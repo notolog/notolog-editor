@@ -1,0 +1,9 @@
+QToolBar > QCheckBox { /* QToolBar > QCheckBox: direct children of a QToolBar */
+    margin-right: 0;
+}
+QToolBar QLabel#search_input_label {
+    margin: 2px;
+}
+QToolBar QLabel#search_case_sensitive {
+    margin: 0 2px;
+}

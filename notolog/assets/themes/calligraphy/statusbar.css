@@ -1,0 +1,6 @@
+QStatusBar QLabel {
+    color: #000000;
+}
+QStatusBar QPushButton#statusbar_litter_bin_label {
+    color: #000000;
+}

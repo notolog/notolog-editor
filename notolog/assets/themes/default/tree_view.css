@@ -1,0 +1,35 @@
+/*
+ * Check colors set in theme settings
+ */
+QListView {
+    color: #f8f8f3;
+    background-color: #55595F;
+}
+QListView::item:hover {
+    color: #333333;
+    background-color: #cccccc;
+}
+/*
+  QListView::item:selected {}
+  or
+  QListView::item:selected:active {} + QListView::item:selected:!active {}
+*/
+QListView::item:selected:active {
+    color: #f8f8f3;
+    background-color: #999999;
+}
+QListView::item:selected:!active {
+    color: #f8f8f3;
+    background-color: #666666;
+}
+QListView::item:selected:focus {
+    /* When click on the item till focus persists */
+    background-color: #999999;
+}
+QListView::item:selected:!focus {
+    background-color: #666666;
+}
+/* Navigation tree filter field */
+QLineEdit {
+    background-color: #ffffff;
+}

@@ -1,0 +1,2 @@
+class FileHeaderEmptyException(Exception):
+    pass

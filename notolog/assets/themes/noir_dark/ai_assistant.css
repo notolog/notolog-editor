@@ -1,0 +1,17 @@
+/* Request field */
+QLineEdit {
+    color: whitesmoke;
+}
+/* Response field */
+QTextEdit {
+    color: whitesmoke;
+}
+/* Token usage labels by id */
+QLabel#ai_assistant_dialog_usage_model_label, QLabel#ai_assistant_dialog_usage_tokens_label {
+    color: grey;
+}
+/* Request submit button */
+QPushButton {
+    color: white;
+    background-color: red;
+}

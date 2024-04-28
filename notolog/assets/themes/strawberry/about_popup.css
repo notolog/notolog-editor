@@ -1,0 +1,44 @@
+QDialog {
+    background-color: #FFF3F3;
+    border: 1px solid salmon;
+    border-radius: 3px;
+}
+QFrame {
+    border: none;
+}
+QLabel {
+    color: #111111;
+}
+QLabel#app_icon {
+    margin: 0 0 15px;
+}
+QLabel#app_name {
+    font-weight: bold;
+    margin: 0;
+}
+QLabel#app_name_caption {
+    color: #575757;
+    margin: 0 0 15px;
+}
+QLabel#label_widget {
+    font-weight: bold;
+}
+QLabel#value_widget {
+    text-align: left;
+}
+QPushButton#value_widget_link {
+    color: deeppink;
+    text-decoration: underline;
+    border: none;
+    background-color: transparent;
+    text-align: left;
+}
+QPushButton#value_widget_icon_link {
+    border: none;
+    background-color: transparent;
+}
+QPushButton#value_widget_link:hover {
+    color: white;
+    background-color: hotpink;
+    text-decoration: none;
+}
