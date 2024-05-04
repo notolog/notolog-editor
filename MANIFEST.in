@@ -1,5 +1,7 @@
+include CHANGELOG.md
 include LICENSE
 include README.md
-include-include docs *
+include requirements.txt
+recursive-include docs *
 recursive-include app/lexemes *
 recursive-include app/assets *
