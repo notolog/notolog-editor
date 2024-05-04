@@ -1,6 +1,6 @@
 # tests/test_enc_helper.py
-from notolog.encrypt.enc_helper import EncHelper
-from notolog.encrypt.enc_password import EncPassword
+from app.encrypt.enc_helper import EncHelper
+from app.encrypt.enc_password import EncPassword
 
 from cryptography.fernet import Fernet
 

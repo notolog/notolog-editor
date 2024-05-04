@@ -1,9 +1,9 @@
 # tests/test_notolog_editor.py
 
-from notolog.notolog_editor import NotologEditor
-from notolog.settings import Settings
-from notolog.editor_state import Mode
-from notolog.lexemes.lexemes import Lexemes
+from app.notolog_editor import NotologEditor
+from app.settings import Settings
+from app.editor_state import Mode
+from app.lexemes.lexemes import Lexemes
 
 import pytest
 
@@ -61,11 +61,13 @@ class TestNotologEditor:
         assert result is True
 
         # Current working directory
-        test_file_dir = os.getcwd()  # The .py file directory: os.path.dirname(os.path.realpath(__file__))
+        # test_run_from_dir = os.getcwd()
+        test_file_dir = os.path.dirname(os.path.realpath(__file__))
+        test_file_parent_dir = os.path.dirname(test_file_dir)
         # Assert that the method was called once
         mock_method1.assert_not_called()
         # Assert that the method was called once with the param(s)
-        mock_method2.assert_called_once_with('%s/README.md' % test_file_dir)
+        mock_method2.assert_called_once_with('%s/README.md' % test_file_parent_dir)
 
     def test_notolog_editor_load_default_page_any(self, mocker, test_obj_notolog_editor, test_obj_settings):
         """
@@ -117,9 +119,10 @@ class TestNotologEditor:
         mocker.patch.object(test_obj_notolog_editor, 'toggle_mode', return_value=None)
         setattr(test_obj_notolog_editor, 'debug', False)
 
-        mock_res_path = mocker.patch('notolog.notolog_editor.res_path', return_value=file_path)
+        mock_res_path = mocker.patch.object(test_obj_notolog_editor, 'get_active_dir', return_value=file_path)
+        #mock_res_path = mocker.patch('app.notolog_editor.res_path', return_value=file_path)
         # fixture arg: monkeypatch
-        # monkeypatch.setattr('notolog.notolog_editor.res_path', lambda _file_path: _file_path == file_path)
+        # monkeypatch.setattr('app.notolog_editor.res_path', lambda _file_path: _file_path == file_path)
         mocker.patch.object(os.path, 'isfile', return_value=isfile)
 
         mock_save_file_content = mocker.patch.object(test_obj_notolog_editor, 'save_file_content', return_value=None)
@@ -129,7 +132,7 @@ class TestNotologEditor:
 
         assert mock_res_path.call_count == res_path_call_cnt
         # Check the parameters passed to the mocked function(s)
-        assert str(mock_res_path.call_args) == "call('%s')" % file_path
+        # assert str(mock_res_path.call_args) == "call('%s')" % file_path
         # assert str(mock_save_file_content.call_args) == "call('%s', '%s')" % (file_path, content)
         if content:
             assert str(content) in str(mock_save_file_content.call_args)

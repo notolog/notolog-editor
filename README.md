@@ -1,5 +1,7 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-04-28 23:13:43.036897"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-05-04 21:45:11.850240"}} -->
 # Notolog
+
+![Notolog](app/assets/notolog-example-image.png)&nbsp;&nbsp;&nbsp;![PyPI - Version](https://img.shields.io/pypi/v/notolog) ![PyPI - License](https://img.shields.io/pypi/l/notolog) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)
 
 ## Overview
 
@@ -8,6 +10,10 @@ Notolog is a markdown editor crafted in Python and Qt, offered as an open-source
 In short, I was in search of a simple, lightweight, and cross-platform editor to fulfill my daily needs as a software developer. Concurrently, I aimed to deepen my understanding of Python, leading me to embark on creating my own editor. Thus, the Notolog editor was born.
 
 The editor has no aim but the path, hence its proof-of-concept nature and many tasks yet to be completed. Speaking of tasks, the editor features special highlighting for the word 'TODO'; simply type it with '@', like '@todo something', and see what happens.
+
+---
+![Notolog settings UI example](docs/notolog-ui-settings.png)
+
 
 ## Features
 
@@ -45,32 +51,48 @@ The editor has no aim but the path, hence its proof-of-concept nature and many t
 * AI Assistant UI to get all things you need in one place:
 	* At the moment the OpenAI API is supported with plans to extend support with other providers.
 
----
 There is no classical web engine integration to make overall package more lightweight and to achieve the best possible performance.
 
-## Prerequisites:
+
+## Prerequisites
 
 **Python 3.9 or higher installed on your system.**
 
 If you haven't already, download and install Python from the official website [python.org](python.org).
 
-Check the version of Python available with this command:
-```sh
-python3 -V
-```
+Check the version of Python available with this command `python3 -V`.
 
 **pip (Python package installer) should be available.**
+
 You can check if pip is installed by running `pip3 --version` in your terminal/command prompt.
+
+**Virtual Environment**
+
+It is highly recommended to use as it helps avoid version conflicts and interference from other packages. Below is a description of how to set up a virtual environment on your machine.
+
 
 ## Installation
 
-### <span style="color: green">Run the Python code</span>
+### Method 1: pip installer (Recommended)
+
+```sh
+pip install notolog
+```
+
+That's it! Starting the app is as simple as `notolog`.
+
+To update to the latest version, use:
+```sh
+pip install --upgrade notolog
+```
+
+### Method 2: Python source code
 
 0. Open Terminal.
 1. Clone project's GitHub repository to get a latest version.
 	* `git clone https://github.com/notolog/notolog-editor.git`
-2. Navigate to your project directory using the **cd** command.
-3. Make sure the virtual environment is activated as it's a common practice to isolate project code (described below).
+2. Navigate to the just cloned project's directory using the **cd** command.
+3. Make sure the virtual environment is activated as it's a common practice to isolate project code (activation described below).
 4. Simply run this command to set up project dependencies:
 
 ```sh
@@ -79,35 +101,32 @@ pip3 install -r requirements.txt
 
 That's it! Starting the app is as simple as `python3 main.py`
 
-### Using Virtual Environments
+<details>
+<summary>Run tests</summary>
 
-The instructions below contain steps of how to set up **venv** virtual environment to run a Python app safely. Starting from Python 3.6 **venv** is a recommended way to create virtual environments. For more information check [Creation of virtual environments](https://docs.python.org/3/library/venv.html)
-
-#### Windows
-
-##### Set Up Virtual Environment
-
-1. Open Command Prompt or PowerShell.
-2. Navigate to your project directory using the `cd` command.
-3. Create a virtual environment by running `python -m venv notolog`. Replace **notolog** with the name you want to give to your virtual environment.
-
-##### Activate Virtual Environment
-
-To activate the virtual environment, run:
+To run all available tests:
+```sh
+pytest
 ```
-notolog\Scripts\activate
+
+To run a particular file's tests:
+```sh
+pytest tests/test_notolog_editor.py
 ```
-_Mind the environment name (**notolog** or any other selected before)._
+</details>
+
+### Virtual Environments
+
+The instructions below contain steps of how to set up **venv** virtual environment to run a Python app safely. Starting from Python 3.6 **venv** is a recommended way to create virtual environments. For more information check [Creation of virtual environments](https://docs.python.org/3/library/venv.html). Alternatively, you can execute the Notolog code and set up virtual environment with your favorite Python code editor.
 
 #### MacOS and Linux
 
 ##### Set Up Virtual Environment
-
 1. Open Terminal.
 2. Navigate to your project directory using the cd command.
 3. Create a virtual environment by running `python3 -m venv notolog`. Replace **notolog** with the desired name for your virtual environment.
 
-Activate Virtual Environment:
+##### Activate Virtual Environment:
 To activate the virtual environment, run:
 ```sh
 source notolog/bin/activate
@@ -118,7 +137,8 @@ To deactivate environment just run this command:
 deactivate
 ```
 
-##### Install venv on Linux systems
+<details>
+<summary>Install venv on Linux systems</summary>
 
 While Python itself comes pre-installed on many Linux distributions, including Ubuntu, some distributions may not include the venv module by default. Therefore, you need to install it separately using the package manager before you can use it to create virtual environments.
 
@@ -140,29 +160,24 @@ sudo dnf install python3-venv
 ```sh
 sudo yum install python3-venv
 ```
+</details>
 
-### Using IDE
+#### Windows
 
-Alternatively, you can execute the Notolog code with your favorite Python code editor.
+##### Set Up Virtual Environment
 
-## Usage
+1. Open Command Prompt or PowerShell.
+2. Navigate to your project directory using the `cd` command.
+3. Create a virtual environment by running `python -m venv notolog`. Replace **notolog** with the name you want to give to your virtual environment.
 
-To start the app simply run this command in a project dir:
-```sh
-python3 main.py
+##### Activate Virtual Environment
+
+To activate the virtual environment, run:
 ```
-
-### Run tests
-
-To run all available tests:
-```sh
-pytest
+notolog\Scripts\activate
 ```
+_Mind the environment name (**notolog** or any other selected before)._
 
-To run a particular file's tests:
-```sh
-pytest tests/test_notolog_editor.py
-```
 
 ## Contributing
 
@@ -232,7 +247,7 @@ As an educational tool, this software is not intended for high-security needs. U
 
 ---
 
-`░░░░░░░░░░░░░░░░░░░░░░░▒▒▒▒▒▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓███■███▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░░` 
-`╔═══════════════════════════════════════════════════════════════════════════════════════════╗` 
-`║ This README.md file has been carefully crafted and edited using the Notolog editor itself ║` 
+`░░░░░░░░░░░░░░░░░░░░░░░▒▒▒▒▒▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓███■███▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░░`
+`╔═══════════════════════════════════════════════════════════════════════════════════════════╗`
+`║ This README.md file has been carefully crafted and edited using the Notolog editor itself ║`
 `╚═══════════════════════════════════════════════════════════════════════════════════════════╝`

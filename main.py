@@ -1,6 +1,9 @@
-"""
-Notolog main file to start up the app and to set up an async loop.
+# Notolog
+# An open-source markdown editor written in Python.
 
+# Main file to start up the app and to set up an async loop.
+
+"""
 This module is the main entry point for the Notolog app. It handles the initialization of the
 application environment, processes command line arguments, and starts the main application loop.
 
@@ -12,18 +15,21 @@ Detailed Description:
 Usage:
 Run the module directly from the command line with the necessary arguments:
 python3 main.py
-
-GitHub Repository: https://github.com/notolog/notolog-editor
-
-Author: Vadim Bakhrenkov
-License: MIT License
 """
+
+# - GitHub Repository: https://github.com/notolog/notolog-editor
+# - PyPI: https://pypi.org/project/notolog
+# - WebSite: https://notolog.app
+# - Author: Vadim Bakhrenkov
+# - Copyright 2024 Vadim Bakhrenkov
+# - License: MIT License
+
 
 from PySide6.QtWidgets import QStyleFactory
 from qasync import QEventLoop, QApplication
 
-from notolog.app_config import AppConfig
-from notolog.notolog_editor import NotologEditor
+from app.app_config import AppConfig
+from app.notolog_editor import NotologEditor
 
 import platform
 import logging

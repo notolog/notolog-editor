@@ -1,10 +1,10 @@
 # tests/test_themes.py
 
-from notolog.helpers.theme_helper import ThemeHelper
-from notolog.enums.themes import Themes
-from notolog.theme import Theme
-from notolog.settings import Settings
-from notolog.app_config import AppConfig
+from app.helpers.theme_helper import ThemeHelper
+from app.enums.themes import Themes
+from app.theme import Theme
+from app.settings import Settings
+from app.app_config import AppConfig
 
 from logging import Logger
 
@@ -15,7 +15,14 @@ import pytest
 class TestThemeHelper:
 
     @pytest.fixture(scope="function", autouse=True)
-    def test_obj_theme_helper(self, mocker, request):
+    def test_settings_fixture(self):
+
+        settings = Settings()
+
+        yield settings
+
+    @pytest.fixture(scope="function", autouse=True)
+    def test_obj_theme_helper(self, test_settings_fixture, mocker, request):
         """
         Testing object fixture.
         May contain minimal logic for testing purposes.
@@ -26,7 +33,8 @@ class TestThemeHelper:
 
         mocker.patch.object(AppConfig, 'get_debug', return_value=False)
         # Or: monkeypatch.setattr(Settings, 'theme', theme)
-        mocker.patch('notolog.settings.Settings.app_theme', theme)
+        # mocker.patch('app.settings.Settings.app_theme', theme)
+        test_settings_fixture.app_theme = theme
 
         """
         If themes dir is set read themes from there.
@@ -34,6 +42,9 @@ class TestThemeHelper:
         """
         test_themes_dir = os.path.join(os.path.dirname(__file__), 'test_themes')
         mocker.patch.object(Theme, 'get_themes_dir', return_value=test_themes_dir)
+
+        # Allow to change theme name during test cycle with no caching
+        AppConfig.set_test_mode(True)
 
         yield ThemeHelper()
 
@@ -81,8 +92,9 @@ class TestThemeHelper:
             ('default', ('test_green', True, '#00FF00')),
             ('default', ('test_blue', False, 0x0000FF)),
             ('default', ('test_undefined', None, None)),
-            ('noir', ('test_non_red', False, 0x00FFFF)),
-            ('noir', ('test_light', True, '#FFFFFF')),
+            # 'noir_dark' is real as it can be checked with Themes enum
+            ('noir_dark', ('test_non_red', False, 0x00FFFF)),
+            ('noir_dark', ('test_light', True, '#FFFFFF')),
             ('test_undefined', (None, None, None)),
             ('test_undefined', ('undefined_name', True, None)),
         ],
@@ -102,7 +114,7 @@ class TestThemeHelper:
             (None, (None, None)),
             ('default', ('test_smth', None)),
             ('default', ('test_styles', 'QTextEdit {}')),
-            ('noir', ('test_smth', 'QTextEdit {}')),
+            ('noir_dark', ('test_smth', 'QTextEdit {}')),
         ],
         indirect=True
     )

@@ -1,6 +1,6 @@
 # tests/test_themes.py
 
-from notolog.theme import Theme
+from app.theme import Theme
 
 from logging import Logger
 
@@ -92,7 +92,7 @@ class TestThemes:
         [
             (None, os.path.join(os.path.dirname(__file__), 'test_themes')),
             ('default', os.path.join(os.path.dirname(__file__), 'test_themes')),
-            ('noir', os.path.join(os.path.dirname(__file__), 'test_themes')),
+            ('noir_dark', os.path.join(os.path.dirname(__file__), 'test_themes')),
         ],
         indirect=True
     )
@@ -121,8 +121,8 @@ class TestThemes:
              ('default',
               {'default': {'test_red': '0xFF0000', 'test_green': '0x00FF00', 'test_blue': '0x0000FF',
                            'test_void': '0x000000'},
-               'noir': {'test_non_red': '0x00FFFF', 'test_non_green': '0xFF00FF', 'test_non_blue': '0xFFFF00',
-                        'test_light': '0xFFFFFF'}})),
+               'noir_dark': {'test_non_red': '0x00FFFF', 'test_non_green': '0xFF00FF', 'test_non_blue': '0xFFFF00',
+                             'test_light': '0xFFFFFF'}})),
         ],
         indirect=True
     )
@@ -144,8 +144,8 @@ class TestThemes:
             ('default',
              ('default',
               {'test_red': 0xFF0000, 'test_green': 0x00FF00, 'test_blue': 0x0000FF, 'test_void': 0x000000})),
-            ('noir',
-             ('noir',
+            ('noir_dark',
+             ('noir_dark',
               {'test_non_red': 0x00FFFF, 'test_non_green': 0xFF00FF, 'test_non_blue': 0xFFFF00,
                'test_light': 0xFFFFFF})),
         ],
@@ -166,7 +166,7 @@ class TestThemes:
         [
             (None, ('default', {'test_styles': 'default/test_styles.css'})),
             ('default', ('default', {'test_styles': 'default/test_styles.css'})),
-            ('noir', ('noir', {'test_smth': 'noir/test_smth.css'})),
+            ('noir_dark', ('noir_dark', {'test_smth': 'noir_dark/test_smth.css'})),
         ],
         indirect=True
     )

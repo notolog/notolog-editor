@@ -1,5 +1,5 @@
 # tests/test_settings.py
-from notolog.settings import Settings
+from app.settings import Settings
 
 import pytest
 

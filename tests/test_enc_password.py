@@ -1,5 +1,5 @@
 # tests/test_enc_password.py
-from notolog.encrypt.enc_password import EncPassword
+from app.encrypt.enc_password import EncPassword
 
 import pytest
 

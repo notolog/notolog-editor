@@ -1,0 +1,146 @@
+body {
+    max-width: 100%; /* Page not stretching upon resize without it */
+    font-family: 'Arial', 'Liberation Sans', sans-serif;
+    line-height: 23px;
+}
+a { display: inline-block; }
+/* Fix new line issue within the p block */
+p { white-space: pre-line; }
+pre {
+    /*display: block;
+    white-space: pre;
+    max-width: 100%;
+    text-indent: 20px;
+    margin: 10px;*/
+}
+img { max-width: 100%; }
+a { color: red; }
+
+/* Somehow h5 and h6 are not balanced. Hence h6 adjusted in pt */
+h1 { font-size: xx-large; }
+h2 { font-size: x-large; }
+h3 { font-size: large; }
+h4 { font-size: medium; }
+h5 { font-size: small; }
+h6 { font-size: 8pt; font-weight: bold; }
+
+/* Expandable block, which replaces the <details><summary>...</summary>...</details> with:
+<p class="_ds_expand">
+<a href="expandable:{}" data-group="{}" data-level="{}">▼{}</a>
+</p>
+*/
+/* Expanded block (collapsible), which appears after expandable block click:
+<table class="_n_details">
+<tr><td class="_n_details_summary"><span class="_ds_collapse">{}</span></td></tr>
+<tr><td class="_n_details_content">{}</td></tr>
+</table>
+*/
+/* anchor details-summary common */
+._ds_expand {
+    border: 1px solid grey !important;
+    background: transparent;
+}
+/* anchor details-summary expandable */
+._ds_expand > a {
+    color: whitesmoke;
+    text-decoration: none;
+    font-weight: bold;
+}
+._ds_expand ._ds_expand_pointer {
+    color: red;
+}
+/* anchor details-summary collapsible */
+._ds_collapse {}
+/* root element of the block, usually table */
+._n_details {
+    margin: 10px 0;
+    padding: 0;
+    border-collapse: collapse;
+}
+/* element which is contain a _ds (expandable or collapsable link) */
+._n_details_summary {
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    border-left: 1px solid dimgrey;
+    background-color: dimgrey;
+    margin: 0;
+    padding: 3px 0 5px 7px;
+}
+/* main content of the expandable block */
+._n_details_content {
+    border-left: 1px solid dimgrey;
+    background-color: #333333;
+    padding: 5px 10px 10px 10px;
+}
+
+abbr { text-decoration: underline; text-decoration-color: red; }
+/*
+ * Supported CSS Selectors
+ * All CSS 2.1 selector classes are supported except pseudo-class selectors such as :first-child, :visited and :hover.
+ *
+ * Use `px` instead of `em`
+ * https://doc.qt.io/qt-6/richtext-html-subset.html#css-properties
+ */
+.codehilite pre {
+    white-space: unset;
+    /* Long string in code block may affect page horizontal scrolling */
+    /*white-space: pre-wrap;      Since CSS 2.1 */
+    /*white-space: -moz-pre-wrap; Mozilla, since 1999 */
+    /*white-space: -pre-wrap;     Opera 4-6 */
+    /*white-space: -o-pre-wrap;   Opera 7 */
+    /*word-wrap: break-word;      Internet Explorer 5.5+ */
+}
+.codehilitetable { width: 100%; table-layout: fixed; border: none; border-spacing: unset; border-collapse: collapse;
+    margin-top: 3px; }
+td.linenos { padding: 10px 7px 0; border-left: 3px dashed #333333; background: #000000; color: #ffffff;
+    /*  line-height: should be equal to td.code, code's line height to match */
+    font-family: 'Menlo', 'Monaco', 'Consolas', 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', 'Courier New', monospace; }
+td.code, code { padding: 10px 10px 0; background: #3f3f3f; color: #ffffff;
+    font-family: 'Menlo', 'Monaco', 'Consolas', 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', 'Courier New', monospace; }
+td.linenos .normal { color: grey; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+div.linenodiv { padding: 0; margin: 0; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: inherit; background-color: #ffffff; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: inherit; background-color: #ffffff; padding-left: 5px; padding-right: 5px; }
+
+.codehilite { overflow-x: auto; line-height: 21px; /* 21px is a min value atm */
+    font-family: 'Menlo', 'Monaco', 'Consolas', 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', 'Courier New', monospace; }
+.codehilite .hll { background: transparent; }
+.codehilite .c { font-style: italic } /* Comment */
+.codehilite .err { border: 1px solid #FF0000 } /* Error */
+.codehilite .k { font-weight: bold } /* Keyword */
+.codehilite .ch { font-style: italic } /* Comment.Hashbang */
+.codehilite .cm { font-style: italic } /* Comment.Multiline */
+.codehilite .cpf { font-style: italic } /* Comment.PreprocFile */
+.codehilite .c1 { font-style: italic } /* Comment.Single */
+.codehilite .cs { font-style: italic } /* Comment.Special */
+.codehilite .ge { font-style: italic } /* Generic.Emph */
+.codehilite .gh { font-weight: bold } /* Generic.Heading */
+.codehilite .gp { font-weight: bold } /* Generic.Prompt */
+.codehilite .gs { font-weight: bold } /* Generic.Strong */
+.codehilite .gu { font-weight: bold } /* Generic.Subheading */
+.codehilite .kc { font-weight: bold } /* Keyword.Constant */
+.codehilite .kd { font-weight: bold } /* Keyword.Declaration */
+.codehilite .kn { font-weight: bold } /* Keyword.Namespace */
+.codehilite .kr { font-weight: bold } /* Keyword.Reserved */
+.codehilite .s { font-style: italic } /* Literal.String */
+.codehilite .nc { font-weight: bold } /* Name.Class */
+.codehilite .ni { font-weight: bold } /* Name.Entity */
+.codehilite .ne { font-weight: bold } /* Name.Exception */
+.codehilite .nn { font-weight: bold } /* Name.Namespace */
+.codehilite .nt { font-weight: bold } /* Name.Tag */
+.codehilite .ow { font-weight: bold } /* Operator.Word */
+.codehilite .sa { font-style: italic } /* Literal.String.Affix */
+.codehilite .sb { font-style: italic } /* Literal.String.Backtick */
+.codehilite .sc { font-style: italic } /* Literal.String.Char */
+.codehilite .dl { font-style: italic } /* Literal.String.Delimiter */
+.codehilite .sd { font-style: italic } /* Literal.String.Doc */
+.codehilite .s2 { font-style: italic } /* Literal.String.Double */
+.codehilite .se { font-weight: bold; font-style: italic } /* Literal.String.Escape */
+.codehilite .sh { font-style: italic } /* Literal.String.Heredoc */
+.codehilite .si { font-weight: bold; font-style: italic } /* Literal.String.Interpol */
+.codehilite .sx { font-style: italic } /* Literal.String.Other */
+.codehilite .sr { font-style: italic } /* Literal.String.Regex */
+.codehilite .s1 { font-style: italic } /* Literal.String.Single */
+.codehilite .ss { font-style: italic } /* Literal.String.Symbol */

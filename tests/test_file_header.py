@@ -1,8 +1,8 @@
 # tests/test_file_header.py
 
-from notolog.file_header import FileHeader
+from app.file_header import FileHeader
 
-from notolog.exceptions.file_header_empty_exception import FileHeaderEmptyException
+from app.exceptions.file_header_empty_exception import FileHeaderEmptyException
 
 from logging import Logger
 
