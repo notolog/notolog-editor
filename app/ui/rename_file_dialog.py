@@ -1,16 +1,14 @@
 from PySide6.QtCore import Signal, QSize
 from PySide6.QtWidgets import QInputDialog, QLineEdit, QDialogButtonBox, QSizePolicy
 
-from ..settings import Settings
-from ..enums.colors import Colors
-from ..app_config import AppConfig
-from ..lexemes.lexemes import Lexemes
+from . import Settings
+from . import AppConfig
+from . import Lexemes
 
 import logging
 
 
 class RenameFileDialog(QInputDialog):
-    colorSelected = Signal(str)
 
     def __init__(self, file_name: str, parent=None):
         super().__init__(parent)

@@ -3,7 +3,8 @@ from PySide6.QtCore import QModelIndex, QSortFilterProxyModel, QRegularExpressio
 import os
 import logging
 
-from ..app_config import AppConfig
+from . import AppConfig
+
 from ..helpers.file_helper import remove_trailing_numbers
 
 

@@ -1,23 +1,19 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-05-04 22:22:51.958596"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-05-05 15:21:52.653006"}} -->
 # Notolog
 
-![Notolog](app/assets/notolog-example-image.png)&nbsp;&nbsp;&nbsp;![PyPI - Version](https://img.shields.io/pypi/v/notolog) ![PyPI - License](https://img.shields.io/pypi/l/notolog) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)
+![Notolog](https://raw.githubusercontent.com/notolog/notolog-editor/main/app/assets/notolog-example-image.png)&nbsp;&nbsp;&nbsp;![PyPI - Version](https://img.shields.io/pypi/v/notolog) ![PyPI - License](https://img.shields.io/pypi/l/notolog) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)
 
 ## Overview
 
-Notolog is a markdown editor crafted in Python and Qt, offered as an open-source solution.
-
-In short, I was in search of a simple, lightweight, and cross-platform editor to fulfill my daily needs as a software developer. Concurrently, I aimed to deepen my understanding of Python, leading me to embark on creating my own editor. Thus, the Notolog editor was born.
-
-The editor has no aim but the path, hence its proof-of-concept nature and many tasks yet to be completed. Speaking of tasks, the editor features special highlighting for the word 'TODO'; simply type it with '@', like '@todo something', and see what happens.
+Notolog is a versatile open-source markdown editor developed with Python and Qt, ideal for anyone looking for an efficient and straightforward way to handle markdown files. Born from a personal endeavor to address daily programming challenges and deepen Python proficiency, Notolog stands as a proof-of-concept that seamlessly integrates simplicity with functionality, offering an intuitive user experience across various platforms.
 
 ---
-![Notolog settings UI example](docs/notolog-ui-settings.png)
+![Notolog settings UI example](https://raw.githubusercontent.com/notolog/notolog-editor/main/docs/notolog-ui-settings.png)
 
 
 ## Features
 
-* Open sourced under the MIT license for full transparency and collaboration.
+* Notolog is open-sourced under the MIT license, promoting full transparency and encouraging collaboration.
 * Markdown syntax highlighting:
 	* Editor mode offers smooth highlighting tailored specifically for Notolog, with line numbers and extended syntax highlighting.
 	* View mode utilizes the Python Markdown library for seamless rendering of Markdown syntax.
@@ -33,11 +29,11 @@ The editor has no aim but the path, hence its proof-of-concept nature and many t
 	* Allows users to search within the opened file.
 	* Quick search by file name within the tree, enabling efficient navigation and content retrieval.
 * File meta-headers in the form of HTML comments to avoid excess visibility.
-* Password-based file symmetric encryption and decryption:
-	* Employing AES-256 in CBC mode (Cipher Block Chaining) with the power of the Fernet library.
-	* Key derivation based on a 256-bit key using PBKDF2HMAC from the cryptography library, using SHA-256 as the hash function.
-	* Fernet provides an easy-to-use and secure way of performing symmetric (also known as "secret key") encryption.
-	* File meta-headers to keep encryption params to allow a seamless decryption process.
+* Password-based File Encryption and Decryption:
+	* Utilizes Fernet for encryption, providing a secure and user-friendly method for symmetric (also known as "secret key") encryption.
+	* Fernet employs AES-128 in CBC mode. Plans to introduce AES-256 in future updates are aimed at further enhancing security.
+* File Meta-Headers:
+	* Notolog implements file meta-headers to store encryption parameters, ensuring a seamless decryption process.
 * Translations-friendly file structure:
 	* Supports several languages out of the box, with provisions for adding and supporting additional languages.
 * Color themes support:
@@ -50,6 +46,7 @@ The editor has no aim but the path, hence its proof-of-concept nature and many t
 * Includes a suite of unit tests to ensure code reliability and maintainability, providing confidence in the editor's functionality.
 * AI Assistant UI to get all things you need in one place:
 	* At the moment the OpenAI API is supported with plans to extend support with other providers.
+* Notolog includes specialized highlighting for TODOs. Simply type '@todo something' to mark tasks, enhancing the ability to track and manage future plans efficiently.
 
 There is no classical web engine integration to make overall package more lightweight and to achieve the best possible performance.
 
@@ -181,7 +178,7 @@ _Mind the environment name (**notolog** or any other selected before)._
 
 ## Contributing
 
-If you encounter any issues or would like to contribute to the project, please don't hesitate to open an issue or submit a pull request on GitHub.
+If you encounter any issues or would like to contribute to the project, please don't hesitate to [open an issue](https://github.com/notolog/notolog-editor/issues) or submit a [pull request](https://github.com/notolog/notolog-editor/pulls) on the project's [GitHub page](https://github.com/notolog/notolog-editor).
 
 ## License
 
@@ -189,41 +186,51 @@ The Notolog project is licensed under the MIT License - see the [LICENSE](LICENS
 
 ## Third-Party Components
 
-### Libraries and Dependencies
+### Libraries and Licenses
 
-This project utilizes the following third-party libraries:
+This project utilizes numerous third-party libraries, each with its own licensing terms. Below is a detailed list of these libraries grouped by license type to help clarify what each license permits and requires. This categorization aids in ensuring compliance with legal terms for use, modification, and distribution of these software components.
 
-* Qt (open-source): Distributed under the GNU LGPLv3, GNU GPLv2, or Qt Commercial License. ([Qt Licensing](https://www.qt.io/licensing))
-* PySide6: Used for creating graphical user interfaces with Qt6 in Python. ([PySide6 is available under both Open Source (LGPLv3/GPLv2) and commercial license.](https://pypi.org/project/PySide6/))
-	* PySide6_Addons: Additional modules and utilities for PySide6 to enhance functionality. ([PySide6 is available under both Open Source (LGPLv3/GPLv2) and commercial license.](https://pypi.org/project/PySide6-Addons/))
-	* PySide6_Essentials: Essential components and tools for PySide6 development, including core libraries and resources. ([PySide6 is available under both Open Source (LGPLv3/GPLv2) and commercial license.](https://pypi.org/project/PySide6-Essentials/))
-* shiboken6: A Python binding generator used in conjunction with PySide6 to create Python bindings for the Qt framework. ([PySide6 is available under both Open Source (LGPLv3/GPLv2) and commercial license.](https://pypi.org/project/shiboken6/))
-* Python-Markdown: Used for Markdown to HTML conversion. ([The 3-Clause BSD License](https://github.com/Python-Markdown/markdown/blob/master/LICENSE.md))
-* Emoji library: Used for converting emoji code to real emoji. ([New BSD License](https://github.com/carpedm20/emoji/blob/master/LICENSE.txt))
-* qasync: Used for handling async syntax highlighting. ([BSD 2-Clause "Simplified" License](https://github.com/CabbageDevelopment/qasync/blob/master/LICENSE))
-* cryptography: Used for generating cryptographic hashes and keys in this project is dual-licensed under the:
-	* ([Apache License 2.0](https://github.com/pyca/cryptography/blob/main/LICENSE.APACHE))
-	* ([BSD 3-Clause License](https://github.com/pyca/cryptography/blob/main/LICENSE.BSD))
-* Bootstrap Icons: Used for UI toolbar icons and other visual elements. ([The MIT License (MIT)](https://github.com/twbs/icons/blob/main/LICENSE))
-* pytest: Used for testing. ([The MIT License (MIT)](https://docs.pytest.org/en/8.0.x/license.html))
-* pytest-mock: Used for testing. ([The MIT License (MIT)](https://github.com/pytest-dev/pytest-mock/blob/main/LICENSE))
-* asyncio: Used for handling async syntax highlighting is part of the Python standard library, which typically falls under the [Python Software Foundation License](https://docs.python.org/3/license.html#psf-license).
-* cffi: Used for interfacing with C code. ([The MIT License (MIT)](https://github.com/python-cffi/cffi/blob/main/LICENSE))
-* click: Used for creating command-line interfaces. ([BSD-3-Clause License](https://click.palletsprojects.com/en/8.1.x/license/))
-* iniconfig: Used for parsing and working with INI configuration files. ([The MIT License (MIT)](https://github.com/pytest-dev/iniconfig/blob/main/LICENSE))
-* packaging: Used for working with Python package metadata and distribution utilities is dual-licensed under the:
-	* ([Apache License 2.0](https://github.com/pypa/packaging/blob/main/LICENSE.APACHE))
-	* ([BSD 2-Clause "Simplified" License](https://github.com/pypa/packaging/blob/main/LICENSE.BSD))
-* tomli: A Python library used for parsing TOML configuration files effortlessly. ([The MIT License (MIT)](https://github.com/hukkin/tomli/blob/master/LICENSE))
-* pluggy: Used for creating and managing plugin systems in Python applications. ([The MIT License (MIT)](https://github.com/pytest-dev/pluggy/blob/main/LICENSE))
-* pycparser: Used for parsing C code and generating Abstract Syntax Trees (AST) in Python. ([BSD 3-Clause License](https://github.com/eliben/pycparser/blob/main/LICENSE))
-* Pygments: Used for syntax highlighting source code in various programming languages. ([BSD 2-Clause "Simplified" License](https://github.com/pygments/pygments/blob/master/LICENSE))
+#### GNU LGPLv3, GNU GPLv2, or Commercial License
 
-Please note that while the majority of this project is licensed under the MIT License, certain components may have different licensing terms. Please refer to the documentation of each library for information about its license and terms of use.
+- **Qt (open-source)**: Framework for graphical user interfaces and more. [Project Details](https://www.qt.io), [Qt Licensing](https://www.qt.io/licensing)
+- **PySide6**: GUI creation with Qt6 in Python. [Project and License Details](https://pyside.org/), [PyPI](https://pypi.org/project/PySide6/)
+- **PySide6_Addons**: Additional modules for PySide6. [Project and License Details](https://pyside.org/), [PyPI](https://pypi.org/project/PySide6-Addons/)
+- **PySide6_Essentials**: Core libraries for PySide6. [Project and License Details](https://pyside.org/), [PyPI](https://pypi.org/project/PySide6-Essentials/)
+- **shiboken6**: Binding generator for Qt framework. [Project and License Details](https://pyside.org/), [PyPI](https://pypi.org/project/shiboken6/)
 
-This project includes code from external sources that are licensed under The Unlicense. We acknowledge and thank the original authors for their contributions.
+#### MIT License
 
-* [Examples of codehilite CSS themes](https://github.com/richleland/pygments-css): Used to create color themes for code block highlighting. ([The Unlicense](https://github.com/richleland/pygments-css/blob/master/UNLICENSE.txt))
+- **Bootstrap Icons**: Icons for UI elements. [Project Details](https://icons.getbootstrap.com/), [License Details](https://github.com/twbs/icons/blob/main/LICENSE)
+- **pytest**: Used for unit testing. It provides powerful features like fixtures, assertions, and test parameterization to facilitate writing and running Python tests. [Project Details](https://pytest.org/), [License Details](https://docs.pytest.org/en/8.0.x/license.html)
+- **pytest-mock**: Enhances pytest for unit tests by offering a simple interface to powerful mocking functionalities. [License Details](https://github.com/pytest-dev/pytest-mock/blob/main/LICENSE), [PyPI](https://pypi.org/project/pytest-mock/)
+- **cffi**: Used for interfacing with C code. [License Details](https://github.com/python-cffi/cffi/blob/main/LICENSE), [PyPI](https://pypi.org/project/cffi/)
+- **iniconfig**: For parsing and working with INI configuration files. [License Details](https://github.com/pytest-dev/iniconfig/blob/main/LICENSE), [PyPI](https://pypi.org/project/iniconfig/)
+- **tomli**: A Python library used for parsing TOML configuration files effortlessly. [License Details](https://github.com/hukkin/tomli/blob/master/LICENSE), [PyPI](https://pypi.org/project/tomli/)
+- **pluggy**: For creating and managing plugin systems in Python applications. [License Details](https://github.com/pytest-dev/pluggy/blob/main/LICENSE), [PyPI](https://pypi.org/project/pluggy/)
+
+#### BSD Licenses
+
+- **Python-Markdown**: Markdown to HTML conversion. [Project Details](https://python-markdown.github.io/), [BSD 3-Clause License](https://github.com/Python-Markdown/markdown/blob/master/LICENSE.md)
+- **Emoji library**: Converts emoji text-code to emojis. [New BSD License](https://github.com/carpedm20/emoji/blob/master/LICENSE.txt), [PyPI](https://pypi.org/project/emoji/)
+- **qasync**: Async support for Python. [BSD 2-Clause "Simplified" License](https://github.com/CabbageDevelopment/qasync/blob/master/LICENSE), [PyPI](https://pypi.org/project/qasync/)
+- **Pygments**: Syntax highlighting for programming languages. [Project Details](https://pygments.org/), [BSD 2-Clause "Simplified" License](https://github.com/pygments/pygments/blob/master/LICENSE)
+- **click**: Used for creating command-line interfaces. [Project Details](https://palletsprojects.com/p/click/), [BSD-3-Clause License](https://click.palletsprojects.com/en/8.1.x/license/)
+- **pycparser**: C code parser and for generating Abstract Syntax Trees (AST) in Python. [BSD 3-Clause License](https://github.com/eliben/pycparser/blob/main/LICENSE), [PyPI](https://pypi.org/project/pycparser/)
+
+#### Other Dual Licensed
+
+- **cryptography**: Provides cryptographic functions and primitives. [Apache License 2.0](https://github.com/pyca/cryptography/blob/main/LICENSE.APACHE) and [BSD 3-Clause License](https://github.com/pyca/cryptography/blob/main/LICENSE.BSD), [PyPI](https://pypi.org/project/cryptography/)
+- **packaging**: Python package metadata and distribution utilities. [Apache License 2.0](https://github.com/pypa/packaging/blob/main/LICENSE.APACHE) and [BSD 2-Clause "Simplified" License](https://github.com/pypa/packaging/blob/main/LICENSE.BSD), [PyPI](https://pypi.org/project/packaging/)
+
+#### Python Standard Library
+
+- **asyncio**: Part of the Python standard library, licensed under the [Python Software Foundation License](https://docs.python.org/3/license.html#psf-license).
+
+#### The Unlicense
+
+- **Codehilite CSS Themes**: Base themes for code highlighting. [The Unlicense](https://github.com/richleland/pygments-css/blob/master/UNLICENSE.txt)
+
+Please note that while the majority of this project is licensed under the MIT License, certain components may have different licensing terms. Always refer to the documentation of each library for detailed information about its license and terms of use.
 
 ### APIs
 
@@ -241,9 +248,7 @@ This project includes code from external sources that are licensed under The Unl
 
 ## Security Disclaimer
 
-This application, primarily designed for educational purposes, employs PBKDF2HMAC for key derivation and AES-256 in CBC mode for encryption, using a 256-bit key. Note that the encryption salt and iteration counts are stored unencrypted in the file's header. While secure for educational and non-critical uses, this setup may not meet the highest security standards. Users can opt to add a password hint in the file header, which should be used judiciously to balance convenience against security risks.
-
-As an educational tool, this software is not intended for high-security needs. Users are encouraged to choose strong passwords to enhance data protection. Distributed under the MIT License, this open-source application requires users to ensure compliance with applicable laws. The developers disclaim liability for misuse or for ensuring legal compliance.
+This application is primarily designed for educational purposes and uses PBKDF2HMAC for key derivation. It employs Fernet, which utilizes AES-128 in CBC mode. The key is initially created at 256 bits but truncated to 128 bits for encryption. The encryption salt and iteration counts are stored unencrypted in the file's header, making this setup suitable for educational and non-critical applications only. As such, while this software provides basic security, it is not intended for high-security needs. Users are encouraged to choose strong passwords to enhance data protection. Distributed under the MIT License, this open-source application requires users to ensure compliance with applicable laws, and the developers disclaim liability for misuse or legal non-compliance.
 
 ---
 

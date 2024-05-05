@@ -5,9 +5,10 @@ from PySide6.QtWidgets import QLabel, QCheckBox, QLineEdit, QPushButton, QComboB
 import logging
 from typing import Union
 
-from ..app_config import AppConfig
-from ..lexemes.lexemes import Lexemes
-from ..helpers.theme_helper import ThemeHelper
+from . import AppConfig
+from . import Lexemes
+from . import ThemeHelper
+
 from ..enums.languages import Languages
 from ..enums.ai_model_names import AiModelNames
 from ..enums.themes import Themes

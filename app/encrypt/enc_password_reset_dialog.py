@@ -4,9 +4,9 @@ from PySide6.QtGui import QFontMetrics
 
 from typing import Optional, Callable, Any
 
-from ..settings import Settings
-from ..app_config import AppConfig
-from ..lexemes.lexemes import Lexemes
+from . import Settings
+from . import AppConfig
+from . import Lexemes
 
 import logging
 

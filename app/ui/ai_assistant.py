@@ -20,13 +20,15 @@ from PySide6.QtGui import QPixmap
 import json
 import logging
 
-from ..settings import Settings
-from ..app_config import AppConfig
-from ..lexemes.lexemes import Lexemes
-from ..helpers.theme_helper import ThemeHelper
+from . import Settings
+from . import AppConfig
+from . import Lexemes
+from . import ThemeHelper
+
+from .vertical_line_spacer import VerticalLineSpacer
+
 from ..ui.rotating_label import RotatingLabel
 from ..enums.ai_model_names import AiModelNames
-from .vertical_line_spacer import VerticalLineSpacer
 
 
 class AIAssistant(QDialog):

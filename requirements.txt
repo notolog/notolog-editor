@@ -1,13 +1,13 @@
 cffi==1.16.0
 click==8.1.7
-cryptography==42.0.5
+cryptography==42.0.6
 emoji==2.11.1
 iniconfig==2.0.0
 Markdown==3.6
 packaging==24.0
 pluggy==1.5.0
 pycparser==2.22
-Pygments==2.17.2
+Pygments==2.18.0
 PySide6==6.7.0
 PySide6_Addons==6.7.0
 PySide6_Essentials==6.7.0

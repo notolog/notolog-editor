@@ -3,9 +3,11 @@ from enum import Enum
 
 class AiModelNames(Enum):
 
-    # Override _generate_next_value_ to allow for custom attributes on enum members (mostly for default).
+    @staticmethod
     def _generate_next_value_(name, start, count, last_values):
         """
+        Override _generate_next_value_ to allow for custom attributes on enum members (mostly for default).
+
         'name' is the name of the Enum's member, which will be 'A', 'B', 'C', etc.
         This method returns the name itself, a 'default' marker (False), and a 'legacy' marker (False)
         """

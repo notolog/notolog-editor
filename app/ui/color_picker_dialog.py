@@ -1,10 +1,11 @@
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QGridLayout, QDialog, QPushButton
 
-from ..settings import Settings
+from . import Settings
+from . import AppConfig
+from . import Lexemes
+
 from ..enums.colors import Colors
-from ..app_config import AppConfig
-from ..lexemes.lexemes import Lexemes
 
 from functools import partial
 

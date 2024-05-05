@@ -45,10 +45,10 @@ def main():
     """
     logging.basicConfig(level=logging.DEBUG, format='[%(name)s] %(funcName)s: %(levelname)s: %(message)s')
 
-    # Enable logging
-    AppConfig.set_logging(True)
-    # Enable debug mode (a lot of logs)
-    AppConfig.set_debug(False)
+    # Enable logging, uncomment or change app config
+    # AppConfig.set_logging(True)
+    # Enable debug mode (a lot of logs), uncomment or change app config
+    # AppConfig.set_debug(False)
 
     # Main application
     app = QApplication(sys.argv)

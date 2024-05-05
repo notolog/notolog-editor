@@ -12,10 +12,10 @@ from PySide6.QtGui import QPainter, QColor, QTextFormat, QTextCharFormat, QFont
 
 from typing import Union
 
-from ..app_config import AppConfig
+from . import Settings
+from . import ThemeHelper
+
 from ..edit_widget import EditWidget
-from ..helpers.theme_helper import ThemeHelper
-from ..settings import Settings
 
 
 class LineNumbers(QWidget):

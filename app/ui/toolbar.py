@@ -3,11 +3,10 @@ from PySide6.QtGui import QAction, QColor
 from PySide6.QtWidgets import QToolBar, QWidget, QMenu, QLabel, QLineEdit, QCheckBox, QToolButton, QPushButton
 from PySide6.QtWidgets import QSizePolicy
 
-from ..lexemes.lexemes import Lexemes
-from ..app_config import AppConfig
-from ..settings import Settings
-
-from ..helpers.theme_helper import ThemeHelper
+from . import Settings
+from . import AppConfig
+from . import Lexemes
+from . import ThemeHelper
 
 from typing import Union
 

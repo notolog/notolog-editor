@@ -164,7 +164,7 @@ class FileHeader:
         file_data = read_file(file_path)
         return self.load(file_data)
 
-    def load(self, file_data: str) -> tuple[Any, str]:
+    def load(self, file_data: str) -> tuple[Any, Union[str, None]]:
         try:
             file_header_line = file_data.splitlines()[0]
         except (IndexError, AttributeError):
@@ -185,7 +185,12 @@ class FileHeader:
             return self, file_data
 
         if self.is_valid():
-            file_body = "\n".join(file_data.splitlines()[1:])
+            # Splitting file_data into lines
+            lines = file_data.splitlines()
+            if len(lines) >= 2:
+                file_body = "\n".join(lines[1:])
+            else:
+                file_body = None
             return self, file_body
 
         if self.debug:

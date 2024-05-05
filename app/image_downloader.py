@@ -89,7 +89,7 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
         # File path to save
         file_path = os.path.join(self.folder.path(), file_name)
         # Save received data
-        if save_file(file_path, data, b=True):
+        if save_file(file_path, data, as_bytearray=True):
             if self.debug:
                 self.logger.debug(f"Resource saved {url} to {file_path} [{size_f(len(data))}]")
         else:

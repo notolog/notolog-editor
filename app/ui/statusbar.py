@@ -5,10 +5,11 @@ from PySide6.QtWidgets import QStatusBar, QWidget, QLabel, QPushButton, QSizePol
 import logging
 from typing import Union
 
-from ..settings import Settings
-from ..app_config import AppConfig
-from ..lexemes.lexemes import Lexemes
-from ..helpers.theme_helper import ThemeHelper
+from . import Settings
+from . import AppConfig
+from . import Lexemes
+from . import ThemeHelper
+
 from .sort_filter_proxy_model import SortFilterProxyModel
 from .vertical_line_spacer import VerticalLineSpacer
 

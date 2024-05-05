@@ -7,7 +7,7 @@ long_description = (here / 'README.md').read_text(encoding='utf-8')
 
 setup(
     name='notolog',
-    version='0.9.0b11',
+    version='0.9.1b0',
     description='Notolog Markdown Editor',
     long_description=long_description,
     long_description_content_type='text/markdown',

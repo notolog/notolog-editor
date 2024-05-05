@@ -2,7 +2,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QDialog, QLabel, QVBoxLayout, QDialogButtonBox, QSizePolicy
 from PySide6.QtGui import QFontMetrics
 
-from ..app_config import AppConfig
+from . import AppConfig
 
 import logging
 

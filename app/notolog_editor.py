@@ -3150,8 +3150,8 @@ class NotologEditor(QMainWindow):
             file_header, file_body = FileHeader().load_file(file_path)
 
         # Load fields content
-        if file_body is not None:  # There should be no valid situation with file_body equal to None
-            self.load_content(file_header, file_body)
+        if file_header or file_body:  # File body equal to None when file is just created but the header was removed
+            self.load_content(file_header, file_body if file_body else '')
         else:
             self.message_box(self.lexemes.get('load_file_none_content_error'), icon_type=2)
             return False

@@ -7,10 +7,11 @@ from PySide6.QtGui import QPixmap, QCursor, QDesktopServices
 from PySide6.QtWidgets import QHBoxLayout, QVBoxLayout, QGridLayout, QDialog, QLabel, QFrame, QPushButton, QWidget
 from PySide6.QtWidgets import QSizePolicy
 
-from ..settings import Settings
-from ..app_config import AppConfig
-from ..lexemes.lexemes import Lexemes
-from ..helpers.theme_helper import ThemeHelper
+from . import Settings
+from . import AppConfig
+from . import Lexemes
+from . import ThemeHelper
+
 from functools import partial
 
 import logging

@@ -1,5 +1,5 @@
 """
-Helper for file operations
+Helper for file operations.
 """
 
 from PySide6.QtCore import QFile, QDir
@@ -11,23 +11,40 @@ from typing import Union
 
 
 def res_path(rel_path):
-    # Get absolute path for resources which works either for dev and for build
+    """
+    Generate an absolute path for resource files. This method accommodates environments
+    both during development and after deployment using PyInstaller.
+
+    The function tries to determine the base path set by PyInstaller, which stores it
+    in the `_MEIPASS` attribute during the bundled application's runtime. If the application
+    is not running as a PyInstaller bundle, it defaults to the current directory's absolute path.
+
+    Args:
+        rel_path (str): The relative path to the resource.
+
+    Returns:
+        str: The absolute path combined from the base path and the relative path.
+    """
     try:
         # PyInstaller creates a temporary folder and store its path in _MEIPASS
         base_path = sys._MEIPASS
     except Exception:
-        # base_path = os.path.abspath(".")
+        # If running as a live Python script, not a bundled application
         base_path = os.path.abspath(QDir.currentPath())
 
     return os.path.join(base_path, rel_path)
 
 
-def size_f(size: int, suffix: str="B") -> str:
+def size_f(size: int, suffix: str = "B") -> str:
     """
-    Human-readable file/content size
-    @param size: size in bytes
-    @param suffix: suffix at the end of the formatted string
-    @return: formatted string of file size
+    Convert a file size to human-readable form.
+
+    Args:
+        size (int): File size in bytes.
+        suffix (str): Suffix for the size unit. Defaults to 'B' (bytes).
+
+    Returns:
+        str: Formatted string representing the file size in a human-readable form.
     """
     units = ["", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"]
     unit_size = 1024.0
@@ -38,13 +55,21 @@ def size_f(size: int, suffix: str="B") -> str:
     return f"{round(size, 1)}{units[i]}{suffix}"
 
 
-def read_file(file_path: str, b: bool=False) -> Union[str, bytearray]:
+def read_file(file_path: str, as_bytearray: bool = False) -> Union[str, bytearray]:
     """
-    Read file content
-    @param file_path: file path string
-    @param b: as a bytearray
-    @return: file content either as a string, bytearray or None
+    Read file content from the specified path.
 
+    Args:
+        file_path (str): The path to the file.
+        as_bytearray (bool): If True, returns the content as a bytearray;
+            if False, returns the content as a string. Defaults to False.
+
+    Returns:
+        str or bytearray or None: Returns the file content as a string or bytearray depending on the value of `b`.
+        Returns None if the file cannot be read.
+    """
+
+    """
     # Qt implementation could be like
     file = QFile(file_path)
     if file.open(QIODevice.OpenModeFlag.ReadOnly):
@@ -52,33 +77,46 @@ def read_file(file_path: str, b: bool=False) -> Union[str, bytearray]:
         return file.readAll()
     """
     # a bytes-like object or string
-    mode = 'rb' if b else 'r'
+    mode = 'rb' if as_bytearray else 'r'
     # without 3-char extension: file_path[:-4]
-    with open(file_path, mode) if b else open(file_path, mode, encoding='utf-8') as file:  # No encoding in bin mode
+    with (open(file_path, mode) if as_bytearray
+          else open(file_path, mode, encoding='utf-8') as file):  # No encoding in bin mode
         return file.read()
 
 
-def save_file(file_path: str, data: Union[str, bytearray], b: bool=False) -> bool:
+def save_file(file_path: str, data: Union[str, bytearray], as_bytearray: bool = False) -> bool:
     """
-    Save content to the file
-    @param file_path: file path string
-    @param data: file content either as a string or bytearray
-    @param b: as a bytearray
-    @return: boolean result
+    Save content to the specified file.
+
+    Args:
+        file_path (str): The path to the file where content will be saved.
+        data (str or bytearray): The content to save, which can be either a string or a bytearray.
+        as_bytearray (bool): Indicates whether the data should be saved as a bytearray.
+            If False and data is a bytearray, it will be converted to a string before saving.
+            Defaults to False.
+
+    Returns:
+        bool: True if the content was successfully saved, False otherwise.
     """
     # a bytes-like object or string
-    mode = 'wb' if b else 'w'
+    mode = 'wb' if as_bytearray else 'w'
     # without 3-char extension: crypted_file_path[:-4]
-    with open(file_path, mode) if b else open(file_path, mode, encoding='utf-8') as file:  # No encoding in bin mode
+    with (open(file_path, mode) if as_bytearray
+          else open(file_path, mode, encoding='utf-8') as file):  # No encoding in bin mode
         file.write(data)
         return True
 
 
 def remove_trailing_numbers(text) -> str:
     """
-    Remove trailing numbers from text, mostly file extension with incremental digital addon.
-    @param text: text to remove trailing digits from
-    @return: string without trailing digits if they are exist
+    Remove trailing numbers from the given text. This is commonly used to strip incremental numeric suffixes from
+    file names or extensions.
+
+    Args:
+        text (str): The text from which trailing digits will be removed.
+
+    Returns:
+        str: The text stripped of any trailing digits, if they exist.
     """
     # Start from the end of the string and find the first non-digit character
     i = len(text)

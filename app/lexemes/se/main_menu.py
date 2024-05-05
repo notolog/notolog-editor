@@ -1,0 +1,47 @@
+# Swedish lexemes main_menu.py
+lexemes = {
+    "group_file_label": "Fil",
+    "group_edit_label": "Redigera",
+    "group_tools_label": "Verktyg",
+    "group_help_label": "Hjälp",
+
+    "actions_file_label_new_document": "Nytt dokument",
+    "actions_file_accessible_name_new_document": "Nytt dokument",
+    "actions_file_label_open": "Öppna",
+    "actions_file_accessible_name_open": "Öppna dokument",
+    "actions_file_label_save": "Spara",
+    "actions_file_accessible_name_save": "Spara dokument",
+    "actions_file_label_save_as": "Spara som",
+    "actions_file_accessible_name_save_as": "Spara dokumentkopior",
+    "actions_file_label_exit": "Avsluta",
+    "actions_file_accessible_name_exit": "Avsluta programmet",
+
+    "edit_actions_edit_mode": "Redigera",
+    "edit_actions_accessible_name_edit_mode": "Redigera fil",
+    "edit_actions_source_mode": "Källkod",
+    "edit_actions_accessible_name_source_mode": "Källkod",
+    "edit_actions_bold": "Fet",
+    "edit_actions_accessible_name_bold": "Fet textformat",
+    "edit_actions_italic": "Kursiv",
+    "edit_actions_accessible_name_italic": "Kursiv textformat",
+    "edit_actions_underline": "Understrykning",
+    "edit_actions_accessible_name_underline": "Understruken textformat",
+    "edit_actions_strikethrough": "Genomstrykning",
+    "edit_actions_accessible_name_strikethrough": "Genomstruken textformat",
+    "edit_actions_blockquote": "Blockcitat",
+    "edit_actions_accessible_name_blockquote": "Blockcitat textformat",
+
+    "tools_actions_ai_assistant": "AI-assistent",
+    "tools_actions_accessible_name_ai_assistant": "Starta AI-assistent",
+    "tools_actions_color_picker": "Färgväljare",
+    "tools_actions_accessible_name_color_picker": "Välj textfärg",
+
+    "actions_help_label_md_syntax": "Markdown-syntax",
+    "actions_help_accessible_name_md_syntax": "Markdown-syntax",
+    "actions_help_label_check_for_updates": "Sök efter uppdateringar",
+    "actions_help_accessible_name_check_for_updates": "Sök efter uppdateringar",
+    "actions_help_label_bug_report": "Felrapport",
+    "actions_help_accessible_name_bug_report": "Skicka felrapport",
+    "actions_help_label_about": "Om",
+    "actions_help_accessible_name_about": "Om"
+}

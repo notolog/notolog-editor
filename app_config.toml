@@ -1,0 +1,8 @@
+[font]
+base_size = 12
+min_size = 5
+max_size = 42
+
+[logger]
+logging = true
+debug = false

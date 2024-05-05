@@ -1,6 +1,20 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [0.9.1b0] - 2024-05-05
+### Added
+- New interface languages: Finnish and Swedish, expanding accessibility for users in these regions.
+- Additional entries to the `.gitignore` and `.gitattributes` files to improve version control practices.
+- A dedicated `app_config.toml` file with initial configuration parameters, simplifying initial setup and customization.
+
+### Updated
+- Updated the `Libraries and Licenses` section within the README.md file to provide comprehensive information about third-party dependencies and their licenses.
+- Updated `cryptography` to version 42.0.6 and `Pygments` to version 2.18.0 to ensure compatibility with the latest standards and to incorporate the newest features and security enhancements.
+
+### Changed
+- Modified file handling: The file header can now be the only content of the file, streamlining setups where minimal data is required.
+- Updated encryption description to clarify that Fernet uses AES-128 for encryption, derived from a 256-bit key, accurately reflecting the cryptographic standards employed.
+
 ## [0.9.0b11] - 2024-05-04
 ### Added
 - Support for embedding external images within documents, with caching.
@@ -9,22 +23,24 @@ All notologable changes to this project will be documented in this file.
 - Expanded example content and resources.
 - Added `CHANGELOG.md` to document all notable changes to the project, enhancing transparency and trackability for developers and users alike.
 
+### Updated
+- Updated pytest to version 8.2.0 to take advantage of improved test suite performance and new features. (Previously listed under "Changed")
+
 ### Changed
 - Updated pip installer related packages and file structure.
 - Current directory now persists during file events, even if no files are actively open.
 - Minor logo adjustment.
-- Updated pytest to version 8.2.0 to take advantage of improved test suite performance and new features.
 
 ### Fixed
 - Resolved sudden crashes when switching between edit and view modes.
 - Addressed UI style issues for improved text visibility under various color schemes.
 
 ## [0.9.0b10] - 2024-04-29
-### Fixed
-- Corrected startup failures following pip installation.
-
 ### Changed
 - Updated pip installer related packages and file structure.
+
+### Fixed
+- Corrected startup failures following pip installation.
 
 ## [0.9.0b0] - 2024-04-29
 ### Added

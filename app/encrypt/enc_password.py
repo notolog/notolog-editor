@@ -1,4 +1,8 @@
 class EncPassword:
+    """
+    Password object class to store password related data.
+    """
+
     def __init__(self):
         self._password = None
         self._hint = None

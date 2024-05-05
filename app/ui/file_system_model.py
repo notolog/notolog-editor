@@ -6,7 +6,8 @@ import os
 
 from typing import Any
 
-from ..helpers.theme_helper import ThemeHelper
+from . import ThemeHelper
+
 from ..helpers.file_helper import remove_trailing_numbers
 
 

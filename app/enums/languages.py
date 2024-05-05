@@ -3,13 +3,17 @@ from enum import Enum
 
 class Languages(Enum):
 
-    # Override _generate_next_value_ to allow for custom attributes on enum members (mostly for default).
+    @staticmethod
     def _generate_next_value_(name, start, count, last_values):
+        """
+        Override _generate_next_value_ to allow for custom attributes on enum members (mostly for default).
+        """
         return name, False  # The second value in the tuple is the custom attribute indicating whether it's the default
 
     DE = "German"
     EN = ("English", True)
     ES = "Spanish"
+    FI = "Finnish"
     FR = "French"
     GE = "Georgian"
     GR = "Greek"
@@ -20,6 +24,7 @@ class Languages(Enum):
     LA = "Latin"
     PT = "Portuguese"
     RU = "Russian"
+    SE = "Swedish"
     TR = "Turkish"
     ZH = "Chinese"
 

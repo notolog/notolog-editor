@@ -21,7 +21,7 @@ Keep space between the `#` sign and the heading itself.
 
 ![Notolog](app/assets/notolog-example-image.png)
 
-Code looks like: `![Alt text](notolog/assets/notolog-example-image.png)`
+Code looks like: `![Alt text](app/assets/notolog-example-image.png)`
 
 ### Image with base64 data
 

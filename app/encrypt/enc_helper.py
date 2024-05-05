@@ -2,9 +2,10 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.fernet import Fernet
 
-from ..app_config import AppConfig
-from ..settings import Settings
 from .enc_password import EncPassword
+
+from . import AppConfig
+from . import Settings
 
 import logging
 import secrets
@@ -63,6 +64,7 @@ class EncHelper:
         # Derive key from password
         key = self.generate_key_from_password()
         encoded_key = base64.urlsafe_b64encode(key)
+        # Fernet uses only the first 128 bits (16 bytes) of the key for AES encryption.
         self.cipher_suite = Fernet(encoded_key)
 
         self.key = None
@@ -78,7 +80,7 @@ class EncHelper:
             algorithm=hashes.SHA256(),
             iterations=self.iterations,
             salt=self.salt,
-            length=32  # Key length for AES-256
+            length=32  # 32 bytes = 256 bits key
         )
 
         self.key = kdf.derive(self.password)
