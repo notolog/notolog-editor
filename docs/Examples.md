@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2024-03-26 00:19:36.466439", "updated": "2024-05-01 04:12:29.203181"}} -->
+<!-- {"notolog.app": {"created": "2024-03-26 00:19:36.466439", "updated": "2024-05-06 21:22:54.003826"}} -->
 # Markdown syntax
 
 ## Headings
@@ -225,8 +225,4 @@ The text contains abbreviation (hover mouse on it):
 </details>
 
 ---
-
-`░░░░░░░░░░░░░░░░░░░░░░░▒▒▒▒▒▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓███■███▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░░`
-`╔═══════════════════════════════════════════════════════════════════════════════════════════╗`
-`║ This README.md file has been carefully crafted and edited using the Notolog editor itself ║`
-`╚═══════════════════════════════════════════════════════════════════════════════════════════╝`
+This README.md file has been carefully crafted and edited using the Notolog editor itself.

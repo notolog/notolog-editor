@@ -22,6 +22,7 @@ class Languages(Enum):
     JA = "Japanese"
     KO = "Korean"
     LA = "Latin"
+    NL = "Dutch"
     PT = "Portuguese"
     RU = "Russian"
     SE = "Swedish"

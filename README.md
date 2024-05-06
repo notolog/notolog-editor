@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-05-05 15:21:52.653006"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-05-06 21:20:54.001715"}} -->
 # Notolog
 
 ![Notolog](https://raw.githubusercontent.com/notolog/notolog-editor/main/app/assets/notolog-example-image.png)&nbsp;&nbsp;&nbsp;![PyPI - Version](https://img.shields.io/pypi/v/notolog) ![PyPI - License](https://img.shields.io/pypi/l/notolog) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)
@@ -251,8 +251,4 @@ Please note that while the majority of this project is licensed under the MIT Li
 This application is primarily designed for educational purposes and uses PBKDF2HMAC for key derivation. It employs Fernet, which utilizes AES-128 in CBC mode. The key is initially created at 256 bits but truncated to 128 bits for encryption. The encryption salt and iteration counts are stored unencrypted in the file's header, making this setup suitable for educational and non-critical applications only. As such, while this software provides basic security, it is not intended for high-security needs. Users are encouraged to choose strong passwords to enhance data protection. Distributed under the MIT License, this open-source application requires users to ensure compliance with applicable laws, and the developers disclaim liability for misuse or legal non-compliance.
 
 ---
-
-`░░░░░░░░░░░░░░░░░░░░░░░▒▒▒▒▒▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓███■███▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░░`
-`╔═══════════════════════════════════════════════════════════════════════════════════════════╗`
-`║ This README.md file has been carefully crafted and edited using the Notolog editor itself ║`
-`╚═══════════════════════════════════════════════════════════════════════════════════════════╝`
+This README.md file has been carefully crafted and edited using the Notolog editor itself.

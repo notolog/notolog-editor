@@ -1,6 +1,16 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [0.9.1b1] - 2024-05-06
+### Added
+- New interface language: Dutch
+
+### Updated
+- Upgraded `cryptography` to version 42.0.7 to align with the latest standards and enhance security.
+
+### Changed
+- Updated requirements.txt to match the actual package list.
+
 ## [0.9.1b0] - 2024-05-05
 ### Added
 - New interface languages: Finnish and Swedish, expanding accessibility for users in these regions.
