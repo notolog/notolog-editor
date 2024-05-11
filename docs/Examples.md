@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2024-03-26 00:19:36.466439", "updated": "2024-05-06 21:22:54.003826"}} -->
+<!-- {"notolog.app": {"created": "2024-03-26 00:19:36.466439", "updated": "2024-05-11 12:23:43.657587"}} -->
 # Markdown syntax
 
 ## Headings
@@ -14,14 +14,35 @@ Keep space between the `#` sign and the heading itself.
 
 *No alternate syntax supported for the headings at the moment.*
 
+## Tables
+
+Markdown table syntax is supported, complete with column alignment options to enhance readability and presentation.
+
+A Markdown table is composed of rows of data, divided by pipes (`|`). The first row is typically the header, followed by a separator line, and then the data rows.
+
+| Item                  | In Stock | Price |
+| :-------------------- | :------: | ----: |
+| Unicorn Bubble Tea    | Yes      | 7.99  |
+| Dragon's Breath Chili | No       | 23.99 |
+| Fairy Dust Tiramisu   | Yes      | 17.99 |
+| Wizard's Cloak Hoodie | No       | 42.99 |
+
+### Alignment Operands
+
+To align the content within your table cells, you can use colons (`:`) in the separator line:
+
+* Left-aligned: Use `:--` or `:---` (colon on the left side)
+* Center-aligned: Use `:--:` or `:---:` (colons on both sides)
+* Right-aligned: Use `--:` or `---:` (colon on the right side)
+
 
 ## Images
 
 ### Image with path
 
-![Notolog](app/assets/notolog-example-image.png)
+![Notolog](../notolog/assets/notolog-example-image.png)
 
-Code looks like: `![Alt text](app/assets/notolog-example-image.png)`
+Code looks like: `![Alt text](notolog/assets/notolog-example-image.png)`.
 
 ### Image with base64 data
 

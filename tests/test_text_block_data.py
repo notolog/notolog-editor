@@ -1,5 +1,5 @@
 # tests/test_text_block_data.py
-from app.text_block_data import TextBlockData
+from notolog.text_block_data import TextBlockData
 
 import pytest
 

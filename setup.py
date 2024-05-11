@@ -7,17 +7,18 @@ long_description = (here / 'README.md').read_text(encoding='utf-8')
 
 setup(
     name='notolog',
-    version='0.9.1b1',
-    description='Notolog Markdown Editor',
+    version='0.9.1b3',
+    description='Notolog - Python Markdown Editor',
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/notolog/notolog-editor',
     author='Vadim Bakhrenkov',
     license='MIT',
-    py_modules=['main'],
+    # py_modules=['main'],  # This refers to the standalone 'main.py' at the top-level directory
     entry_points={
         'console_scripts': [
-            'notolog=main:main',
+            # 'notolog=main:main',  # main.py at the top-level directory
+            'notolog=notolog.main:main',  # main.py within the main package
         ],
     },
     classifiers=[
@@ -52,5 +53,5 @@ setup(
         'Bug Reports': 'https://github.com/notolog/notolog-editor/issues',
         'Source': 'https://github.com/notolog/notolog-editor/',
     },
-    keywords='notolog, ai, markdown, editor',
+    keywords='notolog, python, markdown, editor, ai, text',
 )

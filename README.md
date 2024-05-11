@@ -1,7 +1,7 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-05-06 21:20:54.001715"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-05-11 11:15:29.656338"}} -->
 # Notolog
 
-![Notolog](https://raw.githubusercontent.com/notolog/notolog-editor/main/app/assets/notolog-example-image.png)&nbsp;&nbsp;&nbsp;![PyPI - Version](https://img.shields.io/pypi/v/notolog) ![PyPI - License](https://img.shields.io/pypi/l/notolog) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)
+![Notolog](https://raw.githubusercontent.com/notolog/notolog-editor/main/notolog/assets/notolog-example-image.png)&nbsp;&nbsp;&nbsp;![PyPI - Version](https://img.shields.io/pypi/v/notolog) ![PyPI - License](https://img.shields.io/pypi/l/notolog) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)
 
 ## Overview
 
@@ -28,12 +28,12 @@ Notolog is a versatile open-source markdown editor developed with Python and Qt,
 * Search functionality:
 	* Allows users to search within the opened file.
 	* Quick search by file name within the tree, enabling efficient navigation and content retrieval.
-* File meta-headers in the form of HTML comments to avoid excess visibility.
 * Password-based File Encryption and Decryption:
 	* Utilizes Fernet for encryption, providing a secure and user-friendly method for symmetric (also known as "secret key") encryption.
 	* Fernet employs AES-128 in CBC mode. Plans to introduce AES-256 in future updates are aimed at further enhancing security.
 * File Meta-Headers:
-	* Notolog implements file meta-headers to store encryption parameters, ensuring a seamless decryption process.
+	* Notolog employs file meta-headers to store encryption/decryption parameters and other essential file information.
+	* To minimize visibility, these meta-headers are formatted as HTML comments.
 * Translations-friendly file structure:
 	* Supports several languages out of the box, with provisions for adding and supporting additional languages.
 * Color themes support:
@@ -61,7 +61,7 @@ Check the version of Python available with this command `python3 -V`.
 
 **pip (Python package installer) should be available.**
 
-You can check if pip is installed by running `pip3 --version` in your terminal/command prompt.
+You can check if pip is installed by running `pip --version` in your terminal/command prompt.
 
 **Virtual Environment**
 
@@ -93,10 +93,10 @@ pip install --upgrade notolog
 4. Simply run this command to set up project dependencies:
 
 ```sh
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 ```
 
-That's it! Starting the app is as simple as `python3 main.py`
+That's it! Starting the app is as simple as `python -m notolog.main` form the project's root directory.
 
 <details>
 <summary>Run tests</summary>

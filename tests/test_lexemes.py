@@ -1,6 +1,6 @@
 # tests/test_lexemes.py
 
-from app.lexemes.lexemes import Lexemes
+from notolog.lexemes.lexemes import Lexemes
 
 from logging import Logger
 

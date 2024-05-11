@@ -1,6 +1,6 @@
 # tests/test_themes.py
 
-from app.theme import Theme
+from notolog.theme import Theme
 
 from logging import Logger
 

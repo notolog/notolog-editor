@@ -1,9 +1,9 @@
 # tests/test_html_view.py
 from PySide6.QtGui import QTextDocument, QFont
 
-from app.highlight.view_highlighter import ViewHighlighter
-from app.view_processor import ViewProcessor
-from app.view_decorator import ViewDecorator
+from notolog.highlight.view_highlighter import ViewHighlighter
+from notolog.view_processor import ViewProcessor
+from notolog.view_decorator import ViewDecorator
 
 import pytest
 

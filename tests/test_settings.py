@@ -1,5 +1,5 @@
 # tests/test_settings.py
-from app.settings import Settings
+from notolog.settings import Settings
 
 import pytest
 
@@ -7,6 +7,7 @@ class TestSettings():
 
     def test_settings_defaults(self):
         obj = Settings()
+        obj.clear()
         assert obj.ui_width == 0
         assert obj.ui_height == 0
         assert obj.ui_pos_x == 0

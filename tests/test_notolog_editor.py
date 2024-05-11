@@ -1,9 +1,9 @@
 # tests/test_notolog_editor.py
 
-from app.notolog_editor import NotologEditor
-from app.settings import Settings
-from app.editor_state import Mode
-from app.lexemes.lexemes import Lexemes
+from notolog.notolog_editor import NotologEditor
+from notolog.settings import Settings
+from notolog.editor_state import Mode
+from notolog.lexemes.lexemes import Lexemes
 
 import pytest
 

@@ -1,8 +1,18 @@
-include app_config.toml
 include CHANGELOG.md
+include CODE_OF_CONDUCT.md
 include LICENSE
 include README.md
+include app_config.toml
 include requirements.txt
+
+# Include example and doc files
 recursive-include docs *
-recursive-include app/lexemes *
-recursive-include app/assets *
+# Include all relevant lexeme files
+recursive-include notolog/lexemes *
+# Include all static files
+recursive-include notolog/assets *
+
+# Exclude all cache directories
+global-exclude __pycache__
+# Exclude all bytecode files
+global-exclude *.pyc

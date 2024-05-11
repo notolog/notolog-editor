@@ -1,10 +1,10 @@
 # tests/test_themes.py
 
-from app.helpers.theme_helper import ThemeHelper
-from app.enums.themes import Themes
-from app.theme import Theme
-from app.settings import Settings
-from app.app_config import AppConfig
+from notolog.helpers.theme_helper import ThemeHelper
+from notolog.enums.themes import Themes
+from notolog.theme import Theme
+from notolog.settings import Settings
+from notolog.app_config import AppConfig
 
 from logging import Logger
 
