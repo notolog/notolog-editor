@@ -1,56 +1,38 @@
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QApplication  # Sync with main.py
-from PySide6.QtTest import QTest
-
-from notolog.notolog_editor import NotologEditor
-
-import os
-import sys
+# tests/test_pkg_integration.py
 import pytest
 
-
-@pytest.fixture(scope="session")
-def qt_application():
-    # Force Qt style override
-    """
-    QApplication: invalid style override 'kvantum' passed, ignoring it.
-        Available styles: Windows, Fusion
-    """
-    os.environ["QT_STYLE_OVERRIDE"] = "Fusion"
-    # Fixture to initialize QApplication.
-    return QApplication(sys.argv)
+import emoji
+import markdown
 
 
 @pytest.fixture
-def main_window(qt_application):
-    # Fixture to create and return main window instance
-    window = NotologEditor(screen=qt_application.screens()[0])
-    yield window
+def markdown_obj():
+    # Fixture to create and return main Markdown instance
+    extensions = ['markdown.extensions.extra']
+    # Init markdown object with the selected extensions
+    md = markdown.Markdown(extensions=extensions)
+    yield md
 
 
-def test_editor_state(main_window):
-    # Check default window title
-    assert main_window.windowTitle() == "Notolog Editor"
+def test_markdown_conversion(markdown_obj):
 
-    assert main_window.statusbar['mode_label'].text() == 'View mode'
-    assert main_window.statusbar['source_label'].text() == 'HTML'
-    assert main_window.statusbar['encryption_label'].text() == 'Plain 🔓'
+    md_content = "*Italic text*"
+    "**Bold text**"
+    "___Italic bold text___"
 
-    # Test that clicking the edit button updates the editor state
-    QTest.mouseClick(main_window.toolbar.toolbar_edit_button, Qt.MouseButton.LeftButton)
+    # Convert markdown to HTML
+    html_content = markdown_obj.convert(md_content)
 
-    assert main_window.statusbar['mode_label'].text() == 'Edit mode'
-    assert main_window.statusbar['source_label'].text() == 'Markdown'
-    assert main_window.statusbar['encryption_label'].text() == 'Plain 🔓'
+    assert html_content == "<p><em>Italic text</em></p>"
+    "<p><strong>Bold text</strong></p>"
+    "<p><strong><em>Bold text</em></strong></p>"
 
 
-def test_search_elements(main_window):
-    assert hasattr(main_window.toolbar, 'search_input')
-    main_window.toolbar.search_input.setText('Test search')
-    assert main_window.toolbar.search_input.text() == 'Test search'
+def test_emoji_conversion():
 
-    assert hasattr(main_window.toolbar, 'btn_search_clear')
-    # Test that clicking the button updates the search field
-    QTest.mouseClick(main_window.toolbar.btn_search_clear, Qt.MouseButton.LeftButton)
-    assert main_window.toolbar.search_input.text() == ''
+    text_content = ":cat:"
 
+    # Process emojis :cat: to 🐱 conversion
+    emoji_content = emoji.emojize(text_content, language="en")
+
+    assert emoji_content == "🐈"

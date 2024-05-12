@@ -1,0 +1,13 @@
+# Ensure all text files have LF line endings on checkout
+*.txt text eol=lf
+
+# Ensure all script files have CRLF line endings on Windows and LF on Linux/Mac
+*.sh text eol=lf
+*.bat text eol=crlf
+
+# Treat all jpg and png files as binary
+*.jpg binary
+*.png binary
+
+# Use the union merge strategy for changelogs
+CHANGELOG.md merge=union

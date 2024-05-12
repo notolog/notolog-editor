@@ -4,7 +4,7 @@ import tomli
 toml_base_app_config = """
 [app]
 name = "Notolog"
-version = "0.9.1b3"
+version = "0.9.1b4"
 license = "MIT"
 date = "2024"
 website = "https://notolog.app"

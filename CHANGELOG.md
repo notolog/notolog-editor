@@ -1,6 +1,16 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [0.9.1b4] - 2024-05-12
+
+### Added
+- Introduced the pytest-asyncio package to support testing of asyncio code with pytest, enhancing the robustness and reliability of unit tests.
+- Added the `.gitattributes` file that was previously omitted to ensure consistent Git configurations across various environments.
+
+### Updated
+- Improved the processing and completion of tasks in the asynchronous syntax highlighter, enhancing efficiency and stability.
+- Expanded the `.gitignore` file with additional entries to better manage the files included in version control, such as ignoring more temporary files and build artifacts.
+
 ## [0.9.1b3] - 2024-05-11
 
 ### Added

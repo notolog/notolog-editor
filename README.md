@@ -1,14 +1,17 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-05-11 11:15:29.656338"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-05-12 13:57:34.333369"}} -->
 # Notolog
 
-![Notolog](https://raw.githubusercontent.com/notolog/notolog-editor/main/notolog/assets/notolog-example-image.png)&nbsp;&nbsp;&nbsp;![PyPI - Version](https://img.shields.io/pypi/v/notolog) ![PyPI - License](https://img.shields.io/pypi/l/notolog) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)
+![Notolog - Python Markdown Editor](https://raw.githubusercontent.com/notolog/notolog-editor/main/notolog/assets/notolog-example-image.png)
 
-## Overview
+## Python Markdown Editor
 
-Notolog is a versatile open-source markdown editor developed with Python and Qt, ideal for anyone looking for an efficient and straightforward way to handle markdown files. Born from a personal endeavor to address daily programming challenges and deepen Python proficiency, Notolog stands as a proof-of-concept that seamlessly integrates simplicity with functionality, offering an intuitive user experience across various platforms.
+![PyPI - License](https://img.shields.io/pypi/l/notolog)&nbsp;![PyPI - Version](https://img.shields.io/pypi/v/notolog)&nbsp;![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)
+
+Notolog is an open-source markdown editor developed with Python and PySide6. Born from a personal endeavor to tackle daily programming challenges and deepen Python proficiency, Notolog serves as a proof-of-concept that seamlessly blends simplicity with functionality. It offers an intuitive user experience across various platforms, ensuring users can efficiently manage and edit markdown files with ease.
 
 ---
-![Notolog settings UI example](https://raw.githubusercontent.com/notolog/notolog-editor/main/docs/notolog-ui-settings.png)
+
+![Notolog UI example](https://raw.githubusercontent.com/notolog/notolog-editor/main/docs/notolog-ui-settings.png)
 
 
 ## Features
@@ -182,7 +185,7 @@ If you encounter any issues or would like to contribute to the project, please d
 
 ## License
 
-The Notolog project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+The Notolog project is licensed under the MIT License - see the [LICENSE](https://github.com/notolog/notolog-editor/blob/main/LICENSE) file for details.
 
 ## Third-Party Components
 
@@ -216,6 +219,10 @@ This project utilizes numerous third-party libraries, each with its own licensin
 - **Pygments**: Syntax highlighting for programming languages. [Project Details](https://pygments.org/), [BSD 2-Clause "Simplified" License](https://github.com/pygments/pygments/blob/master/LICENSE)
 - **click**: Used for creating command-line interfaces. [Project Details](https://palletsprojects.com/p/click/), [BSD-3-Clause License](https://click.palletsprojects.com/en/8.1.x/license/)
 - **pycparser**: C code parser and for generating Abstract Syntax Trees (AST) in Python. [BSD 3-Clause License](https://github.com/eliben/pycparser/blob/main/LICENSE), [PyPI](https://pypi.org/project/pycparser/)
+
+#### Apache License 2.0
+
+- **pytest-asyncio**: A library that provides support for testing asyncio code with pytest. [License Details](https://github.com/pytest-dev/pytest-asyncio/blob/main/LICENSE) , [PyPI](https://pypi.org/project/pytest-asyncio/)
 
 #### Other Dual Licensed
 

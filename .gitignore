@@ -1,2 +1,53 @@
-__pycache__
-.idea
+# Python bytecode
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+env/
+venv/
+.venv/
+pythonenv*/
+.ENV/
+
+# Dependency directories
+.eggs/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.whl
+
+# Environment configurations
+.env
+.python-version
+
+# Coverage reports
+htmlcov/
+coverage.xml
+.coverage
+.coverage.*
+
+# Cache files
+.cache/
+.pytest_cache/
+.mypy_cache/
+
+# IDE directories
+.idea/
+.vscode/
+*.sublime-workspace
+
+# Operating system generated files
+.DS_Store
+Thumbs.db
+*.log
+
+# Hypothesis (property-based testing) configurations
+.hypothesis/
+
+# Rope, PyDev, and general IDE settings
+.ropeproject
+.pydevproject
+.project
+.settings

@@ -169,18 +169,14 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
             self.logger.debug('Downloading resource %d tasks in queue' % len(self.resource_tasks))
 
         task = asyncio.ensure_future(self.resource_download_async(resource_url))
-        task.add_done_callback(
-            lambda _task:
-            (self.logger.debug('%s from total %d completed with callback'
-                               % (_task.get_name(), len(self.resource_tasks))) if self.debug else None,
-             # Remove finished task from the queue
-             self.resource_tasks.remove(_task))
-        )
+        # Add task to the local pool first
         self.resource_tasks.append(task)
+        # Callback method to set up further actions
+        task.add_done_callback(lambda _task: self.resource_task_callback(_task))
 
         done, pending = await asyncio.wait(
             self.resource_tasks,
-            return_when=asyncio.ALL_COMPLETED,  # no pending tasks check
+            return_when=asyncio.ALL_COMPLETED,  # There is no pending tasks check
             # timeout = 1.5  # to return after the timeout, some task could be pending
         )
 
@@ -196,11 +192,30 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
                 self.finished.emit(self.downloaded_cnt)
                 self.downloaded_cnt = 0
 
+    def resource_task_callback(self, task):
+        if self.debug:
+            self.logger.debug('%s from total %d completed with callback'
+                              % (task.get_name(), len(self.resource_tasks)))
+
+        # Remove finished task from the queue
+        self.resource_tasks.remove(task)
+
     async def resource_download_async(self, image_url) -> None:
         """
-        Downloading resource which is will be processed by resource_downloaded_handler() then.
+        Downloading resource which will be processed by resource_downloaded_handler() then.
         """
         self.download_image(image_url)
+
+    async def cancel_tasks(self):
+        tasks_total = len(self.resource_tasks)
+        for i, task in enumerate(self.resource_tasks):
+            if not task.done():
+                task_res = task.cancel()
+                if self.logging:
+                    self.logger.info(
+                        f'[{i + 1}/{tasks_total}] Pending task "{task.get_name()}" canceled with result "{task_res}"')
+                # Gather all tasks to ensure they are completed before closing
+                await asyncio.gather(*self.resource_tasks, return_exceptions=True)
 
     @staticmethod
     def is_external_url(url, base_domain='example.com'):

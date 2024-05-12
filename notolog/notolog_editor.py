@@ -1712,13 +1712,19 @@ class NotologEditor(QMainWindow):
             self.logger.info('Stopping events loop, closing the app... Sayonara!')
 
         # Cancel all pending tasks if exist
-        if hasattr(self, 're_tasks'):
+        if hasattr(self, 'rehighlight_tasks'):
             tasks_total = len(self.rehighlight_tasks)
             for i, task in enumerate(self.rehighlight_tasks):
                 if not task.done():
                     task_res = task.cancel()
                     if self.logging:
                         self.logger.info(f'[{i+1}/{tasks_total}] Pending task "{task.get_name()}" canceled with result "{task_res}"')
+                    # Gather all tasks to ensure they are completed before closing
+                    await asyncio.gather(*self.rehighlight_tasks, return_exceptions=True)
+
+        # Cancel all resource downloading tasks if they are exist
+        if hasattr(self, 'resource_downloader'):
+            await self.resource_downloader.cancel_tasks()
 
         if self.get_mode() == Mode.EDIT:
             # Save any unsaved changes
@@ -1733,7 +1739,7 @@ class NotologEditor(QMainWindow):
         event.accept()
 
     @asyncSlot()
-    async def rehighlight_in_queue(self, full_rehighlight: bool = False) -> None:
+    async def rehighlight_in_queue(self, full_rehighlight: bool = False) -> Any:
         """
         More info about asyncio tasks: https://docs.python.org/3/library/asyncio-task.html
         """
@@ -1744,27 +1750,35 @@ class NotologEditor(QMainWindow):
         if self.debug:
             self.logger.debug('Re-highlight is to postpone "%r"' % postpone)
 
+        task = None
         # To keep only a few tasks in queue
         if len(self.rehighlight_tasks) < 3:
             task = asyncio.ensure_future(self.rehighlight_async(full_rehighlight, postpone))
             # task = asyncio.create_task(self.rehighlight_async(full_rehighlight, postpone))
-            task.add_done_callback(
-                lambda _task:
-                    (self.logger.info('%s from total %d completed with callback'
-                                      % (_task.get_name(), len(self.rehighlight_tasks))) if self.debug else None,
-                        self.rehighlight_tasks.remove(_task),
-                        QTimer.singleShot(750,
-                            lambda: self.rehighlight_editor(True)) if len(self.rehighlight_tasks) == 0 else None)
-            )
+            # Add task to the local pool first
             self.rehighlight_tasks.append(task)
+            # Callback method to set up further actions
+            task.add_done_callback(lambda _task: self.rehighlight_task_callback(_task))
 
         done, pending = await asyncio.wait(
             self.rehighlight_tasks,
-            return_when=asyncio.ALL_COMPLETED,  # no pending tasks check
+            return_when=asyncio.ALL_COMPLETED,  # There is no pending tasks check
         )
 
         if self.debug:
             self.logger.debug(f'Re-highlight tasks progress. Done {len(done)}, pending {len(pending)}')
+
+        return task
+
+    def rehighlight_task_callback(self, task) -> None:
+        if self.debug:
+            self.logger.debug('%s from total %d completed with callback'
+                              % (task.get_name(), len(self.rehighlight_tasks)))
+
+        self.rehighlight_tasks.remove(task)
+
+        if len(self.rehighlight_tasks) == 0:
+            QTimer.singleShot(750, lambda: self.rehighlight_editor(True))
 
     async def rehighlight_async(self, full_rehighlight: bool = False, postpone: bool = False) -> None:
         """
