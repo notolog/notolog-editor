@@ -20,6 +20,8 @@ from PySide6.QtGui import QPixmap
 import json
 import logging
 
+from typing import Union
+
 from . import Settings
 from . import AppConfig
 from . import Lexemes
@@ -43,8 +45,8 @@ class AIAssistant(QDialog):
 
         self.logger = logging.getLogger('ai_assistant')
 
-        self.logging = AppConfig.get_logging()
-        self.debug = AppConfig.get_debug()
+        self.logging = AppConfig().get_logging()
+        self.debug = AppConfig().get_debug()
 
         self.settings = Settings(parent=self)
 
@@ -65,6 +67,19 @@ class AIAssistant(QDialog):
 
         self.setWindowTitle(self.lexemes.get('dialog_title'))
 
+        # UI element variables
+        self.prompt_input = Union[QLineEdit, None]
+        self.response_output = Union[QTextEdit, None]
+        self.background_label = Union[QLabel, None]
+        self.model_label = Union[QLabel, None]
+        self.tokens_prompt_label = Union[QLabel, None]
+        self.tokens_answer_label = Union[QLabel, None]
+        self.tokens_total_label = Union[QLabel, None]
+        self.send_button = Union[QPushButton, None]
+
+        self.init_ui()
+
+    def init_ui(self):
         # Set dialog size derived from the main window size
         main_window_size = self.parent.size()
         dialog_width = int(main_window_size.width() * 0.5)

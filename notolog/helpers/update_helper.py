@@ -1,14 +1,19 @@
-from PySide6.QtCore import QObject, Signal, Slot, QUrl, QByteArray
+from PySide6.QtCore import QObject, Signal, Slot, QUrl
 from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply, QSslSocket
 
 from packaging import version
+from typing import TYPE_CHECKING
 
 import json
 import logging
 
+from . import AppConfig
+
 from ..settings import Settings
-from ..app_config import AppConfig
 from ..lexemes.lexemes import Lexemes
+
+if TYPE_CHECKING:
+    from PySide6.QtCore import QByteArray  # noqa
 
 
 class UpdateHelper(QObject):
@@ -34,8 +39,8 @@ class UpdateHelper(QObject):
 
         self.logger = logging.getLogger('update_helper')
 
-        self.logging = AppConfig.get_logging()
-        self.debug = AppConfig.get_debug()
+        self.logging = AppConfig().get_logging()
+        self.debug = AppConfig().get_debug()
 
         if self.logging:
             self.logger.info("SSL supported: %s" % QSslSocket.supportsSsl())
@@ -43,13 +48,13 @@ class UpdateHelper(QObject):
         # Default language setup, change to settings value to modify it via UI
         self.lexemes = Lexemes(self.settings.app_language, default_scope='common')
 
-        self.current_version = version.parse(AppConfig.get_app_version())
+        self.current_version = version.parse(AppConfig().get_app_version())
 
         self.manager = QNetworkAccessManager(self)
 
     def check_for_updates(self):
         # Updates url
-        release_url = AppConfig.get_repository_github_release_url()
+        release_url = AppConfig().get_repository_github_release_url()
         request = QNetworkRequest(QUrl(release_url))
         if self.logging:
             self.logger.info(f'Check for update request to {release_url}')
@@ -110,7 +115,8 @@ class UpdateHelper(QObject):
                 latest_version = version.parse(latest_version_str)
 
                 if latest_version > self.current_version:
-                    update_link = '<a href="%s">%s</a>' % (AppConfig.get_repository_github_release_url(), latest_version)
+                    update_link = ('<a href="%s">%s</a>'
+                                   % (AppConfig().get_repository_github_release_url(), latest_version))
                     result_message = self.lexemes.get('update_helper_new_version_is_available',
                                                       latest_version=update_link)
                     if self.logging:

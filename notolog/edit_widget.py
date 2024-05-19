@@ -1,13 +1,16 @@
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QTextCursor, QTextBlockUserData, QTextBlock, QFont
+from PySide6.QtGui import QTextCursor, QTextBlock, QFont
 from PySide6.QtWidgets import QPlainTextEdit
 
-from typing import Union
+from typing import TYPE_CHECKING, Union
 
 from .app_config import AppConfig
-from .text_block_data import TextBlockData
 
 import logging
+
+if TYPE_CHECKING:
+    from PySide6.QtGui import QTextBlockUserData  # noqa
+    from .text_block_data import TextBlockData  # noqa
 
 
 class EditWidget(QPlainTextEdit):
@@ -24,12 +27,13 @@ class EditWidget(QPlainTextEdit):
 
         # Get app's global font size
         font = QFont()
-        font.setPointSize(AppConfig.get_font_size())
+        font.setPointSize(AppConfig().get_font_size())
         self.setFont(font)
 
         self.logger = logging.getLogger('edit_widget')
 
-        self.debug = AppConfig.get_debug()
+        self.logging = AppConfig().get_logging()
+        self.debug = AppConfig().get_debug()
 
     def setDocument(self, document):
         # Override setDocument() to allow additional actions like emit the document set signal

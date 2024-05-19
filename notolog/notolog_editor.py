@@ -32,6 +32,7 @@ from .view_widget import ViewWidget
 from .view_processor import ViewProcessor
 from .view_decorator import ViewDecorator
 from .image_downloader import ImageDownloader
+from .async_highlighter import AsyncHighlighter
 
 # UI
 from .ui.file_system_model import FileSystemModel
@@ -148,8 +149,8 @@ class NotologEditor(QMainWindow):
 
         self.logger = logging.getLogger('notolog')
 
-        self.logging  = AppConfig.get_logging()
-        self.debug = AppConfig.get_debug()
+        self.logging = AppConfig().get_logging()
+        self.debug = AppConfig().get_debug()
 
         self.settings = Settings(parent=self)
         self.settings.value_changed.connect(
@@ -243,8 +244,9 @@ class NotologEditor(QMainWindow):
         # Highlighters
         self.md_highlighter = None  # type: Union[MdHighlighter, None]
         self.view_highlighter = None  # type: Union[ViewHighlighter, None]
-        # async re-highlight tasks queue
-        self.rehighlight_tasks = []
+
+        # Async highlighter
+        self.async_highlighter = AsyncHighlighter(callback=lambda is_full: self.rehighlight_editor(is_full))
 
         # Resource Downloader
         self.resource_downloader = None  # type: Union[ImageDownloader, None]
@@ -259,7 +261,6 @@ class NotologEditor(QMainWindow):
         self.tree_proxy_model = None  # type: Union[SortFilterProxyModel, None]
         self.file_watcher = None  # type: Union[QFileSystemWatcher, None]
 
-        # self.supported_file_types = ['*.md', '*.txt', '*.html', '*.enc']
         self.supported_file_extensions = ['md', 'txt', 'html', 'enc']
 
         # Line numbers within the document
@@ -327,7 +328,7 @@ class NotologEditor(QMainWindow):
         font_size_ratio = 1.0
         font_size = int(float(self.settings.app_font_size) * font_size_ratio)
 
-        AppConfig.set_font_size(font_size)
+        AppConfig().set_font_size(font_size)
 
         font = QFont()  # Accept args like "Sans Serif"
         font.setPointSize(font_size)
@@ -348,7 +349,7 @@ class NotologEditor(QMainWindow):
         """
 
         if self.debug:
-            self.logger.debug('Settings update handler in use "%s"' % data)
+            self.logger.debug('Settings update handler is in use "%s"' % data)
 
         if 'show_line_numbers' in data and hasattr(self, 'line_numbers'):
             # Show / hide line numbers area
@@ -383,7 +384,7 @@ class NotologEditor(QMainWindow):
             # Update line numbers widget
             self.line_numbers.setFont(self.font())
             # Get app's global font size
-            self.md_highlighter.font_size = AppConfig.get_font_size()
+            self.md_highlighter.font_size = AppConfig().get_font_size()
             # Re-highlight syntax if Mode.EDIT
             if self.get_mode() == Mode.EDIT:
                 # Resource greedy syntax re-highlight
@@ -463,7 +464,7 @@ class NotologEditor(QMainWindow):
         """
 
         if self.debug:
-            self.logger.debug('Editor state update handler in use "%s"' % data)
+            self.logger.debug('Editor state update handler is in use "%s"' % data)
 
         # Initially the elements may not exist, but apper later on
         if hasattr(self, 'statusbar'):
@@ -865,8 +866,7 @@ class NotologEditor(QMainWindow):
         self.file_model.setFilter(QDir.Filter.NoDot | QDir.Filter.Dirs | QDir.Filter.Files)
         """
         Show only these files in the list (implemented via proxy sort model)
-        filters = self.supported_file_types
-        self.file_model.setNameFilters(filters)
+        self.file_model.setNameFilters(['*.md', '*.txt', '*.html', '*.enc'])
         """
         # Do not show greyed filter results
         self.file_model.setNameFilterDisables(False)
@@ -989,7 +989,7 @@ class NotologEditor(QMainWindow):
         """
         If a resource file not found QTextBrowser will try to search either this script or package root path (IDE run).
         """
-        view_doc.setBaseUrl(QUrl.fromLocalFile(dir_path + '/'))
+        view_doc.setBaseUrl(QUrl.fromLocalFile(dir_path + os.sep))
 
     def get_current_file_path(self, is_base: bool = False) -> str:
         """
@@ -1711,19 +1711,12 @@ class NotologEditor(QMainWindow):
         if self.logging:
             self.logger.info('Stopping events loop, closing the app... Sayonara!')
 
-        # Cancel all pending tasks if exist
-        if hasattr(self, 'rehighlight_tasks'):
-            tasks_total = len(self.rehighlight_tasks)
-            for i, task in enumerate(self.rehighlight_tasks):
-                if not task.done():
-                    task_res = task.cancel()
-                    if self.logging:
-                        self.logger.info(f'[{i+1}/{tasks_total}] Pending task "{task.get_name()}" canceled with result "{task_res}"')
-                    # Gather all tasks to ensure they are completed before closing
-                    await asyncio.gather(*self.rehighlight_tasks, return_exceptions=True)
+        # Cancel all re-highlight tasks if they are exist
+        if hasattr(self, 'async_highlighter') and self.async_highlighter:
+            await self.async_highlighter.cancel_tasks()
 
         # Cancel all resource downloading tasks if they are exist
-        if hasattr(self, 'resource_downloader'):
+        if hasattr(self, 'resource_downloader') and self.resource_downloader:
             await self.resource_downloader.cancel_tasks()
 
         if self.get_mode() == Mode.EDIT:
@@ -1738,71 +1731,11 @@ class NotologEditor(QMainWindow):
 
         event.accept()
 
-    @asyncSlot()
-    async def rehighlight_in_queue(self, full_rehighlight: bool = False) -> Any:
-        """
-        More info about asyncio tasks: https://docs.python.org/3/library/asyncio-task.html
-        """
-        if self.debug:
-            self.logger.debug('Re-highlight %d tasks in queue' % len(self.rehighlight_tasks))
-
-        postpone = False if len(self.rehighlight_tasks) == 0 else True
-        if self.debug:
-            self.logger.debug('Re-highlight is to postpone "%r"' % postpone)
-
-        task = None
-        # To keep only a few tasks in queue
-        if len(self.rehighlight_tasks) < 3:
-            task = asyncio.ensure_future(self.rehighlight_async(full_rehighlight, postpone))
-            # task = asyncio.create_task(self.rehighlight_async(full_rehighlight, postpone))
-            # Add task to the local pool first
-            self.rehighlight_tasks.append(task)
-            # Callback method to set up further actions
-            task.add_done_callback(lambda _task: self.rehighlight_task_callback(_task))
-
-        done, pending = await asyncio.wait(
-            self.rehighlight_tasks,
-            return_when=asyncio.ALL_COMPLETED,  # There is no pending tasks check
-        )
-
-        if self.debug:
-            self.logger.debug(f'Re-highlight tasks progress. Done {len(done)}, pending {len(pending)}')
-
-        return task
-
-    def rehighlight_task_callback(self, task) -> None:
-        if self.debug:
-            self.logger.debug('%s from total %d completed with callback'
-                              % (task.get_name(), len(self.rehighlight_tasks)))
-
-        self.rehighlight_tasks.remove(task)
-
-        if len(self.rehighlight_tasks) == 0:
-            QTimer.singleShot(750, lambda: self.rehighlight_editor(True))
-
-    async def rehighlight_async(self, full_rehighlight: bool = False, postpone: bool = False) -> None:
-        """
-        Run this method not too often to avoid overwhelming the system.
-        """
-        # First of all check it's necessary
-        if self.get_mode() == Mode.EDIT and self.get_source() == Source.MARKDOWN:
-            # Postpone before re-highlighting if a few tasks
-            if postpone:
-                if self.debug:
-                    self.logger.debug('Re-highlighting the text > postpone')
-                # Keep this method particular amount of time to avoid overwhelming
-                await asyncio.sleep(0.25, self.loop)
-            # Re-highlight
-            self.rehighlight_editor(full_rehighlight)
-            if self.debug:
-                self.logger.debug('Async re-highlighting queue task processed')
-            # Postpone after re-highlighting to keep the queue busy
-            if self.debug:
-                self.logger.debug('Re-highlighting the text > wait to return')
-            # Keep this method particular amount of time to avoid overwhelming
-            await asyncio.sleep(0.5, self.loop)
-
     def rehighlight_editor(self, full_rehighlight: bool = False) -> None:
+        # First of all check it's necessary
+        if not (self.get_mode() == Mode.EDIT and self.get_source() == Source.MARKDOWN):
+            return
+
         # Edit widget
         edit_widget = self.get_edit_widget()  # type: Union[EditWidget, QPlainTextEdit]
 
@@ -1860,7 +1793,8 @@ class NotologEditor(QMainWindow):
                             or self.get_block_data_param('code', 'closed'))
 
         # Schedule async whole doc re-highlighting task in queue
-        self.rehighlight_in_queue(full_rehighlight)
+        if hasattr(self, 'async_highlighter') and self.async_highlighter:
+            self.async_highlighter.rehighlight_in_queue(full_rehighlight)
         """
         Opposed way, synchronous highlighting direct call:
         self.rehighlight_editor(full_rehighlight)
@@ -2860,13 +2794,11 @@ class NotologEditor(QMainWindow):
         selected_text = ''  # Default
         if cursor.hasSelection():
             selected_text = cursor.selectedText()
-            """
             # Make possible to undo selected text formatting:
-            re = QRegularExpression(r'^(<span style="color:\s*?[a-zA-z]+;?">)(.*?)(<\/span>)$')
-            match = re.match(selected_text)
-            if match.capturedTexts() and match.captured(2):
-                cursor.insertText(match.captured(2))
-            """
+            # re = QRegularExpression(r'^(<span style="color:\s*?[a-zA-z]+;?">)(.*?)(<\/span>)$')
+            # match = re.match(selected_text)
+            # if match.capturedTexts() and match.captured(2):
+            #    cursor.insertText(match.captured(2))
         updated_text = f'<span style="color: {color}">{selected_text}</span>'
 
         if self.get_mode() == Mode.EDIT:
@@ -2948,7 +2880,7 @@ class NotologEditor(QMainWindow):
         if self.debug:
             self.logger.debug('Sending bug report...')
 
-        url = AppConfig.get_repository_github_bug_report_url()
+        url = AppConfig().get_repository_github_bug_report_url()
 
         self.common_dialog(
             self.lexemes.get('dialog_open_link_title'),
@@ -3131,7 +3063,7 @@ class NotologEditor(QMainWindow):
                             self.reset_encrypt_helper()
                         else:
                             """
-                            Ask to reset current password that in use by currently opened file.
+                            Request to change the password for the currently opened file to a new one.
                             Try to load the file by switch to it if the encryption password has been reset.
                             """
                             self.enc_password_reset_dialog()
@@ -3656,9 +3588,13 @@ class NotologEditor(QMainWindow):
 
         # Init image downloader instance
         if self.resource_downloader is None:
-            self.resource_downloader = ImageDownloader()
+            # Init new instance and set up signal handlers
+            self.resource_downloader = ImageDownloader(self.get_active_dir())
             self.resource_downloader.downloaded.connect(self.resource_downloaded_handler)  # Single resource downloaded
             self.resource_downloader.finished.connect(self.resource_downloader_finished_handler)  # All tasks finished
+        else:
+            # Refresh active resource folder
+            self.resource_downloader.update_resource_folder(self.get_active_dir())
 
         block = text_document.begin()
         # Check doc's block

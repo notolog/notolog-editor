@@ -202,18 +202,16 @@ class MdHighlighter(MainHighlighter):
         # abbreviations
         (r'(\*\[.*?\]:.*?)', 1, 'abbr', 'abbr', False, theme['abbr'], None),
         (r'(\*\[(.*?)\]:.*?)', 2, 'abbr_text', 'abbr', False, theme['abbr_text'], None),
+        # hyperlinks (before the web links block to allow style overriding)
+        (r'((?<!!)\[.*?\]\(.*?\))', 1, 'a', 'a', False, theme['a'], None),
         # Web link
         # A word boundary \b matches the position between a word character (e.g., alphanumeric character or underscore)
         # and a non-word character (e.g., whitespace, punctuation, or the beginning/end of a string).
         # It allows you to match patterns only at the boundaries of words.
         # RFC 3986: uri = "[A-Za-z0-9\-._~:/?#\[\]@!$&\'()*+,;=%]"
-        (
-            r'(\b(?:https?|ftp):\/\/(?:\S+(?::\S*)?@)?(?:\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}|(?!-)[A-Za-z0-9-]{1,63}'
-            r'(?:(?:\.(?!-)[A-Za-z0-9-]{1,63})+)?(?:\:[0-9]+)?)?(?:\/(?:[^\:\?#\s\/]+)?)*(?:\?[^\s]*)?(?:#[^\s]*)?\b)',
-            1, 'link', 'link', False, theme['link'], None
-        ),
-        # hyperlinks
-        (r'((?<!!)\[.*?\]\(.*?\))', 1, 'a', 'a', False, theme['a'], None),
+        (r'((?:https?|ftp):\/\/(?:\S+(?::\S*)?@)?'
+         r'(?:\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}|(?!-)[A-Za-z0-9-]{1,63}(?:\.(?!-)[A-Za-z0-9-]{1,63})+)?(?:\:[0-9]+)?'
+         r'(?:\/(?:[^\:\?#\s\/\)]+)?)*(?:\?[^\s]*)?(?:#[^\s]*)?)', 1, 'link', 'link', False, theme['link'], None),
         # horizontal line
         (r'^(?:[\s>]*?)([\-\*_]{3,}(?:[\s]*?))$', 1, 'hr', 'hr', False, theme['hr'], None),
         # Comments
@@ -680,7 +678,7 @@ class MdHighlighter(MainHighlighter):
 
                 # Comment """ block
                 if tag == 'cclop' and self.is_in_code():
-                    if not 'o' in self.tokens[tag]:
+                    if 'o' not in self.tokens[tag]:
                         self.tokens[tag]['o'] = True
                     elif self.tokens[tag]['o']:
                         self.tokens[tag]['o'] = False
@@ -712,6 +710,8 @@ class MdHighlighter(MainHighlighter):
                         # Skip if not in table context yet
                         and not (self.user_data.get_param('table_d', 'within')
                                  or ('table_d' in self.tokens and self.tokens['table_d']['o']))):
+                    if self.debug:
+                        self.logger.debug('Skipping table block')
                     continue
                 # No save to block's data as it will be self stored for next block re-highlight iteration
 

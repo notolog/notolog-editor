@@ -1,0 +1,9 @@
+# Skip, because of: --include is ignored because --source is set (include-ignored)
+# Command line run: pytest tests/ --ignore=tests/ui_tests/ --cov=notolog --cov-report=term
+# [run]
+# include = notolog/*
+
+[report]
+omit =
+  */tests/*
+  */__init__.py

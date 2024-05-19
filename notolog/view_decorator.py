@@ -45,8 +45,8 @@ class ViewDecorator:
         self.highlighter = highlighter
         self.doc = self.highlighter.document()
 
-        self.logging = AppConfig.get_logging()
-        self.debug = AppConfig.get_debug()
+        self.logging = AppConfig().get_logging()
+        self.debug = AppConfig().get_debug()
 
         self.settings = Settings()
 

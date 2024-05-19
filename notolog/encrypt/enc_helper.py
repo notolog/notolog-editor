@@ -28,8 +28,8 @@ class EncHelper:
     def __init__(self, enc_password: EncPassword = None, salt: str = None, iterations: int = None):
         super().__init__()
 
-        self.logging = AppConfig.get_logging()
-        self.debug = AppConfig.get_debug()
+        self.logging = AppConfig().get_logging()
+        self.debug = AppConfig().get_debug()
 
         self.logger = logging.getLogger('enc_helper')
 

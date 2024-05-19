@@ -32,8 +32,8 @@ class SettingsDialog(QDialog):
 
         self.logger = logging.getLogger('settings_dialog')
 
-        self.logging = AppConfig.get_logging()
-        self.debug = AppConfig.get_debug()
+        self.logging = AppConfig().get_logging()
+        self.debug = AppConfig().get_debug()
 
         # Default language setup, change to settings value to modify it via UI
         self.lexemes = Lexemes(self.settings.app_language, default_scope='settings_dialog')
@@ -166,7 +166,8 @@ class SettingsDialog(QDialog):
             {"type": QSlider, "args": [Qt.Orientation.Horizontal],
              "props": {'setFocusPolicy': Qt.FocusPolicy.StrongFocus, 'setTickPosition': QSlider.TickPosition.TicksAbove,
                        'setTickInterval': 5, 'setSingleStep': 1,
-                       'setMinimum': AppConfig.get_font_min_size(), 'setMaximum': AppConfig.get_font_max_size()},
+                       'setMinimum': AppConfig().get_font_min_size(),
+                       'setMaximum': AppConfig().get_font_max_size()},
              "name": "settings_dialog_general_app_font_size_slider:app_font_size",  # Lexeme key : Object name
              "callback": lambda obj: tab_general_layout.addWidget(obj),
              "accessible_description":

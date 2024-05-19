@@ -26,8 +26,8 @@ class EncPasswordResetDialog(QDialog):
 
         self.logger = logging.getLogger('enc_password_reset_dialog')
 
-        self.logging = AppConfig.get_logging()
-        self.debug = AppConfig.get_debug()
+        self.logging = AppConfig().get_logging()
+        self.debug = AppConfig().get_debug()
 
         # Default language setup, change to settings value to modify it via UI
         self.lexemes = Lexemes(self.settings.app_language, default_scope='common')

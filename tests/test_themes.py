@@ -108,7 +108,9 @@ class TestThemes:
         """
         Test default theme dir path.
         """
-        exp_themes_dir = 'test_themes/default'
+
+        # Use os.sep to ensure correct path separators on each OS, or os.path.normpath() to normalize path separators
+        exp_themes_dir = 'test_themes' + os.sep + 'default'
 
         default_theme_dir_parts = test_obj_themes.get_default_theme_dir().split(os.path.sep)[-2:]
 
@@ -164,9 +166,9 @@ class TestThemes:
     @pytest.mark.parametrize(
         "test_obj_themes, test_exp_params_fixture",
         [
-            (None, ('default', {'test_styles': 'default/test_styles.css'})),
-            ('default', ('default', {'test_styles': 'default/test_styles.css'})),
-            ('noir_dark', ('noir_dark', {'test_smth': 'noir_dark/test_smth.css'})),
+            (None, ('default', {'test_styles': os.path.normpath('default/test_styles.css')})),
+            ('default', ('default', {'test_styles': os.path.normpath('default/test_styles.css')})),
+            ('noir_dark', ('noir_dark', {'test_smth': os.path.normpath('noir_dark/test_smth.css')})),
         ],
         indirect=True
     )

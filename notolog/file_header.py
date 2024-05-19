@@ -30,8 +30,8 @@ class FileHeader:
 
         self.logger = logging.getLogger('header')
 
-        self.logging = AppConfig.get_logging()
-        self.debug = AppConfig.get_debug()
+        self.logging = AppConfig().get_logging()
+        self.debug = AppConfig().get_debug()
 
         if self.debug:
             self.logger.debug('Header helper is engaged')

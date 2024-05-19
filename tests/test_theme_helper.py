@@ -1,7 +1,6 @@
 # tests/test_themes.py
 
 from notolog.helpers.theme_helper import ThemeHelper
-from notolog.enums.themes import Themes
 from notolog.theme import Theme
 from notolog.settings import Settings
 from notolog.app_config import AppConfig
@@ -14,27 +13,21 @@ import pytest
 
 class TestThemeHelper:
 
-    @pytest.fixture(scope="function", autouse=True)
-    def test_settings_fixture(self):
+    @pytest.fixture(autouse=True)
+    def test_settings_fixture(self, request):
+        setting = Settings()
+        # Get the parameter value(s) from the request
+        setting.app_theme = request.param
+        yield setting
 
-        settings = Settings()
-
-        yield settings
-
-    @pytest.fixture(scope="function", autouse=True)
-    def test_obj_theme_helper(self, test_settings_fixture, mocker, request):
+    @pytest.fixture(autouse=True)
+    def test_obj_theme_helper(self, mocker, test_settings_fixture):
         """
         Testing object fixture.
         May contain minimal logic for testing purposes.
         """
 
-        # Get the parameter value(s) from the request
-        theme = request.param if hasattr(request, 'param') else None
-
         mocker.patch.object(AppConfig, 'get_debug', return_value=False)
-        # Or: monkeypatch.setattr(Settings, 'theme', theme)
-        # mocker.patch('app.settings.Settings.app_theme', theme)
-        test_settings_fixture.app_theme = theme
 
         """
         If themes dir is set read themes from there.
@@ -44,7 +37,7 @@ class TestThemeHelper:
         mocker.patch.object(Theme, 'get_themes_dir', return_value=test_themes_dir)
 
         # Allow to change theme name during test cycle with no caching
-        AppConfig.set_test_mode(True)
+        AppConfig().set_test_mode(True)
 
         yield ThemeHelper()
 
@@ -61,17 +54,17 @@ class TestThemeHelper:
         yield param_values
 
     @pytest.mark.parametrize(
-        "test_obj_theme_helper, test_exp_params_fixture",
+        "test_settings_fixture, test_obj_theme_helper, test_exp_params_fixture",
         [
-            ((None), ('default')),
-            ((''), ('default')),
-            (('default'), ('default')),  # Because of method default()
-            (('DEFAULT'), ('default')),
-            (('anyval'), ('default')),
+            ((None), (None), ('default')),
+            ((''), (None), ('default')),
+            (('default'), (None), ('default')),  # Because of method default()
+            (('DEFAULT'), (None), ('default')),
+            (('anyval'), (None), ('default')),
         ],
         indirect=True
     )
-    def test_theme_helper_init(self, test_obj_theme_helper, test_exp_params_fixture):
+    def test_theme_helper_init(self,test_settings_fixture,  test_obj_theme_helper, test_exp_params_fixture):
         """
         Test and check initial params are exist in the testing object.
         """
@@ -85,22 +78,22 @@ class TestThemeHelper:
         assert test_obj_theme_helper.theme.theme == exp_theme
 
     @pytest.mark.parametrize(
-        "test_obj_theme_helper, test_exp_params_fixture",
+        "test_settings_fixture, test_obj_theme_helper, test_exp_params_fixture",
         [
-            (None, (None, None, None)),
-            ('default', ('test_red', None, 0xFF0000)),
-            ('default', ('test_green', True, '#00FF00')),
-            ('default', ('test_blue', False, 0x0000FF)),
-            ('default', ('test_undefined', None, None)),
+            (None, None, (None, None, None)),
+            ('default', None, ('test_red', None, 0xFF0000)),
+            ('default', None, ('test_green', True, '#00FF00')),
+            ('default', None, ('test_blue', False, 0x0000FF)),
+            ('default', None, ('test_undefined', None, None)),
             # 'noir_dark' is real as it can be checked with Themes enum
-            ('noir_dark', ('test_non_red', False, 0x00FFFF)),
-            ('noir_dark', ('test_light', True, '#FFFFFF')),
-            ('test_undefined', (None, None, None)),
-            ('test_undefined', ('undefined_name', True, None)),
+            ('noir_dark', None, ('test_non_red', False, 0x00FFFF)),
+            ('noir_dark', None, ('test_light', True, '#FFFFFF')),
+            ('test_undefined', None, (None, None, None)),
+            ('test_undefined', None, ('undefined_name', True, None)),
         ],
         indirect=True
     )
-    def test_themes_get_color(self, test_obj_theme_helper, test_exp_params_fixture):
+    def test_themes_get_color(self, test_settings_fixture, test_obj_theme_helper, test_exp_params_fixture):
         """
         Test getter for correctly loaded and really existent theme's colors.
         """
@@ -109,16 +102,16 @@ class TestThemeHelper:
         assert test_obj_theme_helper.get_color(param_name, param_css_format) == exp_result
 
     @pytest.mark.parametrize(
-        "test_obj_theme_helper, test_exp_params_fixture",
+        "test_settings_fixture, test_obj_theme_helper, test_exp_params_fixture",
         [
-            (None, (None, None)),
-            ('default', ('test_smth', None)),
-            ('default', ('test_styles', 'QTextEdit {}')),
-            ('noir_dark', ('test_smth', 'QTextEdit {}')),
+            (None, None, (None, None)),
+            ('default', None, ('test_smth', None)),
+            ('default', None, ('test_styles', 'QTextEdit {}')),
+            ('noir_dark', None, ('test_smth', 'QTextEdit {}')),
         ],
         indirect=True
     )
-    def test_themes_get_css(self, test_obj_theme_helper, test_exp_params_fixture):
+    def test_themes_get_css(self, test_settings_fixture, test_obj_theme_helper, test_exp_params_fixture):
         """
         Test getter for correctly loaded and really existent theme's css files.
         """

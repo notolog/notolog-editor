@@ -1,11 +1,11 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-05-12 13:57:34.333369"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-05-19 23:29:34.439703"}} -->
 # Notolog
 
 ![Notolog - Python Markdown Editor](https://raw.githubusercontent.com/notolog/notolog-editor/main/notolog/assets/notolog-example-image.png)
 
 ## Python Markdown Editor
 
-![PyPI - License](https://img.shields.io/pypi/l/notolog)&nbsp;![PyPI - Version](https://img.shields.io/pypi/v/notolog)&nbsp;![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)
+[![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/) [![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor)](https://github.com/notolog/notolog-editor/blob/master/LICENSE) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)](https://pypi.org/project/notolog/) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/notolog/notolog-editor/tests.yaml)](https://github.com/notolog/notolog-editor/actions/workflows/tests.yaml)
 
 Notolog is an open-source markdown editor developed with Python and PySide6. Born from a personal endeavor to tackle daily programming challenges and deepen Python proficiency, Notolog serves as a proof-of-concept that seamlessly blends simplicity with functionality. It offers an intuitive user experience across various platforms, ensuring users can efficiently manage and edit markdown files with ease.
 
@@ -54,11 +54,37 @@ Notolog is an open-source markdown editor developed with Python and PySide6. Bor
 There is no classical web engine integration to make overall package more lightweight and to achieve the best possible performance.
 
 
+## Translations
+
+The Notolog Editor supports several language translations out of the box. Here is the list of languages included alongside the default English translation:
+
+* Chinese (Simplified)
+* Dutch
+* Finnish
+* French
+* Georgian
+* German
+* Greek
+* Hindi
+* Italian
+* Japanese
+* Korean
+* Latin
+* Portuguese
+* Russian
+* Spanish
+* Swedish
+* Turkish
+
+Here's an example of what it looks like in the actual UI, featuring the lovely Strawberry theme and Japanese translation:
+
+![Notolog UI translation example](https://raw.githubusercontent.com/notolog/notolog-editor/main/docs/notolog-ui-settings-strawberry-ja.png)
+
 ## Prerequisites
 
 **Python 3.9 or higher installed on your system.**
 
-If you haven't already, download and install Python from the official website [python.org](python.org).
+Ensure Python 3.9 or higher is installed on your system. Visit [python.org](https://python.org) for more details.
 
 Check the version of Python available with this command `python3 -V`.
 
@@ -119,7 +145,7 @@ pytest tests/test_notolog_editor.py
 
 The instructions below contain steps of how to set up **venv** virtual environment to run a Python app safely. Starting from Python 3.6 **venv** is a recommended way to create virtual environments. For more information check [Creation of virtual environments](https://docs.python.org/3/library/venv.html). Alternatively, you can execute the Notolog code and set up virtual environment with your favorite Python code editor.
 
-#### MacOS and Linux
+#### Linux and macOS
 
 ##### Set Up Virtual Environment
 1. Open Terminal.
@@ -209,6 +235,7 @@ This project utilizes numerous third-party libraries, each with its own licensin
 - **cffi**: Used for interfacing with C code. [License Details](https://github.com/python-cffi/cffi/blob/main/LICENSE), [PyPI](https://pypi.org/project/cffi/)
 - **iniconfig**: For parsing and working with INI configuration files. [License Details](https://github.com/pytest-dev/iniconfig/blob/main/LICENSE), [PyPI](https://pypi.org/project/iniconfig/)
 - **tomli**: A Python library used for parsing TOML configuration files effortlessly. [License Details](https://github.com/hukkin/tomli/blob/master/LICENSE), [PyPI](https://pypi.org/project/tomli/)
+- **tomli_w**: A Python library used for writing TOML configuration files effortlessly. [License Details](https://github.com/hukkin/tomli-w/blob/master/LICENSE), [PyPI](https://pypi.org/project/tomli-w/)
 - **pluggy**: For creating and managing plugin systems in Python applications. [License Details](https://github.com/pytest-dev/pluggy/blob/main/LICENSE), [PyPI](https://pypi.org/project/pluggy/)
 
 #### BSD Licenses
@@ -243,19 +270,45 @@ Please note that while the majority of this project is licensed under the MIT Li
 
 #### OpenAI API Disclaimer
 
-**Disclaimer:** This project is independent and neither affiliated with, endorsed by, nor sponsored by OpenAI. Integration of the OpenAI API in this project is provided on an "as is" basis, without any official partnership or endorsement by OpenAI. The creators of this project disclaim all liability for any misuse, harm, or other consequences resulting from the use of the OpenAI API.
+**Disclaimer:** This project is independent and not affiliated with, endorsed by, or sponsored by OpenAI. The integration of the OpenAI API is provided on an "as is" basis, and the creators disclaim all liability for any misuse or consequences resulting from the use of the OpenAI API.
 
-**Usage:** Our project employs the OpenAI API to enhance natural language processing capabilities. Users are required to provide their own OpenAI API keys and should refer to the [OpenAI API reference](https://platform.openai.com/docs/api-reference) for detailed usage guidelines.
+**Usage:** This project uses the OpenAI API to access AI assistant capabilities and enhance natural language processing. Users must provide their own OpenAI API keys and should refer to the [OpenAI API reference](https://platform.openai.com/docs/api-reference) for detailed usage guidelines.
 
-**Responsibility:** Users are responsible for obtaining, configuring, and managing their OpenAI API keys in accordance with OpenAI's terms of service and usage policies.
+**Responsibility:** Users are responsible for obtaining and managing their OpenAI API keys in compliance with OpenAI's terms of service.
 
-**Security:** It is crucial for users to manage their API keys securely, ensuring they are not exposed or shared in public forums.
+**Security:** Users are expected to handle their API keys securely to avoid unauthorized access.
 
 *This section was generated with the assistance of AI to ensure accurate and concise information regarding the use of the OpenAI API.*
 
 ## Security Disclaimer
 
-This application is primarily designed for educational purposes and uses PBKDF2HMAC for key derivation. It employs Fernet, which utilizes AES-128 in CBC mode. The key is initially created at 256 bits but truncated to 128 bits for encryption. The encryption salt and iteration counts are stored unencrypted in the file's header, making this setup suitable for educational and non-critical applications only. As such, while this software provides basic security, it is not intended for high-security needs. Users are encouraged to choose strong passwords to enhance data protection. Distributed under the MIT License, this open-source application requires users to ensure compliance with applicable laws, and the developers disclaim liability for misuse or legal non-compliance.
+This application is designed for educational purposes and offers security features through optional file encryption and protected application settings.
+
+### Optional File Encryption
+
+* **Encryption Details:** The application uses PBKDF2HMAC for key derivation and Fernet for encryption, utilizing AES-128 in CBC mode. Although the key material generated is 256 bits, only the first 128 bits (16 bytes) are used for encryption.
+* **File Headers:** The encryption salt and iteration counts are stored unencrypted in the file's header. This approach is primarily intended for non-critical applications where data exposure has limited risk.
+* **Strong Passwords:** Users are encouraged to use strong passwords to enhance the protection of their encrypted data.
+
+### Protected Application Settings
+
+* **Settings Encryption:** The application may encrypt sensitive data like API keys because these Qt app settings might otherwise be stored as open data. However, the encryption key used is stored on the PC and can be accessed by anyone with physical or user-level access to the computer. This could expose sensitive data to potential unauthorized access.
+
+### General Information
+
+* **Open Source:** This application is open-source and distributed under the MIT License. Users must comply with applicable laws and regulations when using this software.
+* **Liability:** The developers disclaim any liability for misuse or legal non-compliance related to the use of this software.
+
+
+## Code Quality and Test Coverage
+
+To maintain high standards of code quality and ensure comprehensive test coverage, we use several tools:
+
+- **Flake8**: A tool that enforces coding style and checks the quality of Python code by combining PyFlakes, pycodestyle, and McCabe's complexity checker. [MIT License](https://github.com/PyCQA/flake8/blob/main/LICENSE)
+- **coverage**: Measures the effectiveness of tests by showing which parts of your code are being executed and which are not. [Apache License 2.0](https://github.com/nedbat/coveragepy/blob/master/LICENSE.txt)
+- **pytest-cov**: A pytest plugin that provides test coverage reports, extending pytest to measure code coverage alongside running tests. [MIT License](https://github.com/pytest-dev/pytest-cov/blob/master/LICENSE)
+
+These tools help us maintain a clean and reliable codebase by catching potential issues early and documenting where our tests might be lacking.
 
 ---
-This README.md file has been carefully crafted and edited using the Notolog editor itself.
+_This README.md file has been carefully crafted and edited using the Notolog editor itself._

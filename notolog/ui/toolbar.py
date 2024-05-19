@@ -32,8 +32,8 @@ class ToolBar(QToolBar):
 
         self.logger = logging.getLogger('toolbar')
 
-        self.logging = AppConfig.get_logging()
-        self.debug = AppConfig.get_debug()
+        self.logging = AppConfig().get_logging()
+        self.debug = AppConfig().get_debug()
 
         self.actions = actions if actions else {}
         self.buttons = buttons if buttons else {}

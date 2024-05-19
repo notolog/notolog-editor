@@ -7,7 +7,8 @@ import logging
 
 from typing import Union
 
-from ..app_config import AppConfig
+from . import AppConfig
+
 from ..settings import Settings
 from ..theme import Theme
 from ..enums.themes import Themes
@@ -23,6 +24,7 @@ class ThemeHelper:
 
         self.logger = logging.getLogger('theme_helper')
 
+        self.logging = AppConfig().get_logging()
         self.debug = AppConfig().get_debug()
 
         if self.debug:
@@ -98,6 +100,8 @@ class ThemeHelper:
             theme_icon (str): Theme icon file name
             system_icon (str, optional): System icon name as a fallback
             color (QColor, optional): Color of the SVG icon
+            width (int, optional): Icon width
+            height (int, optional): Icon height
 
         Returns:
             QIcon: Either from file or from the system theme

@@ -24,13 +24,13 @@ class ViewWidget(QTextBrowser):
 
         # Get app's global font size
         font = QFont()
-        font.setPointSize(AppConfig.get_font_size())
+        font.setPointSize(AppConfig().get_font_size())
         self.setFont(font)
 
         self.logger = logging.getLogger('view_widget')
 
-        self.logging = AppConfig.get_logging()
-        self.debug = AppConfig.get_debug()
+        self.logging = AppConfig().get_logging()
+        self.debug = AppConfig().get_debug()
 
     def setDocument(self, document):
         # Override setDocument() to allow additional actions like emit the document set signal

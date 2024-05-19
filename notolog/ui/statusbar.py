@@ -26,8 +26,8 @@ class StatusBar(QStatusBar):
 
         self.logger = logging.getLogger('statusbar')
 
-        self.logging = AppConfig.get_logging()
-        self.debug = AppConfig.get_debug()
+        self.logging = AppConfig().get_logging()
+        self.debug = AppConfig().get_debug()
 
         self.settings = Settings(parent=self)
 

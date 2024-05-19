@@ -33,8 +33,8 @@ class AboutPopup(QDialog):
 
         self.logger = logging.getLogger('about_popup')
 
-        self.logging = AppConfig.get_logging()
-        self.debug = AppConfig.get_debug()
+        self.logging = AppConfig().get_logging()
+        self.debug = AppConfig().get_debug()
 
         # Default language setup, change to settings value to modify it via UI
         self.lexemes = Lexemes(self.settings.app_language, default_scope='common')
@@ -85,7 +85,7 @@ class AboutPopup(QDialog):
         app_name_layout.setSpacing(0)
         app_name_layout.setContentsMargins(0, 0, 0, 0)
 
-        app_name = QLabel(AppConfig.get_app_name(), app_name_widget)
+        app_name = QLabel(AppConfig().get_app_name(), app_name_widget)
         app_name_font = self.font()
         app_name_font.setPointSizeF(app_name_font.pointSize() * 1.7)
         app_name.setFont(app_name_font)
@@ -100,15 +100,15 @@ class AboutPopup(QDialog):
 
         # Information fields
         info_fields = [
-            (self.lexemes.get('popup_about_version'), AppConfig.get_app_version(), []),
-            (self.lexemes.get('popup_about_license'), AppConfig.get_app_license(), []),
-            (self.lexemes.get('popup_about_website'), AppConfig.get_app_website(),
-             [{'icon': 'box-arrow-up-right.svg', 'link': AppConfig.get_app_website()}]),
-            (self.lexemes.get('popup_about_repository'), AppConfig.get_app_repository(),
-             [{'icon': 'star-fill.svg', 'link': AppConfig.get_app_repository()}]),
-            (self.lexemes.get('popup_about_pypi'), AppConfig.get_app_pypi(),
-             [{'icon': 'box-arrow-up-right.svg', 'link': AppConfig.get_app_pypi()}]),
-            (self.lexemes.get('popup_about_date'), AppConfig.get_app_date(), [])
+            (self.lexemes.get('popup_about_version'), AppConfig().get_app_version(), []),
+            (self.lexemes.get('popup_about_license'), AppConfig().get_app_license(), []),
+            (self.lexemes.get('popup_about_website'), AppConfig().get_app_website(),
+             [{'icon': 'box-arrow-up-right.svg', 'link': AppConfig().get_app_website()}]),
+            (self.lexemes.get('popup_about_repository'), AppConfig().get_app_repository(),
+             [{'icon': 'star-fill.svg', 'link': AppConfig().get_app_repository()}]),
+            (self.lexemes.get('popup_about_pypi'), AppConfig().get_app_pypi(),
+             [{'icon': 'box-arrow-up-right.svg', 'link': AppConfig().get_app_pypi()}]),
+            (self.lexemes.get('popup_about_date'), AppConfig().get_app_date(), [])
         ]
 
         for i, row in enumerate(info_fields):

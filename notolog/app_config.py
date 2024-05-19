@@ -1,11 +1,18 @@
+from PySide6.QtCore import QObject, Signal
+
 import os
 import tomli
+import tomli_w
+import logging
+
+from typing import Any
+from threading import Lock
 
 toml_base_app_config = """
 [app]
 name = "Notolog"
-version = "0.9.1b4"
-license = "MIT"
+version = "0.9.1b5"
+license = "MIT License"
 date = "2024"
 website = "https://notolog.app"
 repository = "https://github.com/notolog/notolog-editor"
@@ -21,6 +28,23 @@ author = "Vadim Bakhrenkov"
     bug_report_url = "https://github.com/notolog/notolog-editor/issues"
 """
 
+toml_app_config_header = """# Notolog
+# An open-source markdown editor developed in Python.
+
+# Application-Level Configuration
+# --------------------------------
+# This section contains default configuration options for the application.
+# These settings can be overridden programmatically at runtime.
+#
+# IMPORTANT:
+# This file is auto-generated. Changes made to this file may be overwritten.
+# To customize configuration safely, ensure modifications are done through
+# the application's interface or according to the documented process.
+#
+# Modifying this file directly is not recommended as it could lead to
+# unexpected behavior or loss of your settings upon the next auto-generation.\n
+"""
+
 # This is a fallback option if app_config.toml is not found
 toml_app_config = """
 [font]
@@ -31,154 +55,216 @@ max_size = 42
 [logger]
 logging = true
 debug = false
+
+[security]
+app_secret = ""
+
+[editor]
+media_dir = "images"
 """
 
 
-class AppConfig:
+class AppConfig(QObject):
     """
     App configuration to share between app's objects.
     """
 
-    base_app_config = tomli.loads(toml_base_app_config)
+    _instance = None  # Singleton instance
+    _lock = Lock()
 
-    # Get this file dir path
-    script_dir = os.path.dirname(os.path.realpath(__file__))
-    # Get parent dir path
-    parent_dir = os.path.dirname(script_dir)
-    # Get app_config.toml file path which is located at parent dir
-    toml_file_path = os.path.join(parent_dir, 'app_config.toml')
+    value_changed = Signal(dict)  # type: Signal[dict]
 
-    if not os.path.exists(toml_file_path):
-        # Backup option
-        app_config = tomli.loads(toml_app_config)
-    else:
-        # Read actual app_config.toml
-        with open(toml_file_path, 'r') as config_file:
-            app_config = tomli.loads(config_file.read())
+    def __new__(cls, *args, **kwargs):
+        # Overriding __new__ to control the instantiation process
+        if not cls._instance:
+            with cls._lock:
+                # Create the instance if it doesn't exist
+                cls._instance = super(AppConfig, cls).__new__(cls, *args, **kwargs)
+        return cls._instance
 
-    # Font settings
-    _font_size = app_config['font']['base_size']  # Base value
-    _prev_font_size = app_config['font']['base_size']  # Previous value
+    def __init__(self):
+        # Check if instance is already initialized
+        if hasattr(self, 'base_app_config'):
+            return
 
-    # For pytest to allow override some params
-    _test_mode = False
+        # Ensure that the initialization check and the setting of base_app_config are atomic.
+        with self._lock:
+            # This prevents race conditions.
+            if hasattr(self, 'base_app_config'):
+                return
+
+            # Initialize the QObject part only once
+            super(AppConfig, self).__init__()
+
+            # Config variables
+            self.base_app_config = Any
+            self.toml_file_path = Any
+            self.app_config = Any
+
+            # Font settings
+            self._font_size = Any  # Base value
+            self._prev_font_size = Any  # Previous value
+
+            # For pytest to allow override some params
+            self._test_mode = Any
+
+            # Initialize
+            self.load_initial_conf()
+
+            self.logger = logging.getLogger('app_config')
+
+            self.logging = self.get_logging()
+            self.debug = self.get_debug()
+
+            if self.debug:
+                self.logger.info('App config is engaged')
+
+            self.value_changed.connect(self.app_config_update_handler)
+
+    @classmethod
+    def get_instance(cls):
+        # Class method to get the singleton instance
+        if cls._instance is None:
+            cls._instance = cls()
+        return cls._instance
+
+    def load_initial_conf(self):
+        self.base_app_config = tomli.loads(toml_base_app_config)
+
+        # Get this file dir path
+        script_dir = os.path.dirname(os.path.realpath(__file__))
+        # Get parent dir path
+        parent_dir = os.path.dirname(script_dir)
+        # Get app_config.toml file path which is located at parent dir
+        self.toml_file_path = os.path.join(parent_dir, 'app_config.toml')
+
+        if not os.path.exists(self.toml_file_path):
+            # Backup option
+            self.app_config = tomli.loads(toml_app_config)
+        else:
+            # Read actual app_config.toml
+            with open(self.toml_file_path, 'r') as config_file:
+                self.app_config = tomli.loads(config_file.read())
+
+        # Font settings
+        self._font_size = self.app_config['font']['base_size']  # Base value
+        self._prev_font_size = self.app_config['font']['base_size']  # Previous value
+
+        # For pytest to allow override some params
+        self._test_mode = False
+
+    def app_config_update_handler(self, data: dict) -> None:
+        if self.debug:
+            self.logger.debug('App config handler is in use "%s"' % data)
+
+        with open(self.toml_file_path, 'wb') as f:
+            f.write(toml_app_config_header.encode('utf-8'))
+            tomli_w.dump(self.app_config, f)
 
     """
     Constant values with getters.
     """
 
-    @classmethod
-    def get_app_name(cls) -> str:
-        return cls.base_app_config['app']['name']
+    def get_app_name(self) -> str:
+        return self.base_app_config['app']['name']
 
-    @classmethod
-    def get_app_version(cls) -> str:
-        return cls.base_app_config['app']['version']
+    def get_app_version(self) -> str:
+        return self.base_app_config['app']['version']
 
-    @classmethod
-    def get_app_license(cls) -> str:
-        return cls.base_app_config['app']['license']
+    def get_app_license(self) -> str:
+        return self.base_app_config['app']['license']
 
-    @classmethod
-    def get_app_date(cls) -> str:
-        return cls.base_app_config['app']['date']
+    def get_app_date(self) -> str:
+        return self.base_app_config['app']['date']
 
-    @classmethod
-    def get_app_website(cls) -> str:
-        return cls.base_app_config['app']['website']
+    def get_app_website(self) -> str:
+        return self.base_app_config['app']['website']
 
-    @classmethod
-    def get_app_repository(cls) -> str:
-        return cls.base_app_config['app']['repository']
+    def get_app_repository(self) -> str:
+        return self.base_app_config['app']['repository']
 
-    @classmethod
-    def get_app_pypi(cls) -> str:
-        return cls.base_app_config['app']['pypi']
+    def get_app_pypi(self) -> str:
+        return self.base_app_config['app']['pypi']
 
-    @classmethod
-    def get_app_author(cls) -> str:
-        return cls.base_app_config['app']['author']
+    def get_app_author(self) -> str:
+        return self.base_app_config['app']['author']
 
-    @classmethod
-    def get_repository_github_username(cls) -> str:
-        return cls.base_app_config['repository']['github']['username']
+    def get_repository_github_username(self) -> str:
+        return self.base_app_config['repository']['github']['username']
 
-    @classmethod
-    def get_repository_github_project(cls) -> str:
-        return cls.base_app_config['repository']['github']['username']
+    def get_repository_github_project(self) -> str:
+        return self.base_app_config['repository']['github']['username']
 
-    @classmethod
-    def get_repository_github_release_url(cls) -> str:
-        return cls.base_app_config['repository']['github']['release_url']
+    def get_repository_github_release_url(self) -> str:
+        return self.base_app_config['repository']['github']['release_url']
 
-    @classmethod
-    def get_repository_github_bug_report_url(cls) -> str:
-        return cls.base_app_config['repository']['github']['bug_report_url']
+    def get_repository_github_bug_report_url(self) -> str:
+        return self.base_app_config['repository']['github']['bug_report_url']
 
-    @classmethod
-    def get_font_base_size(cls) -> int:
-        return cls.app_config['font']['base_size']
+    def get_font_base_size(self) -> int:
+        return self.app_config['font']['base_size']
+
+    def get_editor_media_dir(self) -> str:
+        return self.app_config['editor']['media_dir']
 
     """
     Methods with setter to override default value.
     """
 
-    @classmethod
-    def set_logging(cls, value) -> None:
-        cls.app_config['logger']['logging'] = value
+    def set_logging(self, value) -> None:
+        self.app_config['logger']['logging'] = value
+        self.value_changed.emit({'logger_logging': value})
 
-    @classmethod
-    def get_logging(cls) -> bool:
-        return cls.app_config['logger']['logging']
+    def get_logging(self) -> bool:
+        return self.app_config['logger']['logging']
 
-    @classmethod
-    def set_debug(cls, value) -> None:
-        cls.app_config['logger']['debug'] = value
+    def set_debug(self, value) -> None:
+        self.app_config['logger']['debug'] = value
+        self.value_changed.emit({'logger_debug': value})
 
-    @classmethod
-    def get_debug(cls) -> bool:
-        return cls.app_config['logger']['debug']
+    def get_debug(self) -> bool:
+        return self.app_config['logger']['debug']
 
-    @classmethod
-    def set_font_min_size(cls, value) -> None:
-        cls.app_config['font']['min_size'] = value
+    def set_font_min_size(self, value) -> None:
+        self.app_config['font']['min_size'] = value
+        self.value_changed.emit({'font_min_size': value})
 
-    @classmethod
-    def get_font_min_size(cls) -> int:
-        return cls.app_config['font']['min_size']
+    def get_font_min_size(self) -> int:
+        return self.app_config['font']['min_size']
 
-    @classmethod
-    def set_font_max_size(cls, value) -> None:
-        cls.app_config['font']['max_size'] = value
+    def set_font_max_size(self, value) -> None:
+        self.app_config['font']['max_size'] = value
+        self.value_changed.emit({'font_max_size': value})
 
-    @classmethod
-    def get_font_max_size(cls) -> int:
-        return cls.app_config['font']['max_size']
+    def get_font_max_size(self) -> int:
+        return self.app_config['font']['max_size']
+
+    def set_security_app_secret(self, value) -> None:
+        self.app_config['security']['app_secret'] = value
+        self.value_changed.emit({'security_app_secret': value})
+
+    def get_security_app_secret(self) -> str:
+        return self.app_config['security']['app_secret']
 
     """
-    Class system variables
+    Class system variables.
+    Do not emit signal upon theirs update.
     """
 
-    @classmethod
-    def set_font_size(cls, value) -> None:
-        cls._font_size = value
+    def set_font_size(self, value) -> None:
+        self._font_size = value
 
-    @classmethod
-    def get_font_size(cls) -> int:
-        return cls._font_size
+    def get_font_size(self) -> int:
+        return self._font_size
 
-    @classmethod
-    def set_prev_font_size(cls, value) -> None:
-        cls._prev_font_size = value
+    def set_prev_font_size(self, value) -> None:
+        self._prev_font_size = value
 
-    @classmethod
-    def get_prev_font_size(cls) -> int:
-        return cls._prev_font_size
+    def get_prev_font_size(self) -> int:
+        return self._prev_font_size
 
-    @classmethod
-    def set_test_mode(cls, value) -> None:
-        cls._test_mode = value
+    def set_test_mode(self, value) -> None:
+        self._test_mode = value
 
-    @classmethod
-    def get_test_mode(cls) -> bool:
-        return cls._test_mode
+    def get_test_mode(self) -> bool:
+        return self._test_mode

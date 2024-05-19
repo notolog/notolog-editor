@@ -8,6 +8,7 @@ from .lexemes.lexemes import Lexemes
 from .helpers.file_helper import size_f, save_file
 
 from urllib.parse import urlparse
+from typing import Union
 
 from qasync import asyncSlot
 import asyncio
@@ -26,7 +27,7 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
     # Signal to emit upon all downloading tasks in queue have been finished
     finished = Signal(int)
 
-    RESOURCE_DIR = 'images'
+    RESOURCE_DIR = AppConfig().get_editor_media_dir()
 
     def __init__(self, base_folder: str = None):
 
@@ -36,8 +37,8 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
 
         self.logger = logging.getLogger('image_downloader')
 
-        self.logging = AppConfig.get_logging()
-        self.debug = AppConfig.get_debug()
+        self.logging = AppConfig().get_logging()
+        self.debug = AppConfig().get_debug()
 
         self.lexemes = Lexemes()
 
@@ -46,16 +47,13 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
         # async download tasks queue
         self.resource_tasks = []
 
+        # Active folder to work with resources
+        self.folder = Union[QDir, None]
+
         # Downloaded counter till finished emitted
         self.downloaded_cnt = 0
 
-        # Validate folder and make it QDir
-        self.folder = self.get_resource_folder(base_folder)
-
-        if self.debug:
-            self.logger.debug(f'Folder to save downloaded resources: {self.folder.path()}')
-
-        os.makedirs(self.folder.path(), exist_ok=True)
+        self.update_resource_folder(base_folder)
 
         self.network_manager = QNetworkAccessManager()
 
@@ -68,6 +66,13 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
         if isinstance(folder, str):
             folder = QDir(folder)
         return folder
+
+    def update_resource_folder(self, base_folder: str = None) -> None:
+        # Validate folder and make it QDir
+        self.folder = self.get_resource_folder(base_folder)
+
+        if self.debug:
+            self.logger.debug(f'Folder to save downloaded resources: {self.folder.path()}')
 
     def download_image(self, url: str) -> None:
         if not self.is_external_url(url):
@@ -89,6 +94,8 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
     def save_image(self, url: str, data: QByteArray) -> None:
         # file_name = os.path.basename(url)
         file_name = self.url_to_filename(url)
+        # Create resource folder if not yet created
+        os.makedirs(self.folder.path(), exist_ok=True)
         # File path to save
         file_path = os.path.join(self.folder.path(), file_name)
         # Save received data
@@ -229,9 +236,7 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
     def url_to_filename(url):
         """
         Generate a filename from a URL by hashing the URL except its basename and combining it with the basename.
-
-        # Convert a URL into a safe filename by replacing non-alphanumeric characters with underscores.
-        return re.sub(r'\W+', '_', url)
+        Convert a URL into a safe filename by replacing non-alphanumeric characters with underscores.
         """
         # Extract the basename
         basename = os.path.basename(url)

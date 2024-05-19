@@ -28,8 +28,8 @@ class ViewProcessor:
         self.highlighter = highlighter
         self.doc = self.highlighter.document()
 
-        self.logging = AppConfig.get_logging()
-        self.debug = AppConfig.get_debug()
+        self.logging = AppConfig().get_logging()
+        self.debug = AppConfig().get_debug()
 
         self.settings = Settings()
 
@@ -247,12 +247,11 @@ class ViewProcessor:
                     pos_close_summary = match.end()
                     selected_text = selected_text[:pos_open_summary] + selected_text[pos_close_summary:]
 
-                """
-                There is a possible situation where the formatted html may become invalid.
-                Say, "<p>...\n<details> </p>\n\n<summary>". That's because of markdown lib may process paragraph that way.
-                Double check it with with a something like exp below, but keep in mind the open tag is also exists:
-                pattern = r"<details.*?>[\s]*?(</p>)"
-                """
+                # There is a possible situation where the formatted html may become invalid.
+                # Say, "<p>...\n<details> </p>\n\n<summary>".
+                # That's because of markdown lib may process paragraph that way.
+                # Double check it with a something like exp below, but keep in mind the open tag is also exists:
+                # pattern = r"<details.*?>[\s]*?(</p>)"
 
                 selected_text = selected_text.strip()
                 encoded_text = base64.b64encode(selected_text.encode('utf-8'))

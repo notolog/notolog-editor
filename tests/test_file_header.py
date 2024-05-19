@@ -6,6 +6,7 @@ from notolog.exceptions.file_header_empty_exception import FileHeaderEmptyExcept
 
 from logging import Logger
 
+import time
 import pytest
 
 
@@ -66,6 +67,7 @@ class TestFileHeader:
         created = test_obj_file_header_new.get_param('created')
         updated = test_obj_file_header_new.get_param('updated')
         # Refresh the header
+        time.sleep(0.1)
         test_obj_file_header_new.refresh()
         # Check update has changed
         assert test_obj_file_header_new.get_param('created') == created
@@ -77,6 +79,7 @@ class TestFileHeader:
         # Reset created param
         test_obj_file_header_new.set_param('created', None)
         # Refresh the header
+        time.sleep(0.1)
         test_obj_file_header_new.refresh()
         # Check update has changed
         assert test_obj_file_header_new.get_param('created') is not None

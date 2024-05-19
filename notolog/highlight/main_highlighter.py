@@ -52,11 +52,11 @@ class MainHighlighter(QSyntaxHighlighter):
 
         self.logger = logging.getLogger('highlighter')
 
-        self.logging = AppConfig.get_logging()
-        self.debug = False  # AppConfig.get_debug()
+        self.logging = AppConfig().get_logging()
+        self.debug = False  # AppConfig().get_debug()
 
         # Get app's global font size
-        self.font_size = AppConfig.get_font_size()
+        self.font_size = AppConfig().get_font_size()
 
         # Walk rules to create QRegExp for each pattern
         self.rules = [(self.get_regex(pattern), nth, tag, group, duple, fmt, reckon)

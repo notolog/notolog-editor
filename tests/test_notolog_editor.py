@@ -67,7 +67,7 @@ class TestNotologEditor:
         # Assert that the method was called once
         mock_method1.assert_not_called()
         # Assert that the method was called once with the param(s)
-        mock_method2.assert_called_once_with('%s/README.md' % test_file_parent_dir)
+        mock_method2.assert_called_once_with(os.path.normpath('%s/README.md') % test_file_parent_dir)
 
     def test_notolog_editor_load_default_page_any(self, mocker, test_obj_notolog_editor, test_obj_settings):
         """

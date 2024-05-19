@@ -76,6 +76,8 @@ class Lexemes:
             # Process placeholders if set, e.g. name="abc" in a string like "... {name} ..." become "... abc ..."
             try:
                 lexeme = lexeme.format(**kwargs)
+            except AttributeError:
+                self.logger.warning('Lexeme "%s" not found' % name)
             except KeyError:
                 self.logger.warning('Lexeme "%s" params [%s] not found for replacement'
                                     % (lexeme, ', '.join(kwargs.keys())))

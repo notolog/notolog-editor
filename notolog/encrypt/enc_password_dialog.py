@@ -1,5 +1,5 @@
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QHBoxLayout, QVBoxLayout, QStyle, QMessageBox
+from PySide6.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QHBoxLayout, QVBoxLayout, QStyle
 from PySide6.QtGui import QFontMetrics, QFont
 
 from . import Settings
@@ -25,8 +25,8 @@ class EncPasswordDialog(QDialog):
 
         self.logger = logging.getLogger('enc_password_dialog')
 
-        self.logging = AppConfig.get_logging()
-        self.debug = AppConfig.get_debug()
+        self.logging = AppConfig().get_logging()
+        self.debug = AppConfig().get_debug()
 
         # Default language setup, change to settings value to modify it via UI
         self.lexemes = Lexemes(self.settings.app_language, default_scope='common')
@@ -93,19 +93,3 @@ class EncPasswordDialog(QDialog):
 
         # Set minimum width for the dialog
         self.setMinimumWidth(title_width + 150)  # Add some padding
-
-    """
-    Example of class standalone usage:
-    def dialog_show():
-        dialog = EncNewPasswordDialog()
-        if dialog.exec() == QDialog.DialogCode.Accepted:
-            return dialog.password_edit.text(), dialog.hint_edit.text()
-        return None, None
-
-    if __name__ == "__main__":
-        app = QApplication(sys.argv)
-        password, hint = dialog_show()
-        print("Password:", password)
-        print("Hint:", hint)
-        sys.exit(app.exec())
-    """

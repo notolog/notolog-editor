@@ -4,6 +4,7 @@ from .app_config import AppConfig
 from .enums.themes import Themes
 from .enums.languages import Languages
 from .enums.ai_model_names import AiModelNames
+from .helpers.settings_helper import SettingsHelper
 
 from typing import Any, Union
 
@@ -26,10 +27,11 @@ class Settings(QSettings):
 
         self.logger = logging.getLogger('settings')
 
-        self.logging = AppConfig.get_logging()
-        self.debug = AppConfig.get_debug()
+        self.logging = AppConfig().get_logging()
+        self.debug = AppConfig().get_debug()
 
         self.settings = QSettings()
+        self.settings_helper = SettingsHelper()
 
         if self.debug:
             # Attributes may not be set at the very beginning
@@ -37,14 +39,15 @@ class Settings(QSettings):
 
         self.value_changed.connect(lambda v: self.settings.sync())
 
+        self.protected_attr = []
         self.init_fields()
 
     def init_fields(self):
         # App's UI settings
         self.create_property("app_theme", str, str(Themes.default()))
         self.create_property("app_language", str, str(Languages.default()))
-        self.create_property("app_font_size", int, AppConfig.get_font_base_size(),
-                             set_prev_func=lambda: AppConfig.set_prev_font_size(self.settings.value("app_font_size")))
+        self.create_property("app_font_size", int, AppConfig().get_font_base_size(),
+                             set_prev_func=lambda prev_value: AppConfig().set_prev_font_size(prev_value))
         # Window positioning and size
         self.create_property("ui_width", int, 0)
         self.create_property("ui_height", int, 0)
@@ -76,26 +79,45 @@ class Settings(QSettings):
         self.create_property("enc_iterations", int, None)
         # AI assistant
         self.create_property("ai_config_openai_url", str, "https://api.openai.com/v1/chat/completions")
-        self.create_property("ai_config_openai_key", str, "")
+        self.create_property("ai_config_openai_key", str, "", encrypt=True)
         self.create_property("ai_config_openai_model", str, str(AiModelNames.default()))
         self.create_property("ai_config_base_system_prompt", str, "")
         self.create_property("ai_config_base_response_max_tokens", int, 512)
 
-    def create_property(self, param_name: str, param_type: Any, default_value: Any, set_prev_func: Any = None):
+    def create_property(self, param_name: str, param_type: Any, default_value: Any, set_prev_func: Any = None,
+                        encrypt: bool = False):
         def getter(_self):
             # Type is crucial here
-            return param_type(_self.settings.value(param_name, default_value, type=param_type))
+            value = _self.settings.value(param_name, default_value, type=param_type)
+            if encrypt:
+                try:
+                    value = self.settings_helper.decrypt_data(value)
+                except (ValueError, EnvironmentError) as e:
+                    if self.logging:
+                        self.logger.warning(f'Settings protected parameter "{param_name}" getting error: {e}')
+            return param_type(value)
 
         def setter(_self, value):
-            if _self.settings.value(param_name) != value:
+            _prev_value = _self.settings.value(param_name)
+            if _prev_value != value:
                 if callable(set_prev_func):
                     # Save previous value
-                    set_prev_func()
+                    set_prev_func(_prev_value)
+                if encrypt:
+                    try:
+                        value = self.settings_helper.encrypt_data(value)
+                    except (ValueError, EnvironmentError) as e:
+                        if self.logging:
+                            self.logger.warning(f'Settings protected parameter "{param_name}" setting error: {e}')
                 _self.settings.setValue(param_name, value)
                 _self.value_changed.emit({param_name: value})
 
         # Dynamically create the property and its setter
         setattr(Settings, param_name, property(getter, setter))
+
+        # Add param to the protected list if applicable
+        if encrypt:
+            self.protected_attr.append(param_name)
 
     """
     Example of how to set up for each settings property

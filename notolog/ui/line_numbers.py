@@ -27,7 +27,7 @@ class LineNumbers(QWidget):
         """
         # Alternatively it can be get from AppConfig:
         font = QFont()
-        font.setPointSize(AppConfig.get_font_size())
+        font.setPointSize(AppConfig().get_font_size())
         self.setFont(font)
         """
         self.setFont(self.editor.document().defaultFont())  # Set global font to the line area

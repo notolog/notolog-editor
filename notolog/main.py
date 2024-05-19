@@ -28,7 +28,7 @@ python3 main.py
 from PySide6.QtWidgets import QStyleFactory
 from qasync import QEventLoop, QApplication
 
-# from notolog.app_config import AppConfig
+from notolog.app_config import AppConfig
 from notolog.notolog_editor import NotologEditor
 
 import platform
@@ -50,18 +50,27 @@ def main():
     logging.basicConfig(level=logging.DEBUG, format='[%(name)s] %(funcName)s: %(levelname)s: %(message)s')
 
     # Enable logging, uncomment or change app config
-    # AppConfig.set_logging(True)
+    # AppConfig().set_logging(True)
     # Enable debug mode (a lot of logs), uncomment or change app config
-    # AppConfig.set_debug(False)
+    # AppConfig().set_debug(False)
+
+    logger = logging.getLogger('notolog')
+    if AppConfig().get_logging():
+        logger.info("%s v%s" % (AppConfig().get_app_name(), AppConfig().get_app_version()))
+        logger.info("%s" % (AppConfig().get_app_license()))
 
     # Main application
     app = QApplication(sys.argv)
+    # To correctly set up app settings
+    app.setOrganizationName('Notolog')
+    app.setApplicationName('notolog_editor')
+    app.setApplicationVersion(AppConfig().get_app_version())
 
     # Detect the operating system to choose the style
     current_os = platform.system()
     if current_os == "Windows":
         app.setStyle(QStyleFactory.create("WindowsVista"))
-    # elif current_os == "Darwin":  # MacOS
+    # elif current_os == "Darwin":  # macOS
     #    app.setStyle(QStyleFactory.create("Macintosh"))  # Renders not as expected
     else:  # Or: current_os == "Linux"
         app.setStyle(QStyleFactory.create("Fusion"))  # Fusion is a cross-platform choice
@@ -69,7 +78,8 @@ def main():
     # Maintain a unique style regardless of the user's system settings
     app.setDesktopSettingsAware(False)
 
-    logging.getLogger('notolog').info('Application dir path "%s"' % QApplication.applicationDirPath())
+    if AppConfig().get_debug():
+        logger.debug('Application dir path "%s"' % QApplication.applicationDirPath())
 
     # Get the screen to pass it to the main module
     screen = app.screens()[0]

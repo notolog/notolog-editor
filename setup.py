@@ -7,7 +7,7 @@ long_description = (here / 'README.md').read_text(encoding='utf-8')
 
 setup(
     name='notolog',
-    version='0.9.1b4',
+    version='0.9.1b5',
     description='Notolog - Python Markdown Editor',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -53,5 +53,5 @@ setup(
         'Bug Reports': 'https://github.com/notolog/notolog-editor/issues',
         'Source': 'https://github.com/notolog/notolog-editor/',
     },
-    keywords='notolog, python, markdown, editor, ai, text',
+    keywords='notolog, python, markdown, editor, ai, text, notes',
 )

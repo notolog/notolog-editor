@@ -15,7 +15,8 @@ class SortFilterProxyModel(QSortFilterProxyModel):
 
         self.logger = logging.getLogger('sort_filter_proxy_model')
 
-        self.debug = AppConfig.get_debug()
+        self.logging = AppConfig().get_logging()
+        self.debug = AppConfig().get_debug()
 
         self._extensions = extensions  # Allow specific file extensions
 

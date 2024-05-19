@@ -2,7 +2,7 @@
 Helper for file operations.
 """
 
-from PySide6.QtCore import QFile, QDir
+from PySide6.QtCore import QDir
 
 import os
 import sys

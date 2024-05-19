@@ -21,8 +21,8 @@ class FileSystemWatcher:
 
         self.logger = logging.getLogger('file_system_watcher')
 
-        self.logging = AppConfig.get_logging()
-        self.debug = AppConfig.get_debug()
+        self.logging = AppConfig().get_logging()
+        self.debug = AppConfig().get_debug()
 
         self.dir = None
 

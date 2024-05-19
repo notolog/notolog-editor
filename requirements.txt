@@ -17,3 +17,4 @@ pytest-mock==3.14.0
 qasync==0.27.1
 shiboken6==6.7.0
 tomli==2.0.1
+tomli_w==1.0.0

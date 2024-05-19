@@ -1,51 +1,35 @@
+# tests/ui/test_qt_ui.py
+
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QApplication
 from PySide6.QtTest import QTest
 
 from notolog.notolog_editor import NotologEditor
-from notolog.enums.languages import Languages
 from notolog.settings import Settings
+from notolog.enums.languages import Languages
 
-import os
-import sys
+from . import test_app
+
 import pytest
 
 
 class TestQtUi:
 
-    @pytest.fixture(autouse=True, scope="session")
-    def qt_app(self):
-        # Check to avoid:
-        # RuntimeError: Please destroy the QApplication singleton before creating a new QApplication instance.
-        app = QApplication.instance()
-        if not app:
-            # Force Qt style override
-            """
-            QApplication: invalid style override 'kvantum' passed, ignoring it.
-                Available styles: Windows, Fusion
-            """
-            os.environ["QT_STYLE_OVERRIDE"] = "Fusion"
-            # Fixture to initialize QApplication.
-            app = QApplication(sys.argv)
-
-        yield app
-
-        # Properly close the QApplication after each test
-        app.quit()
-
     @pytest.fixture
-    def settings_obj(self, qt_app):
+    def settings_obj(self):
         # Fixture to create and return settings instance
         settings = Settings()
         yield settings
 
     @pytest.fixture
-    def main_window(self, mocker, qt_app):
+    def main_window(self, mocker, test_app):
         # Force to override system language as a default
         mocker.patch.object(Languages, 'default', return_value='la')
 
+        # Do not show actual window; return object instance only
+        mocker.patch.object(NotologEditor, 'show', return_value=None)
+
         # Fixture to create and return main window instance
-        window = NotologEditor(screen=qt_app.screens()[0])
+        window = NotologEditor(screen=test_app.screens()[0])
         yield window
 
     def test_editor_state(self, main_window, settings_obj):

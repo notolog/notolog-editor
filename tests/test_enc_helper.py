@@ -28,6 +28,9 @@ class TestEncHelper:
         # Get the parameter value(s) from the request
         salt, iterations = request.param
 
+        # Force fallback default to avoid settings default
+        mocker.patch.object(EncHelper, 'get_default_iterations', return_value=EncHelper.DEFAULT_ITERATIONS)
+
         mocker.patch('secrets.token_urlsafe', return_value='RANDOM_SALT')
         _helper = EncHelper(enc_password=test_obj_enc_password, salt=salt, iterations=iterations)
 

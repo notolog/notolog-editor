@@ -9,7 +9,8 @@ import logging
 
 class CommonDialog(QDialog):
 
-    debug = AppConfig.get_debug()
+    logging = AppConfig().get_logging()
+    debug = AppConfig().get_debug()
 
     def __init__(self, title=str, text=str, callback=None, parent=None):
         super().__init__(parent)

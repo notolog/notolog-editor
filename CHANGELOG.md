@@ -1,6 +1,30 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [0.9.1b5] - 2024-05-19
+
+### Added
+- Introduced a GitHub workflow for tests, incorporating Flake8 and pytest coverage reports to maintain high standards of code quality and ensure comprehensive test coverage.
+- Added the app's organization name, app name, and version to facilitate correct settings storage.
+- Added a media directory to the app_config.toml.
+- App settings now support encrypted values to keep sensitive data, like API keys, secure. The encryption key is generated once and stored in the app config file. A Settings helper class was also added.
+- New tomli_w package added to support TOML-file writing.
+
+### Updated
+- Tests updated to support multi-platform execution.
+- Used `os.sep` to ensure correct path separators on each OS and `os.path.normpath()` to normalize path separators.
+- Updated the description and disclaimers text in README.md; added a "Code Quality and Test Coverage" paragraph.
+
+### Changed
+- Changed the approach to not create a resource directory upfront before any file is available to save.
+- Moved async highlighter functionality to a dedicated file.
+- Adjusted links markdown highlighter to allow highlighting web links within lines of markdown blocks, and adjusted the web links regex accordingly.
+- Refined the AppConfig object to implement the singleton pattern, enabling it to automatically generate the app's config file rather than relying on a predefined version.
+
+### Fixed
+- Fixed a potential error in the image downloader when the property is None upon canceling tasks on exiting the app.
+- Updated the resource folder path according to the currently active file.
+
 ## [0.9.1b4] - 2024-05-12
 
 ### Added

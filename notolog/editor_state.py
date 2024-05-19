@@ -30,7 +30,8 @@ class EditorState(QObject):
     def __init__(self, parent=None):
         super(EditorState, self).__init__(parent)
 
-        self.debug = AppConfig.get_debug()
+        self.logging = AppConfig().get_logging()
+        self.debug = AppConfig().get_debug()
 
         self.logger = logging.getLogger('editor_state')
 

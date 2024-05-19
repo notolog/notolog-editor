@@ -4,8 +4,7 @@ import os
 import sys
 import pytest
 
-# For headless operation
-os.environ["QT_QPA_PLATFORM"] = "offscreen"
+os.environ.pop("QT_QPA_PLATFORM", None)
 # Force Qt style override to avoid:
 # QApplication: invalid style override 'kvantum' passed, ignoring it.
 #    Available styles: Windows, Fusion
@@ -26,7 +25,7 @@ def test_app():
     # Main application; new
     app = QApplication.instance()
     if not app:
-        # Fixture to initialize QCoreApplication for Non-GUI Tests
+        # Consider: Fixture to initialize QCoreApplication for Non-GUI Tests
         """
         Virtual Framebuffer on Linux (Xvfb):
         For Linux, use Xvfb to run tests requiring GUI in a virtual framebuffer.

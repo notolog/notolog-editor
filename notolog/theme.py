@@ -18,7 +18,7 @@ class Theme:
     _instance = None
 
     def __new__(cls, *args, **kwargs):
-        if cls._instance is None or AppConfig.get_test_mode():  # No cache in test mode
+        if cls._instance is None or AppConfig().get_test_mode():  # No cache in test mode
             cls._instance = super().__new__(cls)
         return cls._instance
 
@@ -27,13 +27,10 @@ class Theme:
         if getattr(self, 'theme', None) and self.theme == theme:
             return
 
-        # Logger
         self.logger = logging.getLogger('themes')
 
-        # Logging
-        self.logging = AppConfig.get_logging()
-        # Debug
-        self.debug = AppConfig.get_debug()
+        self.logging = AppConfig().get_logging()
+        self.debug = AppConfig().get_debug()
 
         # Custom Enum logic return name.lower() when cast to string
         # Same as: Themes.default().name.lower()

@@ -65,7 +65,7 @@ class TestHtmlView:
             (("<u>Test text underline</u>", "setHtml"), "text", "underline"),
             (("<s>Test text strikethrough</s>", "setHtml"), "text", "strikeOut"),
             #(("~~Test text strikethrough~~", "setHtml"), "text", "strikeOut"), # TODO decorator result
-            # Markdown is a proof of concept here as not in use for result render
+            # Markdown is a proof of concept here as it is not in use for result rendering
             (("**Test text bold**", "setMarkdown"), "text", "bold"),
             (("*Test text bold*", "setMarkdown"), "text", "italic"),
             (("***Test text bold***", "setMarkdown"), "text", "bold"),

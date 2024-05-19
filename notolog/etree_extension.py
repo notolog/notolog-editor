@@ -17,8 +17,8 @@ class ElementTreeExtension(Extension):
 
     logger = logging.getLogger('tree_extension')
 
-    logging = AppConfig.get_logging()
-    debug = AppConfig.get_debug()
+    logging = AppConfig().get_logging()
+    debug = AppConfig().get_debug()
 
     def extendMarkdown(self, md: Markdown) -> None:
         if self.debug:
@@ -36,8 +36,8 @@ class ElementTreeProcessor(Treeprocessor):
 
     logger = logging.getLogger('tree_processor')
 
-    logging = AppConfig.get_logging()
-    debug = AppConfig.get_debug()
+    logging = AppConfig().get_logging()
+    debug = AppConfig().get_debug()
 
     def run(self, root):
         # Customize elements tree here
@@ -82,12 +82,10 @@ class ElementTreeProcessor(Treeprocessor):
     def process_table_td(self, elem):
         # Replace 'style' with 'class' as css doesn't work otherwise
         if elem.get('style') and elem.get('style').startswith('text-align'):
-            """
-            re = QRegularExpression(r'^text-align:\s?(.*?);$')
-            match = re.match(elem.get('style'))
-            if match.capturedTexts() and match.captured(1):
-                ...
-            """
+            # re = QRegularExpression(r'^text-align:\s?(.*?);$')
+            # match = re.match(elem.get('style'))
+            # if match.capturedTexts() and match.captured(1):
+            #    ...
             pattern = re.compile(r'^text-align:\s?(.*?);$')
             match = pattern.search(elem.get('style'))
             if match:
