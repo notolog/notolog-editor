@@ -120,7 +120,7 @@ class TestNotologEditor:
         setattr(test_obj_notolog_editor, 'debug', False)
 
         mock_res_path = mocker.patch.object(test_obj_notolog_editor, 'get_active_dir', return_value=file_path)
-        #mock_res_path = mocker.patch('app.notolog_editor.res_path', return_value=file_path)
+        # mock_res_path = mocker.patch('app.notolog_editor.res_path', return_value=file_path)
         # fixture arg: monkeypatch
         # monkeypatch.setattr('app.notolog_editor.res_path', lambda _file_path: _file_path == file_path)
         mocker.patch.object(os.path, 'isfile', return_value=isfile)

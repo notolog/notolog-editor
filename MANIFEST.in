@@ -2,8 +2,8 @@ include CHANGELOG.md
 include CODE_OF_CONDUCT.md
 include LICENSE
 include README.md
-include app_config.toml
 include requirements.txt
+include test_requirements.txt
 
 # Include example and doc files
 recursive-include docs *

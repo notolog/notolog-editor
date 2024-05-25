@@ -11,7 +11,7 @@ from threading import Lock
 toml_base_app_config = """
 [app]
 name = "Notolog"
-version = "0.9.1b5"
+version = "0.9.1b8"
 license = "MIT License"
 date = "2024"
 website = "https://notolog.app"
@@ -26,6 +26,11 @@ author = "Vadim Bakhrenkov"
     project = "notolog-editor"
     release_url = "https://api.github.com/repos/notolog/notolog-editor/releases/latest"
     bug_report_url = "https://github.com/notolog/notolog-editor/issues"
+
+[settings]
+org_name = "Notolog"
+org_domain = "notolog.app"
+app_name = "notolog_editor"
 """
 
 toml_app_config_header = """# Notolog
@@ -200,6 +205,18 @@ class AppConfig(QObject):
 
     def get_repository_github_bug_report_url(self) -> str:
         return self.base_app_config['repository']['github']['bug_report_url']
+
+    def get_settings_org_name(self) -> str:
+        return self.base_app_config['settings']['org_name']
+
+    def get_settings_org_domain(self) -> str:
+        return self.base_app_config['settings']['org_domain']
+
+    def get_settings_app_name(self) -> str:
+        return self.base_app_config['settings']['app_name']
+
+    def get_settings_app_name_qa(self) -> str:
+        return f"{self.base_app_config['settings']['app_name']}_qa"
 
     def get_font_base_size(self) -> int:
         return self.app_config['font']['base_size']

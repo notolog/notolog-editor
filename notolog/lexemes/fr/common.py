@@ -53,16 +53,18 @@ lexemes = {
     "dialog_encrypt_new_password_label": "Mot de passe :",
     "dialog_encrypt_new_password_input_placeholder_text": "Entrez un nouveau mot de passe",
     "dialog_encrypt_new_password_hint_label": "Indice :",
-    "dialog_encrypt_new_password_hint_label_description": "L'indice n'est pas crypté et peut être lu dans le fichier ! "
-                                                           "\nÉvitez des indices évidents faciles à deviner, comme la date de naissance. "
-                                                           "\nEssayez d'utiliser une référence qui n'est pas facilement associable à vous.",
+    "dialog_encrypt_new_password_hint_label_description":
+        "L'indice n'est pas crypté et peut être lu dans le fichier ! "
+        "\nÉvitez des indices évidents faciles à deviner, comme la date de naissance. "
+        "\nEssayez d'utiliser une référence qui n'est pas facilement associable à vous.",
     "dialog_encrypt_new_password_hint_input_placeholder_text": "Entrez un indice (facultatif)",
     "dialog_encrypt_new_password_button_ok": "OK",
     "dialog_encrypt_new_password_button_cancel": "Annuler",
     "dialog_encrypt_new_password_warning_empty_title": "Avertissement",
     "dialog_encrypt_new_password_warning_empty_text": "Le champ du mot de passe ne peut pas être vide !",
     "dialog_encrypt_new_password_warning_too_long_title": "Avertissement",
-    "dialog_encrypt_new_password_warning_too_long_text": "Le champ d'indice est trop long, {symbols} caractères maximum !",
+    "dialog_encrypt_new_password_warning_too_long_text":
+        "Le champ d'indice est trop long, {symbols} caractères maximum !",
 
     "dialog_encrypt_password_title": "Entrez le mot de passe",
     "dialog_encrypt_password_label": "Mot de passe :",
@@ -72,7 +74,8 @@ lexemes = {
     "dialog_encrypt_password_button_cancel": "Annuler",
 
     "dialog_encrypt_password_reset_title": "Réinitialiser le mot de passe de chiffrement",
-    "dialog_encrypt_password_reset_text": "Êtes-vous sûr de vouloir réinitialiser le mot de passe de chiffrement actuel ?",
+    "dialog_encrypt_password_reset_text":
+        "Êtes-vous sûr de vouloir réinitialiser le mot de passe de chiffrement actuel ?",
     "dialog_encrypt_password_reset_button_cancel": "Annuler",
     "dialog_encrypt_password_reset_button_yes": "Oui",
 
@@ -107,7 +110,8 @@ lexemes = {
         "Hôte introuvable. Il pourrait y avoir un problème avec la connexion Internet ou le DNS.",
     "network_connection_error_connection_refused":
         "Connexion refusée. Le serveur pourrait être hors service ou il pourrait y avoir des problèmes de réseau.",
-    "network_connection_error_connection_timed_out": "La connexion a expiré. Il pourrait y avoir des problèmes de réseau.",
+    "network_connection_error_connection_timed_out":
+        "La connexion a expiré. Il pourrait y avoir des problèmes de réseau.",
     "network_connection_error_connection_404_error":
         "Erreur 404 de connexion. La page ou la ressource demandée n'est pas trouvée.",
     "network_connection_error_generic_with_status_code": "Échec de la requête avec le code d'état : {status_code}",

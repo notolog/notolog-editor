@@ -1,3 +1,5 @@
+# tests/test_qt_async.py
+
 import asyncio
 
 from notolog.async_highlighter import AsyncHighlighter
@@ -9,7 +11,10 @@ class TestQtAsync:
 
     @pytest.fixture
     def async_highlighter_obj(self):
-        # Fixture to create and return main window instance
+        # To avoid: There is no current event loop when self.loop = asyncio.get_event_loop()
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        # Fixture to create and return object instance
         async_highlighter = AsyncHighlighter(callback=lambda check: check)
         yield async_highlighter
 

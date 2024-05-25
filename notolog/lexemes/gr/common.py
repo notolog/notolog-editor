@@ -53,17 +53,19 @@ lexemes = {
     "dialog_encrypt_new_password_label": "Κωδικός:",
     "dialog_encrypt_new_password_input_placeholder_text": "Εισάγετε νέο κωδικό",
     "dialog_encrypt_new_password_hint_label": "Υπόδειξη:",
-    "dialog_encrypt_new_password_hint_label_description": "Η υπόδειξη δεν είναι κρυπτογραφημένη και μπορεί να διαβαστεί "
-                                                          "από το αρχείο!\nΑποφύγετε προφανείς υποδείξεις που μπορεί να "
-                                                          "μαντευτούν εύκολα, όπως ημερομηνίες γέννησης.\nΠροσπαθήστε "
-                                                          "να χρησιμοποιήσετε μια αναφορά που δεν συνδέεται εύκολα με εσάς.",
+    "dialog_encrypt_new_password_hint_label_description":
+        "Η υπόδειξη δεν είναι κρυπτογραφημένη και μπορεί να διαβαστεί "
+        "από το αρχείο!\nΑποφύγετε προφανείς υποδείξεις που μπορεί να "
+        "μαντευτούν εύκολα, όπως ημερομηνίες γέννησης.\nΠροσπαθήστε "
+        "να χρησιμοποιήσετε μια αναφορά που δεν συνδέεται εύκολα με εσάς.",
     "dialog_encrypt_new_password_hint_input_placeholder_text": "Εισάγετε υπόδειξη (προαιρετικά)",
     "dialog_encrypt_new_password_button_ok": "Εντάξει",
     "dialog_encrypt_new_password_button_cancel": "Ακύρωση",
     "dialog_encrypt_new_password_warning_empty_title": "Προειδοποίηση",
     "dialog_encrypt_new_password_warning_empty_text": "Το πεδίο του κωδικού δεν μπορεί να είναι άδειο!",
     "dialog_encrypt_new_password_warning_too_long_title": "Προειδοποίηση",
-    "dialog_encrypt_new_password_warning_too_long_text": "Το πεδίο της υπόδειξης είναι πολύ μακρύ, μέγιστο {symbols} χαρακτήρες!",
+    "dialog_encrypt_new_password_warning_too_long_text":
+        "Το πεδίο της υπόδειξης είναι πολύ μακρύ, μέγιστο {symbols} χαρακτήρες!",
 
     "dialog_encrypt_password_title": "Εισαγωγή Κωδικού",
     "dialog_encrypt_password_label": "Κωδικός:",
@@ -73,7 +75,8 @@ lexemes = {
     "dialog_encrypt_password_button_cancel": "Ακύρωση",
 
     "dialog_encrypt_password_reset_title": "Επαναφορά Κωδικού Κρυπτογράφησης",
-    "dialog_encrypt_password_reset_text": "Είστε σίγουροι ότι θέλετε να επαναφέρετε τον τρέχοντα κωδικό κρυπτογράφησης;",
+    "dialog_encrypt_password_reset_text":
+        "Είστε σίγουροι ότι θέλετε να επαναφέρετε τον τρέχοντα κωδικό κρυπτογράφησης;",
     "dialog_encrypt_password_reset_button_cancel": "Ακύρωση",
     "dialog_encrypt_password_reset_button_yes": "Ναι",
 

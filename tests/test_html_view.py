@@ -1,4 +1,5 @@
 # tests/test_html_view.py
+
 from PySide6.QtGui import QTextDocument, QFont
 
 from notolog.highlight.view_highlighter import ViewHighlighter
@@ -64,7 +65,7 @@ class TestHtmlView:
             (("<i>Test text italic</i>", "setHtml"), "text", "italic"),
             (("<u>Test text underline</u>", "setHtml"), "text", "underline"),
             (("<s>Test text strikethrough</s>", "setHtml"), "text", "strikeOut"),
-            #(("~~Test text strikethrough~~", "setHtml"), "text", "strikeOut"), # TODO decorator result
+            # (("~~Test text strikethrough~~", "setHtml"), "text", "strikeOut"),  # TODO decorator result
             # Markdown is a proof of concept here as it is not in use for result rendering
             (("**Test text bold**", "setMarkdown"), "text", "bold"),
             (("*Test text bold*", "setMarkdown"), "text", "italic"),
@@ -88,7 +89,7 @@ class TestHtmlView:
         """
         cursor = test_obj_doc.find(test_text_fixture)
 
-        format = cursor.charFormat()
+        _format = cursor.charFormat()
         assert cursor.selectedText()
         """
         test_style_fixture is a method name
@@ -97,11 +98,11 @@ class TestHtmlView:
         * https://doc.qt.io/qt-6/qfont.html#strikeOut
         * ...
         """
-        assert callable(getattr(format.font(), test_style_fixture))
-        assert getattr(format.font(), test_style_fixture)()
+        assert callable(getattr(_format.font(), test_style_fixture))
+        assert getattr(_format.font(), test_style_fixture)()
 
         """
         Assertion like ',-1,-1,5,700,0,0,0,0,0,0,0,0,0,0,1'
         * https://doc.qt.io/qt-6/qfont.html#toString
         """
-        #assert not format.font().toString() == '...'
+        # assert not format.font().toString() == '...'

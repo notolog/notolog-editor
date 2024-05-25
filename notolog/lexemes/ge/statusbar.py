@@ -21,5 +21,6 @@ lexemes = {
     "statusbar_cursor_label": "ხაზი: {line} → სვეტი: {column}",
     "statusbar_cursor_label_selected": "ხაზი: {line} → სვეტი: {column} → არჩეული: {selected}",
     "statusbar_cursor_label_with_global": "ხაზი: {line} → სვეტი: {column} → პოზიცია: {position}",
-    "statusbar_cursor_label_selected_with_global": "ხაზი: {line} → სვეტი: {column} → პოზიცია: {position} → არჩეული: {selected}",
+    "statusbar_cursor_label_selected_with_global":
+        "ხაზი: {line} → სვეტი: {column} → პოზიცია: {position} → არჩეული: {selected}",
 }

@@ -63,7 +63,7 @@ from cryptography.fernet import InvalidToken, InvalidSignature
 from .helpers.theme_helper import ThemeHelper
 from .helpers.clipboard_helper import ClipboardHelper
 from .helpers.update_helper import UpdateHelper
-from .helpers.file_helper import res_path, size_f, read_file, save_file
+from .helpers.file_helper import res_path, size_f, save_file
 
 # Lexemes
 from .lexemes.lexemes import Lexemes
@@ -76,11 +76,11 @@ from PySide6.QtCore import QRegularExpression, QItemSelectionModel, QFileSystemW
 from PySide6.QtGui import QGuiApplication, QIcon, QAction, QColor, QPalette, QShortcut, QFont, QKeySequence
 from PySide6.QtGui import QTextDocument, QTextCursor, QTextBlock, QDesktopServices, QPixmap, QPixmapCache
 from PySide6.QtWidgets import QWidget, QMainWindow, QVBoxLayout, QSplitter, QListView, QTextBrowser
-from PySide6.QtWidgets import QPlainTextEdit, QToolButton, QSizePolicy, QStatusBar, QCheckBox, QToolBar
-from PySide6.QtWidgets import QLabel, QLineEdit, QPushButton, QMenu, QDialog, QMessageBox, QStyle
+from PySide6.QtWidgets import QPlainTextEdit, QSizePolicy
+from PySide6.QtWidgets import QLineEdit, QMenu, QDialog, QMessageBox, QStyle
 from PySide6.QtWidgets import QAbstractItemView, QFileSystemModel, QFileDialog
 
-from qasync import asyncSlot, asyncClose
+from qasync import asyncClose
 import asyncio
 
 # Markdown library
@@ -94,9 +94,13 @@ from .etree_extension import ElementTreeExtension
 import emoji
 
 import os
-from typing import Union, Optional, Callable, List, Dict, Any
+from typing import TYPE_CHECKING, Union, Optional, Callable, List, Dict, Any
 
 import logging
+
+if TYPE_CHECKING:
+    from PySide6.QtGui import QScreen  # noqa: F401
+    from PySide6.QtWidgets import QStatusBar, QToolBar  # noqa: F401
 
 
 class NotologEditor(QMainWindow):
@@ -144,7 +148,7 @@ class NotologEditor(QMainWindow):
         'markdown.extensions.extra',  # Or 'extra'
     ]
 
-    def __init__(self, parent = None, **kwargs):
+    def __init__(self, parent=None, **kwargs):
         super(NotologEditor, self).__init__(parent=parent)
 
         self.logger = logging.getLogger('notolog')
@@ -163,7 +167,7 @@ class NotologEditor(QMainWindow):
         # Default language setup, change to settings value to modify it via UI
         self.lexemes = Lexemes(self.settings.app_language)
 
-        self.screen = None
+        self.screen = None  # type: Union[QScreen, None]
         if 'screen' in kwargs:
             self.screen = kwargs['screen']
 
@@ -403,7 +407,8 @@ class NotologEditor(QMainWindow):
             self.create_icons_toolbar(refresh=True)
             if hasattr(self.toolbar, 'search_input'):
                 # Search field placeholder to empty
-                self.toolbar.search_input.setPlaceholderText(self.lexemes.get('search_input_placeholder_text', scope='toolbar'))
+                self.toolbar.search_input.setPlaceholderText(
+                    self.lexemes.get('search_input_placeholder_text', scope='toolbar'))
             # Re-draw main menu
             self.draw_menu()
 
@@ -457,7 +462,7 @@ class NotologEditor(QMainWindow):
             # Set up connection again
             view_widget.anchorClicked.connect(self.open_link_dialog_proxy())
 
-    def editor_state_update_handler(self, data: dict) -> None:
+    def editor_state_update_handler(self, data: dict) -> None:  # noqa: C901 - consider simplifying this method
         """
         Perform actions belonging to the editor state changed, say mode toggle event.
         When switching between VIEW and EDIT mode some icons and texts may look differ, have different actions, etc.
@@ -484,7 +489,8 @@ class NotologEditor(QMainWindow):
                 encryption_symbol = encryption_symbol_encrypted if self.get_encryption() == Encryption.ENCRYPTED\
                     else encryption_symbol_unencrypted
                 encryption_status = self.lexemes.get('statusbar_encryption_label_encryption_%s'
-                                              % Encryption(self.get_encryption()).name.lower(), scope='statusbar')
+                                                     % Encryption(self.get_encryption()).name.lower(),
+                                                     scope='statusbar')
                 encryption_label_text = self.lexemes.get('statusbar_encryption_label', scope='statusbar',
                                                          encryption=encryption_status, icon=encryption_symbol)
                 self.statusbar['encryption_label'].setText(encryption_label_text)
@@ -1059,7 +1065,7 @@ class NotologEditor(QMainWindow):
 
         global_pos = tree_view.mapToGlobal(pos)
         tree_index = tree_view.indexAt(pos)
-        tree_index_row = tree_view.indexAt(pos).row()
+        # tree_index_row = tree_view.indexAt(pos).row()
         # self.tree_view.currentIndex()
 
         # QSortFilterProxyModel self.tree_proxy_model | tree_view.model()
@@ -1072,24 +1078,28 @@ class NotologEditor(QMainWindow):
 
         menu = QMenu(self)
         menu.setFont(self.font())
-        rename_icon = self.theme_helper.get_icon(theme_icon='cursor-text.svg', system_icon='document-properties',
+        rename_icon = self.theme_helper.get_icon(
+            theme_icon='cursor-text.svg', system_icon='document-properties',
             color=QColor(self.theme_helper.get_color('main_tree_context_menu_rename')))
         menu.addAction(rename_icon, self.lexemes.get('menu_action_rename'),
                        lambda: self.rename_file_dialog(file_path))
         if self.is_file_safely_deleted(file_path):
             # Restore deleted file context action
-            restore_icon = self.theme_helper.get_icon(theme_icon='box-arrow-up.svg', system_icon='edit-undo',
+            restore_icon = self.theme_helper.get_icon(
+                theme_icon='box-arrow-up.svg', system_icon='edit-undo',
                 color=QColor(self.theme_helper.get_color('main_tree_context_menu_restore')))
             menu.addAction(restore_icon, self.lexemes.get('menu_action_restore'),
                            lambda: self.restore_file_dialog(file_path))
             # Delete completely file context action
-            delete_icon = self.theme_helper.get_icon(theme_icon='x-square-fill.svg', system_icon='edit-delete',
+            delete_icon = self.theme_helper.get_icon(
+                theme_icon='x-square-fill.svg', system_icon='edit-delete',
                 color=QColor(self.theme_helper.get_color('main_tree_context_menu_delete_completely')))
             menu.addAction(delete_icon, self.lexemes.get('menu_action_delete_completely'),
                            lambda: self.delete_completely_file_dialog(file_path))
         else:
             # Delete file context action
-            delete_icon = self.theme_helper.get_icon(theme_icon='x-square.svg', system_icon='edit-delete',
+            delete_icon = self.theme_helper.get_icon(
+                theme_icon='x-square.svg', system_icon='edit-delete',
                 color=QColor(self.theme_helper.get_color('main_tree_context_menu_delete')))
             menu.addAction(delete_icon, self.lexemes.get('menu_action_delete'),
                            lambda: self.delete_file_dialog(file_path))
@@ -1711,13 +1721,26 @@ class NotologEditor(QMainWindow):
         if self.logging:
             self.logger.info('Stopping events loop, closing the app... Sayonara!')
 
-        # Cancel all re-highlight tasks if they are exist
-        if hasattr(self, 'async_highlighter') and self.async_highlighter:
-            await self.async_highlighter.cancel_tasks()
-
-        # Cancel all resource downloading tasks if they are exist
-        if hasattr(self, 'resource_downloader') and self.resource_downloader:
-            await self.resource_downloader.cancel_tasks()
+        async def cleanup_tasks():
+            if not asyncio.get_event_loop().is_running():
+                return
+            tasks = asyncio.all_tasks()
+            tasks_total = len(tasks)
+            # Cancel and clean up all pending asyncio tasks
+            for i, task in enumerate(tasks):
+                # Or: not task.done()
+                if (task is not asyncio.current_task()
+                        # But not the final task set at main
+                        and not (hasattr(task, 'get_coro') and task.get_coro().__qualname__ == 'Event.wait')):
+                    task_res = task.cancel()
+                    try:
+                        await task
+                    except asyncio.CancelledError:
+                        print(f'[{i + 1}/{tasks_total}] Pending task {task.get_name()} '
+                              f'was cancelled with result "{task_res}"')
+                        pass
+        # Await tasks to complete
+        await cleanup_tasks()
 
         if self.get_mode() == Mode.EDIT:
             # Save any unsaved changes
@@ -1977,12 +2000,12 @@ class NotologEditor(QMainWindow):
                  'system_icon': 'media-floppy', 'theme_icon': 'floppy2-fill.svg',
                  'label': self.lexemes.get('actions_file_label_save', scope='main_menu'),
                  'accessible_name': self.lexemes.get('actions_file_accessible_name_save', scope='main_menu'),
-                 'action': self.action_save_file,},
+                 'action': self.action_save_file},
                 {'type': 'action', 'name': 'actions_file_label_save_as',
                  'system_icon': 'media-floppy', 'theme_icon': 'floppy2.svg',
                  'label': self.lexemes.get('actions_file_label_save_as', scope='main_menu'),
                  'accessible_name': self.lexemes.get('actions_file_accessible_name_save_as', scope='main_menu'),
-                 'action': self.action_save_as_file,},
+                 'action': self.action_save_as_file},
                 {'type': 'delimiter'},
                 {'type': 'action', 'name': 'actions_file_label_exit',
                  'system_icon': 'application-exit', 'theme_icon': 'power.svg',
@@ -2885,10 +2908,10 @@ class NotologEditor(QMainWindow):
         self.common_dialog(
             self.lexemes.get('dialog_open_link_title'),
             self.lexemes.get(name='dialog_open_link_text', url=url),
-                # Open url with system browser
-                callback=lambda dialog_callback:
-                # Open link in a system browser and run dialog's callback
-                (QDesktopServices.openUrl(url), dialog_callback()))
+            # Open url with system browser
+            callback=lambda dialog_callback:
+            # Open link in a system browser and run dialog's callback
+            (QDesktopServices.openUrl(url), dialog_callback()))
 
     def action_about(self) -> None:
         """
@@ -2982,7 +3005,7 @@ class NotologEditor(QMainWindow):
         # Set cursor back
         self.setCursor(Qt.CursorShape.ArrowCursor)
 
-    def load_file(self, file_path: str) -> bool:
+    def load_file(self, file_path: str) -> bool:  # noqa: C901 - consider simplifying this method
         """
         Helper: Load content of the file.
         """
@@ -3220,7 +3243,7 @@ class NotologEditor(QMainWindow):
 
         return save_file(file_path, content)
 
-    def save_active_file(self, clear_after: bool = False, allow_save_empty_content: bool = None) -> None:
+    def save_active_file(self, clear_after: bool = False, allow_save_empty_content: bool = None) -> None:  # noqa: C901
         """
         Helper: Save currently opened file.
         @param clear_after: bool, clear edit field after saving (when applicable, say switching view mode)
@@ -3252,87 +3275,86 @@ class NotologEditor(QMainWindow):
                 self.logger.warning(f"Cannot save active file '{current_file_path}', check if it was moved or deleted")
             return
 
-        with open(current_file_path, 'r', encoding='utf-8') as file:
-            # Edit widget
-            edit_widget = self.get_edit_widget()  # type: Union[EditWidget, QPlainTextEdit]
-            file_content = edit_widget.toPlainText()
+        # Edit widget
+        edit_widget = self.get_edit_widget()  # type: Union[EditWidget, QPlainTextEdit]
+        file_content = edit_widget.toPlainText()
 
-            # If new content is empty ask confirmation to be sure
-            if (not file_content
-                    # Previous content not the same as a current one
-                    and self.content != file_content
-                    # Allow empty content dialog not answered
-                    and (self.estate.allow_save_empty is None)):
-                # Set this globally to avoid a lot of annoying dialogs
-                self.estate.allow_save_empty = False
-                # Dialog with a callback back to the file and closing dialog sub-callback
-                self.common_dialog(
-                    self.lexemes.get('dialog_save_empty_file_title'),
-                    self.lexemes.get('dialog_save_empty_file_text'),
-                    callback=lambda dialog_callback:
-                        (self.save_active_file(clear_after=clear_after, allow_save_empty_content=True),
-                         # Close dialog sub-callback
-                         dialog_callback()))
+        # If new content is empty ask confirmation to be sure
+        if (not file_content
+                # Previous content not the same as a current one
+                and self.content != file_content
+                # Allow empty content dialog not answered
+                and (self.estate.allow_save_empty is None)):
+            # Set this globally to avoid a lot of annoying dialogs
+            self.estate.allow_save_empty = False
+            # Dialog with a callback back to the file and closing dialog sub-callback
+            self.common_dialog(
+                self.lexemes.get('dialog_save_empty_file_title'),
+                self.lexemes.get('dialog_save_empty_file_text'),
+                callback=lambda dialog_callback:
+                    (self.save_active_file(clear_after=clear_after, allow_save_empty_content=True),
+                     # Close dialog sub-callback
+                     dialog_callback()))
 
-            # Save if any changes
-            if (file_content or self.estate.allow_save_empty) and self.content != file_content:
-                # Show saving progress in the status bar
+        # Save if any changes
+        if (file_content or self.estate.allow_save_empty) and self.content != file_content:
+            # Show saving progress in the status bar
+            if hasattr(self, 'statusbar'):
+                self.statusbar['save_progress_label'].setVisible(True)
+            # Grayscale save button(s) at the toolbar
+            if hasattr(self.toolbar, 'toolbar_save_button'):
+                self.toolbar.toolbar_save_button.setDisabled(True)
+
+            def restore_saving_ui_state() -> None:
                 if hasattr(self, 'statusbar'):
-                    self.statusbar['save_progress_label'].setVisible(True)
-                # Grayscale save button(s) at the toolbar
-                if hasattr(self.toolbar, 'toolbar_save_button'):
-                    self.toolbar.toolbar_save_button.setDisabled(True)
+                    self.statusbar['save_progress_label'].setVisible(False)
+                # Keep it switched off to explicitly show the nothing to save state
+                # self.toolbar.toolbar_save_button.setEnabled(True)
+            # Restore saving UI state automatically.
+            QTimer.singleShot(1500, restore_saving_ui_state)
 
-                def restore_saving_ui_state() -> None:
-                    if hasattr(self, 'statusbar'):
-                        self.statusbar['save_progress_label'].setVisible(False)
-                    # Keep it switched off to explicitly show the nothing to save state
-                    # self.toolbar.toolbar_save_button.setEnabled(True)
-                # Restore saving UI state automatically.
-                QTimer.singleShot(1500, restore_saving_ui_state)
+            if self.header is None or not self.header.is_valid():
+                # Get empty file header here, it's needed for compatibility and will not be applied to the file
+                header = FileHeader()
+                if self.logging:
+                    self.logger.info('File "%s" has no header info' % current_file_path)
+            else:
+                header = self.header
 
-                if self.header is None or not self.header.is_valid():
-                    # Get empty file header here, it's needed for compatibility and will not be applied to the file
-                    header = FileHeader()
+            # Update the header with a new date
+            header.refresh()
+
+            # To keep initial content unencrypted
+            content = file_content
+            if self.get_encryption() == Encryption.ENCRYPTED:
+                # Check file header contains salt and the other params. May update migration params.
+                # Only if the file is encrypted!
+                try:
+                    header.validate_enc()
+                except Exception as e:
                     if self.logging:
-                        self.logger.info('File "%s" has no header info' % current_file_path)
-                else:
-                    header = self.header
+                        self.logger.error('File header cannot be validated "%s"' % e)
+                # Get file specific salt
+                file_salt = header.get_enc_param('slt')
+                file_iterations = int(header.get_enc_param('itr'))
 
-                # Update the header with a new date
-                header.refresh()
+                # Encrypt
+                encrypted_content_b = self.get_encrypt_helper(
+                    salt=file_salt, iterations=file_iterations).encrypt_data(content.encode("utf-8"))
+                if encrypted_content_b:
+                    content = encrypted_content_b.decode("utf-8")
 
-                # To keep initial content unencrypted
-                content = file_content
-                if self.get_encryption() == Encryption.ENCRYPTED:
-                    # Check file header contains salt and the other params. May update migration params.
-                    # Only if the file is encrypted!
-                    try:
-                        header.validate_enc()
-                    except Exception as e:
-                        if self.logging:
-                            self.logger.error('File header cannot be validated "%s"' % e)
-                    # Get file specific salt
-                    file_salt = header.get_enc_param('slt')
-                    file_iterations = int(header.get_enc_param('itr'))
+            content = header.pack(content)
+            save_result = self.save_file_content(current_file_path, content)
 
-                    # Encrypt
-                    encrypted_content_b = self.get_encrypt_helper(
-                        salt=file_salt, iterations=file_iterations).encrypt_data(content.encode("utf-8"))
-                    if encrypted_content_b:
-                        content = encrypted_content_b.decode("utf-8")
-
-                content = header.pack(content)
-                save_result = self.save_file_content(current_file_path, content)
-
-                if save_result:
-                    self.header = header
-                    self.content = file_content
-                    # Clear field's data
-                    if clear_after:
-                        edit_widget.clear()
-                else:
-                    self.message_box(self.lexemes.get('save_active_file_error_occurred'), icon_type=2)
+            if save_result:
+                self.header = header
+                self.content = file_content
+                # Clear field's data
+                if clear_after:
+                    edit_widget.clear()
+            else:
+                self.message_box(self.lexemes.get('save_active_file_error_occurred'), icon_type=2)
 
             # Grayscale save button at the toolbar
             if hasattr(self.toolbar, 'toolbar_save_button'):

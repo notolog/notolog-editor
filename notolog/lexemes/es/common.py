@@ -53,16 +53,18 @@ lexemes = {
     "dialog_encrypt_new_password_label": "Contraseña:",
     "dialog_encrypt_new_password_input_placeholder_text": "Introduzca la nueva contraseña",
     "dialog_encrypt_new_password_hint_label": "Pista:",
-    "dialog_encrypt_new_password_hint_label_description": "¡La pista no está cifrada y puede ser leída desde el archivo! "
-                                                          "\nEvite pistas obvias que se puedan adivinar fácilmente, como fechas de nacimiento. "
-                                                          "\nIntente utilizar una referencia que no se asocie fácilmente con usted.",
+    "dialog_encrypt_new_password_hint_label_description":
+        "¡La pista no está cifrada y puede ser leída desde el archivo! "
+        "\nEvite pistas obvias que se puedan adivinar fácilmente, como fechas de nacimiento. "
+        "\nIntente utilizar una referencia que no se asocie fácilmente con usted.",
     "dialog_encrypt_new_password_hint_input_placeholder_text": "Introduzca una pista (opcional)",
     "dialog_encrypt_new_password_button_ok": "Aceptar",
     "dialog_encrypt_new_password_button_cancel": "Cancelar",
     "dialog_encrypt_new_password_warning_empty_title": "Advertencia",
     "dialog_encrypt_new_password_warning_empty_text": "¡El campo de contraseña no puede estar vacío!",
     "dialog_encrypt_new_password_warning_too_long_title": "Advertencia",
-    "dialog_encrypt_new_password_warning_too_long_text": "El campo de la pista es demasiado largo, ¡máximo de {symbols} caracteres!",
+    "dialog_encrypt_new_password_warning_too_long_text":
+        "El campo de la pista es demasiado largo, ¡máximo de {symbols} caracteres!",
 
     "dialog_encrypt_password_title": "Introducir Contraseña",
     "dialog_encrypt_password_label": "Contraseña:",

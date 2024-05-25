@@ -1,4 +1,4 @@
-# tests/ui/test_qt_ui.py
+# tests/ui_tests/test_qt_ui.py
 
 from PySide6.QtCore import Qt
 from PySide6.QtTest import QTest
@@ -7,7 +7,7 @@ from notolog.notolog_editor import NotologEditor
 from notolog.settings import Settings
 from notolog.enums.languages import Languages
 
-from . import test_app
+from . import test_app  # noqa: F401
 
 import pytest
 
@@ -21,7 +21,7 @@ class TestQtUi:
         yield settings
 
     @pytest.fixture
-    def main_window(self, mocker, test_app):
+    def main_window(self, mocker, test_app):  # noqa: F811 redefinition of unused 'test_app'
         # Force to override system language as a default
         mocker.patch.object(Languages, 'default', return_value='la')
 

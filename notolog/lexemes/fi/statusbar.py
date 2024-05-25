@@ -23,4 +23,3 @@ lexemes = {
     "statusbar_cursor_label_with_global": "rivi: {line} → sar: {column} → pos: {position}",
     "statusbar_cursor_label_selected_with_global": "rivi: {line} → sar: {column} → pos: {position} → val: {selected}",
 }
-

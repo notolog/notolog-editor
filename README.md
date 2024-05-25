@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-05-19 23:29:34.439703"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-05-25 16:38:26.173086"}} -->
 # Notolog
 
 ![Notolog - Python Markdown Editor](https://raw.githubusercontent.com/notolog/notolog-editor/main/notolog/assets/notolog-example-image.png)
@@ -80,6 +80,7 @@ Here's an example of what it looks like in the actual UI, featuring the lovely S
 
 ![Notolog UI translation example](https://raw.githubusercontent.com/notolog/notolog-editor/main/docs/notolog-ui-settings-strawberry-ja.png)
 
+
 ## Prerequisites
 
 **Python 3.9 or higher installed on your system.**
@@ -127,17 +128,39 @@ pip install -r requirements.txt
 
 That's it! Starting the app is as simple as `python -m notolog.main` form the project's root directory.
 
-<details>
-<summary>Run tests</summary>
+### Tests and Test Coverage
 
-To run all available tests:
+To minimize installation overhead and streamline dependency management, dependencies required solely for testing are isolated in `test_requirements.txt`. This separation helps manage test dependencies independently from the main application dependencies.
+
+```sh
+pip install -r test_requirements.txt
+```
+
+<details>
+<summary>Run Tests</summary>
+
+To execute all available tests:
 ```sh
 pytest
 ```
 
-To run a particular file's tests:
+To run tests from a specific file:
 ```sh
-pytest tests/test_notolog_editor.py
+pytest tests/test_pkg_integration.py
+```
+</details>
+
+<details>
+<summary>Run Tests with Coverage Reports</summary>
+
+To run all tests with a coverage report:
+```sh
+pytest tests/ --cov=notolog --cov-report=term
+```
+
+Alternatively, to exclude UI tests from execution:
+```sh
+pytest tests/ --cov=notolog --cov-report=term --ignore=tests/ui_tests/
 ```
 </details>
 
@@ -209,62 +232,59 @@ _Mind the environment name (**notolog** or any other selected before)._
 
 If you encounter any issues or would like to contribute to the project, please don't hesitate to [open an issue](https://github.com/notolog/notolog-editor/issues) or submit a [pull request](https://github.com/notolog/notolog-editor/pulls) on the project's [GitHub page](https://github.com/notolog/notolog-editor).
 
+
 ## License
 
 The Notolog project is licensed under the MIT License - see the [LICENSE](https://github.com/notolog/notolog-editor/blob/main/LICENSE) file for details.
+
 
 ## Third-Party Components
 
 ### Libraries and Licenses
 
-This project utilizes numerous third-party libraries, each with its own licensing terms. Below is a detailed list of these libraries grouped by license type to help clarify what each license permits and requires. This categorization aids in ensuring compliance with legal terms for use, modification, and distribution of these software components.
+This project incorporates numerous third-party libraries, each subject to its own licensing terms. Below is a detailed list of these libraries, categorized by license type to facilitate understanding of what each license permits and requires. This organization helps ensure compliance with legal terms for the use, modification, and distribution of these components.
 
 #### GNU LGPLv3, GNU GPLv2, or Commercial License
 
-- **Qt (open-source)**: Framework for graphical user interfaces and more. [Project Details](https://www.qt.io), [Qt Licensing](https://www.qt.io/licensing)
-- **PySide6**: GUI creation with Qt6 in Python. [Project and License Details](https://pyside.org/), [PyPI](https://pypi.org/project/PySide6/)
-- **PySide6_Addons**: Additional modules for PySide6. [Project and License Details](https://pyside.org/), [PyPI](https://pypi.org/project/PySide6-Addons/)
+- **Qt (open-source)**: A framework for graphical user interfaces and more. [Project Details](https://www.qt.io), [Qt Licensing](https://www.qt.io/licensing)
+- **PySide6**: Enables GUI creation with Qt6 in Python. [Project and License Details](https://pyside.org/), [PyPI](https://pypi.org/project/PySide6/)
+- **PySide6_Addons**: Provides additional modules for PySide6. [Project and License Details](https://pyside.org/), [PyPI](https://pypi.org/project/PySide6-Addons/)
 - **PySide6_Essentials**: Core libraries for PySide6. [Project and License Details](https://pyside.org/), [PyPI](https://pypi.org/project/PySide6-Essentials/)
-- **shiboken6**: Binding generator for Qt framework. [Project and License Details](https://pyside.org/), [PyPI](https://pypi.org/project/shiboken6/)
+- **shiboken6**: Binding generator for the Qt framework. [Project and License Details](https://pyside.org/), [PyPI](https://pypi.org/project/shiboken6/)
 
 #### MIT License
 
 - **Bootstrap Icons**: Icons for UI elements. [Project Details](https://icons.getbootstrap.com/), [License Details](https://github.com/twbs/icons/blob/main/LICENSE)
-- **pytest**: Used for unit testing. It provides powerful features like fixtures, assertions, and test parameterization to facilitate writing and running Python tests. [Project Details](https://pytest.org/), [License Details](https://docs.pytest.org/en/8.0.x/license.html)
-- **pytest-mock**: Enhances pytest for unit tests by offering a simple interface to powerful mocking functionalities. [License Details](https://github.com/pytest-dev/pytest-mock/blob/main/LICENSE), [PyPI](https://pypi.org/project/pytest-mock/)
-- **cffi**: Used for interfacing with C code. [License Details](https://github.com/python-cffi/cffi/blob/main/LICENSE), [PyPI](https://pypi.org/project/cffi/)
-- **iniconfig**: For parsing and working with INI configuration files. [License Details](https://github.com/pytest-dev/iniconfig/blob/main/LICENSE), [PyPI](https://pypi.org/project/iniconfig/)
-- **tomli**: A Python library used for parsing TOML configuration files effortlessly. [License Details](https://github.com/hukkin/tomli/blob/master/LICENSE), [PyPI](https://pypi.org/project/tomli/)
-- **tomli_w**: A Python library used for writing TOML configuration files effortlessly. [License Details](https://github.com/hukkin/tomli-w/blob/master/LICENSE), [PyPI](https://pypi.org/project/tomli-w/)
-- **pluggy**: For creating and managing plugin systems in Python applications. [License Details](https://github.com/pytest-dev/pluggy/blob/main/LICENSE), [PyPI](https://pypi.org/project/pluggy/)
+- **cffi**: For interfacing with C code. [License Details](https://github.com/python-cffi/cffi/blob/main/LICENSE), [PyPI](https://pypi.org/project/cffi/)
+- **iniconfig**: For parsing and managing INI configuration files. [License Details](https://github.com/pytest-dev/iniconfig/blob/main/LICENSE), [PyPI](https://pypi.org/project/iniconfig/)
+- **tomli**: Effortlessly parses TOML configuration files. [License Details](https://github.com/hukkin/tomli/blob/master/LICENSE), [PyPI](https://pypi.org/project/tomli/)
+- **tomli_w**: For writing TOML configuration files effortlessly. [License Details](https://github.com/hukkin/tomli-w/blob/master/LICENSE), [PyPI](https://pypi.org/project/tomli-w/)
+- **pluggy**: Facilitates the creation and management of plugin systems. [License Details](https://github.com/pytest-dev/pluggy/blob/main/LICENSE), [PyPI](https://pypi.org/project/pluggy/)
 
 #### BSD Licenses
 
-- **Python-Markdown**: Markdown to HTML conversion. [Project Details](https://python-markdown.github.io/), [BSD 3-Clause License](https://github.com/Python-Markdown/markdown/blob/master/LICENSE.md)
-- **Emoji library**: Converts emoji text-code to emojis. [New BSD License](https://github.com/carpedm20/emoji/blob/master/LICENSE.txt), [PyPI](https://pypi.org/project/emoji/)
-- **qasync**: Async support for Python. [BSD 2-Clause "Simplified" License](https://github.com/CabbageDevelopment/qasync/blob/master/LICENSE), [PyPI](https://pypi.org/project/qasync/)
-- **Pygments**: Syntax highlighting for programming languages. [Project Details](https://pygments.org/), [BSD 2-Clause "Simplified" License](https://github.com/pygments/pygments/blob/master/LICENSE)
-- **click**: Used for creating command-line interfaces. [Project Details](https://palletsprojects.com/p/click/), [BSD-3-Clause License](https://click.palletsprojects.com/en/8.1.x/license/)
-- **pycparser**: C code parser and for generating Abstract Syntax Trees (AST) in Python. [BSD 3-Clause License](https://github.com/eliben/pycparser/blob/main/LICENSE), [PyPI](https://pypi.org/project/pycparser/)
-
-#### Apache License 2.0
-
-- **pytest-asyncio**: A library that provides support for testing asyncio code with pytest. [License Details](https://github.com/pytest-dev/pytest-asyncio/blob/main/LICENSE) , [PyPI](https://pypi.org/project/pytest-asyncio/)
+- **Python-Markdown**: Converts Markdown to HTML. [Project Details](https://python-markdown.github.io/), [BSD 3-Clause License](https://github.com/Python-Markdown/markdown/blob/master/LICENSE.md)
+- **Emoji library**: Converts emoji text-codes to emojis. [New BSD License](https://github.com/carpedm20/emoji/blob/master/LICENSE.txt), [PyPI](https://pypi.org/project/emoji/)
+- **qasync**: Adds async support to Python. [BSD 2-Clause "Simplified" License](https://github.com/CabbageDevelopment/qasync/blob/master/LICENSE), [PyPI](https://pypi.org/project/qasync/)
+- **Pygments**: Provides syntax highlighting for programming languages. [Project Details](https://pygments.org/), [BSD 2-Clause "Simplified" License](https://github.com/pygments/pygments/blob/master/LICENSE)
+- **click**: Creates command-line interfaces. [Project Details](https://palletsprojects.com/p/click/), [BSD-3-Clause License](https://click.palletsprojects.com/en/8.1.x/license/)
+- **pycparser**: A C code parser; generates Abstract Syntax Trees in Python. [BSD 3-Clause License](https://github.com/eliben/pycparser/blob/main/LICENSE), [PyPI](https://pypi.org/project/pycparser/)
 
 #### Other Dual Licensed
 
 - **cryptography**: Provides cryptographic functions and primitives. [Apache License 2.0](https://github.com/pyca/cryptography/blob/main/LICENSE.APACHE) and [BSD 3-Clause License](https://github.com/pyca/cryptography/blob/main/LICENSE.BSD), [PyPI](https://pypi.org/project/cryptography/)
-- **packaging**: Python package metadata and distribution utilities. [Apache License 2.0](https://github.com/pypa/packaging/blob/main/LICENSE.APACHE) and [BSD 2-Clause "Simplified" License](https://github.com/pypa/packaging/blob/main/LICENSE.BSD), [PyPI](https://pypi.org/project/packaging/)
+- **packaging**: Handles metadata and distribution for Python packages. [Apache License 2.0](https://github.com/pypa/packaging/blob/main/LICENSE.APACHE) and [BSD 2-Clause "Simplified" License](https://github.com/pypa/packaging/blob/main/LICENSE.BSD), [PyPI](https://pypi.org/project/packaging/)
 
-#### Python Standard Library
-
-- **asyncio**: Part of the Python standard library, licensed under the [Python Software Foundation License](https://docs.python.org/3/license.html#psf-license).
+#### Python Software Foundation License
+- **typing_extensions**: Enhances support for type hints on older versions of Python. Licensed under the [Python Software Foundation License](https://github.com/python/typing_extensions/blob/main/LICENSE), [PyPI](https://pypi.org/project/typing-extensions/).
+- **Standard Python Libraries**: Includes commonly used libraries such as `asyncio` and `unittest`. All are part of the Python standard library and are licensed under the [Python Software Foundation License](https://docs.python.org/3/license.html#psf-license). This includes any other standard libraries not explicitly mentioned but used in the project.
 
 #### The Unlicense
 
-- **Codehilite CSS Themes**: Base themes for code highlighting. [The Unlicense](https://github.com/richleland/pygments-css/blob/master/UNLICENSE.txt)
+- **Codehilite CSS Themes**: Basic themes for code highlighting. [The Unlicense](https://github.com/richleland/pygments-css/blob/master/UNLICENSE.txt)
 
 Please note that while the majority of this project is licensed under the MIT License, certain components may have different licensing terms. Always refer to the documentation of each library for detailed information about its license and terms of use.
+
 
 ### APIs
 
@@ -280,35 +300,44 @@ Please note that while the majority of this project is licensed under the MIT Li
 
 *This section was generated with the assistance of AI to ensure accurate and concise information regarding the use of the OpenAI API.*
 
+
 ## Security Disclaimer
 
 This application is designed for educational purposes and offers security features through optional file encryption and protected application settings.
 
 ### Optional File Encryption
 
-* **Encryption Details:** The application uses PBKDF2HMAC for key derivation and Fernet for encryption, utilizing AES-128 in CBC mode. Although the key material generated is 256 bits, only the first 128 bits (16 bytes) are used for encryption.
-* **File Headers:** The encryption salt and iteration counts are stored unencrypted in the file's header. This approach is primarily intended for non-critical applications where data exposure has limited risk.
-* **Strong Passwords:** Users are encouraged to use strong passwords to enhance the protection of their encrypted data.
+- **Encryption Details**: The application uses PBKDF2HMAC for key derivation and Fernet for encryption, utilizing AES-128 in CBC mode. Although the key material generated is 256 bits, only the first 128 bits (16 bytes) are used for encryption.
+- **File Headers**: The encryption salt and iteration counts are stored unencrypted in the file's header. This approach is primarily intended for non-critical applications where data exposure has limited risk.
+- **Strong Passwords**: Users are encouraged to use strong passwords to enhance the protection of their encrypted data.
 
 ### Protected Application Settings
 
-* **Settings Encryption:** The application may encrypt sensitive data like API keys because these Qt app settings might otherwise be stored as open data. However, the encryption key used is stored on the PC and can be accessed by anyone with physical or user-level access to the computer. This could expose sensitive data to potential unauthorized access.
+- **Settings Encryption**: The application may encrypt sensitive data like API keys because these Qt app settings might otherwise be stored as open data. However, the encryption key used is stored on the PC and can be accessed by anyone with physical or user-level access to the computer. This could expose sensitive data to potential unauthorized access.
 
 ### General Information
 
-* **Open Source:** This application is open-source and distributed under the MIT License. Users must comply with applicable laws and regulations when using this software.
-* **Liability:** The developers disclaim any liability for misuse or legal non-compliance related to the use of this software.
+- **Open Source**: This application is open-source and distributed under the MIT License. Users must comply with applicable laws and regulations when using this software.
+- **Liability**: The developers disclaim any liability for misuse or legal non-compliance related to the use of this software.
 
 
-## Code Quality and Test Coverage
+## Development and Testing Tools
 
 To maintain high standards of code quality and ensure comprehensive test coverage, we use several tools:
 
-- **Flake8**: A tool that enforces coding style and checks the quality of Python code by combining PyFlakes, pycodestyle, and McCabe's complexity checker. [MIT License](https://github.com/PyCQA/flake8/blob/main/LICENSE)
-- **coverage**: Measures the effectiveness of tests by showing which parts of your code are being executed and which are not. [Apache License 2.0](https://github.com/nedbat/coveragepy/blob/master/LICENSE.txt)
-- **pytest-cov**: A pytest plugin that provides test coverage reports, extending pytest to measure code coverage alongside running tests. [MIT License](https://github.com/pytest-dev/pytest-cov/blob/master/LICENSE)
+- **coverage**: Measures the code coverage of our tests, helping to ensure that all parts of the application are properly tested. [License](https://github.com/nedbat/coveragepy/blob/master/LICENSE.txt), [PyPI](https://pypi.org/project/coverage/).
+- **flake8**: A tool that enforces coding style and checks the quality of Python code by combining PyFlakes, pycodestyle, and McCabe's complexity checker. [MIT License](https://github.com/PyCQA/flake8/blob/main/LICENSE), [PyPI](https://pypi.org/project/flake8/).
+  - **mccabe**: Analyzes code complexity, which can help in identifying overly complex code that may need simplification. [License](https://github.com/PyCQA/mccabe/blob/master/LICENSE), [PyPI](https://pypi.org/project/mccabe/).
+  - **pycodestyle**: A tool to check Python code against coding style conventions in PEP 8. [License](https://github.com/PyCQA/pycodestyle/blob/main/LICENSE), [PyPI](https://pypi.org/project/pycodestyle/).
+  - **pyflakes**: Analyzes Python programs and detects various errors like undefined names. [License](https://github.com/PyCQA/pyflakes/blob/main/LICENSE), [PyPI](https://pypi.org/project/pyflakes/).
+- **pytest**: Provides a powerful framework for writing and running Python tests, including support for complex test setups. [License](https://docs.pytest.org/en/8.0.x/license.html), [PyPI](https://pypi.org/project/pytest/).
+- **pytest-asyncio**: Enables testing of asyncio Python code with pytest, making it easier to test asynchronous functions and classes. [License](https://github.com/pytest-dev/pytest-asyncio/blob/main/LICENSE), [PyPI](https://pypi.org/project/pytest-asyncio/).
+- **pytest-cov**: A pytest plugin that produces test coverage reports, showing how well the tests cover the code. [License](https://github.com/pytest-dev/pytest-cov/blob/master/LICENSE), [PyPI](https://pypi.org/project/pytest-cov/).
+- **pytest-mock**: Enhances pytest with mock functionality for unit tests, providing a simpler interface to powerful mocking tools. [License](https://github.com/pytest-dev/pytest-mock/blob/main/LICENSE), [PyPI](https://pypi.org/project/pytest-mock/).
 
-These tools help us maintain a clean and reliable codebase by catching potential issues early and documenting where our tests might be lacking.
+### Additional Notes
+
+These tools are essential for maintaining high standards of code quality and ensuring that all functionality is robustly tested. For each package, the versions listed within the `test_requirements.txt` are those currently in use; updates may be applied as newer versions are released.
 
 ---
 _This README.md file has been carefully crafted and edited using the Notolog editor itself._

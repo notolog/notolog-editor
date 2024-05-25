@@ -59,5 +59,6 @@ lexemes = {
     "ai_config_base_system_prompt_edit_accessible_description":
         "Base system prompt that precedes each request. This is plain text.",
     "ai_config_base_response_max_tokens_label": "Maximum Response Tokens",
-    "ai_config_base_response_max_tokens_input_accessible_description": "Maximum number of tokens to receive in response",
+    "ai_config_base_response_max_tokens_input_accessible_description":
+        "Maximum number of tokens to receive in response",
 }

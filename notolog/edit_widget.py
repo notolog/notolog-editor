@@ -9,8 +9,8 @@ from .app_config import AppConfig
 import logging
 
 if TYPE_CHECKING:
-    from PySide6.QtGui import QTextBlockUserData  # noqa
-    from .text_block_data import TextBlockData  # noqa
+    from PySide6.QtGui import QTextBlockUserData  # noqa: F401
+    from .text_block_data import TextBlockData  # noqa: F401
 
 
 class EditWidget(QPlainTextEdit):
@@ -34,6 +34,11 @@ class EditWidget(QPlainTextEdit):
 
         self.logging = AppConfig().get_logging()
         self.debug = AppConfig().get_debug()
+
+        # Disable line wrapping
+        # self.setLineWrapMode(QPlainTextEdit.LineWrapMode.NoWrap)
+        # Disable word wrapping
+        # self.setWordWrapMode(QTextOption.WrapMode.NoWrap)
 
     def setDocument(self, document):
         # Override setDocument() to allow additional actions like emit the document set signal
@@ -84,11 +89,14 @@ class EditWidget(QPlainTextEdit):
             event (QKeyEvent): Event object
         """
         if event.key() == Qt.Key.Key_Backtab:
-            """
-            Shift + Tab action to shift the text block left either on a one tab or 4 spaces.
-            """
+            # Shift + Tab action to shift the text block left either on a one tab or 4 spaces.
             self.process_back_tab()
+        elif event.key() == Qt.Key.Key_Return and (event.modifiers() & Qt.KeyboardModifier.ShiftModifier):
+            # Process Shift + Enter combination to allow Enter-style behaviour
+            self.insertPlainText("\n")
+            event.accept()
         else:
+            # Default behavior for all other key events
             return QPlainTextEdit.keyPressEvent(self, event)
 
     def process_back_tab(self) -> None:

@@ -6,9 +6,12 @@ from .enums.languages import Languages
 from .enums.ai_model_names import AiModelNames
 from .helpers.settings_helper import SettingsHelper
 
-from typing import Any, Union
+from typing import TYPE_CHECKING, Any
 
 import logging
+
+if TYPE_CHECKING:
+    from typing import Union  # noqa: F401
 
 
 class Settings(QSettings):

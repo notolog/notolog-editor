@@ -1,4 +1,5 @@
 # tests/test_pkg_integration.py
+
 import pytest
 
 import emoji

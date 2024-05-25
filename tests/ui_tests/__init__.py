@@ -1,5 +1,7 @@
 from PySide6.QtWidgets import QApplication
 
+from notolog.app_config import AppConfig
+
 import os
 import sys
 import pytest
@@ -13,16 +15,8 @@ os.environ["QT_STYLE_OVERRIDE"] = "Fusion"
 
 @pytest.fixture
 def test_app():
-    # Main application; existed
-    app = QApplication.instance()
-    if app:
-        # Destroying the QCoreApplication singleton to avoid RuntimeError.
-        app.quit()
-        app.deleteLater()
-        app.processEvents()
-        del app
-
-    # Main application; new
+    # Main widgets application; new
+    # More info: https://doc.qt.io/qt-6/qcoreapplication.html#details
     app = QApplication.instance()
     if not app:
         # Consider: Fixture to initialize QCoreApplication for Non-GUI Tests
@@ -34,12 +28,11 @@ def test_app():
         app = QApplication(sys.argv)
 
         # To correctly set up app settings
-        app.setOrganizationName('Notolog')
-        app.setApplicationName('notolog_editor_tests')
+        app.setOrganizationName(AppConfig().get_settings_org_name())
+        app.setApplicationName(AppConfig().get_settings_app_name_qa())
 
     yield app
 
     # Cleanup
     app.quit()
-    app.deleteLater()
     app.processEvents()

@@ -1,8 +1,9 @@
 # tests/test_settings.py
 
 from notolog.settings import Settings
+from notolog.app_config import AppConfig
 
-from . import test_app
+from . import test_core_app  # noqa: F401
 
 import os
 import pytest
@@ -11,7 +12,8 @@ import pytest
 class TestSettings:
 
     @pytest.fixture(scope="function")
-    def test_obj_settings(self, test_app):
+    def test_obj_settings(self, test_core_app):  # noqa: F811 redefinition of unused 'test_app'
+        # The test_app fixture sets up the app environment explicitly.
         settings = Settings()
         settings.clear()
         yield settings
@@ -53,7 +55,7 @@ class TestSettings:
         # Linux: /home/runner/.config/Notolog/notolog_editor_tests.conf
         # macOS: '/Users/runner/Library/Preferences/com.notolog.notolog_editor_tests.plist'
         # Windows: '\\HKEY_CURRENT_USER\\Software\\Notolog\\notolog_editor_tests'
-        assert 'notolog_editor_tests' in settings.fileName()
+        assert AppConfig().get_settings_app_name_qa() in settings.fileName()
         assert test_obj_settings.fileName() == settings.fileName()
 
         # Reset to restore

@@ -4,13 +4,15 @@ from notolog.lexemes.lexemes import Lexemes
 
 from logging import Logger
 
-import pytest
 import os
+import pytest
+import pathlib
+import importlib.util
 
 
 class TestLexemes:
 
-    @pytest.fixture(scope="function", autouse=True)
+    @pytest.fixture(scope="function")
     def test_obj_lexemes(self, mocker, request):
         """
         Testing object fixture.
@@ -63,7 +65,7 @@ class TestLexemes:
         ],
         indirect=True
     )
-    def test_lexemes_init(self, test_obj_lexemes, test_exp_params_fixture):
+    def test_lexemes_init(self, test_obj_lexemes: Lexemes, test_exp_params_fixture):
         """
         Test and check initial params are exist in the testing object.
         """
@@ -87,7 +89,7 @@ class TestLexemes:
         ],
         indirect=True
     )
-    def test_lexemes_set_language(self, test_obj_lexemes, test_exp_params_fixture):
+    def test_lexemes_set_language(self, test_obj_lexemes: Lexemes, test_exp_params_fixture):
         """
         Test language setting for lexemes after the one was initialized.
         """
@@ -110,7 +112,7 @@ class TestLexemes:
         ],
         indirect=True
     )
-    def test_lexemes_get_lexemes_dir(self, mocker, test_obj_lexemes, test_exp_params_fixture):
+    def test_lexemes_get_lexemes_dir(self, mocker, test_obj_lexemes: Lexemes, test_exp_params_fixture):
         """
         Test lexemes target dir path.
         """
@@ -131,7 +133,7 @@ class TestLexemes:
         ],
         indirect=True
     )
-    def test_lexemes_load_lexemes(self, mocker, test_obj_lexemes, test_exp_params_fixture):
+    def test_lexemes_load_lexemes(self, test_obj_lexemes: Lexemes, test_exp_params_fixture):
         """
         Test actual lexemes loaded.
         """
@@ -153,10 +155,43 @@ class TestLexemes:
         ],
         indirect=True
     )
-    def test_lexemes_get(self, test_obj_lexemes, test_exp_params_fixture):
+    def test_lexemes_get(self, test_obj_lexemes: Lexemes, test_exp_params_fixture):
         """
         Test getter for correctly loaded and really existent lexemes.
         """
         param_scope, param_name, exp_result = test_exp_params_fixture
 
         assert test_obj_lexemes.get(param_name, param_scope) == exp_result
+
+    @staticmethod
+    def load_module_from_file(full_path_to_module, module_name):
+        spec = importlib.util.spec_from_file_location(module_name, full_path_to_module)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+    def test_translation_files(self):
+        # Define the root path for translation directories
+        translations_root = os.path.join(
+            pathlib.Path(os.path.dirname(__file__)).parent.resolve(), 'notolog', 'lexemes')
+
+        # Iterate over each language directory
+        for lang in os.listdir(translations_root):
+            lang_path = os.path.join(translations_root, lang)
+            if os.path.isdir(lang_path):
+                # Iterate over each module in the language directory
+                for file in os.listdir(lang_path):
+                    if file.endswith('.py'):
+                        # Load the module
+                        module_path = os.path.join(lang_path, file)
+                        module_name = f"{lang}.{file[:-3]}"  # Remove '.py' from filename, to get smth like 'toolbar'
+                        module = self.load_module_from_file(module_path, module_name)
+
+                        # You can now use 'module' to access the loaded module's attributes
+                        # and ensure they are covered by some form of assertion or operation.
+                        # For this example, let's just print out the module's dir(): print(dir(module))
+                        assert module_name == (f"{os.path.basename(lang_path)}."
+                                               f"{os.path.basename(file).replace('.py', '')}")
+
+                        # Check the actual language data exists
+                        assert isinstance(module.lexemes, dict)

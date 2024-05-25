@@ -53,16 +53,18 @@ lexemes = {
     "dialog_encrypt_new_password_label": "Senha:",
     "dialog_encrypt_new_password_input_placeholder_text": "Digite a nova senha",
     "dialog_encrypt_new_password_hint_label": "Dica:",
-    "dialog_encrypt_new_password_hint_label_description": "A dica não é criptografada e pode ser lida do arquivo!"
-                                                          "\nNão use dicas óbvias que possam ser adivinhadas, como"
-                                                          "\na data de nascimento, ou algo do tipo. Tente usar uma referência.",
+    "dialog_encrypt_new_password_hint_label_description":
+        "A dica não é criptografada e pode ser lida do arquivo!"
+        "\nNão use dicas óbvias que possam ser adivinhadas, como"
+        "\na data de nascimento, ou algo do tipo. Tente usar uma referência.",
     "dialog_encrypt_new_password_hint_input_placeholder_text": "Digite uma dica (opcional)",
     "dialog_encrypt_new_password_button_ok": "OK",
     "dialog_encrypt_new_password_button_cancel": "Cancelar",
     "dialog_encrypt_new_password_warning_empty_title": "Aviso",
     "dialog_encrypt_new_password_warning_empty_text": "O campo de senha não pode ficar vazio!",
     "dialog_encrypt_new_password_warning_too_long_title": "Aviso",
-    "dialog_encrypt_new_password_warning_too_long_text": "O campo de dica é muito longo, máximo de {symbols} caracteres!",
+    "dialog_encrypt_new_password_warning_too_long_text":
+        "O campo de dica é muito longo, máximo de {symbols} caracteres!",
 
     "dialog_encrypt_password_title": "Digite a senha",
     "dialog_encrypt_password_label": "Senha:",

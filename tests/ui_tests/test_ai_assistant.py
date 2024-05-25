@@ -1,4 +1,4 @@
-# tests/ui/test_ai_assistant.py
+# tests/ui_tests/test_ai_assistant.py
 
 from PySide6.QtCore import Qt
 from PySide6.QtTest import QTest
@@ -8,7 +8,7 @@ from notolog.notolog_editor import NotologEditor
 from notolog.settings import Settings
 from notolog.enums.languages import Languages
 
-from . import test_app
+from . import test_app  # noqa: F401
 
 import pytest
 
@@ -22,7 +22,7 @@ class TestAiAssistant:
         yield settings
 
     @pytest.fixture
-    def main_window(self, mocker, test_app):
+    def main_window(self, mocker, test_app):  # noqa: F811 redefinition of unused 'test_app'
         # Force to override system language as a default
         mocker.patch.object(Languages, 'default', return_value='la')
 
@@ -39,7 +39,7 @@ class TestAiAssistant:
         ui_obj = AIAssistant(parent=main_window)
         yield ui_obj
 
-    def test_ui_object_state(self, mocker, ui_obj, settings_obj):
+    def test_ui_object_state(self, mocker, ui_obj: AIAssistant, settings_obj):
         # Check app language set correctly
         assert settings_obj.app_language == 'la'
         # Check default AI model

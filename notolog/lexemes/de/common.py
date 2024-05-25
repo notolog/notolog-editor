@@ -53,9 +53,10 @@ lexemes = {
     "dialog_encrypt_new_password_label": "Passwort:",
     "dialog_encrypt_new_password_input_placeholder_text": "Neues Passwort eingeben",
     "dialog_encrypt_new_password_hint_label": "Hinweis:",
-    "dialog_encrypt_new_password_hint_label_description": "Der Hinweis ist nicht verschlüsselt und kann aus der Datei gelesen werden! "
-                                                          "\nVerwenden Sie keine offensichtlichen Hinweise, die leicht erraten werden können, wie Geburtsdaten. "
-                                                          "\nVersuchen Sie, eine Referenz zu verwenden, die nicht leicht mit Ihnen in Verbindung gebracht werden kann.",
+    "dialog_encrypt_new_password_hint_label_description":
+        "Der Hinweis ist nicht verschlüsselt und kann aus der Datei gelesen werden! "
+        "\nVerwenden Sie keine offensichtlichen Hinweise, die leicht erraten werden können, wie Geburtsdaten. "
+        "\nVersuchen Sie, eine Referenz zu verwenden, die nicht leicht mit Ihnen in Verbindung gebracht werden kann.",
     "dialog_encrypt_new_password_hint_input_placeholder_text": "Hinweis eingeben (optional)",
     "dialog_encrypt_new_password_button_ok": "OK",
     "dialog_encrypt_new_password_button_cancel": "Abbrechen",
@@ -72,7 +73,8 @@ lexemes = {
     "dialog_encrypt_password_button_cancel": "Abbrechen",
 
     "dialog_encrypt_password_reset_title": "Verschlüsselungspasswort zurücksetzen",
-    "dialog_encrypt_password_reset_text": "Sind Sie sicher, dass Sie das aktuelle Verschlüsselungspasswort zurücksetzen möchten?",
+    "dialog_encrypt_password_reset_text":
+        "Sind Sie sicher, dass Sie das aktuelle Verschlüsselungspasswort zurücksetzen möchten?",
     "dialog_encrypt_password_reset_button_cancel": "Abbrechen",
     "dialog_encrypt_password_reset_button_yes": "Ja",
 

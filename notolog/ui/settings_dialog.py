@@ -341,7 +341,8 @@ class SettingsDialog(QDialog):
             if callable(setter):
                 setter(value)  # Call the setter with the provided value
 
-    def create_setting_field(self, conf) -> Union[QCheckBox, QLineEdit, QPlainTextEdit, QComboBox, QSpinBox, QSlider]:
+    def create_setting_field(self, conf) \
+            -> Union[QCheckBox, QLineEdit, QPlainTextEdit, QComboBox, QSpinBox, QSlider]:  # noqa: C901
         """
         Method to create setting field with ease.
         @param conf: Config of the field. As the param bounded to the particular method it will be called then.
@@ -383,6 +384,7 @@ class SettingsDialog(QDialog):
         if 'alignment' in conf:
             obj.setAlignment(conf['alignment'])
         if 'callback' in conf and callable(conf['callback']):
+            # Add object to the layout via the callback
             conf['callback'](obj)
         if 'style' in conf:
             styles = []
@@ -415,7 +417,7 @@ class SettingsDialog(QDialog):
             # lexeme_key, setting_name
             return object_name, object_name
 
-    def connect_widgets(self):
+    def connect_widgets(self):  # noqa: C901 - consider simplifying this method
         # Find children of type QCheckBox
         checkboxes = self.findChildren(QCheckBox)
         for checkbox in checkboxes:
@@ -487,7 +489,7 @@ class SettingsDialog(QDialog):
                     slider.setValue(getattr(self.settings, setting_name, 0))
                 slider.valueChanged.connect(self.save_settings)
 
-    def save_settings(self):
+    def save_settings(self):  # noqa: C901 - consider simplifying this method
         # Signal sender
         sender = self.sender()
 

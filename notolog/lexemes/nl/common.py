@@ -53,10 +53,10 @@ lexemes = {
     "dialog_encrypt_new_password_label": "Wachtwoord:",
     "dialog_encrypt_new_password_input_placeholder_text": "Nieuw wachtwoord invoeren",
     "dialog_encrypt_new_password_hint_label": "Hint:",
-    "dialog_encrypt_new_password_hint_label_description": "De hint is niet versleuteld en kan uit het bestand worden gelezen!"
-                                                          "\nVermijd voor de hand liggende hints die gemakkelijk geraden kunnen worden, zoals"
-                                                          "\ngeboortedata."
-                                                          "\nProbeer een referentie te gebruiken die niet gemakkelijk met u in verband wordt gebracht.",
+    "dialog_encrypt_new_password_hint_label_description":
+        "De hint is niet versleuteld en kan uit het bestand worden gelezen!"
+        "\nVermijd voor de hand liggende hints die gemakkelijk geraden kunnen worden, zoals geboortedata."
+        "\nProbeer een referentie te gebruiken die niet gemakkelijk met u in verband wordt gebracht.",
     "dialog_encrypt_new_password_hint_input_placeholder_text": "Hint invoeren (optioneel)",
     "dialog_encrypt_new_password_button_ok": "OK",
     "dialog_encrypt_new_password_button_cancel": "Annuleren",

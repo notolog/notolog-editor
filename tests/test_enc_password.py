@@ -1,4 +1,5 @@
 # tests/test_enc_password.py
+
 from notolog.encrypt.enc_password import EncPassword
 
 import pytest
@@ -63,5 +64,5 @@ class TestEncPassword:
         ],
         indirect=True
     )
-    def test_enc_password_is_valid(self, test_obj_enc_password, test_exp_is_valid_fixture):
+    def test_enc_password_is_valid(self, test_obj_enc_password: EncPassword, test_exp_is_valid_fixture):
         assert test_obj_enc_password.is_valid() == test_exp_is_valid_fixture

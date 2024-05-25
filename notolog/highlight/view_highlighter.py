@@ -20,9 +20,12 @@ from PySide6.QtGui import QTextBlock
 from .main_highlighter import MainHighlighter
 from . import TextBlockData
 
-from typing import Match
+from typing import TYPE_CHECKING
 
 import re
+
+if TYPE_CHECKING:
+    from typing import Match  # noqa: F401
 
 
 class ViewHighlighter(MainHighlighter):
@@ -69,7 +72,7 @@ class ViewHighlighter(MainHighlighter):
             {'group': 's', 'open': 's_open', 'close': 's_close', 'theme': 's'}
         ]
 
-    def highlightBlock(self, text_str):
+    def highlightBlock(self, text_str):  # noqa: C901 - consider simplifying this method
         """
         Apply a syntax highlighting to each line of the text.
         https://doc.qt.io/qt-6/qsyntaxhighlighter.html#highlightBlock
@@ -100,7 +103,7 @@ class ViewHighlighter(MainHighlighter):
             self.line_tokens[line_number] = {}
 
         # Groups of tokens for correction (they have similar approach in rules)
-        oct_groups = [r.get('group') for r in self.get_open_close_token_map()]
+        # oct_groups = [r.get('group') for r in self.get_open_close_token_map()]
         open_tokens = [r.get('open') for r in self.get_open_close_token_map()]
         close_tokens = [r.get('close') for r in self.get_open_close_token_map()]
 

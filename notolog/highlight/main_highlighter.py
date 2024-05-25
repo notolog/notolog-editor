@@ -15,16 +15,20 @@ This module contains shared functionality for subclasses like the MdHighlighter.
 # - License: MIT License
 
 from PySide6.QtCore import Qt, QRegularExpression
-from PySide6.QtGui import QTextDocument, QSyntaxHighlighter, QTextBlockUserData, QTextBlock, QTextCharFormat
+from PySide6.QtGui import QTextDocument, QSyntaxHighlighter, QTextCharFormat
 from PySide6.QtGui import QColor, QBrush, QFont
 
-from typing import Union
+from typing import TYPE_CHECKING
 
 from . import AppConfig
-from . import TextBlockData
 from . import ThemeHelper
 
 import logging
+
+if TYPE_CHECKING:
+    from typing import Union  # noqa: F401
+    from . import TextBlockData  # noqa: F401
+    from PySide6.QtGui import QTextBlock, QTextBlockUserData  # noqa: F401
 
 
 class MainHighlighter(QSyntaxHighlighter):
@@ -96,7 +100,7 @@ class MainHighlighter(QSyntaxHighlighter):
         for item in self.theme:
             """
             Proof of concept method of how to override the colors set to highlighter's syntax.
-            Consider to override the whole map with styles like background pattern.
+            Consider overriding the whole map with styles like background pattern.
             """
             # Get color values from the theme helper
             # For example: 'md_color_h1_text', where the 'md' is the theme prefix, and the 'h1_text' is the item

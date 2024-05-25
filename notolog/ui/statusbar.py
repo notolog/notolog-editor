@@ -3,7 +3,7 @@ from PySide6.QtGui import QColor
 from PySide6.QtWidgets import QStatusBar, QWidget, QLabel, QPushButton, QSizePolicy
 
 import logging
-from typing import Union
+from typing import TYPE_CHECKING
 
 from . import Settings
 from . import AppConfig
@@ -12,6 +12,9 @@ from . import ThemeHelper
 
 from .sort_filter_proxy_model import SortFilterProxyModel
 from .vertical_line_spacer import VerticalLineSpacer
+
+if TYPE_CHECKING:
+    from typing import Union  # noqa
 
 
 class StatusBar(QStatusBar):
@@ -126,13 +129,15 @@ class StatusBar(QStatusBar):
             if visible:
                 # Add 'deleted' extension to the tree
                 tree_proxy_model.add_extension('del'),
-                self.litter_bin_label.setIcon(self.theme_helper.get_icon(theme_icon='trash3-fill.svg',
+                self.litter_bin_label.setIcon(self.theme_helper.get_icon(
+                    theme_icon='trash3-fill.svg',
                     color=QColor(self.theme_helper.get_color('statusbar_litter_bin_icon_color_active'))))
                 self.settings.show_deleted_files = True
             else:
                 # Remove 'deleted' extension from the tree
                 tree_proxy_model.remove_extension('del'),
-                self.litter_bin_label.setIcon(self.theme_helper.get_icon(theme_icon='trash3.svg',
+                self.litter_bin_label.setIcon(self.theme_helper.get_icon(
+                    theme_icon='trash3.svg',
                     color=QColor(self.theme_helper.get_color('statusbar_litter_bin_icon_color'))))
                 self.settings.show_deleted_files = False
 
@@ -164,4 +169,3 @@ class StatusBar(QStatusBar):
                 self._elements[name] = value
             elif self.logging:
                 self.logger.warning(f'Trying to set object that is not a QLabel type {type(value)}')
-

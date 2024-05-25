@@ -13,7 +13,7 @@ from ..settings import Settings
 from ..lexemes.lexemes import Lexemes
 
 if TYPE_CHECKING:
-    from PySide6.QtCore import QByteArray  # noqa
+    from PySide6.QtCore import QByteArray  # noqa: F401
 
 
 class UpdateHelper(QObject):
@@ -79,68 +79,7 @@ class UpdateHelper(QObject):
 
         # Make sure there is no error
         if reply.error() == QNetworkReply.NetworkError.NoError:
-            # The request was successful
-            data = reply.readAll()  # type: QByteArray
-            """
-            # Or like this:
-            data = reply.readAll().data().decode('utf-8')
-            json_data = json.loads(data)
-            """
-
-            if self.debug:
-                self.logger.debug(f'Raw RESPONSE [{status_code}]: {data}')
-
-            # json_document = QJsonDocument.fromJson(data)
-            # json_data = json_document.object()
-
-            # Convert QByteArray to string
-            res_string = data.toStdString()  # Or: str(data.data(), encoding='utf-8')
-            if self.debug:
-                self.logger.debug(f'Result multi-line STRING: {res_string}')
-
-            # Clean up the string and make one line
-            json_str = ''.join(line.strip() for line in res_string.splitlines())
-
-            if self.debug:
-                self.logger.debug(f'Result STRING: {json_str}')
-
-            result_message = self.lexemes.get('network_connection_error_empty')
-            # Parse JSON response
-            try:
-                json_data = json.loads(json_str)
-                if self.debug:
-                    self.logger.debug(f"Result JSON: {json_data}")
-
-                latest_version_str = json_data['tag_name']
-                latest_version = version.parse(latest_version_str)
-
-                if latest_version > self.current_version:
-                    update_link = ('<a href="%s">%s</a>'
-                                   % (AppConfig().get_repository_github_release_url(), latest_version))
-                    result_message = self.lexemes.get('update_helper_new_version_is_available',
-                                                      latest_version=update_link)
-                    if self.logging:
-                        self.logger.info("New version of the app is available: %s. Current version is %s. Response: %s}"
-                                         % (latest_version, self.current_version, reply.errorString()))
-                    # Emit the new version signal
-                    self.new_version_check_response.emit(
-                        {'status': self.STATUS_OK, 'msg': result_message,
-                         'current_version': self.current_version,
-                         # Check new version by this var
-                         'new_version': latest_version_str})
-                else:
-                    result_message = self.lexemes.get('update_helper_latest_version_installed')
-                    if self.logging:
-                        self.logger.info(
-                            "No new version of the app is available, the current version is %s. Response: %s}"
-                            % (self.current_version, reply.errorString()))
-                    # Emit the same version signal
-                    self.new_version_check_response.emit(
-                        {'status': self.STATUS_OK, 'msg': result_message, 'current_version': self.current_version})
-
-            except json.JSONDecodeError as e:
-                if self.logging:
-                    self.logger.warning("Error decoding JSON: %s" % e)
+            result_message = self.process_response(reply, status_code)
         elif reply.error() == QNetworkReply.NetworkError.HostNotFoundError:
             # The host was not found, indicating possible DNS issues or no internet connection
             result_message = self.lexemes.get('network_connection_error_connection_or_dns')
@@ -164,3 +103,67 @@ class UpdateHelper(QObject):
                 self.logger.warning(f"Failed to fetch update information: {reply.errorString()}")
             # Emit error signal
             self.new_version_check_response.emit({'status': self.STATUS_ERROR, 'msg': result_message})
+
+    def process_response(self, reply: QNetworkReply, status_code) -> str:
+        # The request was successful
+        data = reply.readAll()  # type: QByteArray
+        # Or like this:
+        # data = reply.readAll().data().decode('utf-8')
+        # json_data = json.loads(data)
+
+        if self.debug:
+            self.logger.debug(f'Raw RESPONSE [{status_code}]: {data}')
+
+        # json_document = QJsonDocument.fromJson(data)
+        # json_data = json_document.object()
+
+        # Convert QByteArray to string
+        res_string = data.toStdString()  # Or: str(data.data(), encoding='utf-8')
+        if self.debug:
+            self.logger.debug(f'Result multi-line STRING: {res_string}')
+
+        # Clean up the string and make one line
+        json_str = ''.join(line.strip() for line in res_string.splitlines())
+
+        if self.debug:
+            self.logger.debug(f'Result STRING: {json_str}')
+
+        result_message = self.lexemes.get('network_connection_error_empty')
+        # Parse JSON response
+        try:
+            json_data = json.loads(json_str)
+            if self.debug:
+                self.logger.debug(f"Result JSON: {json_data}")
+
+            latest_version_str = json_data['tag_name']
+            latest_version = version.parse(latest_version_str)
+
+            if latest_version > self.current_version:
+                update_link = ('<a href="%s">%s</a>'
+                               % (AppConfig().get_repository_github_release_url(), latest_version))
+                result_message = self.lexemes.get('update_helper_new_version_is_available',
+                                                  latest_version=update_link)
+                if self.logging:
+                    self.logger.info("New version of the app is available: %s. Current version is %s. Response: %s}"
+                                     % (latest_version, self.current_version, reply.errorString()))
+                # Emit the new version signal
+                self.new_version_check_response.emit(
+                    {'status': self.STATUS_OK, 'msg': result_message,
+                     'current_version': self.current_version,
+                     # Check new version by this var
+                     'new_version': latest_version_str})
+            else:
+                result_message = self.lexemes.get('update_helper_latest_version_installed')
+                if self.logging:
+                    self.logger.info(
+                        "No new version of the app is available, the current version is %s. Response: %s}"
+                        % (self.current_version, reply.errorString()))
+                # Emit the same version signal
+                self.new_version_check_response.emit(
+                    {'status': self.STATUS_OK, 'msg': result_message, 'current_version': self.current_version})
+
+        except json.JSONDecodeError as e:
+            if self.logging:
+                self.logger.warning("Error decoding JSON: %s" % e)
+
+        return result_message

@@ -1,4 +1,5 @@
 # tests/test_enc_helper.py
+
 from notolog.encrypt.enc_helper import EncHelper
 from notolog.encrypt.enc_password import EncPassword
 

@@ -42,7 +42,7 @@ class TextBlockData(QTextBlockUserData):
     def get_one(self, tag=str, index=0) -> Any:
         """
         This method returns a single piece of list data.
-        Consider to use it with code blocks only where the multiple occurrences are not supported.
+        Consider using it with code blocks only where the multiple occurrences are not supported.
         """
         if (tag in self.data
                 and self.data[tag]
@@ -53,7 +53,7 @@ class TextBlockData(QTextBlockUserData):
     def get_all(self, tag=str) -> Any:
         """
         This method returns all stored pieces of list data.
-        Consider to use it with the multiple occurrences, like a few strikethrough elements within one line.
+        Consider using it with the multiple occurrences, like a few strikethrough elements within one line.
         """
         if tag in self.data and self.data[tag]:
             return self.data[tag]

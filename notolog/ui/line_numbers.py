@@ -6,16 +6,20 @@
 # If used with PyQt6 make sure slots and signals are declared correctly, as there are some differences:
 # from PyQt6.QtCore import pyqtSlot as Slot
 
-from PySide6.QtCore import Qt, QObject, QRect, QSize, Slot
+from PySide6.QtCore import Qt, QRect, QSize, Slot
 from PySide6.QtWidgets import QWidget, QTextEdit, QPlainTextEdit
-from PySide6.QtGui import QPainter, QColor, QTextFormat, QTextCharFormat, QFont
+from PySide6.QtGui import QPainter, QColor, QTextFormat
 
-from typing import Union
+from typing import TYPE_CHECKING, Union
 
 from . import Settings
 from . import ThemeHelper
 
 from ..edit_widget import EditWidget
+
+if TYPE_CHECKING:
+    from PySide6.QtCore import QObject  # noqa: F401
+    from PySide6.QtGui import QTextCharFormat  # noqa: F401
 
 
 class LineNumbers(QWidget):
@@ -40,7 +44,8 @@ class LineNumbers(QWidget):
 
         editor.updateRequest.connect(self.update_request)
         editor.blockCountChanged.connect(self.update_width)
-        # TODO set up in settings and find out the better way to highlight the line (when mixing backgrounds)
+        # TODO: Improve line highlighting on hover.
+        # Current method of mixing background colors does not yield clear results.
         # editor.cursorPositionChanged.connect(self.highlight_current_line)
 
         # Init object with direct updates
@@ -79,8 +84,9 @@ class LineNumbers(QWidget):
             # Set selection properties
             # line_color = QColor(Qt.GlobalColor.green).lighter(175)  # As an example of how to shift base color tone
             line_color = QColor(self.theme_helper.get_color('edit_widget_line_numbers_active_line_background'))
-            selection.format.setBackground(line_color)
-            selection.format.setProperty(QTextFormat.Property.FullWidthSelection, True)
+            _format = selection.format  # type: ignore
+            _format.setBackground(line_color)
+            _format.setProperty(QTextFormat.Property.FullWidthSelection, True)
             # extra_selections.append(selection)
             self.editor.setExtraSelections([selection])
 

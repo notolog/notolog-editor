@@ -62,8 +62,11 @@ def main():
     # Main application
     app = QApplication(sys.argv)
     # To correctly set up app settings
-    app.setOrganizationName('Notolog')
-    app.setApplicationName('notolog_editor')
+    app.setOrganizationName(AppConfig().get_settings_org_name())
+    app.setOrganizationDomain(AppConfig().get_settings_org_domain())
+    # Consider different app names for pip package and for the source files run,
+    # as the settings storage depends on it.
+    app.setApplicationName(AppConfig().get_settings_app_name())
     app.setApplicationVersion(AppConfig().get_app_version())
 
     # Detect the operating system to choose the style
@@ -79,7 +82,8 @@ def main():
     app.setDesktopSettingsAware(False)
 
     if AppConfig().get_debug():
-        logger.debug('Application dir path "%s"' % QApplication.applicationDirPath())
+        # E.g. /usr/bin and /usr/bin/python3.11
+        logger.debug(f'Application dir path "{app.applicationDirPath()}"; file path "{app.applicationFilePath()}"')
 
     # Get the screen to pass it to the main module
     screen = app.screens()[0]

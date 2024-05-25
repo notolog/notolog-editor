@@ -1,15 +1,18 @@
-from PySide6.QtCore import Qt, QObject
-from PySide6.QtGui import QTextCursor, QSyntaxHighlighter, QTextBlockUserData
-from PySide6.QtWidgets import QTextBrowser
+from PySide6.QtGui import QTextCursor, QSyntaxHighlighter
 
 import logging
 
-from typing import Union
+from typing import TYPE_CHECKING, Union
 
 from .settings import Settings
 from .app_config import AppConfig
 from .highlight.view_highlighter import ViewHighlighter
-from .text_block_data import TextBlockData
+
+if TYPE_CHECKING:
+    from PySide6.QtCore import QObject  # noqa: F401
+    from PySide6.QtGui import QTextBlockUserData  # noqa: F401
+    from PySide6.QtWidgets import QTextBrowser  # noqa: F401
+    from .text_block_data import TextBlockData  # noqa: F401
 
 
 class ViewDecorator:
@@ -73,7 +76,7 @@ class ViewDecorator:
                    # Sometimes, cursor.atEnd() doesn't work as the cursor unable to move next block at the very end
                    or (cursor.block().blockNumber() > 0 and cursor.block().blockNumber() == self.doc.blockCount() - 1)):
             current_block = cursor.block()
-            current_block_number = current_block.blockNumber()
+            # current_block_number = current_block.blockNumber()
             block_pos = current_block.position()
 
             for tag, oi, ci, fmt_key, repl in self.rules:

@@ -53,16 +53,18 @@ lexemes = {
     "dialog_encrypt_new_password_label": "Password:",
     "dialog_encrypt_new_password_input_placeholder_text": "Inserisci la nuova password",
     "dialog_encrypt_new_password_hint_label": "Suggerimento:",
-    "dialog_encrypt_new_password_hint_label_description": "Il suggerimento non è criptato e può essere letto dal file!"
-                                                          "\nNon utilizzare suggerimenti ovvi che possono essere indovinati, come"
-                                                          "\nla data di nascita, ecc. Prova a usare un riferimento.",
+    "dialog_encrypt_new_password_hint_label_description":
+        "Il suggerimento non è criptato e può essere letto dal file!"
+        "\nNon utilizzare suggerimenti ovvi che possono essere indovinati, come"
+        "\nla data di nascita, ecc. Prova a usare un riferimento.",
     "dialog_encrypt_new_password_hint_input_placeholder_text": "Inserisci un suggerimento (opzionale)",
     "dialog_encrypt_new_password_button_ok": "OK",
     "dialog_encrypt_new_password_button_cancel": "Annulla",
     "dialog_encrypt_new_password_warning_empty_title": "Avviso",
     "dialog_encrypt_new_password_warning_empty_text": "Il campo della password non può essere vuoto!",
     "dialog_encrypt_new_password_warning_too_long_title": "Avviso",
-    "dialog_encrypt_new_password_warning_too_long_text": "Il campo del suggerimento è troppo lungo, massimo {symbols} caratteri!",
+    "dialog_encrypt_new_password_warning_too_long_text":
+        "Il campo del suggerimento è troppo lungo, massimo {symbols} caratteri!",
 
     "dialog_encrypt_password_title": "Inserisci password",
     "dialog_encrypt_password_label": "Password:",

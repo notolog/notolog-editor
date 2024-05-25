@@ -53,9 +53,10 @@ lexemes = {
     "dialog_encrypt_new_password_label": "Şifre:",
     "dialog_encrypt_new_password_input_placeholder_text": "Yeni Şifre Girin",
     "dialog_encrypt_new_password_hint_label": "İpucu:",
-    "dialog_encrypt_new_password_hint_label_description": "İpucu şifrelenmez ve dosyadan okunabilir!\nKolay tahmin "
-                                                          "edilebilecek açık ipuçları kullanmayın, örneğin doğum "
-                                                          "tarihleri gibi.\nKolayca ilişkilendirilemeyecek bir referans kullanın.",
+    "dialog_encrypt_new_password_hint_label_description":
+        "İpucu şifrelenmez ve dosyadan okunabilir!"
+        "\nKolay tahmin edilebilecek açık ipuçları kullanmayın, örneğin doğum tarihleri gibi."
+        "\nKolayca ilişkilendirilemeyecek bir referans kullanın.",
     "dialog_encrypt_new_password_hint_input_placeholder_text": "İpucu Girin (İsteğe Bağlı)",
     "dialog_encrypt_new_password_button_ok": "Tamam",
     "dialog_encrypt_new_password_button_cancel": "İptal",

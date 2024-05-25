@@ -1,4 +1,4 @@
-# tests/test_themes.py
+# tests/test_theme_helper.py
 
 from notolog.helpers.theme_helper import ThemeHelper
 from notolog.theme import Theme
@@ -7,6 +7,8 @@ from notolog.app_config import AppConfig
 
 from logging import Logger
 
+from . import test_core_app  # noqa: F401
+
 import os
 import pytest
 
@@ -14,7 +16,8 @@ import pytest
 class TestThemeHelper:
 
     @pytest.fixture(autouse=True)
-    def test_settings_fixture(self, request):
+    def test_settings_fixture(self, request, test_core_app):  # noqa: F811 redefinition of unused 'test_app'
+        # The test_app fixture sets up the app environment explicitly.
         setting = Settings()
         # Get the parameter value(s) from the request
         setting.app_theme = request.param
@@ -58,13 +61,14 @@ class TestThemeHelper:
         [
             ((None), (None), ('default')),
             ((''), (None), ('default')),
-            (('default'), (None), ('default')),  # Because of method default()
+            (('default'), (None), ('default')),  # Because of default() method
             (('DEFAULT'), (None), ('default')),
             (('anyval'), (None), ('default')),
         ],
         indirect=True
     )
-    def test_theme_helper_init(self,test_settings_fixture,  test_obj_theme_helper, test_exp_params_fixture):
+    def test_theme_helper_init(self, test_settings_fixture, test_obj_theme_helper: ThemeHelper,
+                               test_exp_params_fixture):
         """
         Test and check initial params are exist in the testing object.
         """

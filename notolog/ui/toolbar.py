@@ -8,9 +8,12 @@ from . import AppConfig
 from . import Lexemes
 from . import ThemeHelper
 
-from typing import Union
+from typing import TYPE_CHECKING
 
 import logging
+
+if TYPE_CHECKING:
+    from typing import Union  # noqa
 
 
 class ToolBar(QToolBar):
@@ -258,7 +261,10 @@ class ToolBar(QToolBar):
             button = QAction(label['label'], self)
             button.setFont(self.font())
 
-            slot = lambda checked, i=label['weight']: self.toolbar_menu_item(checked, i)
+            # Method def instead of lambda
+            def slot(checked, i=label['weight']):
+                self.toolbar_menu_item(checked, i)
+
             # Check button.toggled.connect()
             button.triggered[bool].connect(slot)
             button.setCheckable(True)
@@ -267,7 +273,8 @@ class ToolBar(QToolBar):
 
             menu.addAction(button)
 
-            self.buttons[index] = button
+            if index in self.buttons:
+                self.buttons[index] = button
 
             # Collect items already added to the context menu
             _weights |= settings_weight

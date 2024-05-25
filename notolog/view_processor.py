@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt, QObject, QUrl
+from PySide6.QtCore import Qt, QUrl
 from PySide6.QtWidgets import QTextBrowser
 from PySide6.QtGui import QTextCursor, QSyntaxHighlighter, QTextCharFormat
 
@@ -6,12 +6,15 @@ import logging
 import re
 import base64
 
-from typing import Union
+from typing import TYPE_CHECKING, Union
 
 from .settings import Settings
 from .app_config import AppConfig
 from .highlight.view_highlighter import ViewHighlighter
 from .lexemes.lexemes import Lexemes
+
+if TYPE_CHECKING:
+    from PySide6.QtCore import QObject  # noqa: F401
 
 
 class ViewProcessor:

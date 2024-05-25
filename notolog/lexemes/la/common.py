@@ -53,9 +53,10 @@ lexemes = {
     "dialog_encrypt_new_password_label": "Signum:",
     "dialog_encrypt_new_password_input_placeholder_text": "Novum signum ingredere",
     "dialog_encrypt_new_password_hint_label": "Monitum:",
-    "dialog_encrypt_new_password_hint_label_description": "Monitum non est cryptatum et legi potest ex archivo!"
-                                                          "\nNoli uti monitis perspicuis quae facile divinari possunt, ut"
-                                                          "\nnatale diem vel similia. Conare uti referentia non facile associata.",
+    "dialog_encrypt_new_password_hint_label_description":
+        "Monitum non est cryptatum et legi potest ex archivo!"
+        "\nNoli uti monitis perspicuis quae facile divinari possunt, ut"
+        "\nnatale diem vel similia. Conare uti referentia non facile associata.",
     "dialog_encrypt_new_password_hint_input_placeholder_text": "Ingredere monitum (non necessarium)",
     "dialog_encrypt_new_password_button_ok": "OK",
     "dialog_encrypt_new_password_button_cancel": "Cancellare",

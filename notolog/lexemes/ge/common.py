@@ -53,10 +53,11 @@ lexemes = {
     "dialog_encrypt_new_password_label": "პაროლი:",
     "dialog_encrypt_new_password_input_placeholder_text": "შეიყვანეთ ახალი პაროლი",
     "dialog_encrypt_new_password_hint_label": "მინიშნება:",
-    "dialog_encrypt_new_password_hint_label_description": "მინიშნება არ არის დაშიფრული და ფაილიდან იკითხება!"
-                                                          "\nარ გამოიყენოთ მინიშნები, რომლებიც ადვილად შეიმჩნევა, როგორიცაა"
-                                                          "\nდაბადების თარიღი."
-                                                          "\nსცადეთ გამოიყენოთ რეფერენცია, რომელიც ადვილად არ არის თქვენთან გაიგიანებელი.",
+    "dialog_encrypt_new_password_hint_label_description":
+        "მინიშნება არ არის დაშიფრული და ფაილიდან იკითხება!"
+        "\nარ გამოიყენოთ მინიშნები, რომლებიც ადვილად შეიმჩნევა, როგორიცაა"
+        "\nდაბადების თარიღი."
+        "\nსცადეთ გამოიყენოთ რეფერენცია, რომელიც ადვილად არ არის თქვენთან გაიგიანებელი.",
     "dialog_encrypt_new_password_hint_input_placeholder_text": "შეიყვანეთ მინიშნება (არასავალდებულო)",
     "dialog_encrypt_new_password_button_ok": "კარგი",
     "dialog_encrypt_new_password_button_cancel": "გაუქმება",

@@ -1,6 +1,29 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [0.9.1b8] - 2024-05-25
+
+### Added
+- Added `typing_extensions` package, which is also automatically installed with the `emoji` package.
+- New tests and test-related updates, particularly complex async tests for `ImageDownloader`.
+
+### Updated
+- Updated the following packages to their latest versions: `PySide6` (including `PySide6_Addons` and `PySide6_Essentials`) to version 6.7.1, `pytest` to version 8.2.1, `pytest-asyncio` to version 0.23.7, `cffi` to version 1.17.0rc1, and `Emoji lib` to version 2.12.1.
+- Added processing for the Shift + Enter keyboard combination to avoid soft line breaks, which may alter the perception of how soft line breaks function.
+- Updated the package's `setup.py` to include supported languages and additional package information.
+- Updated the functionality for getting and storing protected fields in settings, including refactoring and error fixes (re-setup of corresponding values may be required).
+- Updated `AppConfig` with additional settings-related options.
+- Various `Flake8` linter fixes to ensure the code meets the PEP 8 style guide, along with McCabe complexity updates (current complexity check level is 15).
+- Updated and optimized the content of the `README.md` file to enhance the sections on third-party components, and tests-related topics.
+
+### Changed
+- Slightly reduced the await time for the async highlighter to make the editing mode more responsive to changes involved in syntax highlighting (experimental).
+- Improved the error-proofing of async queue processing upon app closing, particularly if background processes like highlighting or others are still in progress.
+
+### Fixed
+- Fixed an issue where resources might be downloaded twice.
+- Resolved a problem with the toolbar context menu being unresponsive.
+
 ## [0.9.1b5] - 2024-05-19
 
 ### Added

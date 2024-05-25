@@ -56,9 +56,11 @@ lexemes = {
 
     "ai_config_base_label": "Parametri Principes",
     "ai_config_base_system_prompt_label": "Systēma Monitum",
-    "ai_config_base_system_prompt_edit_placeholder_text": "Monitum systēmatis basis quod præcedit singulas postulationes",
+    "ai_config_base_system_prompt_edit_placeholder_text":
+        "Monitum systēmatis basis quod præcedit singulas postulationes",
     "ai_config_base_system_prompt_edit_accessible_description":
         "Monitum systēmatis basis quod præcedit singulas postulationes. Textus simpliciter.",
     "ai_config_base_response_max_tokens_label": "Maxima Responsionis Signa",
-    "ai_config_base_response_max_tokens_input_accessible_description": "Maximum signorum quæ in responsione accipiuntur",
+    "ai_config_base_response_max_tokens_input_accessible_description":
+        "Maximum signorum quæ in responsione accipiuntur",
 }

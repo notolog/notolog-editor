@@ -1,4 +1,4 @@
-from PySide6.QtCore import Signal, QSize
+from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QInputDialog, QLineEdit, QDialogButtonBox, QSizePolicy
 
 from . import Settings

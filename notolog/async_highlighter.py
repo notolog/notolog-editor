@@ -28,8 +28,16 @@ class AsyncHighlighter:
     @asyncSlot()
     async def rehighlight_in_queue(self, full_rehighlight: bool = False) -> Any:
         """
+        Re-highlight code asynchronously here.
         More info about asyncio tasks: https://docs.python.org/3/library/asyncio-task.html
         """
+
+        # Check async loop is running
+        if not asyncio.get_event_loop().is_running():
+            if self.logging:
+                self.logger.debug('Async loop is not running, skip task')
+            return
+
         if self.debug:
             self.logger.debug('Re-highlight %d tasks in queue' % len(self.rehighlight_tasks))
 
@@ -47,13 +55,16 @@ class AsyncHighlighter:
             # Callback method to set up further actions
             task.add_done_callback(lambda _task: self.rehighlight_task_callback(_task))
 
-        done, pending = await asyncio.wait(
-            self.rehighlight_tasks,
-            return_when=asyncio.ALL_COMPLETED,  # There is no pending tasks check
-        )
-
-        if self.debug:
-            self.logger.debug(f'Re-highlight tasks progress. Done {len(done)}, pending {len(pending)}')
+        try:
+            done, pending = await asyncio.wait(
+                self.rehighlight_tasks,
+                return_when=asyncio.ALL_COMPLETED,  # There is no pending tasks check
+            )
+            if self.debug:
+                self.logger.debug(f'Re-highlight tasks progress. Done {len(done)}, pending {len(pending)}')
+        except asyncio.CancelledError:
+            # All tasks will be cancelled later upon close event
+            pass
 
         return task
 
@@ -65,35 +76,28 @@ class AsyncHighlighter:
         self.rehighlight_tasks.remove(task)
 
         if len(self.rehighlight_tasks) == 0:
-            QTimer.singleShot(750, lambda: self.callback(True))
+            QTimer.singleShot(500, lambda: self.callback(True))
 
     async def rehighlight_async(self, full_rehighlight: bool = False, postpone: bool = False) -> None:
         """
         Run this method not too often to avoid overwhelming the system.
         """
-        # Postpone before re-highlighting set
-        if postpone:
+        try:
+            # Postpone before re-highlighting set
+            if postpone:
+                if self.debug:
+                    self.logger.debug('Re-highlighting the text > postpone')
+                # Keep this method particular amount of time to avoid overwhelming
+                await asyncio.sleep(0.15, self.loop)
+            # Re-highlight
+            self.callback(full_rehighlight)
             if self.debug:
-                self.logger.debug('Re-highlighting the text > postpone')
+                self.logger.debug('Async re-highlighting queue task processed')
+            # Postpone after re-highlighting to keep the queue busy
+            if self.debug:
+                self.logger.debug('Re-highlighting the text > wait to return')
             # Keep this method particular amount of time to avoid overwhelming
-            await asyncio.sleep(0.25, self.loop)
-        # Re-highlight
-        self.callback(full_rehighlight)
-        if self.debug:
-            self.logger.debug('Async re-highlighting queue task processed')
-        # Postpone after re-highlighting to keep the queue busy
-        if self.debug:
-            self.logger.debug('Re-highlighting the text > wait to return')
-        # Keep this method particular amount of time to avoid overwhelming
-        await asyncio.sleep(0.5, self.loop)
-
-    async def cancel_tasks(self):
-        tasks_total = len(self.rehighlight_tasks)
-        for i, task in enumerate(self.rehighlight_tasks):
-            if not task.done():
-                task_res = task.cancel()
-                if self.logging:
-                    self.logger.info(
-                        f'[{i + 1}/{tasks_total}] Pending task "{task.get_name()}" canceled with result "{task_res}"')
-                # Gather all tasks to ensure they are completed before closing
-                await asyncio.gather(*self.rehighlight_tasks, return_exceptions=True)
+            await asyncio.sleep(0.3, self.loop)
+        except asyncio.CancelledError:
+            # All tasks will be cancelled later upon close event
+            pass

@@ -53,9 +53,10 @@ lexemes = {
     "dialog_encrypt_new_password_label": "Пароль:",
     "dialog_encrypt_new_password_input_placeholder_text": "Введите новый пароль",
     "dialog_encrypt_new_password_hint_label": "Подсказка:",
-    "dialog_encrypt_new_password_hint_label_description": "Подсказка не зашифрована и может быть прочитана из файла!"
-                                                          "\nНе используйте очевидные подсказки, которые можно легко угадать, например,"
-                                                          "\nдату рождения и т.д. Попробуйте использовать ссылку.",
+    "dialog_encrypt_new_password_hint_label_description":
+        "Подсказка не зашифрована и может быть прочитана из файла!"
+        "\nНе используйте очевидные подсказки, которые можно легко угадать,"
+        "\nнапример, дату рождения и т.д. Попробуйте использовать отсылку.",
     "dialog_encrypt_new_password_hint_input_placeholder_text": "Введите подсказку (необязательно)",
     "dialog_encrypt_new_password_button_ok": "ОК",
     "dialog_encrypt_new_password_button_cancel": "Отмена",

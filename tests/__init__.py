@@ -1,46 +1,19 @@
-from PySide6.QtWidgets import QApplication
+from PySide6.QtCore import QCoreApplication
+
+from notolog.app_config import AppConfig
 
 import os
-import sys
 import pytest
 
 # For headless operation
 os.environ["QT_QPA_PLATFORM"] = "offscreen"
-# Force Qt style override to avoid:
-# QApplication: invalid style override 'kvantum' passed, ignoring it.
-#    Available styles: Windows, Fusion
-os.environ["QT_STYLE_OVERRIDE"] = "Fusion"
 
 
-@pytest.fixture
-def test_app():
-    # Main application; existed
-    app = QApplication.instance()
-    if app:
-        # Destroying the QCoreApplication singleton to avoid RuntimeError.
-        app.quit()
-        app.deleteLater()
-        app.processEvents()
-        del app
+@pytest.fixture(autouse=True)
+def test_core_app():
 
-    # Main application; new
-    app = QApplication.instance()
-    if not app:
-        # Fixture to initialize QCoreApplication for Non-GUI Tests
-        """
-        Virtual Framebuffer on Linux (Xvfb):
-        For Linux, use Xvfb to run tests requiring GUI in a virtual framebuffer.
-        For Windows, ensure GUI sessions are available for tests.
-        """
-        app = QApplication(sys.argv)
+    # To correctly set up app settings
+    QCoreApplication.setOrganizationName(AppConfig().get_settings_org_name())
+    QCoreApplication.setApplicationName(AppConfig().get_settings_app_name_qa())
 
-        # To correctly set up app settings
-        app.setOrganizationName('Notolog')
-        app.setApplicationName('notolog_editor_tests')
-
-    yield app
-
-    # Cleanup
-    app.quit()
-    app.deleteLater()
-    app.processEvents()
+    yield None

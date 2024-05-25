@@ -60,5 +60,6 @@ lexemes = {
     "ai_config_base_system_prompt_edit_accessible_description":
         "Prompt di sistema base che precede ogni richiesta. Testo semplice.",
     "ai_config_base_response_max_tokens_label": "Massimo di Token di Risposta",
-    "ai_config_base_response_max_tokens_input_accessible_description": "Numero massimo di token da ricevere in risposta",
+    "ai_config_base_response_max_tokens_input_accessible_description":
+        "Numero massimo di token da ricevere in risposta",
 }

@@ -196,54 +196,9 @@ class AIAssistant(QDialog):
         # For example: NetworkError.UnknownNetworkError
         # reply = self.sender()  # type: QNetworkReply
 
-        error = None
         # Make sure there is no error
         if reply.error() == QNetworkReply.NetworkError.NoError:
-            # The request was successful
-            data = reply.readAll()  # type: QByteArray
-
-            if self.debug:
-                self.logger.debug(f'Raw RESPONSE [{status_code}]: {data}')
-
-            reply.deleteLater()  # Clean up the QNetworkReply object
-
-            # json_document = QJsonDocument.fromJson(data)
-            # json_data = json_document.object()
-
-            # Convert QByteArray to string
-            res_string = data.toStdString()  # Or: str(data.data(), encoding='utf-8')
-            if self.debug:
-                self.logger.debug(f'Result multi-line STRING: {res_string}')
-
-            # Clean up the string and make one line
-            json_str = ''.join(line.strip() for line in res_string.splitlines())
-
-            if self.debug:
-                self.logger.debug(f'Result STRING: {json_str}')
-
-            result_message = self.lexemes.get('network_connection_error_empty', scope='common')
-            # Parse JSON response
-            try:
-                json_data = json.loads(json_str)
-                if self.debug:
-                    self.logger.debug(f"Result JSON: {json_data}")
-                if ('choices' in json_data
-                        and len(json_data['choices']) > 0
-                        # Legacy completions
-                        # and 'text' in json_data['choices'][0]):
-                        and 'message' in json_data['choices'][0]
-                        and 'content' in json_data['choices'][0]['message']):
-                    # Legacy completions
-                    # self.response_output.setPlainText(str(json_data['choices'][0]['text']).strip())
-                    self.response_output.setPlainText(str(json_data['choices'][0]['message']['content']).strip())
-                if 'usage' in json_data:
-                    self.update_usage(json_data['usage'])
-                if 'model' in json_data:
-                    if hasattr(self, 'model_label'):
-                        self.model_label.setText(json_data['model'] if len(json_data['model']) > 0 else '?')
-            except json.JSONDecodeError as e:
-                if self.logging:
-                    self.logger.warning("Error decoding JSON: %s" % e)
+            result_message = self.process_response(reply, status_code)
         elif reply.error() == QNetworkReply.NetworkError.HostNotFoundError:
             # The host was not found, indicating possible DNS issues or no internet connection
             result_message = self.lexemes.get('network_connection_error_connection_or_dns', scope='common')
@@ -269,6 +224,55 @@ class AIAssistant(QDialog):
             self.response_output.setPlainText(result_message)
 
         self.set_status_ready()
+
+    def process_response(self, reply: QNetworkReply, status_code) -> str:
+        # The request was successful
+        data = reply.readAll()  # type: QByteArray
+
+        if self.debug:
+            self.logger.debug(f'Raw RESPONSE [{status_code}]: {data}')
+
+        reply.deleteLater()  # Clean up the QNetworkReply object
+
+        # json_document = QJsonDocument.fromJson(data)
+        # json_data = json_document.object()
+
+        # Convert QByteArray to string
+        res_string = data.toStdString()  # Or: str(data.data(), encoding='utf-8')
+        if self.debug:
+            self.logger.debug(f'Result multi-line STRING: {res_string}')
+
+        # Clean up the string and make one line
+        json_str = ''.join(line.strip() for line in res_string.splitlines())
+
+        if self.debug:
+            self.logger.debug(f'Result STRING: {json_str}')
+
+        result_message = self.lexemes.get('network_connection_error_empty', scope='common')
+        # Parse JSON response
+        try:
+            json_data = json.loads(json_str)
+            if self.debug:
+                self.logger.debug(f"Result JSON: {json_data}")
+            if ('choices' in json_data
+                    and len(json_data['choices']) > 0
+                    # Legacy completions
+                    # and 'text' in json_data['choices'][0]):
+                    and 'message' in json_data['choices'][0]
+                    and 'content' in json_data['choices'][0]['message']):
+                # Legacy completions
+                # self.response_output.setPlainText(str(json_data['choices'][0]['text']).strip())
+                self.response_output.setPlainText(str(json_data['choices'][0]['message']['content']).strip())
+            if 'usage' in json_data:
+                self.update_usage(json_data['usage'])
+            if 'model' in json_data:
+                if hasattr(self, 'model_label'):
+                    self.model_label.setText(json_data['model'] if len(json_data['model']) > 0 else '?')
+        except json.JSONDecodeError as e:
+            if self.logging:
+                self.logger.warning("Error decoding JSON: %s" % e)
+
+        return result_message
 
     def update_usage(self, usage: dict = None):
         if hasattr(self, 'tokens_prompt_label'):

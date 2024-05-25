@@ -21,14 +21,17 @@ This module may be subject to changes in future releases. Currently, it serves m
 # - License: MIT License
 
 from PySide6.QtCore import Qt
-from PySide6.QtGui import QTextBlockUserData
 
 from .main_highlighter import MainHighlighter
 from . import TextBlockData
 
-from typing import Union
+from typing import TYPE_CHECKING
 
 import re
+
+if TYPE_CHECKING:
+    from typing import Union  # noqa: F401
+    from PySide6.QtGui import QTextBlockUserData  # noqa: F401
 
 
 class MdHighlighter(MainHighlighter):
@@ -68,8 +71,10 @@ class MdHighlighter(MainHighlighter):
         's': {'color': 'grey', 'style': 'strikethrough'},
         'u': {'color': 'black', 'style': 'underline'},
         'code': {'color': 'magenta', 'bg': {'color': 'magenta', 'pattern': Qt.BrushStyle.Dense6Pattern}},
-        'codel': {'color': 'yellow', 'style': 'monospace', 'bg': {'color': 'darkMagenta', 'pattern': Qt.BrushStyle.Dense2Pattern}},
-        'codelf': {'color': 'white', 'style': 'monospace', 'bg': {'color': 'magenta', 'pattern': Qt.BrushStyle.Dense2Pattern}},
+        'codel': {'color': 'yellow', 'style': 'monospace',
+                  'bg': {'color': 'darkMagenta', 'pattern': Qt.BrushStyle.Dense2Pattern}},
+        'codelf': {'color': 'white', 'style': 'monospace',
+                   'bg': {'color': 'magenta', 'pattern': Qt.BrushStyle.Dense2Pattern}},
         'code_lang': {'color': 'magenta', 'style': 'bold'},
         'code_indent': {'bg': {'color': 'pink', 'pattern': Qt.BrushStyle.Dense6Pattern}},
         'code_content': {'color': 'brown'},
@@ -82,7 +87,8 @@ class MdHighlighter(MainHighlighter):
         'ref': {'color': 'white', 'bg': {'color': 'green', 'pattern': Qt.BrushStyle.Dense3Pattern}},
         # 'ref_data': {'color': 'green', 'bg': {'color': 'yellow', 'pattern': Qt.BrushStyle.Dense6Pattern}},
         'abbr': {'color': 'white', 'bg': {'color': 'dodgerBlue', 'pattern': Qt.BrushStyle.SolidPattern}},
-        'abbr_text': {'color': 'white', 'style': 'bold', 'bg': {'color': 'dodgerBlue', 'pattern': Qt.BrushStyle.SolidPattern}},
+        'abbr_text': {'color': 'white', 'style': 'bold',
+                      'bg': {'color': 'dodgerBlue', 'pattern': Qt.BrushStyle.SolidPattern}},
         'link': {'color': 'white', 'style': 'italic', 'bg': 'blue'},
         'list': {'color': 'white', 'bg': 'darkMagenta'},
         'list_text': {'color': 'darkMagenta'},
@@ -129,7 +135,8 @@ class MdHighlighter(MainHighlighter):
         (r'(?:^|\s|\W|[^`\#])(?<!`)(```(?!`).*?(?<!`)```)(?!`)(?:\s|\W|[^`]|$)',
          1, 'codel', 'code', False, theme['codelf'], None),
         (r'^(?<!\#)((?:[\s]*?)```)[a-z\-_\+#\s\.{}]*?(?!```)$', 1, 'code', 'code', True, theme['code'], None),
-        (r'^(?<!\#)((?:[\s]*?)```)(\s*?\{?[a-z\-_\+#\s\.^{}]+\}?)$', 2, 'code_lang', 'code', False, theme['code_lang'], None),
+        (r'^(?<!\#)((?:[\s]*?)```)(\s*?\{?[a-z\-_\+#\s\.^{}]+\}?)$',
+         2, 'code_lang', 'code', False, theme['code_lang'], None),
         (r'^([\s]{1,})```([\S]+|)$', 1, 'wrong_indent', 'code', False, theme['wrong_indent'], None),
         # Code ::::
         (r'^(([\s]{4,}|[\t]{1,})(::::))[\S]*?\s*?$', 3, 'codec', 'code', False, theme['code'], None),
@@ -292,7 +299,7 @@ class MdHighlighter(MainHighlighter):
         """
         return ['rn', 'codec', 'blockquote', 'list']
 
-    def highlightBlock(self, text_str):
+    def highlightBlock(self, text_str):  # noqa: C901 - consider simplifying this method
         """
         Apply a syntax highlighting to each line of the text.
         * https://doc.qt.io/qt-6/qsyntaxhighlighter.html#highlightBlock
@@ -477,7 +484,8 @@ class MdHighlighter(MainHighlighter):
             Notice: Do not processing it when located within a code block, like this:
             if (self.is_in_code() and tag not in {'codec'}):
                 continue
-            Causing a "jumping" syntax, so better to leave the blocks within the code block but re-write their style completely.
+            Causing a "jumping" syntax, so better to leave the blocks within the code block
+            but re-write their style accordingly.
             """
             if tag not in self.get_nl_closing_tokens():
                 continue
@@ -594,7 +602,7 @@ class MdHighlighter(MainHighlighter):
             """
             self.current_block.setUserData(self.user_data)
         except (TypeError, RuntimeError, ValueError) as e:
-            self.logger.error('Cannot setup block data "%s"' % self.user_data)
+            self.logger.error(f'Cannot setup block data "{self.user_data}", error occurred: {e}')
 
         format_map = {}  # To apply formatting after the whole line processed
         for pattern, nth, tag, group, duple, cf_data, reckon in self.rules:
