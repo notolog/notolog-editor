@@ -80,6 +80,12 @@ lexemes = {
     "dialog_open_link_title": "Bağlantı",
     "dialog_open_link_text": "\"{url}\" bağlantısını tarayıcıda aç?",
 
+    "dialog_reset_settings_title": "Ayarları sıfırla?",
+    "dialog_reset_settings_text":
+        "Ayarlar içinde saklanan tüm veriler silinecek ve uygulama değişiklikleri uygulamak için yeniden başlatılacak.",
+
+    "field_dir_path_line_edit": "Dizin Seç",
+
     "load_file_encryption_password_mismatch": "Şifreleme şifresi uyuşmuyor!",
     "load_file_encryption_password_incorrect": "Şifreleme şifresi yanlış!",
     "load_file_none_content_error": "Dosya yüklenemedi.",

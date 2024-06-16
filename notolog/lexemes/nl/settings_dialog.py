@@ -44,20 +44,16 @@ lexemes = {
     "viewer_config_save_resources_checkbox_accessible_description":
         "Sla automatisch kopieën van externe afbeeldingen op schijf op voor offline toegang.",
 
-    "ai_config_openai_api_label": "OpenAI API",
-    "ai_config_openai_api_url_input_placeholder_text": "API URL",
-    "ai_config_openai_api_url_input_accessible_description": "OpenAI API URL",
-    "ai_config_openai_api_key_input_placeholder_text": "API-sleutel",
-    "ai_config_openai_api_key_input_accessible_description": "OpenAI API-sleutel",
-    "ai_config_openai_api_supported_models_label": "Ondersteunde modellen",
-    "ai_config_ai_model_names_combo_placeholder_text": "Kies model",
-    "ai_config_ai_model_names_combo_accessible_description": "Te kiezen ondersteunde modellen",
+    "ai_config_inference_module_label": "Inferentie module",
+    "ai_config_inference_module_names_combo_placeholder_text": "Kies module",
+    "ai_config_inference_module_names_combo_accessible_description": "Beschikbare modules om te kiezen",
+
+    "ai_config_multi_turn_dialogue_checkbox":
+        "Meerstaps dialoog die voortbouwt op eerdere prompts voor contextuele continuïteit",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
+        "Meerstaps dialoog die voortbouwt op eerdere prompts voor contextuele continuïteit",
+    "ai_config_convert_to_md_checkbox": "Zet het resultaat om naar Markdown",
+    "ai_config_convert_to_md_checkbox_accessible_description": "Zet het resultaatbericht om naar Markdown",
 
     "ai_config_base_label": "Basisparameters",
-    "ai_config_base_system_prompt_label": "Systeemprompt",
-    "ai_config_base_system_prompt_edit_placeholder_text": "Basis systeemprompt die elke aanvraag voorafgaat",
-    "ai_config_base_system_prompt_edit_accessible_description":
-        "Basis systeemprompt die elke aanvraag voorafgaat. Dit is platte tekst.",
-    "ai_config_base_response_max_tokens_label": "Maximale respons tokens",
-    "ai_config_base_response_max_tokens_input_accessible_description": "Maximaal aantal tokens om te ontvangen in respons"
 }

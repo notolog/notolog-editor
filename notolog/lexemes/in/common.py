@@ -80,6 +80,12 @@ lexemes = {
     "dialog_open_link_title": "लिंक",
     "dialog_open_link_text": "लिंक \"{url}\" को ब्राउज़र में खोलें?",
 
+    "dialog_reset_settings_title": "सेटिंग्स रीसेट करें?",
+    "dialog_reset_settings_text":
+        "सेटिंग्स में संग्रहीत सभी डेटा मिटाया जाएगा, और एप्लिकेशन परिवर्तन लागू करने के लिए पुनः आरंभ होगा।",
+
+    "field_dir_path_line_edit": "डायरेक्टरी चुनें",
+
     "load_file_encryption_password_mismatch": "एन्क्रिप्शन पासवर्ड मेल नहीं खाता!",
     "load_file_encryption_password_incorrect": "एन्क्रिप्शन पासवर्ड गलत है!",
     "load_file_none_content_error": "फ़ाइल लोड नहीं की जा सकती।",

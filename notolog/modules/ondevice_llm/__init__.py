@@ -1,0 +1,31 @@
+from .module_core import ModuleCore
+
+from .. import AppConfig
+
+import sys
+import importlib.util
+
+
+def get_name():
+    """
+    Readable module name.
+    """
+    return ModuleCore.module_name
+
+
+def is_available() -> bool:
+    # The required packages are not supported yet
+    if sys.platform == "darwin":
+        if AppConfig().get_logging():
+            AppConfig().logger.info(f"The system is not supported by the module '{get_name()}'")
+        return False
+
+    # Required packages for a local LLM inference
+    for package_name in ["onnxruntime_genai", "numpy"]:
+        module_spec = importlib.util.find_spec(package_name)
+        if module_spec is None:
+            if AppConfig().get_logging():
+                AppConfig().logger.info(f"The package '{package_name}' is required for the module '{get_name()}'")
+            return False
+
+    return True

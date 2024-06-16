@@ -8,10 +8,14 @@ lexemes = {
     "dialog_response_output_accessible_description": "Responsdata zal hier getoond worden",
     "dialog_response_output_notice_empty_text": "Voer tekst in om een respons van ongeveer... te krijgen",
 
+    "dialog_usage_module_label": "MODULE",
     "dialog_usage_model_label": "MODEL",
     "dialog_usage_tokens_label": "TOKENS",
     "dialog_usage_tokens_prompt": "prompt: {tokens}",
     "dialog_usage_tokens_answer": "antwoord: {tokens}",
     "dialog_usage_tokens_total": "totaal: {tokens}",
-    "dialog_button_send_request": "Verstuur Verzoek"
+
+    "dialog_button_send_request": "Verstuur Verzoek",
+
+    "dialog_error_loading_model": "Fout bij laden aangepast model",
 }

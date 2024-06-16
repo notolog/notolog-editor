@@ -82,6 +82,13 @@ lexemes = {
     "dialog_open_link_title": "Lien",
     "dialog_open_link_text": "Ouvrir le lien \"{url}\" dans un navigateur ?",
 
+    "dialog_reset_settings_title": "Réinitialiser les paramètres ?",
+    "dialog_reset_settings_text":
+        "Toutes les données enregistrées dans les paramètres seront effacées, et l'application redémarrera pour "
+        "appliquer les modifications.",
+
+    "field_dir_path_line_edit": "Sélectionner un répertoire",
+
     "load_file_encryption_password_mismatch": "Non-concordance du mot de passe de chiffrement !",
     "load_file_encryption_password_incorrect": "Mot de passe de chiffrement incorrect !",
     "load_file_none_content_error": "Impossible de charger le fichier.",

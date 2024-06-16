@@ -80,6 +80,12 @@ lexemes = {
     "dialog_open_link_title": "Vinculum",
     "dialog_open_link_text": "Vinculum \"{url}\" in navigatro aperire?",
 
+    "dialog_reset_settings_title": "Reddere ad initium?",
+    "dialog_reset_settings_text":
+        "Omnia in configurationibus data delebuntur, et app ad mutationes applicandas restituetur.",
+
+    "field_dir_path_line_edit": "Select Directory",
+
     "load_file_encryption_password_mismatch": "Signi codicis discrepantia!",
     "load_file_encryption_password_incorrect": "Signum codicis incorrectum!",
     "load_file_none_content_error": "Fasciculum onerare non potest.",

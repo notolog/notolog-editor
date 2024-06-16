@@ -44,20 +44,16 @@ lexemes = {
     "viewer_config_save_resources_checkbox_accessible_description":
         "Sparar automatiskt kopior av externa bilder på disken för offline-åtkomst",
 
-    "ai_config_openai_api_label": "OpenAI API",
-    "ai_config_openai_api_url_input_placeholder_text": "API URL",
-    "ai_config_openai_api_url_input_accessible_description": "OpenAI API URL",
-    "ai_config_openai_api_key_input_placeholder_text": "API-nyckel",
-    "ai_config_openai_api_key_input_accessible_description": "OpenAI API-nyckel",
-    "ai_config_openai_api_supported_models_label": "Stödda modeller",
-    "ai_config_ai_model_names_combo_placeholder_text": "Välj modell",
-    "ai_config_ai_model_names_combo_accessible_description": "Välj bland stödda modeller",
+    "ai_config_inference_module_label": "Inferensmodul",
+    "ai_config_inference_module_names_combo_placeholder_text": "Välj modul",
+    "ai_config_inference_module_names_combo_accessible_description": "Tillgängliga moduler att välja mellan",
+
+    "ai_config_multi_turn_dialogue_checkbox":
+        "Flerstegsdialog som bygger på tidigare prompts för kontextuell kontinuitet",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
+        "Flerstegsdialog som bygger på tidigare prompts för kontextuell kontinuitet",
+    "ai_config_convert_to_md_checkbox": "Konvertera resultatet till Markdown",
+    "ai_config_convert_to_md_checkbox_accessible_description": "Konvertera resultatmeddelandet till Markdown",
 
     "ai_config_base_label": "Basparametrar",
-    "ai_config_base_system_prompt_label": "Systemprompt",
-    "ai_config_base_system_prompt_edit_placeholder_text": "Bas systemprompt som föregår varje förfrågan",
-    "ai_config_base_system_prompt_edit_accessible_description":
-        "Bas systemprompt som föregår varje förfrågan. Detta är ren text.",
-    "ai_config_base_response_max_tokens_label": "Maximalt antal svarstoken",
-    "ai_config_base_response_max_tokens_input_accessible_description": "Maximalt antal token att ta emot som svar"
 }

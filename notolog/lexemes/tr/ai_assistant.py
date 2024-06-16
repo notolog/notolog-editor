@@ -7,10 +7,14 @@ lexemes = {
     "dialog_response_output_accessible_description": "Yanıt verisi bu alanda görünecek",
     "dialog_response_output_notice_empty_text": "Yaklaşık bir yanıt almak için metin girişi sağlayın",
 
+    "dialog_usage_module_label": "MODÜL",
     "dialog_usage_model_label": "MODEL",
     "dialog_usage_tokens_label": "TOKENLAR",
     "dialog_usage_tokens_prompt": "istek: {tokens}",
     "dialog_usage_tokens_answer": "cevap: {tokens}",
     "dialog_usage_tokens_total": "toplam: {tokens}",
+
     "dialog_button_send_request": "İstek Gönder",
+
+    "dialog_error_loading_model": "Özel model yüklenirken hata",
 }

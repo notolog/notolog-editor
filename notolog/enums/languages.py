@@ -26,10 +26,6 @@ class Languages(EnumBase):
     TR = "Turkish"
     ZH = "Chinese"
 
-    def __init__(self, value, is_default=False):
-        self._value_ = value
-        self.is_default = is_default
-
     @classmethod
     def default(cls):
         """

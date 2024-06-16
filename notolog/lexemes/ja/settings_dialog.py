@@ -43,20 +43,14 @@ lexemes = {
     "viewer_config_save_resources_checkbox_accessible_description":
         "オフラインアクセスのために外部画像のコピーをディスクに自動保存します。",
 
-    "ai_config_openai_api_label": "OpenAI API",
-    "ai_config_openai_api_url_input_placeholder_text": "API URL",
-    "ai_config_openai_api_url_input_accessible_description": "OpenAI APIのURL",
-    "ai_config_openai_api_key_input_placeholder_text": "API キー",
-    "ai_config_openai_api_key_input_accessible_description": "OpenAI APIのキー",
-    "ai_config_openai_api_supported_models_label": "サポートされているモデル",
-    "ai_config_ai_model_names_combo_placeholder_text": "モデルを選択",
-    "ai_config_ai_model_names_combo_accessible_description": "選択可能なサポートされているモデル",
+    "ai_config_inference_module_label": "推論モジュール",
+    "ai_config_inference_module_names_combo_placeholder_text": "モジュールを選択",
+    "ai_config_inference_module_names_combo_accessible_description": "選択可能なモジュール",
+
+    "ai_config_multi_turn_dialogue_checkbox": "以前のプロンプトに基づいて構築されるマルチターン対話",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description": "以前のプロンプトに基づいて構築されるマルチターン対話",
+    "ai_config_convert_to_md_checkbox": "結果をMarkdownに変換",
+    "ai_config_convert_to_md_checkbox_accessible_description": "結果のメッセージをMarkdownに変換",
 
     "ai_config_base_label": "基本パラメータ",
-    "ai_config_base_system_prompt_label": "システムプロンプト",
-    "ai_config_base_system_prompt_edit_placeholder_text": "各リクエストに先立つ基本システムプロンプト",
-    "ai_config_base_system_prompt_edit_accessible_description":
-        "各リクエストに先立つ基本システムプロンプト。プレーンテキスト。",
-    "ai_config_base_response_max_tokens_label": "応答の最大トークン数",
-    "ai_config_base_response_max_tokens_input_accessible_description": "応答で受け取る最大トークン数",
 }

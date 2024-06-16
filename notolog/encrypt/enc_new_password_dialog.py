@@ -30,7 +30,7 @@ class EncNewPasswordDialog(QDialog):
         self.logging = AppConfig().get_logging()
         self.debug = AppConfig().get_debug()
 
-        # Default language setup, change to settings value to modify it via UI
+        # Load lexemes for selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='common')
 
         self.theme_helper = ThemeHelper()

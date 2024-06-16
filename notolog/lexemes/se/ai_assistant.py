@@ -8,10 +8,14 @@ lexemes = {
     "dialog_response_output_accessible_description": "Svarsdata kommer att visas i detta fält",
     "dialog_response_output_notice_empty_text": "Ange text för att få ett svar om...",
 
+    "dialog_usage_module_label": "MODUL",
     "dialog_usage_model_label": "MODELL",
     "dialog_usage_tokens_label": "TOKENS",
     "dialog_usage_tokens_prompt": "prompt: {tokens}",
     "dialog_usage_tokens_answer": "svar: {tokens}",
     "dialog_usage_tokens_total": "totalt: {tokens}",
-    "dialog_button_send_request": "Skicka förfrågan"
+
+    "dialog_button_send_request": "Skicka förfrågan",
+
+    "dialog_error_loading_model": "Fel vid laddning av anpassad modell",
 }

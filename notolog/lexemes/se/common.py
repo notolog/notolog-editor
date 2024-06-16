@@ -80,6 +80,13 @@ lexemes = {
     "dialog_open_link_title": "Länk",
     "dialog_open_link_text": "Öppna länken \"{url}\" i en webbläsare?",
 
+    "dialog_reset_settings_title": "Återställ inställningar?",
+    "dialog_reset_settings_text":
+        "All lagrad data i inställningarna kommer att rensas, och appen kommer att startas om för att tillämpa "
+        "ändringarna.",
+
+    "field_dir_path_line_edit": "Välj katalog",
+
     "load_file_encryption_password_mismatch": "Krypteringslösenordet stämmer inte!",
     "load_file_encryption_password_incorrect": "Fel krypteringslösenord!",
     "load_file_none_content_error": "Filen kan inte laddas.",

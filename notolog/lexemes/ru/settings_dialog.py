@@ -45,21 +45,16 @@ lexemes = {
     "viewer_config_save_resources_checkbox_accessible_description":
         "Автоматически сохраняет копии внешних изображений на диск для доступа без подключения к интернету.",
 
-    "ai_config_openai_api_label": "API OpenAI",
-    "ai_config_openai_api_url_input_placeholder_text": "URL API",
-    "ai_config_openai_api_url_input_accessible_description": "URL API OpenAI",
-    "ai_config_openai_api_key_input_placeholder_text": "Ключ API",
-    "ai_config_openai_api_key_input_accessible_description": "Ключ API OpenAI",
-    "ai_config_openai_api_supported_models_label": "Поддерживаемые модели",
-    "ai_config_ai_model_names_combo_placeholder_text": "Выберите модель",
-    "ai_config_ai_model_names_combo_accessible_description": "Выбор поддерживаемых моделей",
+    "ai_config_inference_module_label": "Модуль вывода",
+    "ai_config_inference_module_names_combo_placeholder_text": "Выберите модуль",
+    "ai_config_inference_module_names_combo_accessible_description": "Модули доступные для выбора",
+
+    "ai_config_multi_turn_dialogue_checkbox":
+        "Многоходовый диалог, который строится на предыдущих запросах для контекстуальной связности",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
+        "Многоходовый диалог, который строится на предыдущих запросах для контекстуальной связности",
+    "ai_config_convert_to_md_checkbox": "Преобразовать результат в Markdown",
+    "ai_config_convert_to_md_checkbox_accessible_description": "Преобразовать сообщение с результатом в Markdown",
 
     "ai_config_base_label": "Основные параметры",
-    "ai_config_base_system_prompt_label": "Системный запрос",
-    "ai_config_base_system_prompt_edit_placeholder_text": "Базовый системный запрос, предшествующий каждому запросу",
-    "ai_config_base_system_prompt_edit_accessible_description":
-        "Базовый системный запрос, предшествующий каждому запросу. Простой текст.",
-    "ai_config_base_response_max_tokens_label": "Максимальное количество токенов ответа",
-    "ai_config_base_response_max_tokens_input_accessible_description":
-        "Максимальное количество токенов для получения в ответе",
 }

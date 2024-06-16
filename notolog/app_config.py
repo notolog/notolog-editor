@@ -11,7 +11,7 @@ from threading import Lock
 toml_base_app_config = """
 [app]
 name = "Notolog"
-version = "0.9.1b8"
+version = "0.9.5b1"
 license = "MIT License"
 date = "2024"
 website = "https://notolog.app"
@@ -133,15 +133,19 @@ class AppConfig(QObject):
             cls._instance = cls()
         return cls._instance
 
-    def load_initial_conf(self):
-        self.base_app_config = tomli.loads(toml_base_app_config)
-
+    def get_app_config_path(self):
         # Get this file dir path
         script_dir = os.path.dirname(os.path.realpath(__file__))
         # Get parent dir path
         parent_dir = os.path.dirname(script_dir)
         # Get app_config.toml file path which is located at parent dir
-        self.toml_file_path = os.path.join(parent_dir, 'app_config.toml')
+        return os.path.join(parent_dir, 'app_config.toml')
+
+    def load_initial_conf(self):
+        self.base_app_config = tomli.loads(toml_base_app_config)
+
+        # Get app_config.toml file path
+        self.toml_file_path = self.get_app_config_path()
 
         if not os.path.exists(self.toml_file_path):
             # Backup option
@@ -157,6 +161,11 @@ class AppConfig(QObject):
 
         # For pytest to allow override some params
         self._test_mode = False
+
+    def delete_app_config(self):
+        if os.path.exists(self.toml_file_path):
+            # Delete file
+            os.remove(self.toml_file_path)
 
     def app_config_update_handler(self, data: dict) -> None:
         if self.debug:

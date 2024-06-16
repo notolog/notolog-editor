@@ -38,7 +38,7 @@ class ViewProcessor:
 
         self.logger = logging.getLogger('view_processor')
 
-        # Default language setup, change to settings value to modify it via UI
+        # Load lexemes for selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='common')
 
         if self.debug:

@@ -29,7 +29,7 @@ class EncPasswordResetDialog(QDialog):
         self.logging = AppConfig().get_logging()
         self.debug = AppConfig().get_debug()
 
-        # Default language setup, change to settings value to modify it via UI
+        # Load lexemes for selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='common')
 
         title = self.lexemes.get('dialog_encrypt_password_reset_title')

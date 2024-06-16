@@ -5,18 +5,6 @@ assert hasattr(EnumBase, 'default'), "Check default() method is implemented in t
 
 class Colors(EnumBase):
 
-    @staticmethod
-    def _generate_next_value_(name, start, count, last_values):
-        """
-        Override _generate_next_value_ to allow for custom attributes on enum members (mostly for default).
-
-        'name' is the name of the Enum's member, which will be 'A', 'B', 'C', etc.
-        This method returns the name itself, an 'extended' marker (False), and a 'default' marker (False).
-
-        Extended means extended color palette.
-        """
-        return name, False, False
-
     # Red Spectrum
     CRIMSON = ("Crimson", True)
     DARKRED = ("DarkRed", True)
@@ -150,19 +138,17 @@ class Colors(EnumBase):
     KHAKI = ("Khaki", True)
     WHEAT = ("Wheat", True)
 
-    def __init__(self, value, is_extended=False, is_default=False):
-        # If the value is a tuple, unpack it.
-        if isinstance(value, tuple):
-            self._value_, self.is_extended, self.is_default = value
-        else:
-            self._value_ = value
-            self.is_extended = is_extended
-            self.is_default = is_default
+    def __init__(self, value, is_extended=False, is_default=False, *args, **kwargs):
+        super().__init__(value, is_default=is_default, *args, **kwargs)
+        # Additional argument
+        self.is_extended = is_extended
 
     @classmethod
     def extended_members(cls):
+        # Extended means extended color palette.
         return [member for member in cls if member.is_extended]
 
     @classmethod
     def is_extended(cls, member):
+        # Extended means extended color palette.
         return member in cls.extended_members()

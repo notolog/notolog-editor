@@ -15,7 +15,11 @@ class TestSettings:
     def test_obj_settings(self, test_core_app):  # noqa: F811 redefinition of unused 'test_app'
         # The test_app fixture sets up the app environment explicitly.
         settings = Settings()
+        # Clear settings to be sure start over without side effects
         settings.clear()
+        # Reset singleton (qa functionality)
+        settings.reload()
+
         yield settings
 
     def test_settings_defaults(self, test_obj_settings):
@@ -41,7 +45,10 @@ class TestSettings:
         # Sync changes
         test_obj_settings.sync()
 
-        # Get settings instance
+        # Reset singleton (qa functionality)
+        test_obj_settings.reload()
+
+        # Get fresh settings instance
         settings = Settings()
 
         # Assert values are stored correctly
@@ -52,7 +59,7 @@ class TestSettings:
         assert settings.file_path == os.path.normpath('test/path/file.txt')
         assert settings.toolbar_icons == 8
 
-        # Linux: /home/runner/.config/Notolog/notolog_editor_tests.conf
+        # Linux: /home/runner/.config/Notolog/notolog_editor_tests.conf (notolog_editor_qa.conf)
         # macOS: '/Users/runner/Library/Preferences/com.notolog.notolog_editor_tests.plist'
         # Windows: '\\HKEY_CURRENT_USER\\Software\\Notolog\\notolog_editor_tests'
         assert AppConfig().get_settings_app_name_qa() in settings.fileName()

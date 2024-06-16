@@ -8,10 +8,14 @@ lexemes = {
     "dialog_response_output_accessible_description": "応答データはこのフィールドに表示されます",
     "dialog_response_output_notice_empty_text": "テキスト入力を提供して、約...",
 
+    "dialog_usage_module_label": "モジュール",
     "dialog_usage_model_label": "モデル",
     "dialog_usage_tokens_label": "トークン",
     "dialog_usage_tokens_prompt": "プロンプト: {tokens}",
     "dialog_usage_tokens_answer": "回答: {tokens}",
     "dialog_usage_tokens_total": "合計: {tokens}",
+
     "dialog_button_send_request": "リクエストを送信",
+
+    "dialog_error_loading_model": "カスタムモデルのロードエラー",
 }

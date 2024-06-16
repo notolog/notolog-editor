@@ -44,20 +44,14 @@ lexemes = {
     "viewer_config_save_resources_checkbox_accessible_description":
         "오프라인 액세스를 위해 외부 이미지의 복사본을 디스크에 자동으로 저장합니다.",
 
-    "ai_config_openai_api_label": "OpenAI API",
-    "ai_config_openai_api_url_input_placeholder_text": "API URL",
-    "ai_config_openai_api_url_input_accessible_description": "OpenAI API URL",
-    "ai_config_openai_api_key_input_placeholder_text": "API 키",
-    "ai_config_openai_api_key_input_accessible_description": "OpenAI API 키",
-    "ai_config_openai_api_supported_models_label": "지원되는 모델",
-    "ai_config_ai_model_names_combo_placeholder_text": "모델 선택",
-    "ai_config_ai_model_names_combo_accessible_description": "선택할 수 있는 지원되는 모델",
+    "ai_config_inference_module_label": "추론 모듈",
+    "ai_config_inference_module_names_combo_placeholder_text": "모듈 선택",
+    "ai_config_inference_module_names_combo_accessible_description": "선택 가능한 모듈들",
+
+    "ai_config_multi_turn_dialogue_checkbox": "이전 프롬프트에 기반한 멀티턴 대화로 문맥 연속성을 구축",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description": "이전 프롬프트에 기반한 멀티턴 대화로 문맥 연속성을 구축",
+    "ai_config_convert_to_md_checkbox": "결과를 마크다운으로 변환",
+    "ai_config_convert_to_md_checkbox_accessible_description": "결과 메시지를 마크다운으로 변환",
 
     "ai_config_base_label": "기본 매개변수",
-    "ai_config_base_system_prompt_label": "시스템 프롬프트",
-    "ai_config_base_system_prompt_edit_placeholder_text": "각 요청에 앞서는 기본 시스템 프롬프트",
-    "ai_config_base_system_prompt_edit_accessible_description":
-        "각 요청에 앞서는 기본 시스템 프롬프트. 일반 텍스트.",
-    "ai_config_base_response_max_tokens_label": "응답 최대 토큰 수",
-    "ai_config_base_response_max_tokens_input_accessible_description": "응답에서 받을 수 있는 최대 토큰 수",
 }

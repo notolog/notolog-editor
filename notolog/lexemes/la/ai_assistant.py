@@ -8,10 +8,14 @@ lexemes = {
     "dialog_response_output_accessible_description": "Responsi data in hoc campo apparebunt",
     "dialog_response_output_notice_empty_text": "Praebe textum ad respondendum fere...",
 
+    "dialog_usage_module_label": "MODULUS",
     "dialog_usage_model_label": "EXEMPLAR",
     "dialog_usage_tokens_label": "SIGNA",
     "dialog_usage_tokens_prompt": "promptus: {tokens}",
     "dialog_usage_tokens_answer": "responsio: {tokens}",
     "dialog_usage_tokens_total": "totum: {tokens}",
+
     "dialog_button_send_request": "Postulationem mittere",
+
+    "dialog_error_loading_model": "Error loading mos proprius",
 }

@@ -81,6 +81,12 @@ lexemes = {
     "dialog_open_link_title": "ბმული",
     "dialog_open_link_text": "გახსნა ბმული \"{url}\" ბრაუზერში?",
 
+    "dialog_reset_settings_title": "პარამეტრების აღდგენა?",
+    "dialog_reset_settings_text":
+        "ყველა შენახული მონაცემი პარამეტრებში წაიშლება, და აპლიკაცია გადაიტვირთება ცვლილებების გამო.",
+
+    "field_dir_path_line_edit": "აირჩიეთ დირექტორია",
+
     "load_file_encryption_password_mismatch": "დაშიფრვის პაროლის უთანასწორობა!",
     "load_file_encryption_password_incorrect": "დაშიფრვის პაროლი არასწორია!",
     "load_file_none_content_error": "ფაილი ვერ იტვირთება.",

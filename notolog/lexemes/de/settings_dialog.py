@@ -44,21 +44,16 @@ lexemes = {
     "viewer_config_save_resources_checkbox_accessible_description":
         "Speichert automatisch Kopien von externen Bildern auf der Festplatte für den Offline-Zugriff.",
 
-    "ai_config_openai_api_label": "OpenAI-API",
-    "ai_config_openai_api_url_input_placeholder_text": "API-URL",
-    "ai_config_openai_api_url_input_accessible_description": "URL der OpenAI-API",
-    "ai_config_openai_api_key_input_placeholder_text": "API-Schlüssel",
-    "ai_config_openai_api_key_input_accessible_description": "API-Schlüssel von OpenAI",
-    "ai_config_openai_api_supported_models_label": "Unterstützte Modelle",
-    "ai_config_ai_model_names_combo_placeholder_text": "Modell wählen",
-    "ai_config_ai_model_names_combo_accessible_description": "Zur Auswahl stehende unterstützte Modelle",
+    "ai_config_inference_module_label": "Inferenzmodul",
+    "ai_config_inference_module_names_combo_placeholder_text": "Modul wählen",
+    "ai_config_inference_module_names_combo_accessible_description": "Verfügbare Module zur Auswahl",
+
+    "ai_config_multi_turn_dialogue_checkbox":
+        "Mehrschritt-Dialog, der auf vorherigen Aufforderungen aufbaut, um kontextuelle Kontinuität zu gewährleisten",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
+        "Mehrschritt-Dialog, der auf vorherigen Aufforderungen aufbaut, um kontextuelle Kontinuität zu gewährleisten",
+    "ai_config_convert_to_md_checkbox": "Das Ergebnis in Markdown konvertieren",
+    "ai_config_convert_to_md_checkbox_accessible_description": "Die Ergebnisnachricht in Markdown konvertieren",
 
     "ai_config_base_label": "Grundparameter",
-    "ai_config_base_system_prompt_label": "Systemaufforderung",
-    "ai_config_base_system_prompt_edit_placeholder_text": "Grundsystemaufforderung, die jeder Anfrage vorausgeht",
-    "ai_config_base_system_prompt_edit_accessible_description":
-        "Grundsystemaufforderung, die jeder Anfrage vorausgeht. Reiner Text.",
-    "ai_config_base_response_max_tokens_label": "Maximale Antwort-Token",
-    "ai_config_base_response_max_tokens_input_accessible_description":
-        "Maximale Anzahl von Token, die in der Antwort empfangen werden",
 }

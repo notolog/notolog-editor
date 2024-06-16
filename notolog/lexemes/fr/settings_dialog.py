@@ -45,20 +45,16 @@ lexemes = {
     "viewer_config_save_resources_checkbox_accessible_description":
         "Enregistre automatiquement des copies des images externes sur le disque pour un accès hors ligne.",
 
-    "ai_config_openai_api_label": "API OpenAI",
-    "ai_config_openai_api_url_input_placeholder_text": "URL de l'API",
-    "ai_config_openai_api_url_input_accessible_description": "URL de l'API OpenAI",
-    "ai_config_openai_api_key_input_placeholder_text": "Clé API",
-    "ai_config_openai_api_key_input_accessible_description": "Clé de l'API OpenAI",
-    "ai_config_openai_api_supported_models_label": "Modèles pris en charge",
-    "ai_config_ai_model_names_combo_placeholder_text": "Choisir un modèle",
-    "ai_config_ai_model_names_combo_accessible_description": "Modèles pris en charge à choisir",
+    "ai_config_inference_module_label": "Module d'inférence",
+    "ai_config_inference_module_names_combo_placeholder_text": "Choisir le module",
+    "ai_config_inference_module_names_combo_accessible_description": "Modules disponibles à choisir",
+
+    "ai_config_multi_turn_dialogue_checkbox":
+        "Dialogue multi-tours qui se construit sur les invites précédentes pour la continuité contextuelle",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
+        "Dialogue multi-tours qui se construit sur les invites précédentes pour la continuité contextuelle",
+    "ai_config_convert_to_md_checkbox": "Convertir le résultat en Markdown",
+    "ai_config_convert_to_md_checkbox_accessible_description": "Convertir le message de résultat en Markdown",
 
     "ai_config_base_label": "Paramètres de base",
-    "ai_config_base_system_prompt_label": "Invite de système",
-    "ai_config_base_system_prompt_edit_placeholder_text": "Invite de système de base qui précède chaque demande",
-    "ai_config_base_system_prompt_edit_accessible_description":
-        "Invite de système de base qui précède chaque demande. Texte brut.",
-    "ai_config_base_response_max_tokens_label": "Nombre maximal de jetons de réponse",
-    "ai_config_base_response_max_tokens_input_accessible_description": "Nombre maximal de jetons à recevoir en réponse",
 }

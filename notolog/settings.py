@@ -3,10 +3,10 @@ from PySide6.QtCore import Signal, QSettings
 from .app_config import AppConfig
 from .enums.themes import Themes
 from .enums.languages import Languages
-from .enums.ai_model_names import AiModelNames
 from .helpers.settings_helper import SettingsHelper
 
 from typing import TYPE_CHECKING, Any
+from threading import Lock
 
 import logging
 
@@ -21,29 +21,63 @@ class Settings(QSettings):
 
     value_changed = Signal(object)  # type: Signal[Union[object, QSettings]]
 
+    _instance = None  # Singleton instance
+    _lock = Lock()
+
+    ai_config_inference_modules: dict = {}
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            with cls._lock:
+                if not cls._instance:
+                    # Create the instance if it doesn't exist
+                    cls._instance = super().__new__(cls)
+        return cls._instance
+
+    @ classmethod
+    def reload(cls, *args, **kwargs):
+        """
+        Reinitialize the singleton instance. This method allows for the controlled
+        re-creation of the singleton instance.
+        """
+        with cls._lock:
+            # Create a new instance
+            cls._instance = super().__new__(cls)
+
     def __init__(self, parent=None):
         """
         Args:
             parent (optional): Parent object
         """
-        super(Settings, self).__init__(parent)
 
-        self.logger = logging.getLogger('settings')
+        # Check if instance is already initialized
+        if hasattr(self, 'settings'):
+            return
 
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
+        # Ensure that the initialization check and the setting of 'modules' param are atomic.
+        with self._lock:
+            # This prevents race conditions.
+            if hasattr(self, 'settings'):
+                return
 
-        self.settings = QSettings()
-        self.settings_helper = SettingsHelper()
+            super(Settings, self).__init__(parent)
 
-        if self.debug:
-            # Attributes may not be set at the very beginning
-            self.logger.debug('Window size %d x %d' % (getattr(self, 'ui_width', 0), getattr(self, 'ui_height', 0)))
+            self.logger = logging.getLogger('settings')
 
-        self.value_changed.connect(lambda v: self.settings.sync())
+            self.logging = AppConfig().get_logging()
+            self.debug = AppConfig().get_debug()
 
-        self.protected_attr = []
-        self.init_fields()
+            self.settings = QSettings()
+            self.settings_helper = SettingsHelper()
+
+            if self.debug:
+                # Attributes may not be set at the very beginning
+                self.logger.debug('Window size %d x %d' % (getattr(self, 'ui_width', 0), getattr(self, 'ui_height', 0)))
+
+            self.value_changed.connect(lambda v: self.settings.sync())
+
+            self.protected_attr = []
+            self.init_fields()
 
     def init_fields(self):
         # App's UI settings
@@ -81,11 +115,9 @@ class Settings(QSettings):
         self.create_property("toolbar_icons", int, None)
         self.create_property("enc_iterations", int, None)
         # AI assistant
-        self.create_property("ai_config_openai_url", str, "https://api.openai.com/v1/chat/completions")
-        self.create_property("ai_config_openai_key", str, "", encrypt=True)
-        self.create_property("ai_config_openai_model", str, str(AiModelNames.default()))
-        self.create_property("ai_config_base_system_prompt", str, "")
-        self.create_property("ai_config_base_response_max_tokens", int, 512)
+        self.create_property("ai_config_inference_module", str, "openai_api")
+        self.create_property("ai_config_multi_turn_dialogue", bool, True)
+        self.create_property("ai_config_convert_to_md", bool, False)
 
     def create_property(self, param_name: str, param_type: Any, default_value: Any, set_prev_func: Any = None,
                         encrypt: bool = False):

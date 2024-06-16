@@ -44,20 +44,16 @@ lexemes = {
     "viewer_config_save_resources_checkbox_accessible_description":
         "გარე სურათების ასლების ავტომატურად შენახვა დისკზე ოფლაინ წვდომისთვის.",
 
-    "ai_config_openai_api_label": "OpenAI API",
-    "ai_config_openai_api_url_input_placeholder_text": "API URL",
-    "ai_config_openai_api_url_input_accessible_description": "OpenAI API URL",
-    "ai_config_openai_api_key_input_placeholder_text": "API გასაღები",
-    "ai_config_openai_api_key_input_accessible_description": "OpenAI API გასაღები",
-    "ai_config_openai_api_supported_models_label": "მხარდაჭერილი მოდელები",
-    "ai_config_ai_model_names_combo_placeholder_text": "მოდელის არჩევა",
-    "ai_config_ai_model_names_combo_accessible_description": "მხარდაჭერილი მოდელების არჩევა",
+    "ai_config_inference_module_label": "ინფერენსის მოდული",
+    "ai_config_inference_module_names_combo_placeholder_text": "მოდულის არჩევა",
+    "ai_config_inference_module_names_combo_accessible_description": "არჩევადი მოდულები",
+
+    "ai_config_multi_turn_dialogue_checkbox":
+        "მრავალსვლიანი დიალოგი, რომელიც აშენებულია წინა პრომპტებზე და ზრუნავს კონტექსტური მკაცრობის გაგრძელებაზე",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
+        "მრავალსვლიანი დიალოგი, რომელიც აშენებულია წინა პრომპტებზე და ზრუნავს კონტექსტური მკაცრობის გაგრძელებაზე",
+    "ai_config_convert_to_md_checkbox": "შედეგის ქცევა Markdown-ში",
+    "ai_config_convert_to_md_checkbox_accessible_description": "შედეგის მესიჯის ქცევა Markdown-ში",
 
     "ai_config_base_label": "საბაზო პარამეტრები",
-    "ai_config_base_system_prompt_label": "სისტემური პრომპტი",
-    "ai_config_base_system_prompt_edit_placeholder_text": "საბაზო სისტემური პრომპტი, რომელიც ყოველ მოთხოვნას წინასწარ მიდის",
-    "ai_config_base_system_prompt_edit_accessible_description":
-        "საბაზო სისტემური პრომპტი, რომელიც ყოველ მოთხოვნას წინასწარ მიდის. ეს ტექსტია.",
-    "ai_config_base_response_max_tokens_label": "პასუხის მაქსიმალური ტოკენები",
-    "ai_config_base_response_max_tokens_input_accessible_description": "პასუხში მისაღები ტოკენების მაქსიმალური რაოდენობა",
 }

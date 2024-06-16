@@ -80,6 +80,12 @@ lexemes = {
     "dialog_open_link_title": "Linkki",
     "dialog_open_link_text": "Avaa linkki \"{url}\" selaimessa?",
 
+    "dialog_reset_settings_title": "Nollaa asetukset?",
+    "dialog_reset_settings_text":
+        "Kaikki asetuksissa tallennetut tiedot poistetaan, ja sovellus käynnistetään uudelleen muutosten soveltamiseksi.",
+
+    "field_dir_path_line_edit": "Valitse hakemisto",
+
     "load_file_encryption_password_mismatch": "Salaussalasana ei täsmää!",
     "load_file_encryption_password_incorrect": "Väärä salaussalasana!",
     "load_file_none_content_error": "Tiedostoa ei voi ladata.",

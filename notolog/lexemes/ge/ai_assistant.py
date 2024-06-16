@@ -8,10 +8,14 @@ lexemes = {
     "dialog_response_output_accessible_description": "პასუხის მონაცემები გამოჩნდება ამ ველში",
     "dialog_response_output_notice_empty_text": "შეიყვანეთ ტექსტი, რათა მიიღოთ პასუხი დაახლოებით...",
 
+    "dialog_usage_module_label": "მოდული",
     "dialog_usage_model_label": "მოდელი",
     "dialog_usage_tokens_label": "ტოკენები",
     "dialog_usage_tokens_prompt": "მოთხოვნა: {tokens}",
     "dialog_usage_tokens_answer": "პასუხი: {tokens}",
     "dialog_usage_tokens_total": "ჯამში: {tokens}",
+
     "dialog_button_send_request": "მოთხოვნის გაგზავნა",
+
+    "dialog_error_loading_model": "შეცდომა საბაჟო მოდელის ჩატვირთვისას",
 }

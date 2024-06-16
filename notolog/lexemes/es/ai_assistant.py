@@ -9,10 +9,14 @@ lexemes = {
     "dialog_response_output_notice_empty_text":
         "Proporcione una entrada de texto para obtener una respuesta de aproximadamente...",
 
+    "dialog_usage_module_label": "MÓDULO",
     "dialog_usage_model_label": "MODELO",
     "dialog_usage_tokens_label": "TOKENS",
     "dialog_usage_tokens_prompt": "prompt: {tokens}",
     "dialog_usage_tokens_answer": "respuesta: {tokens}",
     "dialog_usage_tokens_total": "total: {tokens}",
+
     "dialog_button_send_request": "Enviar solicitud",
+
+    "dialog_error_loading_model": "Error al cargar el modelo personalizado",
 }

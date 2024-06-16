@@ -1,6 +1,6 @@
 from PySide6.QtCore import Qt, QObject, QRegularExpression
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QTabWidget, QWidget, QFrame, QSizePolicy, QPlainTextEdit
-from PySide6.QtWidgets import QLabel, QCheckBox, QLineEdit, QPushButton, QComboBox, QSpinBox, QSlider, QSpacerItem
+from PySide6.QtWidgets import QDialog, QVBoxLayout, QTabWidget, QWidget, QSizePolicy, QPlainTextEdit
+from PySide6.QtWidgets import QLabel, QCheckBox, QLineEdit, QPushButton, QComboBox, QSpinBox, QSlider
 
 import logging
 from typing import Union
@@ -9,10 +9,12 @@ from . import AppConfig
 from . import Lexemes
 from . import ThemeHelper
 
+from ..enums.enum_base import EnumBase
 from ..enums.languages import Languages
-from ..enums.ai_model_names import AiModelNames
 from ..enums.themes import Themes
 from ..ui.enum_combo_box import EnumComboBox
+from ..ui.horizontal_line_spacer import HorizontalLineSpacer
+from ..modules.modules import Modules
 
 
 class SettingsDialog(QDialog):
@@ -35,20 +37,20 @@ class SettingsDialog(QDialog):
         self.logging = AppConfig().get_logging()
         self.debug = AppConfig().get_debug()
 
-        # Default language setup, change to settings value to modify it via UI
+        # Load lexemes for selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='settings_dialog')
 
         self.setWindowTitle(self.lexemes.get('window_title'))
 
+        # Set dialog size derived from the main window size
+        main_window_size = self.parent.size()
+        dialog_width = int(main_window_size.width() * 0.5)
+        dialog_height = int(main_window_size.height() * 0.33)
+        self.setMinimumSize(dialog_width, dialog_height)
+
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         if self.sizeHint().isValid():
             self.setMinimumSize(self.sizeHint())
-
-        # Set dialog size derived from the main window size
-        main_window_size = self.parent.size()
-        dialog_width = int(main_window_size.width() * 0.33)
-        dialog_height = int(main_window_size.height() * 0.33)
-        self.setMinimumSize(dialog_width, dialog_height)
 
         # Tabs widget as a main one
         self.tab_widget = Union[QWidget, None]
@@ -63,53 +65,80 @@ class SettingsDialog(QDialog):
 
         # Main tabs widget
         self.tab_widget = QTabWidget()
-        self.tab_widget.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
+        self.tab_widget.setSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Minimum)
         layout.addWidget(self.tab_widget)
 
-        # Add tabs to the main widget
+        # Get tabs fields config
+        fields_conf = self.get_fields_conf()
+
+        for conf in fields_conf:
+            self.create_setting_field(conf)
+
+        # Close button
+        close_button = QPushButton(self.lexemes.get('button_close'))
+        close_button.setObjectName('settings_dialog_button_close')
+        close_button.clicked.connect(self.close)
+        layout.addWidget(close_button)
+
+        self.connect_widgets()
+
+        # Get the preferred size of the dialog's content
+        preferred_size = self.layout().sizeHint()
+        # Adjust the dialog's size based on the preferred size then
+        if preferred_size.isValid():
+            self.resize(preferred_size)
+
+        self.adjustSize()
+
+    def get_fields_conf(self) -> list:
+        # Load modules first to enable the loading of extension settings.
+        module_instances = []
+        for module in Modules().get_by_extension('settings_dialog'):
+            # Pass settings object to avoid circular dependencies
+            module_instances.append(Modules().create(module))
+
+        fields_config = []
+        fields_config.extend(self.get_general_fields())
+        fields_config.extend(self.get_editor_config_fields())
+        fields_config.extend(self.get_viewer_config_fields())
+        fields_config.extend(self.get_ai_config_fields())
+
+        # Extend settings UI based on extended settings
+        for module_instance in module_instances:
+            if hasattr(module_instance, 'extend_settings_dialog_fields_conf'):
+                fields_config.extend(module_instance.extend_settings_dialog_fields_conf(self.tab_widget))
+            else:
+                if self.logging:
+                    self.logger.warning(f'Cannot extend settings_dialog for module {module_instance}')
+
+        return fields_config
+
+    def get_general_fields(self) -> list:
+
         # General
         tab_general = QWidget(self)
         tab_general.setObjectName('settings_dialog_tab_general')
-        # Editor
-        tab_editor_config = QWidget(self)
-        tab_editor_config.setObjectName('settings_dialog_tab_editor_config')
-        # Viewer
-        tab_viewer_config = QWidget(self)
-        tab_viewer_config.setObjectName('settings_dialog_tab_viewer_config')
-        # AI Config
-        tab_ai_config = QWidget(self)
-        tab_ai_config.setObjectName('settings_dialog_tab_ai_config')
-
-        self.tab_widget.addTab(tab_general, self.lexemes.get('tab_general'))
-        self.tab_widget.addTab(tab_editor_config, self.lexemes.get('tab_editor_config'))
-        self.tab_widget.addTab(tab_viewer_config, self.lexemes.get('tab_viewer_config'))
-        self.tab_widget.addTab(tab_ai_config, self.lexemes.get('tab_ai_config'))
 
         # Layout for the General tab
         tab_general_layout = QVBoxLayout(tab_general)
-        # Layout for the Editor Config tab
-        tab_editor_config_layout = QVBoxLayout(tab_editor_config)
-        # Layout for the Viewer Config tab
-        tab_viewer_config_layout = QVBoxLayout(tab_viewer_config)
-        # Layout for the AI Config tab
-        tab_ai_config_layout = QVBoxLayout(tab_ai_config)
-        """
-        Set spacing between widgets if needed:
-        tab_ai_config_layout.setSpacing(5)
-        """
 
-        fields_conf = [
+        self.tab_widget.addTab(tab_general, self.lexemes.get('tab_general'))
+
+        return [
             # [General]
             # General settings block label
-            {"type": QLabel, "name": "settings_dialog_general_app_config_label", "alignment": Qt.AlignmentFlag.AlignLeft,
+            {"type": QLabel, "name": "settings_dialog_header_label",
+             "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('general_app_config_label'), "style": {"bold": True},
              "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # Available languages label
-            {"type": QLabel, "name": "settings_dialog_general_app_language_label", "alignment": Qt.AlignmentFlag.AlignLeft,
+            {"type": QLabel, "name": "settings_dialog_general_app_language_label",
+             "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('general_app_language_label'),
              "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # Available languages dropdown list
-            {"type": EnumComboBox, "args": [sorted(Languages, key=lambda member: (not member.is_default, member.value))],
+            {"type": EnumComboBox,
+             "args": [sorted(Languages, key=lambda member: (not member.is_default, member.value))],
              "name": "settings_dialog_general_app_language_combo:app_language",  # Lexeme key : Object name
              "callback": lambda obj: tab_general_layout.addWidget(obj),
              "placeholder_text": self.lexemes.get('general_app_language_combo_placeholder_text'),
@@ -127,9 +156,9 @@ class SettingsDialog(QDialog):
              "accessible_description":
                  self.lexemes.get('general_app_theme_combo_accessible_description')},
             # Horizontal spacer
-            {"type": self.layout_horizontal_spacer, "args": [tab_general_layout]},
+            {"type": HorizontalLineSpacer, "callback": lambda obj: tab_general_layout.addWidget(obj)},
             # Main menu label
-            {"type": QLabel, "name": "settings_dialog_general_app_main_menu_label",
+            {"type": QLabel, "name": "settings_dialog_header_label",
              "alignment": Qt.AlignmentFlag.AlignLeft, "style": {"bold": True},
              "text": self.lexemes.get('general_app_main_menu_label'),
              "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
@@ -142,9 +171,9 @@ class SettingsDialog(QDialog):
              "accessible_description":
                  self.lexemes.get('general_app_main_menu_checkbox_accessible_description')},
             # Horizontal spacer
-            {"type": self.layout_horizontal_spacer, "args": [tab_general_layout]},
+            {"type": HorizontalLineSpacer, "callback": lambda obj: tab_general_layout.addWidget(obj)},
             # Status bar settings block label
-            {"type": QLabel, "name": "settings_dialog_general_statusbar_label", "alignment": Qt.AlignmentFlag.AlignLeft,
+            {"type": QLabel, "name": "settings_dialog_header_label", "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('general_statusbar_label'), "style": {"bold": True},
              "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # Either show or not global position at status bar
@@ -157,7 +186,7 @@ class SettingsDialog(QDialog):
              "accessible_description":
                  self.lexemes.get('general_statusbar_show_global_cursor_position_checkbox_accessible_description')},
             # Horizontal spacer
-            {"type": self.layout_horizontal_spacer, "args": [tab_general_layout]},
+            {"type": HorizontalLineSpacer, "callback": lambda obj: tab_general_layout.addWidget(obj)},
             # Main menu label
             {"type": QLabel, "name": "settings_dialog_general_app_font_size_label",
              "alignment": Qt.AlignmentFlag.AlignLeft, "style": {"bold": True},
@@ -175,10 +204,22 @@ class SettingsDialog(QDialog):
             # Spacer to keep elements above on top
             {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding),
              "callback": lambda obj: tab_general_layout.addWidget(obj)},
+        ]
 
+    def get_editor_config_fields(self) -> list:
+        # Editor
+        tab_editor_config = QWidget(self)
+        tab_editor_config.setObjectName('settings_dialog_tab_editor_config')
+
+        # Layout for the Editor Config tab
+        tab_editor_config_layout = QVBoxLayout(tab_editor_config)
+
+        self.tab_widget.addTab(tab_editor_config, self.lexemes.get('tab_editor_config'))
+
+        return [
             # [Editor config]
             # Editor block label
-            {"type": QLabel, "name": "settings_dialog_editor_config_label", "alignment": Qt.AlignmentFlag.AlignLeft,
+            {"type": QLabel, "name": "settings_dialog_header_label", "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('editor_config_label'), "style": {"bold": True},
              "callback": lambda obj: tab_editor_config_layout.addWidget(obj)},
             # Either to show or not editor's line numbers
@@ -192,10 +233,22 @@ class SettingsDialog(QDialog):
             # Spacer to keep elements above on top
             {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding),
              "callback": lambda obj: tab_editor_config_layout.addWidget(obj)},
+        ]
 
+    def get_viewer_config_fields(self) -> list:
+        # Viewer
+        tab_viewer_config = QWidget(self)
+        tab_viewer_config.setObjectName('settings_dialog_tab_viewer_config')
+
+        # Layout for the Viewer Config tab
+        tab_viewer_config_layout = QVBoxLayout(tab_viewer_config)
+
+        self.tab_widget.addTab(tab_viewer_config, self.lexemes.get('tab_viewer_config'))
+
+        return [
             # [Viewer config]
             # Viewer block label
-            {"type": QLabel, "name": "settings_dialog_viewer_config_label", "alignment": Qt.AlignmentFlag.AlignLeft,
+            {"type": QLabel, "name": "settings_dialog_header_label", "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('viewer_config_label'), "style": {"bold": True},
              "callback": lambda obj: tab_viewer_config_layout.addWidget(obj)},
             # Either to show or not viewer's emojis
@@ -242,97 +295,64 @@ class SettingsDialog(QDialog):
             # Spacer to keep elements above on top
             {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding),
              "callback": lambda obj: tab_viewer_config_layout.addWidget(obj)},
+        ]
 
+    def get_ai_config_fields(self) -> list:
+        # AI Config
+        tab_ai_config = QWidget(self)
+        tab_ai_config.setObjectName('settings_dialog_tab_ai_config')
+
+        # Layout for the AI Config tab
+        tab_ai_config_layout = QVBoxLayout(tab_ai_config)
+        # Set spacing between widgets if needed:
+        # tab_ai_config_layout.setSpacing(5)
+
+        self.tab_widget.addTab(tab_ai_config, self.lexemes.get('tab_ai_config'))
+
+        return [
             # [AI config]
-            # OpenAI API block label
-            {"type": QLabel, "name": "settings_dialog_ai_config_openai_api_label", "alignment": Qt.AlignmentFlag.AlignLeft,
-             "text": self.lexemes.get('ai_config_openai_api_label'), "style": {"bold": True},
-             "callback": lambda obj: tab_ai_config_layout.addWidget(obj)},
-            # OpenAI API url line input
-            {"type": QLineEdit, "name": "settings_dialog_ai_config_openai_url:ai_config_openai_url",
-             "read_only": False, "max_length": 128,
-             "callback": lambda obj: tab_ai_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
-             "placeholder_text": self.lexemes.get('ai_config_openai_api_url_input_placeholder_text'),
-             "accessible_description":
-                 self.lexemes.get('ai_config_openai_api_url_input_accessible_description')},
-            # OpenAI API key line input
-            {"type": QLineEdit, "name": "settings_dialog_ai_config_openai_key:ai_config_openai_key",
-             "read_only": False, "max_length": 128,
-             "callback": lambda obj: tab_ai_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
-             "placeholder_text": self.lexemes.get('ai_config_openai_api_key_input_placeholder_text'),
-             "accessible_description":
-                 self.lexemes.get('ai_config_openai_api_key_input_accessible_description')},
-            # Spacer
-            {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum),
-             "callback": lambda obj: tab_ai_config_layout.addWidget(obj)},
-            # Supported models label
-            {"type": QLabel, "name": "settings_dialog_ai_config_openai_api_supported_models_label",
-             "alignment": Qt.AlignmentFlag.AlignLeft,
-             "text": self.lexemes.get('ai_config_openai_api_supported_models_label'),
+            # Default inference model label
+            {"type": QLabel, "name": "settings_dialog_ai_config_inference_module_label",
+             "alignment": Qt.AlignmentFlag.AlignLeft, "style": {"bold": True},
+             "text": self.lexemes.get('ai_config_inference_module_label'),
              "callback": lambda obj: tab_ai_config_layout.addWidget(obj)},
             # Supported models dropdown list
-            {"type": EnumComboBox, "args": [sorted(AiModelNames, key=lambda member: member.legacy)],  # legacy below
-             "name": "settings_dialog_ai_config_ai_model_names_combo:ai_config_openai_model",
+            {"type": EnumComboBox,
+             "args": [sorted(EnumBase('InferenceModuleNames', self.settings.ai_config_inference_modules),
+                      key=lambda member: (not member.is_default, member.value))],
+             "name": "settings_dialog_ai_config_inference_module_names_combo:ai_config_inference_module",
              "callback": lambda obj: tab_ai_config_layout.addWidget(obj),
-             "placeholder_text": self.lexemes.get('ai_config_ai_model_names_combo_placeholder_text'),
+             "placeholder_text": self.lexemes.get('ai_config_inference_module_names_combo_placeholder_text'),
              "accessible_description":
-                 self.lexemes.get('ai_config_ai_model_names_combo_accessible_description')},
+                 self.lexemes.get('ai_config_inference_module_names_combo_accessible_description')},
             # Horizontal spacer
-            {"type": self.layout_horizontal_spacer, "args": [tab_ai_config_layout]},
-            # Status bar settings block label
+            {"type": HorizontalLineSpacer, "callback": lambda obj: tab_ai_config_layout.addWidget(obj)},
+            # Base AI settings block label
             {"type": QLabel, "name": "settings_dialog_ai_config_base_label", "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('ai_config_base_label'), "style": {"bold": True},
              "callback": lambda obj: tab_ai_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
-            # Base system prompt label
-            {"type": QLabel, "name": "settings_dialog_ai_config_base_system_prompt_label",
-             "alignment": Qt.AlignmentFlag.AlignLeft, "text": self.lexemes.get('ai_config_base_system_prompt_label'),
-             "callback": lambda obj: tab_ai_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
-            # Base system prompt text edit
-            {"type": QPlainTextEdit, "name": "settings_dialog_ai_config_base_system_prompt:ai_config_base_system_prompt",
+            # Auto save downloaded resources on disk
+            {"type": QCheckBox,
+             # Lexeme key : Object name
+             "name": "settings_dialog_ai_config_multi_turn_dialogue_checkbox:ai_config_multi_turn_dialogue",
              "callback": lambda obj: tab_ai_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
-             "placeholder_text": self.lexemes.get('ai_config_base_system_prompt_edit_placeholder_text'),
+             "text": self.lexemes.get('ai_config_multi_turn_dialogue_checkbox'),
              "accessible_description":
-                 self.lexemes.get('ai_config_base_system_prompt_edit_accessible_description'), "text_lines": 7},
+                 self.lexemes.get('ai_config_multi_turn_dialogue_checkbox_accessible_description')},
             # Spacer
             {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum),
              "callback": lambda obj: tab_ai_config_layout.addWidget(obj)},
-            # Base response max tokens label
-            {"type": QLabel, "name": "settings_dialog_ai_config_base_response_max_tokens_label",
-             "alignment": Qt.AlignmentFlag.AlignLeft,
-             "text": self.lexemes.get('ai_config_base_response_max_tokens_label'),
-             "callback": lambda obj: tab_ai_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
-            # Base response max tokens input
-            {"type": QSpinBox, "props": {'setMinimum': 1, 'setMaximum': 65536},  # Update the highest range
-             "size_policy": (QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred),
-             "name": "settings_dialog_ai_config_base_response_max_tokens:ai_config_base_response_max_tokens",
+            # Auto save downloaded resources on disk
+            {"type": QCheckBox,
+             # Lexeme key : Object name
+             "name": "settings_dialog_ai_config_convert_to_md_checkbox:ai_config_convert_to_md",
              "callback": lambda obj: tab_ai_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
-             "accessible_description":
-                 self.lexemes.get('ai_config_base_response_max_tokens_input_accessible_description')},
+             "text": self.lexemes.get('ai_config_convert_to_md_checkbox'),
+             "accessible_description": self.lexemes.get('ai_config_convert_to_md_checkbox_accessible_description')},
             # Spacer to keep elements above on top
             {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding),
              "callback": lambda obj: tab_ai_config_layout.addWidget(obj)},
         ]
-
-        for conf in fields_conf:
-            self.create_setting_field(conf)
-
-        # Close button
-        close_button = QPushButton(self.lexemes.get('button_close'))
-        close_button.setObjectName('settings_dialog_button_close')
-        close_button.clicked.connect(self.close)
-        layout.addWidget(close_button)
-
-        self.connect_widgets()
-
-        # Adjust size policy to allow for dynamic resizing
-        self.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
-        self.adjustSize()
-
-        # Get the preferred size of the dialog's content
-        preferred_size = self.layout().sizeHint()
-        # Adjust the dialog's size based on the preferred size then
-        if preferred_size.isValid():
-            self.resize(preferred_size)
 
     def apply_props(self, widget, properties):
         for prop, value in properties.items():
@@ -348,8 +368,9 @@ class SettingsDialog(QDialog):
         @param conf: Config of the field. As the param bounded to the particular method it will be called then.
         @return: Any object instance
         """
-        args = conf['args'] if 'args' in conf else [self]
-        obj = conf['type'](*args)  # type: conf['type']
+        _args = conf['args'] if 'args' in conf else [self]  # Add to the dialog
+        _kwargs = conf['kwargs'] if 'kwargs' in conf else {}
+        obj = conf['type'](*_args, **_kwargs)
         # Align with the dialog font size (mostly for QLabel)
         if hasattr(obj, 'setFont'):
             obj.setFont(self.font())
@@ -639,16 +660,3 @@ class SettingsDialog(QDialog):
                 # Set the text
                 self.tab_widget.setTabText(index, text)
                 break
-
-    def layout_horizontal_spacer(self, layout: QVBoxLayout):
-        # Add spacer above the line
-        layout.addSpacerItem(QSpacerItem(0, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed))
-
-        # Add horizontal delimiter
-        line = QFrame()
-        line.setFrameShape(QFrame.Shape.HLine)
-        line.setFrameShadow(QFrame.Shadow.Sunken)
-        layout.addWidget(line)
-
-        # Add spacer below the line
-        layout.addSpacerItem(QSpacerItem(0, 10, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed))

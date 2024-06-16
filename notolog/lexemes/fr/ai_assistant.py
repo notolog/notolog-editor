@@ -8,10 +8,14 @@ lexemes = {
     "dialog_response_output_accessible_description": "Les données de réponse apparaîtront dans ce champ",
     "dialog_response_output_notice_empty_text": "Fournissez une saisie de texte pour obtenir une réponse d'environ...",
 
+    "dialog_usage_module_label": "MODULE",
     "dialog_usage_model_label": "MODÈLE",
     "dialog_usage_tokens_label": "JETONS",
     "dialog_usage_tokens_prompt": "invite : {tokens}",
     "dialog_usage_tokens_answer": "réponse : {tokens}",
     "dialog_usage_tokens_total": "total : {tokens}",
+
     "dialog_button_send_request": "Envoyer la requête",
+
+    "dialog_error_loading_model": "Erreur lors du chargement du modèle personnalisé",
 }

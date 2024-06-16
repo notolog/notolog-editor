@@ -9,7 +9,3 @@ class Themes(EnumBase):
     CALLIGRAPHY = "Calligraphy"
     NOIR_DARK = "Noir Dark"
     STRAWBERRY = "Strawberry"
-
-    def __init__(self, value, is_default=False):
-        self._value_ = value
-        self.is_default = is_default

@@ -7,7 +7,7 @@ long_description = (here / 'README.md').read_text(encoding='utf-8')
 
 setup(
     name='notolog',
-    version='0.9.1b8',
+    version='0.9.5b1',
     description='Notolog - Python Markdown Editor',
     long_description=long_description,
     long_description_content_type='text/markdown',
@@ -37,7 +37,6 @@ setup(
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12',
-        'Programming Language :: Python :: 3.13',
         'Topic :: Text Editors',
         'Topic :: Text Editors :: Documentation',
         'Topic :: Text Editors :: Emacs',
@@ -68,11 +67,20 @@ setup(
     ],
     packages=find_packages(),  # Find all packages in the directory
     include_package_data=True,  # Include data files specified in MANIFEST.in
-    python_requires='>=3.9, <4',
+    python_requires='>=3.9, <3.13',
     install_requires=[line.strip() for line in open("requirements.txt", "r")],
+    setup_requires=[
+        'build',
+        'setuptools',
+        'wheel',
+    ],
+    extras_require={
+        'dev': [line.strip() for line in open("dev_requirements.txt", "r")],  # Development dependencies
+        'test': [line.strip() for line in open("test_requirements.txt", "r")]  # Test dependencies
+    },
     project_urls={
         'Bug Reports': 'https://github.com/notolog/notolog-editor/issues',
         'Source': 'https://github.com/notolog/notolog-editor/',
     },
-    keywords='notolog, python, markdown, editor, ai, text, notes',
+    keywords='notolog, python, markdown, editor, ai, llm, text, notes',
 )

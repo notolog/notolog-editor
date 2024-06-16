@@ -79,6 +79,11 @@ lexemes = {
     "dialog_open_link_title": "링크",
     "dialog_open_link_text": "링크 \"{url}\"을(를) 브라우저에서 열겠습니까?",
 
+    "dialog_reset_settings_title": "설정을 재설정하시겠습니까?",
+    "dialog_reset_settings_text": "설정에 저장된 모든 데이터가 삭제되며, 변경 사항을 적용하기 위해 앱이 재시작됩니다.",
+
+    "field_dir_path_line_edit": "디렉토리 선택",
+
     "load_file_encryption_password_mismatch": "암호화 비밀번호가 일치하지 않습니다!",
     "load_file_encryption_password_incorrect": "암호화 비밀번호가 정확하지 않습니다!",
     "load_file_none_content_error": "파일을 불러올 수 없습니다.",

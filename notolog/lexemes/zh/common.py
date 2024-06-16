@@ -79,6 +79,11 @@ lexemes = {
     "dialog_open_link_title": "链接",
     "dialog_open_link_text": "在浏览器中打开链接 \"{url}\"?",
 
+    "dialog_reset_settings_title": "重置设置？",
+    "dialog_reset_settings_text": "将清除设置中的所有存储数据，并将重新启动应用程序以应用更改。",
+
+    "field_dir_path_line_edit": "选择目录",
+
     "load_file_encryption_password_mismatch": "加密密码不匹配!",
     "load_file_encryption_password_incorrect": "加密密码错误!",
     "load_file_none_content_error": "无法加载文件。",

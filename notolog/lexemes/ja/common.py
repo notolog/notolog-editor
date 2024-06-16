@@ -79,6 +79,11 @@ lexemes = {
     "dialog_open_link_title": "リンク",
     "dialog_open_link_text": "リンク \"{url}\" をブラウザで開きますか？",
 
+    "dialog_reset_settings_title": "設定をリセットしますか？",
+    "dialog_reset_settings_text": "設定に保存されているすべてのデータがクリアされ、変更を適用するためにアプリが再起動されます。",
+
+    "field_dir_path_line_edit": "ディレクトリを選択",
+
     "load_file_encryption_password_mismatch": "暗号化パスワードが一致しません！",
     "load_file_encryption_password_incorrect": "暗号化パスワードが正しくありません！",
     "load_file_none_content_error": "ファイルを読み込めません。",

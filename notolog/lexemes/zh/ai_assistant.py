@@ -8,10 +8,14 @@ lexemes = {
     "dialog_response_output_accessible_description": "响应数据将出现在此字段",
     "dialog_response_output_notice_empty_text": "提供文本输入以获得大约...",
 
+    "dialog_usage_module_label": "模块",
     "dialog_usage_model_label": "模型",
     "dialog_usage_tokens_label": "令牌",
     "dialog_usage_tokens_prompt": "提示：{tokens}",
     "dialog_usage_tokens_answer": "答案：{tokens}",
     "dialog_usage_tokens_total": "总计：{tokens}",
+
     "dialog_button_send_request": "发送请求",
+
+    "dialog_error_loading_model": "加载自定义模型错误",
 }

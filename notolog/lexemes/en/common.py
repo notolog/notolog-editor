@@ -80,6 +80,12 @@ lexemes = {
     "dialog_open_link_title": "Link",
     "dialog_open_link_text": "Open link \"{url}\" in a browser?",
 
+    "dialog_reset_settings_title": "Reset settings?",
+    "dialog_reset_settings_text":
+        "All stored data in settings will be cleared, and the app will restart to apply changes.",
+
+    "field_dir_path_line_edit": "Select Directory",
+
     "load_file_encryption_password_mismatch": "Encryption password mismatch!",
     "load_file_encryption_password_incorrect": "Incorrect encryption password!",
     "load_file_none_content_error": "File cannot be loaded.",

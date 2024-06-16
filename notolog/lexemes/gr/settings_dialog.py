@@ -46,21 +46,16 @@ lexemes = {
     "viewer_config_save_resources_checkbox_accessible_description":
         "Αυτόματη αποθήκευση αντιγράφων εξωτερικών εικόνων στον δίσκο για πρόσβαση χωρίς σύνδεση.",
 
-    "ai_config_openai_api_label": "OpenAI API",
-    "ai_config_openai_api_url_input_placeholder_text": "URL API",
-    "ai_config_openai_api_url_input_accessible_description": "URL του OpenAI API",
-    "ai_config_openai_api_key_input_placeholder_text": "Κλειδί API",
-    "ai_config_openai_api_key_input_accessible_description": "Κλειδί του OpenAI API",
-    "ai_config_openai_api_supported_models_label": "Υποστηριζόμενα μοντέλα",
-    "ai_config_ai_model_names_combo_placeholder_text": "Επιλέξτε μοντέλο",
-    "ai_config_ai_model_names_combo_accessible_description": "Υποστηριζόμενα μοντέλα προς επιλογή",
+    "ai_config_inference_module_label": "Μονάδα συμπερασμάτων",
+    "ai_config_inference_module_names_combo_placeholder_text": "Επιλέξτε μονάδα",
+    "ai_config_inference_module_names_combo_accessible_description": "Διαθέσιμες μονάδες για επιλογή",
+
+    "ai_config_multi_turn_dialogue_checkbox":
+        "Πολυστροφικός διάλογος που βασίζεται σε προηγούμενες εντολές για συνεχή πλαίσιο",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
+        "Πολυστροφικός διάλογος που βασίζεται σε προηγούμενες εντολές για συνεχή πλαίσιο",
+    "ai_config_convert_to_md_checkbox": "Μετατροπή του αποτελέσματος σε Markdown",
+    "ai_config_convert_to_md_checkbox_accessible_description": "Μετατροπή του μηνύματος αποτελέσματος σε Markdown",
 
     "ai_config_base_label": "Βασικοί Παράμετροι",
-    "ai_config_base_system_prompt_label": "Σύστημα Προτροπής",
-    "ai_config_base_system_prompt_edit_placeholder_text": "Βασική προτροπή συστήματος που προηγείται κάθε αιτήματος",
-    "ai_config_base_system_prompt_edit_accessible_description":
-        "Βασική προτροπή συστήματος που προηγείται κάθε αιτήματος. Απλό κείμενο.",
-    "ai_config_base_response_max_tokens_label": "Μέγιστοι Διακριτικοί Απόκρισης",
-    "ai_config_base_response_max_tokens_input_accessible_description":
-        "Μέγιστος αριθμός διακριτικών για λήψη σε απόκριση",
 }

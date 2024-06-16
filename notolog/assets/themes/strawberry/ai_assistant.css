@@ -4,11 +4,20 @@ QLineEdit {}
 QTextEdit {
     background-color: #fff7f7;
 }
+/* Buttons within messages */
+QLabel > QPushButton {
+    background-color: none;
+}
 /* Token usage labels by id */
-QLabel#ai_assistant_dialog_usage_model_label, QLabel#ai_assistant_dialog_usage_tokens_label {
+QLabel#ai_assistant_dialog_usage_module_name_label,
+QLabel#ai_assistant_dialog_usage_model_name_label,
+QLabel#ai_assistant_dialog_usage_tokens_label {
     color: grey;
 }
 /* Request submit button */
 QPushButton {
     background-color: crimson;
+}
+QPushButton:disabled {
+    background-color: lightgray;
 }

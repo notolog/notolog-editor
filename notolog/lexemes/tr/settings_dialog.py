@@ -42,20 +42,16 @@ lexemes = {
     "viewer_config_save_resources_checkbox_accessible_description":
         "Dış resimlerin kopyalarını çevrimdışı erişim için diske otomatik olarak kaydet",
 
-    "ai_config_openai_api_label": "OpenAI API",
-    "ai_config_openai_api_url_input_placeholder_text": "API URL",
-    "ai_config_openai_api_url_input_accessible_description": "OpenAI API URL'si",
-    "ai_config_openai_api_key_input_placeholder_text": "API anahtarı",
-    "ai_config_openai_api_key_input_accessible_description": "OpenAI API anahtarı",
-    "ai_config_openai_api_supported_models_label": "Desteklenen modeller",
-    "ai_config_ai_model_names_combo_placeholder_text": "Model seç",
-    "ai_config_ai_model_names_combo_accessible_description": "Seçilebilecek desteklenen modeller",
+    "ai_config_inference_module_label": "Çıkarım modülü",
+    "ai_config_inference_module_names_combo_placeholder_text": "Modül seç",
+    "ai_config_inference_module_names_combo_accessible_description": "Seçilebilecek modüller",
+
+    "ai_config_multi_turn_dialogue_checkbox":
+        "Önceki isteklere dayanan bağlamsal sürekliliği sağlayan çok turlu diyalog",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
+        "Önceki isteklere dayanan bağlamsal sürekliliği sağlayan çok turlu diyalog",
+    "ai_config_convert_to_md_checkbox": "Sonucu Markdown'a çevir",
+    "ai_config_convert_to_md_checkbox_accessible_description": "Sonuç mesajını Markdown'a çevir",
 
     "ai_config_base_label": "Temel Parametreler",
-    "ai_config_base_system_prompt_label": "Sistem İstemcisi",
-    "ai_config_base_system_prompt_edit_placeholder_text": "Her istekten önce gelen temel sistem istemcisi",
-    "ai_config_base_system_prompt_edit_accessible_description":
-        "Her istekten önce gelen temel sistem istemcisi. Bu düz metindir.",
-    "ai_config_base_response_max_tokens_label": "Maksimum Yanıt Token'ları",
-    "ai_config_base_response_max_tokens_input_accessible_description": "Yanıtta alınabilecek maksimum token sayısı",
 }

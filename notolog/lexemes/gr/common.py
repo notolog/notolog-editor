@@ -83,6 +83,13 @@ lexemes = {
     "dialog_open_link_title": "Σύνδεσμος",
     "dialog_open_link_text": "Άνοιγμα συνδέσμου \"{url}\" σε πρόγραμμα περιήγησης;",
 
+    "dialog_reset_settings_title": "Επαναφορά ρυθμίσεων;",
+    "dialog_reset_settings_text":
+        "Όλα τα αποθηκευμένα δεδομένα στις ρυθμίσεις θα διαγραφούν, και η εφαρμογή θα επανεκκινηθεί για να εφαρμοστούν "
+        "οι αλλαγές.",
+
+    "field_dir_path_line_edit": "Επιλέξτε Κατάλογο",
+
     "load_file_encryption_password_mismatch": "Αναντιστοιχία κωδικού κρυπτογράφησης!",
     "load_file_encryption_password_incorrect": "Λάθος κωδικός κρυπτογράφησης!",
     "load_file_none_content_error": "Το αρχείο δεν μπορεί να φορτωθεί.",

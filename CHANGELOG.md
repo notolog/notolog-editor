@@ -1,6 +1,25 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [0.9.5b1] - 2024-06-16
+
+### Added
+- Modular functionality with extendable settings and lexemes.
+- Introduced the 'On Device LLM' module using ONNX Runtime GenAI, enabling local, CPU-optimized versions of LLMs like Phi-3 without requiring internet access. Added two new packages, `onnxruntime_genai` and `numpy`, to support this feature. Supported systems include Linux and Windows (support for macOS is in progress).
+
+### Changed
+- Transformed the OpenAI API into a dedicated module.
+- Moved descriptions of third-party packages and their licenses to the `ThirdPartyNotices.md` file from the README.md.
+
+### Updated
+- Enhanced the AI Assistant to support multi-turn conversations with optional 'no memory' requests, improved token count management, and added a stop button functionality to halt inference.
+- Enabled saving of the entire AI Assistant conversation; individual messages can now be copied to the clipboard as well.
+- Implemented caching of settings, which can be reset via the main menu.
+
+### Fixed
+- Resolved an issue where the code block background color was indiscernible in the Dark Noir theme.
+- Corrected anchors processing for headers using the 'toc' (Table of Contents) markdown extension.
+
 ## [0.9.1b8] - 2024-05-25
 
 ### Added
@@ -8,7 +27,7 @@ All notologable changes to this project will be documented in this file.
 - New tests and test-related updates, particularly complex async tests for `ImageDownloader`.
 
 ### Updated
-- Updated the following packages to their latest versions: `PySide6` (including `PySide6_Addons` and `PySide6_Essentials`) to version 6.7.1, `pytest` to version 8.2.1, `pytest-asyncio` to version 0.23.7, `cffi` to version 1.17.0rc1, and `Emoji lib` to version 2.12.1.
+- Updated the following packages to their latest versions: `PySide6` (including `PySide6_Addons` and `PySide6_Essentials`) to version 6.7.1, `pytest` to version 8.2.1, `pytest-asyncio` to version 0.23.7, `cffi` to version 1.17.0rc1, and `emoji` to version 2.12.1.
 - Added processing for the Shift + Enter keyboard combination to avoid soft line breaks, which may alter the perception of how soft line breaks function.
 - Updated the package's `setup.py` to include supported languages and additional package information.
 - Updated the functionality for getting and storing protected fields in settings, including refactoring and error fixes (re-setup of corresponding values may be required).

@@ -107,7 +107,7 @@ class TestLexemes:
             ((None, None, None), 'en'),
             (('', None, None), 'en'),
             (('en', None, None), 'en'),
-            (('any', None, None), 'any'),
+            (('any', None, None), 'en'),
             (('..', None, None), 'en'),
         ],
         indirect=True

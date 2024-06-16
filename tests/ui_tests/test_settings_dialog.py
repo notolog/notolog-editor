@@ -8,6 +8,7 @@ from notolog.ui.settings_dialog import SettingsDialog
 from notolog.notolog_editor import NotologEditor
 from notolog.settings import Settings
 from notolog.enums.languages import Languages
+from notolog.modules.modules import Modules
 
 from . import test_app  # noqa: F401
 
@@ -22,6 +23,13 @@ class TestSettingsDialog:
         settings = Settings()
         yield settings
 
+    @pytest.fixture(autouse=True)
+    def modules_obj(self):
+        # Fixture to create and return modules instance
+        modules = Modules()
+        modules.modules = []
+        yield modules
+
     @pytest.fixture
     def main_window(self, mocker, test_app):  # noqa: F811 redefinition of unused 'test_app'
         # Force to override system language as a default
@@ -35,7 +43,9 @@ class TestSettingsDialog:
         yield window
 
     @pytest.fixture(autouse=True)
-    def ui_obj(self, main_window):
+    def ui_obj(self, mocker, main_window):
+        # No modules
+        mocker.patch.object(Modules, 'get_by_extension', return_value=[])
         # Fixture to initialize object.
         ui_obj = SettingsDialog(parent=main_window)
         yield ui_obj

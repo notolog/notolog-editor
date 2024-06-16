@@ -81,6 +81,13 @@ lexemes = {
     "dialog_open_link_title": "Link",
     "dialog_open_link_text": "Aprire il link \"{url}\" nel browser?",
 
+    "dialog_reset_settings_title": "Reimposta impostazioni?",
+    "dialog_reset_settings_text":
+        "Tutti i dati memorizzati nelle impostazioni verranno cancellati, e l'app verrà riavviata per applicare "
+        "le modifiche.",
+
+    "field_dir_path_line_edit": "Seleziona directory",
+
     "load_file_encryption_password_mismatch": "La password di crittografia non corrisponde!",
     "load_file_encryption_password_incorrect": "Password di crittografia incorretta!",
     "load_file_none_content_error": "Impossibile caricare il file.",

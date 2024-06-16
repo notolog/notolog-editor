@@ -81,6 +81,13 @@ lexemes = {
     "dialog_open_link_title": "Enlace",
     "dialog_open_link_text": "¿Abrir enlace \"{url}\" en un navegador?",
 
+    "dialog_reset_settings_title": "¿Restablecer configuraciones?",
+    "dialog_reset_settings_text":
+        "Todos los datos almacenados en las configuraciones serán borrados, y la aplicación se reiniciará para aplicar "
+        "los cambios.",
+
+    "field_dir_path_line_edit": "Seleccionar Directorio",
+
     "load_file_encryption_password_mismatch": "¡La contraseña de encriptación no coincide!",
     "load_file_encryption_password_incorrect": "¡Contraseña de encriptación incorrecta!",
     "load_file_none_content_error": "No se puede cargar el archivo.",

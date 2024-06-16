@@ -80,6 +80,13 @@ lexemes = {
     "dialog_open_link_title": "Link",
     "dialog_open_link_text": "Link \"{url}\" openen in een browser?",
 
+    "dialog_reset_settings_title": "Instellingen resetten?",
+    "dialog_reset_settings_text":
+        "Alle opgeslagen gegevens in de instellingen worden gewist, en de app wordt opnieuw opgestart om wijzigingen "
+        "toe te passen.",
+
+    "field_dir_path_line_edit": "Selecteer map",
+
     "load_file_encryption_password_mismatch": "Versleutelingswachtwoord komt niet overeen!",
     "load_file_encryption_password_incorrect": "Onjuist versleutelingswachtwoord!",
     "load_file_none_content_error": "Bestand kan niet worden geladen.",

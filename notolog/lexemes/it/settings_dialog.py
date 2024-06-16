@@ -45,21 +45,16 @@ lexemes = {
     "viewer_config_save_resources_checkbox_accessible_description":
         "Salva automaticamente copie delle immagini esterne sul disco per l'accesso offline.",
 
-    "ai_config_openai_api_label": "API OpenAI",
-    "ai_config_openai_api_url_input_placeholder_text": "URL API",
-    "ai_config_openai_api_url_input_accessible_description": "URL dell'API OpenAI",
-    "ai_config_openai_api_key_input_placeholder_text": "Chiave API",
-    "ai_config_openai_api_key_input_accessible_description": "Chiave API di OpenAI",
-    "ai_config_openai_api_supported_models_label": "Modelli supportati",
-    "ai_config_ai_model_names_combo_placeholder_text": "Scegli modello",
-    "ai_config_ai_model_names_combo_accessible_description": "Modelli supportati da scegliere",
+    "ai_config_inference_module_label": "Modulo di inferenza",
+    "ai_config_inference_module_names_combo_placeholder_text": "Scegli modulo",
+    "ai_config_inference_module_names_combo_accessible_description": "Moduli disponibili da scegliere",
+
+    "ai_config_multi_turn_dialogue_checkbox":
+        "Dialogo multi-turn che si basa su prompt precedenti per la continuità contestuale",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
+        "Dialogo multi-turn che si basa su prompt precedenti per la continuità contestuale",
+    "ai_config_convert_to_md_checkbox": "Converti il risultato in Markdown",
+    "ai_config_convert_to_md_checkbox_accessible_description": "Converti il messaggio del risultato in Markdown",
 
     "ai_config_base_label": "Parametri Base",
-    "ai_config_base_system_prompt_label": "Prompt del Sistema",
-    "ai_config_base_system_prompt_edit_placeholder_text": "Prompt di sistema base che precede ogni richiesta",
-    "ai_config_base_system_prompt_edit_accessible_description":
-        "Prompt di sistema base che precede ogni richiesta. Testo semplice.",
-    "ai_config_base_response_max_tokens_label": "Massimo di Token di Risposta",
-    "ai_config_base_response_max_tokens_input_accessible_description":
-        "Numero massimo di token da ricevere in risposta",
 }

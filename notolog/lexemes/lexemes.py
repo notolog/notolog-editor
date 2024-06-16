@@ -4,14 +4,18 @@ import importlib.util
 
 from typing import Union, Dict
 
+from ..enums.languages import Languages
+
 
 class Lexemes:
-    def __init__(self, language: str = 'en', default_scope: str = 'common'):
+    def __init__(self, language: str = 'en', default_scope: str = 'common', lexemes_dir: str = None):
         if not language or language in ('.', '..'):
-            language = 'en'
+            # Default language ('en')
+            language = str(Languages.default())
 
         self.language = language
         self._default_scope = default_scope
+        self._lexemes_dir = lexemes_dir
 
         # Lexeme storage
         self.lexemes = {}
@@ -21,7 +25,14 @@ class Lexemes:
         self.lexemes = self.load_lexemes()
 
     def get_lexemes_dir(self):
-        return os.path.join(os.path.dirname(__file__), self.language)
+        # Check if lexemes dir is re-written
+        lexemes_dir = self._lexemes_dir if self._lexemes_dir else os.path.dirname(__file__)
+        # Lexemes dir for the selected language
+        lexemes_lang_dir = os.path.join(lexemes_dir, self.language)
+        if not os.path.isdir(lexemes_lang_dir):
+            # Default language ('en')
+            lexemes_lang_dir = os.path.join(lexemes_dir, str(Languages.default()))
+        return lexemes_lang_dir
 
     def load_lexemes(self) -> Dict[str, Dict]:
         # Get the directory path of lexemes relative to this file

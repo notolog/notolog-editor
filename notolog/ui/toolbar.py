@@ -46,7 +46,7 @@ class ToolBar(QToolBar):
 
         self.theme_helper = ThemeHelper()
 
-        # Default language setup, change to settings value to modify it via UI
+        # Load lexemes for selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='toolbar')
 
         # Sometimes (when weights changed) the values could be reset like this:

@@ -44,20 +44,17 @@ lexemes = {
     "viewer_config_save_resources_checkbox_accessible_description":
         "Tallenna automaattisesti ulkoisten kuvien kopiot levylle offline-käyttöä varten.",
 
-    "ai_config_openai_api_label": "OpenAI API",
-    "ai_config_openai_api_url_input_placeholder_text": "API URL",
-    "ai_config_openai_api_url_input_accessible_description": "OpenAI API:n URL",
-    "ai_config_openai_api_key_input_placeholder_text": "API-avain",
-    "ai_config_openai_api_key_input_accessible_description": "OpenAI API:n avain",
-    "ai_config_openai_api_supported_models_label": "Tuetut mallit",
-    "ai_config_ai_model_names_combo_placeholder_text": "Valitse malli",
-    "ai_config_ai_model_names_combo_accessible_description": "Valittavissa olevat tuetut mallit",
+    "ai_config_inference_module_label": "Päätelmämoduuli",
+    "ai_config_inference_module_names_combo_placeholder_text": "Valitse moduuli",
+    "ai_config_inference_module_names_combo_accessible_description": "Valittavissa olevat moduulit",
+
+    "ai_config_multi_turn_dialogue_checkbox": "Monikierroksinen dialogi, joka rakentuu aikaisempien kehotteiden "
+                                              "pohjalle kontekstuaalisen jatkuvuuden säilyttämiseksi",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
+        "Monikierroksinen dialogi, joka rakentuu aikaisempien kehotteiden pohjalle kontekstuaalisen jatkuvuuden "
+        "säilyttämiseksi",
+    "ai_config_convert_to_md_checkbox": "Muunna tulos Markdowniksi",
+    "ai_config_convert_to_md_checkbox_accessible_description": "Muunna tulosviesti Markdowniksi",
 
     "ai_config_base_label": "Perusparametrit",
-    "ai_config_base_system_prompt_label": "Järjestelmäkehoite",
-    "ai_config_base_system_prompt_edit_placeholder_text": "Perusjärjestelmäkehoite, joka edeltää jokaista pyyntöä",
-    "ai_config_base_system_prompt_edit_accessible_description":
-        "Perusjärjestelmäkehoite, joka edeltää jokaista pyyntöä. Tämä on pelkkää tekstiä.",
-    "ai_config_base_response_max_tokens_label": "Vastauksen enimmäismäärä tokeneita",
-    "ai_config_base_response_max_tokens_input_accessible_description": "Vastauksessa saatavien tokenien enimmäismäärä",
 }

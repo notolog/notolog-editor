@@ -43,20 +43,14 @@ lexemes = {
     "viewer_config_save_resources_checkbox": "自动保存外部图片到硬盘",
     "viewer_config_save_resources_checkbox_accessible_description": "自动将外部图片的副本保存到硬盘以供离线访问。",
 
-    "ai_config_openai_api_label": "OpenAI API",
-    "ai_config_openai_api_url_input_placeholder_text": "API 地址",
-    "ai_config_openai_api_url_input_accessible_description": "OpenAI API 地址",
-    "ai_config_openai_api_key_input_placeholder_text": "API 密钥",
-    "ai_config_openai_api_key_input_accessible_description": "OpenAI API 密钥",
-    "ai_config_openai_api_supported_models_label": "支持的模型",
-    "ai_config_ai_model_names_combo_placeholder_text": "选择模型",
-    "ai_config_ai_model_names_combo_accessible_description": "选择支持的模型",
+    "ai_config_inference_module_label": "推理模块",
+    "ai_config_inference_module_names_combo_placeholder_text": "选择模块",
+    "ai_config_inference_module_names_combo_accessible_description": "可选择的模块",
+
+    "ai_config_multi_turn_dialogue_checkbox": "多轮对话，基于先前的提示保持语境连续性",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description": "多轮对话，基于先前的提示保持语境连续性",
+    "ai_config_convert_to_md_checkbox": "将结果转换为Markdown",
+    "ai_config_convert_to_md_checkbox_accessible_description": "将结果消息转换为Markdown",
 
     "ai_config_base_label": "基础参数",
-    "ai_config_base_system_prompt_label": "系统提示",
-    "ai_config_base_system_prompt_edit_placeholder_text": "基础系统提示，位于每个请求之前",
-    "ai_config_base_system_prompt_edit_accessible_description":
-        "基础系统提示，位于每个请求之前。纯文本。",
-    "ai_config_base_response_max_tokens_label": "响应的最大令牌数",
-    "ai_config_base_response_max_tokens_input_accessible_description": "响应中接收的最大令牌数",
 }

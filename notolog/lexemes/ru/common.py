@@ -80,6 +80,12 @@ lexemes = {
     "dialog_open_link_title": "Ссылка",
     "dialog_open_link_text": "Открыть ссылку \"{url}\" в браузере?",
 
+    "dialog_reset_settings_title": "Сбросить настройки?",
+    "dialog_reset_settings_text":
+        "Все сохранённые данные в настройках будут очищены, и приложение будет перезапущено для применения изменений.",
+
+    "field_dir_path_line_edit": "Выбрать каталог",
+
     "load_file_encryption_password_mismatch": "Несоответствие пароля шифрования!",
     "load_file_encryption_password_incorrect": "Неверный пароль шифрования!",
     "load_file_none_content_error": "Невозможно загрузить файл.",

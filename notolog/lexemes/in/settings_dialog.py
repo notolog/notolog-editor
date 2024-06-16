@@ -43,21 +43,16 @@ lexemes = {
     "viewer_config_save_resources_checkbox_accessible_description":
         "ऑफ़लाइन पहुंच के लिए बाहरी छवियों की स्वचालित प्रतिलिपियाँ डिस्क में सहेजें।",
 
-    "ai_config_openai_api_label": "ओपनएआई एपीआई",
-    "ai_config_openai_api_url_input_placeholder_text": "एपीआई यूआरएल",
-    "ai_config_openai_api_url_input_accessible_description": "ओपनएआई एपीआई यूआरएल",
-    "ai_config_openai_api_key_input_placeholder_text": "एपीआई कुंजी",
-    "ai_config_openai_api_key_input_accessible_description": "ओपनएआई एपीआई कुंजी",
-    "ai_config_openai_api_supported_models_label": "समर्थित मॉडल्स",
-    "ai_config_ai_model_names_combo_placeholder_text": "मॉडल चुनें",
-    "ai_config_ai_model_names_combo_accessible_description": "चुनने के लिए समर्थित मॉडल्स",
+    "ai_config_inference_module_label": "अनुमान मॉड्यूल",
+    "ai_config_inference_module_names_combo_placeholder_text": "मॉड्यूल चुनें",
+    "ai_config_inference_module_names_combo_accessible_description": "चुनने के लिए उपलब्ध मॉड्यूल",
+
+    "ai_config_multi_turn_dialogue_checkbox":
+        "पिछले प्रॉम्प्ट्स पर आधारित मल्टी-टर्न डायलॉग जो सांदर्भिक निरंतरता प्रदान करता है",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
+        "पिछले प्रॉम्प्ट्स पर आधारित मल्टी-टर्न डायलॉग जो सांदर्भिक निरंतरता प्रदान करता है",
+    "ai_config_convert_to_md_checkbox": "परिणाम को Markdown में परिवर्तित करें",
+    "ai_config_convert_to_md_checkbox_accessible_description": "परिणाम संदेश को Markdown में परिवर्तित करें",
 
     "ai_config_base_label": "मूल पैरामीटर",
-    "ai_config_base_system_prompt_label": "सिस्टम प्रॉम्प्ट",
-    "ai_config_base_system_prompt_edit_placeholder_text": "प्रत्येक अनुरोध से पहले मूल सिस्टम प्रॉम्प्ट",
-    "ai_config_base_system_prompt_edit_accessible_description":
-        "प्रत्येक अनुरोध से पहले मूल सिस्टम प्रॉम्प्ट। यह सादा पाठ है।",
-    "ai_config_base_response_max_tokens_label": "अधिकतम प्रतिसाद टोकन्स",
-    "ai_config_base_response_max_tokens_input_accessible_description":
-        "प्रतिसाद में प्राप्त करने के लिए अधिकतम टोकन्स की संख्या"
 }

@@ -11,13 +11,11 @@ Features:
 - Provides functionality that can be adjusted based on the app
 """
 
-from PySide6.QtCore import Qt, QUrl, QByteArray, QSize
-from PySide6.QtNetwork import QNetworkRequest, QNetworkAccessManager, QNetworkReply
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QWidget, QLineEdit, QTextEdit, QPushButton
-from PySide6.QtWidgets import QLabel, QSizePolicy, QHBoxLayout
-from PySide6.QtGui import QPixmap
+from PySide6.QtCore import Qt, QSize, Signal
+from PySide6.QtWidgets import QDialog, QVBoxLayout, QWidget, QLineEdit, QPushButton
+from PySide6.QtWidgets import QLabel, QSizePolicy, QHBoxLayout, QScrollArea
+from PySide6.QtGui import QPixmap, QColor
 
-import json
 import logging
 
 from typing import Union
@@ -30,14 +28,52 @@ from . import ThemeHelper
 from .vertical_line_spacer import VerticalLineSpacer
 
 from ..ui.rotating_label import RotatingLabel
-from ..enums.ai_model_names import AiModelNames
+from ..ui.ai_message_label import AiMessageLabel
+from ..modules.modules import Modules
+from ..modules.base_ai_core import BaseAiCore
+from ..enums.enum_base import EnumBase
+
+from qasync import asyncClose
+
+import markdown
+
+
+class EnumMessageType(EnumBase):
+    # Sync with corresponding CSS-styles
+    DEFAULT = ("default", True)  # Fallback default option
+    USER_INPUT = "user_input"
+    RESPONSE = "response"
+
+
+class EnumMessageStyle(EnumBase):
+    DEFAULT = ("default", True)  # Fallback default option
+    INFO = "info"
+    ERROR = "error"
 
 
 class AIAssistant(QDialog):
 
-    def __init__(self, parent):
-        super().__init__(parent, Qt.WindowType.Dialog)
+    dialog_closed = Signal()
+    request_cancelled = Signal()
 
+    message_added = Signal(str, int, int, EnumMessageType)
+
+    md: markdown.Markdown = None
+
+    module: None
+    # Inference module core
+    module_core: BaseAiCore = None
+
+    def __init__(self, parent):
+        super().__init__(parent, Qt.WindowType.Window)
+
+        # self.setWindowFlags(Qt.WindowType.Window | Qt.WindowType.WindowStaysOnTopHint)
+        self.setWindowState(Qt.WindowState.WindowActive)
+
+        # Make the dialog non-modal
+        self.setModal(False)  # or self.setWindowModality(Qt.WindowModality.NonModal)
+
+        # Parent instance
         self.parent = parent
 
         # Apply font from the dialog instance to the label
@@ -49,69 +85,124 @@ class AIAssistant(QDialog):
         self.debug = AppConfig().get_debug()
 
         self.settings = Settings(parent=self)
+        self.settings.value_changed.connect(
+            lambda v: self.settings_update_handler(v))
 
-        # TODO add more AI providers and a setting of which one is in use
-        self.api_url = self.settings.ai_config_openai_url
-        self.api_key = self.settings.ai_config_openai_key
-        self.inference_model = AiModelNames.__getitem__(self.settings.ai_config_openai_model).value
-        self.prompt_system = self.settings.ai_config_base_system_prompt
-        self.prompt_user = "%s"
-        self.response_max_tokens = self.settings.ai_config_base_response_max_tokens
+        # Load modules first to enable the loading of extension settings.
+        module_instances = []
+        for module in Modules().get_by_extension('ai_assistant'):
+            # Pass settings object to avoid circular dependencies
+            module_instances.append(Modules().create(module))
+
+        # A module to use for inference
+        self.inference_module = self.settings.ai_config_inference_module
+        try:
+            # Get the name of the inference module
+            self.inference_module_name = Modules().modules.get(self.inference_module).get_name()
+        except Exception as e:
+            if self.logging:
+                self.logger.warning(f"Inference module '{self.inference_module}' name is not set {e}")
+            # Try to find any suitable module
+            for module_name in self.settings.ai_config_inference_modules.keys():
+                # Set up first available module as a default one
+                self.settings.ai_config_inference_module = module_name
+                self.inference_module = self.settings.ai_config_inference_module
+                break
+            # Update with the default module name
+            self.inference_module_name = self.inference_module
+            if self.logging:
+                self.logger.warning(f"Fallback to the inference module named '{self.inference_module}'")
 
         self.theme_helper = ThemeHelper()
 
-        # Default language setup, change to settings value to modify it via UI
+        # Load lexemes for selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='ai_assistant')
 
+        # Dialog layout
         self.layout = QVBoxLayout(self)
 
         self.setWindowTitle(self.lexemes.get('dialog_title'))
 
         # UI element variables
         self.prompt_input = Union[QLineEdit, None]
-        self.response_output = Union[QTextEdit, None]
+        self.messages_area = Union[QScrollArea, None]
+        self.messages_layout = Union[QWidget, None]
         self.background_label = Union[QLabel, None]
-        self.model_label = Union[QLabel, None]
+        self.module_name_label = Union[QLabel, None]
+        self.model_name_label = Union[QLabel, None]
         self.tokens_prompt_label = Union[QLabel, None]
         self.tokens_answer_label = Union[QLabel, None]
         self.tokens_total_label = Union[QLabel, None]
         self.send_button = Union[QPushButton, None]
+        self.stop_button = Union[QPushButton, None]
+        self.save_button = Union[QPushButton, None]
+
+        # Last added message id
+        self.message_id = 0
+
+        # Last requested message id
+        self.request_message_id = 0
+
+        # Message ids
+        self.message_ids = []
+
+        # Prompt and response tokens
+        self.token_usage = {}
 
         self.init_ui()
 
     def init_ui(self):
         # Set dialog size derived from the main window size
         main_window_size = self.parent.size()
-        dialog_width = int(main_window_size.width() * 0.5)
-        dialog_height = int(main_window_size.height() * 0.5)
+        dialog_width = int(main_window_size.width() * 0.7)
+        dialog_height = int(main_window_size.height() * 0.7)
         # self.setMinimumSize(dialog_width, dialog_height)
         self.resize(dialog_width, dialog_height)
 
+        # Main view margins
+        self.setContentsMargins(5, 5, 5, 5)
+        # Corresponding styles
         self.setStyleSheet(self.theme_helper.get_css('ai_assistant'))
+
+        self.messages_area = QScrollArea(self)
+        self.messages_area.setWidgetResizable(True)
+        self.messages_area.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.messages_area.setStyleSheet("QScrollArea { border: none; }")
+        self.messages_area.setAccessibleDescription(
+            self.lexemes.get('dialog_response_output_accessible_description'))
+
+        scroll_widget = QWidget()
+        self.messages_layout = QVBoxLayout(scroll_widget)
+        self.messages_layout.setContentsMargins(0, 0, 0, 5)
+        self.messages_layout.setSpacing(0)
+        # scroll_widget.setLayout(self.messages_layout)
+        self.messages_area.setWidget(scroll_widget)
+
+        self.layout.addWidget(self.messages_area)
+
+        # To fill the space atop
+        spacer_widget = QWidget()
+        spacer_widget.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        self.messages_layout.addWidget(spacer_widget)
 
         # Prompt input field
         self.prompt_input = QLineEdit(self)
+        self.prompt_input.setFont(self.font())
+        self.prompt_input.setFocus()
+        # Calculate height: font metrics height * 2 + some padding
+        text_height = self.prompt_input.fontMetrics().height()
+        self.prompt_input.setFixedHeight(text_height * 2 + 10)  # Adjust 10 for padding
         self.prompt_input.sizeHint()
         self.prompt_input.setPlaceholderText(
             self.lexemes.get('dialog_prompt_input_placeholder_text'))
         self.prompt_input.setAccessibleDescription(
             self.lexemes.get('dialog_prompt_input_accessible_description'))
-        self.prompt_input.returnPressed.connect(self.send_request)
+        self.prompt_input.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
         self.layout.addWidget(self.prompt_input)
 
-        # Text output field for displaying JSON response
-        self.response_output = QTextEdit(self)
-        self.response_output.sizeHint()
-        self.response_output.setReadOnly(True)
-        self.response_output.setPlaceholderText(
-            self.lexemes.get('dialog_response_output_placeholder_text'))
-        self.response_output.setAccessibleDescription(
-            self.lexemes.get('dialog_response_output_accessible_description'))
-        self.layout.addWidget(self.response_output)
-
         label_size = QSize(48, 48)
-        label_pixmap = QPixmap(self.theme_helper.get_icon(theme_icon='arrow-repeat.svg').pixmap(label_size))
-        # Use custom Pixmap class to asure the transformation (rotation)
+        label_pixmap = QPixmap(self.theme_helper.get_icon(theme_icon='clock-fill.svg').pixmap(label_size))
+        # Use custom Pixmap class to assure the transformation (rotation)
         self.background_label = RotatingLabel(pixmap=label_pixmap, parent=self)
         self.background_label.resize(label_size)
         # self.background_label.setPixmap(label_pixmap)
@@ -129,28 +220,40 @@ class AIAssistant(QDialog):
         status_bar_widget = QWidget(self)
         status_bar_layout = QHBoxLayout(status_bar_widget)
 
-        model_label = QLabel(text=self.lexemes.get('dialog_usage_model_label'))
+        model_label = QLabel(text=self.lexemes.get('dialog_usage_module_label'))
+        model_label.setObjectName("ai_assistant_dialog_usage_module_name_label")
+        model_label.setFont(self.font())
         model_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
         model_label.sizeHint()
         model_label.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Preferred)
-        model_label.setObjectName("ai_assistant_dialog_usage_model_label")
         # model_label.setStyleSheet("QLabel {color: grey;}")
         status_bar_layout.addWidget(model_label)
 
         status_bar_layout.addWidget(VerticalLineSpacer())
 
-        self.model_label = QLabel(text=self.inference_model)
-        self.model_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        self.model_label.sizeHint()
-        self.model_label.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Preferred)
-        self.model_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        status_bar_layout.addWidget(self.model_label)
+        self.module_name_label = QLabel(self.inference_module_name)
+        self.module_name_label.setFont(self.font())
+        self.module_name_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.module_name_label.sizeHint()
+        self.module_name_label.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Preferred)
+        self.module_name_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        status_bar_layout.addWidget(self.module_name_label)
+
+        self.model_name_label = QLabel()  # Text will be updated later
+        self.model_name_label.setObjectName("ai_assistant_dialog_usage_model_name_label")
+        self.model_name_label.setFont(self.font())
+        self.model_name_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.model_name_label.sizeHint()
+        self.model_name_label.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Preferred)
+        self.model_name_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        status_bar_layout.addWidget(self.model_name_label)
 
         central_spacer = QWidget()
         central_spacer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
         status_bar_layout.addWidget(central_spacer)
 
         tokens_label = QLabel(text=self.lexemes.get('dialog_usage_tokens_label'))
+        tokens_label.setFont(self.font())
         tokens_label.setAlignment(Qt.AlignmentFlag.AlignRight)
         tokens_label.sizeHint()
         tokens_label.setObjectName("ai_assistant_dialog_usage_tokens_label")
@@ -158,229 +261,428 @@ class AIAssistant(QDialog):
         status_bar_layout.addWidget(tokens_label)
         status_bar_layout.addWidget(VerticalLineSpacer(), alignment=Qt.AlignmentFlag.AlignRight)
         self.tokens_prompt_label = QLabel()
+        self.tokens_prompt_label.setFont(self.font())
         self.tokens_prompt_label.setAlignment(Qt.AlignmentFlag.AlignRight)
         self.tokens_prompt_label.sizeHint()
         status_bar_layout.addWidget(self.tokens_prompt_label)
         status_bar_layout.addWidget(VerticalLineSpacer(), alignment=Qt.AlignmentFlag.AlignRight)
         self.tokens_answer_label = QLabel()
+        self.tokens_answer_label.setFont(self.font())
         self.tokens_answer_label.setAlignment(Qt.AlignmentFlag.AlignRight)
         self.tokens_answer_label.sizeHint()
         status_bar_layout.addWidget(self.tokens_answer_label)
         status_bar_layout.addWidget(VerticalLineSpacer(), alignment=Qt.AlignmentFlag.AlignRight)
         self.tokens_total_label = QLabel()
+        self.tokens_total_label.setFont(self.font())
         self.tokens_total_label.setAlignment(Qt.AlignmentFlag.AlignRight)
         self.tokens_total_label.sizeHint()
         status_bar_layout.addWidget(self.tokens_total_label)
 
         self.layout.addWidget(status_bar_widget)
         # Update usage with initial params
-        self.update_usage()
+        self.update_usage('')
+
+        buttons_layout = QHBoxLayout()
+        buttons_widget = QWidget()
+        buttons_widget.setLayout(buttons_layout)
+
+        # Submit button
+        self.stop_button = QPushButton()
+        self.stop_button.setFont(self.font())
+        self.stop_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.stop_button.setIcon(self.theme_helper.get_icon(theme_icon='stop-fill.svg'))
+        self.stop_button.clicked.connect(self.cancel_request)
+        self.stop_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.stop_button.setDisabled(True)
+        buttons_layout.addWidget(self.stop_button)
+
+        # Save button
+        self.save_button = QPushButton()
+        self.save_button.setFont(self.font())
+        self.save_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.save_button.setIcon(self.theme_helper.get_icon(theme_icon='floppy2.svg'))
+        self.save_button.clicked.connect(self.save_history)
+        self.save_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.save_button.setDisabled(True)
+        buttons_layout.addWidget(self.save_button)
+
+        # To fill the space between
+        spacer_widget = QWidget()
+        spacer_widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        buttons_layout.addWidget(spacer_widget, 3)
 
         # Submit button
         self.send_button = QPushButton(self.lexemes.get('dialog_button_send_request'), self)
         self.send_button.setFont(self.font())
-        self.layout.addWidget(self.send_button)
+        self.send_button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.send_button.clicked.connect(self.send_request)
+        buttons_layout.addWidget(self.send_button, 3)
+
+        self.layout.addWidget(buttons_widget)
 
         # Set the main layout for the dialog
         self.setLayout(self.layout)
 
-    def handle_response(self, reply: QNetworkReply, error_code=None):
-        # Get received status code, say 200
-        status_code = reply.attribute(QNetworkRequest.Attribute.HttpStatusCodeAttribute)
-
-        if self.debug:
-            self.logger.debug(f'AI assistant response: {reply}, {error_code}, {status_code}')
-
-        # Return the QNetworkReply object that emitted the signal.
-        # For example: NetworkError.UnknownNetworkError
-        # reply = self.sender()  # type: QNetworkReply
-
-        # Make sure there is no error
-        if reply.error() == QNetworkReply.NetworkError.NoError:
-            result_message = self.process_response(reply, status_code)
-        elif reply.error() == QNetworkReply.NetworkError.HostNotFoundError:
-            # The host was not found, indicating possible DNS issues or no internet connection
-            result_message = self.lexemes.get('network_connection_error_connection_or_dns', scope='common')
-        elif reply.error() == QNetworkReply.NetworkError.ConnectionRefusedError:
-            # Connection was refused, indicating the server might be down or there are network issues
-            result_message = self.lexemes.get('network_connection_error_connection_refused', scope='common')
-        elif reply.error() == QNetworkReply.NetworkError.TimeoutError:
-            # The connection timed out, indicating network issues
-            result_message = self.lexemes.get('network_connection_error_connection_timed_out', scope='common')
-        elif reply.error() == QNetworkReply.NetworkError.ContentNotFoundError:
-            # The requested page or resource is not found
-            result_message = self.lexemes.get('network_connection_error_connection_404_error', scope='common')
+    def get_message_color(self, message_type: EnumMessageType, message_style: EnumMessageStyle) -> tuple:
+        if message_style == EnumMessageStyle.INFO:
+            color = self.theme_helper.get_color('ai_assistant_message_info_color', True)
+            bg_color = self.theme_helper.get_color('ai_assistant_message_info_background_color', True)
+        elif message_style == EnumMessageStyle.ERROR:
+            color = self.theme_helper.get_color('ai_assistant_message_error_color', True)
+            bg_color = self.theme_helper.get_color('ai_assistant_message_error_background_color', True)
         else:
-            # Handle other errors
-            result_message = self.lexemes.get('network_connection_error_generic_with_status_code', scope='common',
-                                              status_code=status_code)
+            if message_type == EnumMessageType.USER_INPUT:
+                color = self.theme_helper.get_color('ai_assistant_message_user_input_color', True)
+                bg_color = self.theme_helper.get_color('ai_assistant_message_user_input_background_color', True)
+            elif message_type == EnumMessageType.RESPONSE:
+                color = self.theme_helper.get_color('ai_assistant_message_response_color', True)
+                bg_color = self.theme_helper.get_color('ai_assistant_message_response_background_color', True)
+            else:
+                color = self.theme_helper.get_color('ai_assistant_message_default_color', True)
+                bg_color = self.theme_helper.get_color('ai_assistant_message_default_background_color', True)
+        return color, bg_color
 
-        if error_code is not None:
-            if self.logging:
-                self.logger.warning(result_message)
-                self.logger.warning(f"Failed to fetch update information: {reply.errorString()}")
-            # Set up response status visible within response field
-            self.response_output.setPlainText(result_message)
+    def add_message(self, message, request_msg_id=None, response_msg_id=None,
+                    message_type: EnumMessageType = EnumMessageType.default(),
+                    message_style: EnumMessageStyle = EnumMessageStyle.default()) -> int:
+        # Message background color
+        color, bg_color = self.get_message_color(message_type, message_style)
 
-        self.set_status_ready()
+        if message_type == EnumMessageType.USER_INPUT:
+            if request_msg_id is None:
+                # Message id might not be set in case of a new message needed
+                request_msg_id = self.gen_next_message_id()
+            message_id = request_msg_id
+        elif message_type == EnumMessageType.RESPONSE:
+            if response_msg_id is None:
+                # Message id might not be set in case of a new message needed
+                response_msg_id = self.gen_next_message_id()
+            message_id = response_msg_id
+        else:
+            # Default or info; new internal id
+            message_id = self.gen_next_message_id()
 
-    def process_response(self, reply: QNetworkReply, status_code) -> str:
-        # The request was successful
-        data = reply.readAll()  # type: QByteArray
+        # Remove leading spaces if exist
+        message_text = message.lstrip()
 
-        if self.debug:
-            self.logger.debug(f'Raw RESPONSE [{status_code}]: {data}')
+        message_label = AiMessageLabel(text=message_text, parent=self)
+        message_label.setFont(self.font())
+        message_label.setWordWrap(True)
+        message_label.setObjectName(f'msg_{message_type}_{message_id}')
+        message_label.setStyleSheet(""" QLabel {
+            border-radius: 5px;
+            margin: 5px 0;
+            padding: 5px;
+            color: %s;
+            background-color: %s;
+        } """ % (color, bg_color))
 
-        reply.deleteLater()  # Clean up the QNetworkReply object
+        palette = message_label.palette()
+        palette.setColor(message_label.foregroundRole(), QColor(color))
+        palette.setColor(message_label.backgroundRole(), QColor(bg_color))
 
-        # json_document = QJsonDocument.fromJson(data)
-        # json_data = json_document.object()
+        message_label.setPalette(palette)
+        message_label.setAutoFillBackground(True)
+        message_label.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
+        self.messages_layout.setAlignment(message_label, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom)
+        message_label.sizeHint()
+        self.messages_layout.addWidget(message_label, alignment=Qt.AlignmentFlag.AlignBottom)
+        # self.messages_layout.addSpacerItem(QSpacerItem(0, 5, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed))
 
-        # Convert QByteArray to string
-        res_string = data.toStdString()  # Or: str(data.data(), encoding='utf-8')
-        if self.debug:
-            self.logger.debug(f'Result multi-line STRING: {res_string}')
+        self.messages_area.verticalScrollBar().setValue(self.messages_area.verticalScrollBar().maximum())
 
-        # Clean up the string and make one line
-        json_str = ''.join(line.strip() for line in res_string.splitlines())
+        # Emit message added signal
+        self.message_added.emit(message_text, request_msg_id, response_msg_id, message_type)
 
-        if self.debug:
-            self.logger.debug(f'Result STRING: {json_str}')
+        # Unique message id
+        return message_id
 
-        result_message = self.lexemes.get('network_connection_error_empty', scope='common')
-        # Parse JSON response
-        try:
-            json_data = json.loads(json_str)
-            if self.debug:
-                self.logger.debug(f"Result JSON: {json_data}")
-            if ('choices' in json_data
-                    and len(json_data['choices']) > 0
-                    # Legacy completions
-                    # and 'text' in json_data['choices'][0]):
-                    and 'message' in json_data['choices'][0]
-                    and 'content' in json_data['choices'][0]['message']):
-                # Legacy completions
-                # self.response_output.setPlainText(str(json_data['choices'][0]['text']).strip())
-                self.response_output.setPlainText(str(json_data['choices'][0]['message']['content']).strip())
-            if 'usage' in json_data:
-                self.update_usage(json_data['usage'])
-            if 'model' in json_data:
-                if hasattr(self, 'model_label'):
-                    self.model_label.setText(json_data['model'] if len(json_data['model']) > 0 else '?')
-        except json.JSONDecodeError as e:
-            if self.logging:
-                self.logger.warning("Error decoding JSON: %s" % e)
+    def append_to_message(self, additional_text, request_msg_id=None, response_msg_id=None,
+                          message_type: EnumMessageType = EnumMessageType.default(),
+                          message_style: EnumMessageStyle = EnumMessageStyle.DEFAULT):
+        last_message = None
+        if response_msg_id:
+            # Message with the same id
+            last_message = self.findChild(QLabel, f'msg_{message_type}_{response_msg_id}')
+        # Double check found object type
+        if isinstance(last_message, QLabel):
+            current_text = last_message.text()
+            new_text = current_text + additional_text
+            last_message.setText(new_text)
+            last_message.adjustSize()
+        else:
+            self.add_message(additional_text, request_msg_id, response_msg_id, message_type, message_style)
 
-        return result_message
+        self.messages_area.verticalScrollBar().setValue(self.messages_area.verticalScrollBar().maximum())
 
-    def update_usage(self, usage: dict = None):
+    def gen_next_message_id(self) -> int:
+        # Update with gaps to allow extra space in case of race condition
+        self.message_id += 3
+        self.message_ids.append(self.message_id)
+        return self.message_id
+
+    def get_prev_message_id(self) -> Union[int, None]:
+        # Check if there are at least two items in the list
+        if len(self.message_ids) > 1:
+            # Return the second-to-last item
+            return self.message_ids[-2]
+        else:
+            # Return None if there are not enough items
+            return None
+
+    def init_md(self) -> None:
+        """
+        Init Markdown object and set it to variable.
+        """
+        extensions = ['markdown.extensions.extra']
+        # Init markdown object with the selected extensions
+        self.md = markdown.Markdown(extensions=extensions)
+
+    def convert_markdown_to_html(self, md_content: str) -> str:
+        """
+        Process Markdown syntax and convert it to html.
+        """
+        if not self.md:
+            self.init_md()
+        # Convert markdown to html
+        html_content = self.md.convert(md_content)
+        # Converted html data
+        return html_content
+
+    def update_usage(self, model, prompt_tokens=None, response_tokens=None, total_tokens=None, append=False):
+        if not append:
+            # Count token usage
+            self.token_usage = {model: {'prompt_tokens': 0, 'response_tokens': 0, 'total_tokens': 0}}
+        # Update model from response
+        if hasattr(self, 'model_name_label'):
+            self.model_name_label.setText(model if len(model) > 0 else '')
+        # Tokens spent in user's prompt
+        prompt_tokens_cnt = prompt_tokens if prompt_tokens else 0
+        if append:
+            prompt_tokens_cnt += self.token_usage[model]['prompt_tokens']
+        self.token_usage[model]['prompt_tokens'] = prompt_tokens_cnt
         if hasattr(self, 'tokens_prompt_label'):
-            prompt_tokens_cnt = (usage['prompt_tokens'] if usage and 'prompt_tokens' in usage else 0)
             self.tokens_prompt_label.setText(self.lexemes.get('dialog_usage_tokens_prompt',
                                                               tokens=prompt_tokens_cnt))
+        # Tokens spent in response
+        response_tokens_cnt = response_tokens if response_tokens else 0
+        if append:
+            response_tokens_cnt += self.token_usage[model]['response_tokens']
+        self.token_usage[model]['response_tokens'] = response_tokens_cnt
         if hasattr(self, 'tokens_answer_label'):
-            answer_tokens_cnt = (usage['completion_tokens'] if usage and 'completion_tokens' in usage else 0)
-            self.tokens_answer_label.setText(self.lexemes.get('dialog_usage_tokens_prompt',
-                                                              tokens=answer_tokens_cnt))
+            self.tokens_answer_label.setText(self.lexemes.get('dialog_usage_tokens_answer',
+                                                              tokens=response_tokens_cnt))
+        # Total tokens spent (combined)
+        total_tokens_cnt = total_tokens if total_tokens else 0
+        if append:
+            total_tokens_cnt += self.token_usage[model]['total_tokens']
+        self.token_usage[model]['total_tokens'] = total_tokens_cnt
         if hasattr(self, 'tokens_total_label'):
-            total_tokens_cnt = (usage['total_tokens'] if usage and 'total_tokens' in usage else 0)
             self.tokens_total_label.setText(self.lexemes.get('dialog_usage_tokens_total',
                                                              tokens=total_tokens_cnt))
 
+    def init_module(self) -> Union[BaseAiCore, None]:
+        self.module = Modules().import_module(self.inference_module)
+        if not self.module:
+            return None
+        if self.module_core:
+            return self.module_core
+        try:
+            # Create an instance of the inference module
+            self.module_core = Modules().create(self.module)
+            # Connect dialog first before posting any messages to allow correct stream processing
+            self.module_core.attach_dialog(self)  # type: ignore
+            # Return module core instance
+            return self.module_core
+        except (RuntimeError, Exception) as e:
+            if self.logging:
+                self.logger.warning(f'Error occurred during module {self.inference_module} init {e}')
+        return None
+
     def send_request(self) -> None:
+        # Check previous request id
+        if self.request_message_id and self.request_message_id == self.message_id:
+            if self.logging:
+                self.logger.warning(
+                    f"Duplicate request message id {self.request_message_id}")
+            return
+
         # Get context for the prompt
         prompt_context = self.prompt_input.text()
         if len(prompt_context) == 0:
-            self.response_output.setText(self.lexemes.get('dialog_response_output_notice_empty_text'))
+            self.add_message(self.lexemes.get('dialog_response_output_notice_empty_text'), None, None,
+                             EnumMessageType.DEFAULT, EnumMessageStyle.INFO)
             return
+        # Do not show placeholder text after first input for user convenience
+        self.prompt_input.setPlaceholderText('')
 
-        url = QUrl(self.api_url)  # API entrypoint
-        request = QNetworkRequest(url)
+        try:
+            # Get an instance of the inference module
+            module_core = self.init_module()
+            # Get a prompt manager
+            prompt_manager = module_core.get_prompt_manager()
+            # Add request message first to allow it to appear within prompt history
+            self.request_message_id = self.add_message(prompt_context, None, None,
+                                                       EnumMessageType.USER_INPUT)
+            # Either a multi-turn or stateless prompt
+            user_prompt = prompt_manager.get_prompt(multi_turn=self.settings.ai_config_multi_turn_dialogue)
+            if self.debug:
+                self.logger.debug(f'The prompt:\n{user_prompt}\n')
+            self.set_status_waiting()  # Pending status
+            # Obtain new message id
+            response_msg_id = self.gen_next_message_id()
+            # Assume the previous message was a request
+            check_request_msg_id = self.get_prev_message_id()
+            if self.request_message_id != check_request_msg_id:
+                if self.logging:
+                    self.logger.warning(
+                        f"Request message id doesn't match: {self.request_message_id} vs {check_request_msg_id}")
+            module_core.request(
+                user_prompt=user_prompt,
+                request_msg_id=self.request_message_id,
+                response_msg_id=response_msg_id,
+                init_callback=self.set_status_processing,  # Processing status
+                finished_callback=self.send_request_finished_callback)  # Finished status
+        except (AttributeError, ValueError) as e:
+            if self.logging:
+                self.logger.warning(f'Error occurred during the request: {e}')
+            # Set up response status visible within response field
+            self.add_message(self.lexemes.get('dialog_error_loading_model'), None, None,
+                             EnumMessageType.DEFAULT, EnumMessageStyle.ERROR)
+            self.cancel_request()
+            self.set_status_ready()
+        except (RuntimeError, Exception) as e:
+            if self.logging:
+                self.logger.error(f'Error occurred during the request: {e}')
+            self.cancel_request()
+            self.set_status_ready()
 
-        # Set Authorization header
-        access_token = self.api_key
-        request.setRawHeader(b"Authorization", bytes("Bearer " + access_token, encoding="utf-8"))
-
-        # Set Content-Type header
-        request.setHeader(QNetworkRequest.KnownHeaders.ContentTypeHeader, "application/json")
-
-        # Legacy completions
-        """
-        Consider these params as well:
-        * "logprobs": None,
-        * "echo": false,
-        * * "stop": null,
-        * "presence_penalty": 0,
-        * "frequency_penalty": 0,
-        * * "best_of": 1,
-        * "logit_bias": None,
-        * "user": "",
-        """
-
-        # New completions
-        post_params = {
-            "model": self.inference_model,
-            "messages": [
-                {
-                    "role": "system",
-                    "content": self.prompt_system,
-                },
-                {
-                    "role": "user",
-                    "content": self.prompt_user % prompt_context,
-                }
-            ],
-            "temperature": 0.2,
-            "top_p": 1,
-            "n": 1,
-            "stream": False,
-        }
-        # If response max tokens set
-        if self.response_max_tokens:
-            post_params.update({"max_tokens": self.response_max_tokens})
-
-        json_post_params = json.dumps(post_params)
-
-        # Set request data
-        request_data = QByteArray(json_post_params.encode("utf-8"))
-
-        # Set request type to POST
-        request.setRawHeader(b"Custom-Request", b"POST")
-
-        self.set_status_waiting()
-
-        # Set request data
-        manager = QNetworkAccessManager(self)
-        reply = manager.post(request, request_data)
-
-        # Connect finished signal
-        reply.finished.connect(lambda _reply=reply: self.handle_response(_reply))
-        # Connect error signal
-        reply.errorOccurred.connect(lambda error, _reply=reply: self.handle_response(_reply, error))
+    def send_request_finished_callback(self, request_msg_id=None, response_msg_id=None,
+                                       message_type=EnumMessageType.RESPONSE):
+        # Objects might be deleted
+        try:
+            # Return ready status
+            self.set_status_ready()
+            # Find the target message
+            finished_msg = None
+            if response_msg_id:
+                # Message (response) with the same id
+                finished_msg = self.findChild(QLabel, f'msg_{message_type}_{response_msg_id}')
+            # Double check found object type
+            if isinstance(finished_msg, QLabel):
+                plain_text = finished_msg.text()
+                # Check if postprocessing is needed
+                if self.settings.ai_config_convert_to_md:
+                    # Convert markdown response
+                    md_text = self.convert_markdown_to_html(plain_text)
+                    finished_msg.setText(md_text)
+                # Emit message added signal to update final variant of the message (might not be completed yet)
+                self.message_added.emit(plain_text, request_msg_id, response_msg_id, EnumMessageType.RESPONSE)
+        except RuntimeError as e:  # Object is already deleted
+            if self.logging:
+                self.logger.warning(f'Finished event callback interrupted, probably an object already deleted {e}')
 
     def set_status_waiting(self):
         # Set loader cursor whilst loading content
         self.setCursor(Qt.CursorShape.WaitCursor)
         # Disable prompt input field
         self.prompt_input.setDisabled(True)
+        # Clear prompt field as it have to be in the chat already
+        self.prompt_input.clear()
         # Clear response field from prev results if set
-        self.response_output.clear()
-        # Disconnect Enter action onto the input field
-        self.prompt_input.returnPressed.disconnect()
+        # self.response_output.clear()
+        # Disconnect send button click action
+        # self.send_button.clicked.disconnect()
         # Disable send request button
         self.send_button.setDisabled(True)
+        # Enable stop button
+        self.stop_button.setEnabled(True)
+        # Disable save button
+        self.save_button.setDisabled(True)
         # Show progress label
         self.background_label.show()
 
+    def set_status_processing(self):
+        try:
+            # Set cursor back
+            self.setCursor(Qt.CursorShape.ArrowCursor)
+            # Hide progress label
+            self.background_label.hide()
+        except RuntimeError:
+            raise
+
     def set_status_ready(self):
-        # Set cursor back
-        self.setCursor(Qt.CursorShape.ArrowCursor)
-        # Enable prompt input field
-        self.prompt_input.setEnabled(True)
-        # Connect Enter action onto the input field
-        self.prompt_input.returnPressed.connect(self.send_request)
-        # Enable send request button
-        self.send_button.setEnabled(True)
-        # Hide progress label
-        self.background_label.hide()
+        try:
+            # Set cursor back
+            self.setCursor(Qt.CursorShape.ArrowCursor)
+            # Enable prompt input field
+            self.prompt_input.setEnabled(True)
+            self.prompt_input.setFocus()
+            # Restore send button click action
+            # self.send_button.clicked.connect(self.send_request)
+            # Enable send request button
+            self.send_button.setEnabled(True)
+            # Disable stop button
+            self.stop_button.setDisabled(True)
+            # Enable save button
+            self.save_button.setEnabled(True)
+            # Hide progress label
+            self.background_label.hide()
+        except RuntimeError:
+            raise
+
+    def cancel_request(self):
+        self.request_cancelled.emit()
+
+    def save_history(self):
+        if not hasattr(self.parent, 'action_new_file'):
+            if self.logging:
+                self.logger.error("Cannot save history to the file, no method available")
+            return
+
+        # Get an instance of the inference module
+        module_core = self.init_module()
+        # Get a prompt manager
+        prompt_manager = module_core.get_prompt_manager()
+        # Get history
+        history = prompt_manager.get_history()
+
+        # Save history
+        self.parent.action_new_file(history)  # noqa
+
+        # Disable save button until next update
+        self.save_button.setDisabled(True)
+
+    @asyncClose
+    async def closeEvent(self, event):
+        if self.logging:
+            self.logger.info('Closing AI Assistant')
+        self.dialog_closed.emit()
+        self.deleteLater()
+        # event.accept()  # Event handled
+        super().closeEvent(event)  # Ensure the dialog and base object are closed properly
+
+    def settings_update_handler(self, data) -> None:
+        """
+        Perform actions upon settings change.
+        Data comes in a view of a dictionary, where is the key is the setting name, and the value is the actual value.
+        Can be resource greedy.
+
+        Args:
+            data dict: say {"settings_key": "..."}
+
+        Return:
+            None
+        """
+
+        if self.debug:
+            self.logger.debug('Settings update handler is in use "%s"' % data)
+
+        if 'module_ondevice_llm_model_path' in data or 'ai_config_inference_module' in data:
+            try:
+                if hasattr(self, 'model_name_label'):
+                    # Update model name (any updates in settings)
+                    self.model_name_label.setText('')
+            except RuntimeError:
+                # Object can be deleted already
+                pass

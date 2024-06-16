@@ -3,7 +3,9 @@ include CODE_OF_CONDUCT.md
 include LICENSE
 include README.md
 include requirements.txt
+include dev_requirements.txt
 include test_requirements.txt
+include ThirdPartyNotices.md
 
 # Include example and doc files
 recursive-include docs *
@@ -11,6 +13,8 @@ recursive-include docs *
 recursive-include notolog/lexemes *
 # Include all static files
 recursive-include notolog/assets *
+# Include all module files
+recursive-include notolog/modules *
 
 # Exclude all cache directories
 global-exclude __pycache__

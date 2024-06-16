@@ -42,6 +42,11 @@ os.environ["QT_STYLE_OVERRIDE"] = "Fusion"
 
 
 def main():
+    # Check if any command line arguments are present
+    if len(sys.argv) > 1:
+        print("This is a GUI application. Simply run the command without options to use it.")
+        sys.exit(0)
+
     """
     Possible params:
     filename='notolog.log'
@@ -108,4 +113,7 @@ def main():
 
 
 if __name__ == '__main__':
+    # Debug:
+    # async def main(): ...
+    # asyncio.run(main(), debug=True)
     main()

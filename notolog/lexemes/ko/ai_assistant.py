@@ -8,10 +8,14 @@ lexemes = {
     "dialog_response_output_accessible_description": "응답 데이터가 이 필드에 표시됩니다",
     "dialog_response_output_notice_empty_text": "텍스트 입력을 제공하여 대략...",
 
+    "dialog_usage_module_label": "모듈",
     "dialog_usage_model_label": "모델",
     "dialog_usage_tokens_label": "토큰",
     "dialog_usage_tokens_prompt": "프롬프트: {tokens}",
     "dialog_usage_tokens_answer": "답변: {tokens}",
     "dialog_usage_tokens_total": "총계: {tokens}",
+
     "dialog_button_send_request": "요청 보내기",
+
+    "dialog_error_loading_model": "사용자 정의 모델 로딩 오류",
 }

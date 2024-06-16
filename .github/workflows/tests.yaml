@@ -5,9 +5,9 @@ name: Tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "master" ]
 
 jobs:
   build:
@@ -37,6 +37,7 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: |
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        if [ -f dev_requirements.txt ]; then pip install -r dev_requirements.txt; fi
         if [ -f test_requirements.txt ]; then pip install -r test_requirements.txt; fi
         sudo apt-get update
         # fixes: libEGL.so.1: cannot open shared object file: No such file or directory
@@ -47,6 +48,7 @@ jobs:
       if: matrix.os == 'macos-latest'
       run: |
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        if [ -f dev_requirements.txt ]; then pip install -r dev_requirements.txt; fi
         if [ -f test_requirements.txt ]; then pip install -r test_requirements.txt; fi
       shell: bash
 
@@ -54,6 +56,7 @@ jobs:
       if: matrix.os == 'windows-latest'
       run: |
         if (Test-Path requirements.txt) { pip install -r requirements.txt }
+        if (Test-Path dev_requirements.txt) { pip install -r dev_requirements.txt }
         if (Test-Path test_requirements.txt) { pip install -r test_requirements.txt }
       shell: powershell
 

@@ -44,7 +44,9 @@ class TestQtUi:
         assert main_window.statusbar['encryption_label'].text() == 'Simplicitas 🔓'
 
         # Test that clicking the edit button updates the editor state
-        QTest.mouseClick(main_window.toolbar.toolbar_edit_button, Qt.MouseButton.LeftButton)
+        button = main_window.toolbar.toolbar_edit_button
+        # assert button
+        QTest.mouseClick(button, Qt.MouseButton.LeftButton, pos=button.rect().center())
 
         assert main_window.statusbar['mode_label'].text() == 'Modus Editio'
         assert main_window.statusbar['source_label'].text() == 'Markdown'

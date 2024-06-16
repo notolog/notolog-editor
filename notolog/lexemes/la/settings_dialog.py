@@ -45,22 +45,16 @@ lexemes = {
     "viewer_config_save_resources_checkbox_accessible_description":
         "Automatice servat exemplaria imaginum externarum in disco ad usum sine nexu.",
 
-    "ai_config_openai_api_label": "API OpenAI",
-    "ai_config_openai_api_url_input_placeholder_text": "URL API",
-    "ai_config_openai_api_url_input_accessible_description": "URL API OpenAI",
-    "ai_config_openai_api_key_input_placeholder_text": "Clavis API",
-    "ai_config_openai_api_key_input_accessible_description": "Clavis API OpenAI",
-    "ai_config_openai_api_supported_models_label": "Modela sustenta",
-    "ai_config_ai_model_names_combo_placeholder_text": "Modelum elige",
-    "ai_config_ai_model_names_combo_accessible_description": "Modela sustenta ad eligendum",
+    "ai_config_inference_module_label": "Modulus Inferentiae",
+    "ai_config_inference_module_names_combo_placeholder_text": "Modulum Elige",
+    "ai_config_inference_module_names_combo_accessible_description": "Moduli eligibiles",
+
+    "ai_config_multi_turn_dialogue_checkbox":
+        "Dialogus multis vicibus qui super praemissis innititur ad continuitatem contextualem",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
+        "Dialogus multis vicibus qui super praemissis innititur ad continuitatem contextualem",
+    "ai_config_convert_to_md_checkbox": "Convertit resultat ad Markdown",
+    "ai_config_convert_to_md_checkbox_accessible_description": "Convertit nuntium resultat ad Markdown",
 
     "ai_config_base_label": "Parametri Principes",
-    "ai_config_base_system_prompt_label": "Systēma Monitum",
-    "ai_config_base_system_prompt_edit_placeholder_text":
-        "Monitum systēmatis basis quod præcedit singulas postulationes",
-    "ai_config_base_system_prompt_edit_accessible_description":
-        "Monitum systēmatis basis quod præcedit singulas postulationes. Textus simpliciter.",
-    "ai_config_base_response_max_tokens_label": "Maxima Responsionis Signa",
-    "ai_config_base_response_max_tokens_input_accessible_description":
-        "Maximum signorum quæ in responsione accipiuntur",
 }

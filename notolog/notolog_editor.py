@@ -146,6 +146,7 @@ class NotologEditor(QMainWindow):
     """
     md_extensions = [
         'markdown.extensions.extra',  # Or 'extra'
+        'markdown.extensions.toc',  # 'toc' stands for 'Table of Contents', provides anchors for header tags
     ]
 
     def __init__(self, parent=None, **kwargs):
@@ -156,6 +157,7 @@ class NotologEditor(QMainWindow):
         self.logging = AppConfig().get_logging()
         self.debug = AppConfig().get_debug()
 
+        # The 'parent' param is crucial here as it allows to set up correct file path.
         self.settings = Settings(parent=self)
         self.settings.value_changed.connect(
             lambda v: self.settings_update_handler(v))
@@ -164,7 +166,7 @@ class NotologEditor(QMainWindow):
         self.settings.theme = 'bordo'
         """
 
-        # Default language setup, change to settings value to modify it via UI
+        # Load lexemes for selected language and scope
         self.lexemes = Lexemes(self.settings.app_language)
 
         self.screen = None  # type: Union[QScreen, None]
@@ -306,7 +308,7 @@ class NotologEditor(QMainWindow):
         self.set_mode(mode)
         self.set_source(source)
 
-        self.save_timer = QTimer(interval=15000, timeout=self.auto_save_file)
+        self.save_timer = QTimer(interval=15000, timeout=self.auto_save_file)  # noqa
         self.save_timer.start()
 
         """
@@ -315,14 +317,14 @@ class NotologEditor(QMainWindow):
         More info about the keyboard modifier enum: https://doc.qt.io/qt-6/qt.html#KeyboardModifier-enum
         """
         shortcut_save = QShortcut(
-            QKeySequence(Qt.KeyboardModifier.ControlModifier | Qt.Key.Key_S),
+            QKeySequence(Qt.KeyboardModifier.ControlModifier | Qt.Key.Key_S),  # noqa
             self
         )
         # Reset 'allow save empty' dialog if save file action called explicitly
         shortcut_save.activated.connect(lambda: (self.estate.allow_save_empty_reset(), self.auto_save_file()))
 
         shortcut_search = QShortcut(
-            QKeySequence(Qt.KeyboardModifier.ControlModifier | Qt.Key.Key_F),
+            QKeySequence(Qt.KeyboardModifier.ControlModifier | Qt.Key.Key_F),  # noqa
             self
         )
         shortcut_search.activated.connect(self.search_text)
@@ -1736,8 +1738,9 @@ class NotologEditor(QMainWindow):
                     try:
                         await task
                     except asyncio.CancelledError:
-                        print(f'[{i + 1}/{tasks_total}] Pending task {task.get_name()} '
-                              f'was cancelled with result "{task_res}"')
+                        if self.logging:
+                            self.logger.info(f'[{i + 1}/{tasks_total}] Pending task {task.get_name()} '
+                                             f'was cancelled with result "{task_res}"')
                         pass
         # Await tasks to complete
         await cleanup_tasks()
@@ -2007,6 +2010,17 @@ class NotologEditor(QMainWindow):
                  'accessible_name': self.lexemes.get('actions_file_accessible_name_save_as', scope='main_menu'),
                  'action': self.action_save_as_file},
                 {'type': 'delimiter'},
+                {'type': 'action', 'name': 'actions_file_label_settings',
+                 'theme_icon': 'three-dots.svg',
+                 'label': self.lexemes.get('actions_file_label_settings', scope='main_menu'),
+                 'accessible_name': self.lexemes.get('actions_file_accessible_name_settings', scope='main_menu'),
+                 'action': self.action_settings},
+                {'type': 'action', 'name': 'actions_file_label_reset_settings',
+                 'theme_icon': 'x-square.svg',
+                 'label': self.lexemes.get('actions_file_label_reset_settings', scope='main_menu'),
+                 'accessible_name': self.lexemes.get('actions_file_accessible_name_reset_settings', scope='main_menu'),
+                 'action': self.action_reset_settings},
+                {'type': 'delimiter'},
                 {'type': 'action', 'name': 'actions_file_label_exit',
                  'system_icon': 'application-exit', 'theme_icon': 'power.svg',
                  'label': self.lexemes.get('actions_file_label_exit', scope='main_menu'),
@@ -2015,52 +2029,52 @@ class NotologEditor(QMainWindow):
             ]},
             {'name': 'main_menu_group_edit', 'text': self.lexemes.get('group_edit_label', scope='main_menu'),
              'items': [
-                {'type': 'action', 'name': 'main_menu_edit_actions_edit_mode',
+                {'type': 'action', 'name': 'main_menu_actions_edit_edit_mode',
                  'system_icon': 'accessories-text-editor', 'theme_icon': 'pencil-square.svg',
-                 'label': self.lexemes.get('edit_actions_edit_mode', scope='main_menu'),
-                 'accessible_name': self.lexemes.get('edit_actions_accessible_name_edit_mode', scope='main_menu'),
+                 'label': self.lexemes.get('actions_edit_edit_mode', scope='main_menu'),
+                 'accessible_name': self.lexemes.get('actions_edit_accessible_name_edit_mode', scope='main_menu'),
                  'action': self.action_edit_file},
-                {'type': 'action', 'name': 'main_menu_edit_actions_source_mode',
+                {'type': 'action', 'name': 'main_menu_actions_edit_source_mode',
                  'system_icon': 'edit-find', 'theme_icon': 'code-slash.svg',
-                 'label': self.lexemes.get('edit_actions_source_mode', scope='main_menu'),
-                 'accessible_name': self.lexemes.get('edit_actions_accessible_name_source_mode', scope='main_menu'),
+                 'label': self.lexemes.get('actions_edit_source_mode', scope='main_menu'),
+                 'accessible_name': self.lexemes.get('actions_edit_accessible_name_source_mode', scope='main_menu'),
                  'action': self.action_source},
                 {'type': 'delimiter'},
-                {'type': 'action', 'name': 'main_menu_edit_actions_bold',
+                {'type': 'action', 'name': 'main_menu_actions_edit_bold',
                  'system_icon': 'format-text-bold', 'theme_icon': 'type-bold.svg',
-                 'label': self.lexemes.get('edit_actions_bold', scope='main_menu'),
-                 'accessible_name': self.lexemes.get('edit_actions_accessible_name_bold', scope='main_menu'),
+                 'label': self.lexemes.get('actions_edit_bold', scope='main_menu'),
+                 'accessible_name': self.lexemes.get('actions_edit_accessible_name_bold', scope='main_menu'),
                  'action': self.action_text_bold, 'switched_off_check': lambda: self.get_mode() != Mode.EDIT},
-                {'type': 'action', 'name': 'main_menu_edit_actions_italic',
+                {'type': 'action', 'name': 'main_menu_actions_edit_italic',
                  'system_icon': 'format-text-italic', 'theme_icon': 'type-italic.svg',
-                 'label': self.lexemes.get('edit_actions_italic', scope='main_menu'),
-                 'accessible_name': self.lexemes.get('edit_actions_accessible_name_italic', scope='main_menu'),
+                 'label': self.lexemes.get('actions_edit_italic', scope='main_menu'),
+                 'accessible_name': self.lexemes.get('actions_edit_accessible_name_italic', scope='main_menu'),
                  'action': self.action_text_italic, 'switched_off_check': lambda: self.get_mode() != Mode.EDIT},
-                {'type': 'action', 'name': 'main_menu_edit_actions_underline',
+                {'type': 'action', 'name': 'main_menu_actions_edit_underline',
                  'system_icon': 'format-text-underline', 'theme_icon': 'type-underline.svg',
-                 'label': self.lexemes.get('edit_actions_underline', scope='main_menu'),
-                 'accessible_name': self.lexemes.get('edit_actions_accessible_name_underline', scope='main_menu'),
+                 'label': self.lexemes.get('actions_edit_underline', scope='main_menu'),
+                 'accessible_name': self.lexemes.get('actions_edit_accessible_name_underline', scope='main_menu'),
                  'action': self.action_text_underline, 'switched_off_check': lambda: self.get_mode() != Mode.EDIT},
-                {'type': 'action', 'name': 'main_menu_edit_actions_strikethrough',
+                {'type': 'action', 'name': 'main_menu_actions_edit_strikethrough',
                  'system_icon': 'format-text-strikethrough', 'theme_icon': 'type-strikethrough.svg',
-                 'label': self.lexemes.get('edit_actions_strikethrough', scope='main_menu'),
-                 'accessible_name': self.lexemes.get('edit_actions_accessible_name_strikethrough', scope='main_menu'),
+                 'label': self.lexemes.get('actions_edit_strikethrough', scope='main_menu'),
+                 'accessible_name': self.lexemes.get('actions_edit_accessible_name_strikethrough', scope='main_menu'),
                  'action': self.action_text_strikethrough, 'switched_off_check': lambda: self.get_mode() != Mode.EDIT},
-                {'type': 'action', 'name': 'main_menu_edit_actions_blockquote',
+                {'type': 'action', 'name': 'main_menu_actions_edit_blockquote',
                  'system_icon': 'format-text-blockquote', 'theme_icon': 'quote.svg',
-                 'label': self.lexemes.get('edit_actions_blockquote', scope='main_menu'),
-                 'accessible_name': self.lexemes.get('edit_actions_accessible_name_blockquote', scope='main_menu'),
+                 'label': self.lexemes.get('actions_edit_blockquote', scope='main_menu'),
+                 'accessible_name': self.lexemes.get('actions_edit_accessible_name_blockquote', scope='main_menu'),
                  'action': self.action_text_blockquote, 'switched_off_check': lambda: self.get_mode() != Mode.EDIT},
             ]},
             {'name': 'main_menu_group_tools', 'text': self.lexemes.get('group_tools_label', scope='main_menu'),
              'items': [
-                 {'type': 'action', 'name': 'main_menu_tools_actions_ai_assistant', 'theme_icon': 'robot.svg',
-                  'label': self.lexemes.get('tools_actions_ai_assistant', scope='main_menu'),
-                  'accessible_name': self.lexemes.get('tools_actions_accessible_name_ai_assistant', scope='main_menu'),
+                 {'type': 'action', 'name': 'main_menu_actions_tools_ai_assistant', 'theme_icon': 'robot.svg',
+                  'label': self.lexemes.get('actions_tools_ai_assistant', scope='main_menu'),
+                  'accessible_name': self.lexemes.get('actions_tools_accessible_name_ai_assistant', scope='main_menu'),
                   'action': self.action_ai_assistant},
-                 {'type': 'action', 'name': 'main_menu_tools_actions_color_picker', 'theme_icon': 'eyedropper.svg',
-                  'label': self.lexemes.get('tools_actions_color_picker', scope='main_menu'),
-                  'accessible_name': self.lexemes.get('tools_actions_accessible_name_color_picker', scope='main_menu'),
+                 {'type': 'action', 'name': 'main_menu_actions_tools_color_picker', 'theme_icon': 'eyedropper.svg',
+                  'label': self.lexemes.get('actions_tools_color_picker', scope='main_menu'),
+                  'accessible_name': self.lexemes.get('actions_tools_accessible_name_color_picker', scope='main_menu'),
                   'action': self.action_text_color_picker},
              ]},
             {'name': 'main_menu_group_help', 'text': self.lexemes.get('group_help_label', scope='main_menu'),
@@ -2239,7 +2253,7 @@ class NotologEditor(QMainWindow):
              'theme_icon': 'robot.svg', 'color': self.theme_helper.get_color('toolbar_icon_color_ai_assistant_act'),
              'label': self.lexemes.get('actions_label_ai_assistant', scope='toolbar'),
              'accessible_name': self.lexemes.get('actions_accessible_name_ai_assistant', scope='toolbar'),
-             'action': None,
+             'action': self.action_ai_assistant,  # Bring to foreground if active
              'active_state_check': lambda: hasattr(self, 'ai_assistant') and self.ai_assistant},
             {'type': 'action', 'weight': 13, 'name': 'toolbar_actions_label_color', 'theme_icon': 'eyedropper.svg',
              'color': self.theme_helper.get_color('toolbar_icon_color_color_picker'),
@@ -2833,7 +2847,7 @@ class NotologEditor(QMainWindow):
             targeting_widget.setTextCursor(cursor)
             targeting_widget.ensureCursorVisible()
         else:
-            # Cope the text to the clipboard
+            # Copy text to the clipboard
             ClipboardHelper.set_text(updated_text)
             # Show frameless message box closing by timer as a tooltip
             self.message_box(self.lexemes.get('dialog_color_picker_color_copied_to_the_clipboard'),
@@ -2850,11 +2864,26 @@ class NotologEditor(QMainWindow):
         # Save any unsaved changes before calling a dialog
         self.save_active_file(clear_after=False)
 
-        self.ai_assistant = AIAssistant(self)
+        if self.ai_assistant:
+            # Restores the window if it was minimized (optional)
+            if self.ai_assistant.isMinimized():
+                self.ai_assistant.showNormal()
+
+            # Raise the dialog above other widgets
+            self.ai_assistant.raise_()
+            self.ai_assistant.activateWindow()
+            return
+
+        self.ai_assistant = AIAssistant(parent=self)
         # To update icon within toolbar before dialog
         self.create_icons_toolbar(refresh=True)
         # Run dialog
-        self.ai_assistant.exec()
+        # self.ai_assistant.exec()  # Modal
+        self.ai_assistant.show()
+        # Set up dialog closing event
+        self.ai_assistant.dialog_closed.connect(self.close_ai_assistant)
+
+    def close_ai_assistant(self):
         # Unset dialog var
         self.ai_assistant = None
         # To update icon within toolbar after dialog
@@ -2873,6 +2902,43 @@ class NotologEditor(QMainWindow):
 
         settings = SettingsDialog(self)
         settings.exec()
+
+    def action_reset_settings(self):
+        """
+        Reset settings.
+        """
+
+        if self.debug:
+            self.logger.debug('Reset settings dialog')
+
+        # Save any unsaved changes before calling a dialog
+        self.save_active_file(clear_after=False)
+
+        self.common_dialog(
+            self.lexemes.get('dialog_reset_settings_title'),
+            self.lexemes.get(name='dialog_reset_settings_text'),
+            callback=lambda dialog_callback:
+            # Call dialog callback first and close the app
+            (self.reset_settings_dialog_callback(dialog_callback), self.close()))
+
+    def reset_settings_dialog_callback(self, callback: Optional[Callable[..., Any]] = None):
+        """
+        Actions to perform after reset settings dialogue.
+        """
+
+        if self.debug:
+            self.logger.debug('Reset settings dialog callback with sub-callback %s' % callback)
+
+        # Clear all settings
+        self.settings.clear()
+        # Sync to ensure changes are written back to the storage
+        self.settings.sync()
+
+        # Delete app config file
+        AppConfig().delete_app_config()
+
+        if callable(callback):
+            callback()
 
     def action_check_for_updates(self) -> None:
         """

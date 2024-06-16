@@ -44,21 +44,16 @@ lexemes = {
     "viewer_config_save_resources_checkbox_accessible_description":
         "Automatically saves copies of external images to disk for offline access.",
 
-    "ai_config_openai_api_label": "OpenAI API",
-    "ai_config_openai_api_url_input_placeholder_text": "API URL",
-    "ai_config_openai_api_url_input_accessible_description": "OpenAI API URL",
-    "ai_config_openai_api_key_input_placeholder_text": "API key",
-    "ai_config_openai_api_key_input_accessible_description": "OpenAI API key",
-    "ai_config_openai_api_supported_models_label": "Supported models",
-    "ai_config_ai_model_names_combo_placeholder_text": "Choose model",
-    "ai_config_ai_model_names_combo_accessible_description": "Supported models to choose",
+    "ai_config_inference_module_label": "Inference module",
+    "ai_config_inference_module_names_combo_placeholder_text": "Choose module",
+    "ai_config_inference_module_names_combo_accessible_description": "Available modules to choose",
+
+    "ai_config_multi_turn_dialogue_checkbox":
+        "Multi-turn dialog that builds on previous prompts for contextual continuity",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
+        "Multi-turn dialog that builds on previous prompts for contextual continuity",
+    "ai_config_convert_to_md_checkbox": "Convert the result to Markdown",
+    "ai_config_convert_to_md_checkbox_accessible_description": "Convert the result message to Markdown",
 
     "ai_config_base_label": "Base Parameters",
-    "ai_config_base_system_prompt_label": "System Prompt",
-    "ai_config_base_system_prompt_edit_placeholder_text": "Base system prompt that precedes each request",
-    "ai_config_base_system_prompt_edit_accessible_description":
-        "Base system prompt that precedes each request. This is plain text.",
-    "ai_config_base_response_max_tokens_label": "Maximum Response Tokens",
-    "ai_config_base_response_max_tokens_input_accessible_description":
-        "Maximum number of tokens to receive in response",
 }

@@ -30,14 +30,16 @@ class TestImageDownloader:
                     pass
 
     @pytest.fixture()
-    def test_settings_fixture(self, request, test_core_app):  # noqa: F811 redefinition of unused 'test_app'
-        # The test_app fixture sets up the app environment explicitly.
-        setting = Settings()
+    def test_settings_fixture(self, monkeypatch, request, test_core_app):  # noqa: F811 redefinition of unused 'test_app'
         # Get the parameter value(s) from the request
         # The only 'viewer_save_resources' is in use at the moment
-        setting.viewer_save_resources = request.param if hasattr(request, 'param') else None
+        monkeypatch.setattr(Settings, 'viewer_save_resources',
+                            request.param if hasattr(request, 'param') else None)
 
-        yield setting
+        # The test_core_app fixture sets up the app environment explicitly.
+        yield Settings()
+
+        # settings.deleteLater()
 
     def test_initialize_called(self):
         with patch.object(ImageDownloader, 'initialize', MagicMock(name='initialize')) as mock_initialize:

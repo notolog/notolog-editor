@@ -3,7 +3,7 @@ from cryptography.fernet import InvalidToken, InvalidSignature
 
 from . import AppConfig
 
-from typing import Union
+from typing import Any, Union
 
 import os
 import logging
@@ -31,17 +31,25 @@ class SettingsHelper:
         self.key = self.get_app_key()
 
     def encrypt_data(self, data) -> Union[str, None]:
+        if not data:
+            return data  # Empty default
+        data_encoded = data.encode('utf-8')
         try:
             # Encrypt data using Fernet symmetric encryption.
             cipher_suite = Fernet(self.key)
-            encrypted_data = cipher_suite.encrypt(data.encode('utf-8'))
+            encrypted_data = cipher_suite.encrypt(data_encoded)
             return encrypted_data.decode('utf-8')
         except (InvalidToken, InvalidSignature, TypeError) as e:
             if self.logging:
                 self.logger.warning(f'Settings helper encryption token error: {e}')
         return None
 
-    def decrypt_data(self, encrypted_data: bytes) -> Union[str, None]:
+    def decrypt_data(self, encrypted_data: Any) -> Union[str, None]:
+        if not encrypted_data:
+            # When settings not set
+            return encrypted_data  # Empty default
+        if not isinstance(encrypted_data, bytes):
+            encrypted_data = encrypted_data.encode('utf-8')
         try:
             # Decrypt data using Fernet symmetric encryption.
             cipher_suite = Fernet(self.key)

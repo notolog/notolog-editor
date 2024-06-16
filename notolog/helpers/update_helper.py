@@ -45,7 +45,7 @@ class UpdateHelper(QObject):
         if self.logging:
             self.logger.info("SSL supported: %s" % QSslSocket.supportsSsl())
 
-        # Default language setup, change to settings value to modify it via UI
+        # Load lexemes for selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='common')
 
         self.current_version = version.parse(AppConfig().get_app_version())
