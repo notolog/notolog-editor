@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-06-16 21:03:39.417380"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-06-16 22:51:40.408542"}} -->
 # Notolog
 
 ![Notolog - Python Markdown Editor](https://raw.githubusercontent.com/notolog/notolog-editor/main/notolog/assets/notolog-example-image.png)
@@ -22,6 +22,7 @@ Notolog is an open-source Python Markdown editor that blends simplicity with fun
     - View mode, which uses the Python Markdown library for accurate rendering.
     - Enhances readability and structure with support for multi-line block open-close tokens.
 - **Multi-platform Compatibility**: Works across all major platforms supporting Python, ensuring wide accessibility.
+- **AI Assistant**: Incorporate module extensions able to work either with AI APIs or with on-device large language models (LLMs).
 - **Accessibility Features**:
     - Descriptive elements for enhanced usability.
     - Adjustable font sizes for improved readability.
@@ -158,6 +159,10 @@ Alternatively, to exclude UI tests from execution:
 pytest tests/ --cov=notolog --cov-report=term --ignore=tests/ui_tests/
 ```
 </details>
+
+### Dev Tools
+
+To maintain high standards of code quality and ensure comprehensive test coverage, we utilize several development tools. Flake8, which combines PyFlakes, pycodestyle, and McCabe's complexity checker, is employed to enforce code quality, manage code complexity, and ensure adherence to PEP 8 style conventions. These tools can be installed using the `dev_requirements.txt` file.
 
 ### Virtual Environments
 
