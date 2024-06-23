@@ -1,18 +1,21 @@
-# Notolog
-# An open-source markdown editor written in Python.
-
-# Base Syntax Highlighter class tailored for Notolog
-
 """
-This module contains shared functionality for subclasses like the MdHighlighter.
-"""
+Notolog Editor
+Open-source markdown editor developed in Python.
 
-# - GitHub Repository: https://github.com/notolog/notolog-editor
-# - PyPI: https://pypi.org/project/notolog
-# - WebSite: https://notolog.app
-# - Author: Vadim Bakhrenkov
-# - Copyright 2024 Vadim Bakhrenkov
-# - License: MIT License
+File Details:
+- Purpose: Base Syntax Highlighter class tailored for Notolog.
+- Functionality: This module contains shared functionality for subclasses like the MdHighlighter.
+
+Repository: https://github.com/notolog/notolog-editor
+Website: https://notolog.app
+PyPI: https://pypi.org/project/notolog
+
+Author: Vadim Bakhrenkov
+Copyright: 2024 Vadim Bakhrenkov
+License: MIT License
+
+For detailed instructions and project information, please see the repository's README.md.
+"""
 
 from PySide6.QtCore import Qt, QRegularExpression
 from PySide6.QtGui import QTextDocument, QSyntaxHighlighter, QTextCharFormat

@@ -1,18 +1,22 @@
-# Notolog
-# An open-source markdown editor written in Python.
-
-# View mode Syntax Highlighter class tailored for Notolog
-
 """
-This module includes functionality specifically needed for view mode, such as detecting strikethrough and todo elements.
-"""
+Notolog Editor
+Open-source markdown editor developed in Python.
 
-# - GitHub Repository: https://github.com/notolog/notolog-editor
-# - PyPI: https://pypi.org/project/notolog
-# - WebSite: https://notolog.app
-# - Author: Vadim Bakhrenkov
-# - Copyright 2024 Vadim Bakhrenkov
-# - License: MIT License
+File Details:
+- Purpose: View mode Syntax Highlighter class tailored for Notolog.
+- Functionality: This module includes functionality specifically needed for view mode, such as detecting strikethrough
+  and 'todo' elements.
+
+Repository: https://github.com/notolog/notolog-editor
+Website: https://notolog.app
+PyPI: https://pypi.org/project/notolog
+
+Author: Vadim Bakhrenkov
+Copyright: 2024 Vadim Bakhrenkov
+License: MIT License
+
+For detailed instructions and project information, please see the repository's README.md.
+"""
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QTextBlock

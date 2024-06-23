@@ -1,3 +1,22 @@
+"""
+Notolog Editor
+Open-source markdown editor developed in Python.
+
+File Details:
+- Purpose: Part of the 'OpenAI API' module.
+- Functionality: Facilitates initialization and management of OpenAI API requests and responses.
+
+Repository: https://github.com/notolog/notolog-editor
+Website: https://notolog.app
+PyPI: https://pypi.org/project/notolog
+
+Author: Vadim Bakhrenkov
+Copyright: 2024 Vadim Bakhrenkov
+License: MIT License
+
+For detailed instructions and project information, please see the repository's README.md.
+"""
+
 from PySide6.QtCore import QUrl, QByteArray
 from PySide6.QtNetwork import QNetworkRequest
 

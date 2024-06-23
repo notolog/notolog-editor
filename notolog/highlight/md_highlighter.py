@@ -1,24 +1,27 @@
-# Notolog
-# An open-source markdown editor written in Python.
-
-# Markdown Syntax Highlighter class tailored for Notolog
-
 """
-This module combines regular expression patterns with integrated code logic. This approach provides a balanced result
-and reduces reliance on complex regular expressions as much as possible. It particularly aids in processing multiline
-blocks, such as code blocks, where stability in detection is crucial for accurate visual representation. Avoiding
-precise detection may lead to "blinking highlighting." While the author has attempted to cover most cases, the primary
+Notolog Editor
+Open-source markdown editor developed in Python.
+
+File Details:
+- Purpose: Markdown Syntax Highlighter class tailored for Notolog.
+
+Story:
+This module combines regular expression patterns with integrated code logic to provide balanced results
+and reduce reliance on complex regular expressions. This approach is particularly useful for processing multiline
+blocks, such as code blocks, where stable detection is crucial for accurate visual representation. Inaccurate
+detection may lead to "blinking highlighting." While the author has attempted to cover most cases, the primary
 goal was to meet the common needs expected from a markdown editor.
 
-This module may be subject to changes in future releases. Currently, it serves more as a proof of concept.
-"""
+Repository: https://github.com/notolog/notolog-editor
+Website: https://notolog.app
+PyPI: https://pypi.org/project/notolog
 
-# - GitHub Repository: https://github.com/notolog/notolog-editor
-# - PyPI: https://pypi.org/project/notolog
-# - WebSite: https://notolog.app
-# - Author: Vadim Bakhrenkov
-# - Copyright 2024 Vadim Bakhrenkov
-# - License: MIT License
+Author: Vadim Bakhrenkov
+Copyright: 2024 Vadim Bakhrenkov
+License: MIT License
+
+For detailed instructions and project information, please see the repository's README.md.
+"""
 
 from PySide6.QtCore import Qt
 

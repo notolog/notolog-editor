@@ -16,6 +16,10 @@ lexemes = {
     "dialog_usage_tokens_total": "totale: {tokens}",
 
     "dialog_button_send_request": "Invia richiesta",
+    "dialog_button_stop_request": "Stop",
+    "dialog_button_save_history": "Salva la cronologia della conversazione",
+
+    "dialog_message_copied_tooltip": "Copiato",
 
     "dialog_error_loading_model": "Errore nel caricamento del modello personalizzato",
 }

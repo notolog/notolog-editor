@@ -1,41 +1,50 @@
-# Notolog
-# An open-source markdown editor written in Python.
-
-# Main file to start up the app and to set up an async loop.
-
 """
-This module is the main entry point for the Notolog app. It handles the initialization of the
-application environment, processes command line arguments, and starts the main application loop.
+Notolog Editor
+Open-source markdown editor developed in Python.
+
+File Details:
+- Purpose: Main file to start up the app and set up an async loop.
+- Functionality: This file is the main entry point for the Notolog app. It handles the initialization of the
+  application environment, processes command line arguments, and starts the main application loop.
 
 Detailed Description:
 - Initializes the GUI by calling the main module.
-- Set up global logging and debug settings.
+- Sets up global logging and debug settings.
 - Initializes the async loop.
 
 Usage:
 Run the module directly from the command line with the necessary arguments:
-python3 main.py
+`python -m notolog.app`
+
+Repository: https://github.com/notolog/notolog-editor
+Website: https://notolog.app
+PyPI: https://pypi.org/project/notolog
+
+Author: Vadim Bakhrenkov
+Copyright: 2024 Vadim Bakhrenkov
+License: MIT License
+
+For detailed instructions and project information, please see the repository's README.md.
 """
 
-# - GitHub Repository: https://github.com/notolog/notolog-editor
-# - PyPI: https://pypi.org/project/notolog
-# - WebSite: https://notolog.app
-# - Author: Vadim Bakhrenkov
-# - Copyright 2024 Vadim Bakhrenkov
-# - License: MIT License
 
-
-from PySide6.QtWidgets import QStyleFactory
-from qasync import QEventLoop, QApplication
-
-from notolog.app_config import AppConfig
-from notolog.notolog_editor import NotologEditor
-
-import platform
 import logging
 import asyncio
 import sys
 import os
+
+from PySide6.QtWidgets import QStyleFactory
+
+from notolog.app_config import AppConfig
+
+# Force Qt API (for qasync).
+# It's necessary to set the QT_API environment variable before importing qasync
+# because the library uses this environment variable to determine which Qt binding to use.
+os.environ["QT_API"] = "PySide6"
+
+from notolog.notolog_editor import NotologEditor  # noqa
+
+from qasync import QEventLoop, QApplication  # noqa
 
 # Force Qt style override
 os.environ["QT_STYLE_OVERRIDE"] = "Fusion"
@@ -44,7 +53,13 @@ os.environ["QT_STYLE_OVERRIDE"] = "Fusion"
 def main():
     # Check if any command line arguments are present
     if len(sys.argv) > 1:
-        print("This is a GUI application. Simply run the command without options to use it.")
+        if any(arg.lower() in ('--version', '-v') for arg in sys.argv):
+            print(f'{AppConfig().get_app_name()} {AppConfig().get_app_version()}')
+        else:
+            print("░░░░░░░░░░░░░░░░░░░░░░░▒▒▒▒▒▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓███■███▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░░")
+            print("╔═══════════════════════════════════════════════════════════════════════════════════════════╗")
+            print("║ Notolog Editor is a GUI application. Simply run the command without any options to start. ║")
+            print("╚═══════════════════════════════════════════════════════════════════════════════════════════╝")
         sys.exit(0)
 
     """
@@ -74,14 +89,17 @@ def main():
     app.setApplicationName(AppConfig().get_settings_app_name())
     app.setApplicationVersion(AppConfig().get_app_version())
 
+    # Custom styling may not render as expected with these themes.
+    """
     # Detect the operating system to choose the style
     current_os = platform.system()
     if current_os == "Windows":
         app.setStyle(QStyleFactory.create("WindowsVista"))
-    # elif current_os == "Darwin":  # macOS
-    #    app.setStyle(QStyleFactory.create("Macintosh"))  # Renders not as expected
+    elif current_os == "Darwin":  # macOS
+        app.setStyle(QStyleFactory.create("Macintosh"))
     else:  # Or: current_os == "Linux"
-        app.setStyle(QStyleFactory.create("Fusion"))  # Fusion is a cross-platform choice
+    """
+    app.setStyle(QStyleFactory.create("Fusion"))  # Fusion is a cross-platform choice
 
     # Maintain a unique style regardless of the user's system settings
     app.setDesktopSettingsAware(False)

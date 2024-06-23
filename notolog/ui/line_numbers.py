@@ -1,10 +1,28 @@
-# This class is intended to help with line numbers area on the left side of the main document editor.
-# The bale functions are:
-# - Show line/block number for better text recognition.
-# - Highlight current line where the cursor located.
+"""
+Notolog Editor
+Open-source markdown editor developed in Python.
 
-# If used with PyQt6 make sure slots and signals are declared correctly, as there are some differences:
-# from PyQt6.QtCore import pyqtSlot as Slot
+File Details:
+- Purpose: This class is intended to help with the line numbers area on the left side of the main document editor.
+
+Features:
+  - Shows line/block numbers for better text recognition.
+  - Highlights the current line where the cursor is located.
+
+Note:
+  - If used with PyQt6, ensure slots and signals are declared correctly, as there are some differences:
+    `from PyQt6.QtCore import pyqtSlot as Slot`
+
+Repository: https://github.com/notolog/notolog-editor
+Website: https://notolog.app
+PyPI: https://pypi.org/project/notolog
+
+Author: Vadim Bakhrenkov
+Copyright: 2024 Vadim Bakhrenkov
+License: MIT License
+
+For detailed instructions and project information, please see the repository's README.md.
+"""
 
 from PySide6.QtCore import Qt, QRect, QSize, Slot
 from PySide6.QtWidgets import QWidget, QTextEdit, QPlainTextEdit

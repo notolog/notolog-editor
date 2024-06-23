@@ -15,6 +15,10 @@ lexemes = {
     "dialog_usage_tokens_total": "toplam: {tokens}",
 
     "dialog_button_send_request": "İstek Gönder",
+    "dialog_button_stop_request": "Durdur",
+    "dialog_button_save_history": "Sohbet geçmişini kaydet",
+
+    "dialog_message_copied_tooltip": "Kopyalandı",
 
     "dialog_error_loading_model": "Özel model yüklenirken hata",
 }

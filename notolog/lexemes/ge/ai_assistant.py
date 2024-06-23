@@ -16,6 +16,10 @@ lexemes = {
     "dialog_usage_tokens_total": "ჯამში: {tokens}",
 
     "dialog_button_send_request": "მოთხოვნის გაგზავნა",
+    "dialog_button_stop_request": "შეჩერე",
+    "dialog_button_save_history": "დიალოგის ისტორიის შენახვა",
+
+    "dialog_message_copied_tooltip": "დაკოპირებულია",
 
     "dialog_error_loading_model": "შეცდომა საბაჟო მოდელის ჩატვირთვისას",
 }

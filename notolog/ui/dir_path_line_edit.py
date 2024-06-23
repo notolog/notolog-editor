@@ -66,6 +66,6 @@ class DirPathLineEdit(QLineEdit):
         super(DirPathLineEdit, self).resizeEvent(event)
 
     def open_file_dialog(self):
-        directory = QFileDialog.getExistingDirectory(self, self.lexemes.get("field_dir_path_line_edit"), self.text())
+        directory = QFileDialog.getExistingDirectory(self, self.lexemes.get('field_dir_path_line_edit'), self.text())
         if directory:
             self.setText(directory)

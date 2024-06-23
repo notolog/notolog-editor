@@ -1,0 +1,127 @@
+[tool.poetry]
+name = "notolog"
+version = "0.9.5"
+description = "Notolog - Python Markdown Editor"
+authors = ["Vadim Bakhrenkov"]
+license = "MIT"
+readme = "README.md"
+scripts = {notolog = "notolog.app:main"}
+include = [
+    "CHANGELOG.md",
+    "CODE_OF_CONDUCT.md",
+    "LICENSE",  # auto-included
+    "README.md",  # auto-included
+    "ThirdPartyNotices.md",
+    "dev_install.py",
+    "docs/**/*",
+    "notolog/lexemes/**/*",
+    "notolog/assets/**/*",
+    "notolog/modules/**/*",
+    "tests/**/*",
+]
+exclude = ["**/__pycache__", "**/*.pyc"]
+homepage = "https://notolog.app"
+repository = "https://github.com/notolog/notolog-editor"
+keywords = ["notolog", "python", "markdown", "editor", "ai", "llm", "text", "notes"]
+classifiers = [
+    # Development Status
+    "Development Status :: 4 - Beta",
+
+    # Intended Audience
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+
+    # License
+    "License :: OSI Approved :: MIT License",
+
+    # Operating System
+    "Operating System :: OS Independent",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX",
+    "Operating System :: Unix",
+
+    # Programming Language
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+
+    # Topics
+    "Topic :: Text Editors",
+    "Topic :: Text Editors :: Documentation",
+    "Topic :: Text Editors :: Emacs",
+    "Topic :: Text Editors :: Integrated Development Environments (IDE)",
+    "Topic :: Text Editors :: Text Processing",
+    "Topic :: Text Editors :: Word Processors",
+    "Topic :: Text Processing",
+    "Topic :: Text Processing :: General",
+    "Topic :: Text Processing :: Markup :: Markdown",
+
+    # Natural Language
+    "Natural Language :: Chinese (Simplified)",
+    "Natural Language :: Dutch",
+    "Natural Language :: English",
+    "Natural Language :: Finnish",
+    "Natural Language :: French",
+    "Natural Language :: Georgian",
+    "Natural Language :: German",
+    "Natural Language :: Greek",
+    "Natural Language :: Hindi",
+    "Natural Language :: Italian",
+    "Natural Language :: Japanese",
+    "Natural Language :: Korean",
+    "Natural Language :: Latin",
+    "Natural Language :: Portuguese",
+    "Natural Language :: Russian",
+    "Natural Language :: Spanish",
+    "Natural Language :: Swedish",
+    "Natural Language :: Turkish",
+]
+
+[tool.poetry.urls]
+Changelog = "https://github.com/notolog/notolog-editor/blob/main/CHANGELOG.md"
+IssueTracker = "https://github.com/notolog/notolog-editor/issues"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.13"
+# Main packages
+cffi= "^1.16.0"
+click = "^8.1.7"
+cryptography = "^42.0.7"
+emoji = "^2.12.1"
+iniconfig = "^2.0.0"
+Markdown = "^3.6"
+packaging = "^24.0"
+pluggy = "^1.5.0"
+pycparser = "^2.22"
+Pygments = "^2.18.0"
+PySide6 = "^6.7.0"
+PySide6_Addons = "^6.7.0"
+PySide6_Essentials = "^6.7.0"
+qasync = "^0.27.1"
+shiboken6 = "^6.7.0"
+tomli = "^2.0.1"
+tomli_w = "^1.0.0"
+typing_extensions = "^4.12.0"
+# Exclude on macOS
+numpy = { version = "^1.26.4", markers = "sys_platform != 'darwin'" }
+onnxruntime-genai = { version = "^0.2.0", markers = "sys_platform != 'darwin'" }
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^7.0.0"
+mccabe = "^0.7.0"
+pycodestyle = "^2.11.1"
+pyflakes = "^3.2.0"
+
+[tool.poetry.group.test.dependencies]
+coverage = "^7.5.1"
+pytest = "^8.2.1"
+pytest-asyncio = "^0.23.7"
+pytest-cov = "^5.0.0"
+pytest-mock = "^3.14.0"
+
+[build-system]
+requires = ["poetry-core>=1.5.0"]
+build-backend = "poetry.core.masonry.api"

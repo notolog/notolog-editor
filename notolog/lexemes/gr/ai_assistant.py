@@ -16,6 +16,10 @@ lexemes = {
     "dialog_usage_tokens_total": "total: {tokens}",
 
     "dialog_button_send_request": "Αποστολή Αιτήματος",
+    "dialog_button_stop_request": "Διακοπή",
+    "dialog_button_save_history": "Αποθήκευση ιστορικού διαλόγου",
+
+    "dialog_message_copied_tooltip": "Αντιγράφηκε",
 
     "dialog_error_loading_model": "Σφάλμα φόρτωσης προσαρμοσμένου μοντέλου",
 }

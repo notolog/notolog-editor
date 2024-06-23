@@ -1,3 +1,22 @@
+"""
+Notolog Editor
+Open-source markdown editor developed in Python.
+
+File Details:
+- Purpose: Encryption helper class.
+- Functionality: Encrypts/decrypts file data with a symmetric encryption algorithm.
+
+Repository: https://github.com/notolog/notolog-editor
+Website: https://notolog.app
+PyPI: https://pypi.org/project/notolog
+
+Author: Vadim Bakhrenkov
+Copyright: 2024 Vadim Bakhrenkov
+License: MIT License
+
+For detailed instructions and project information, please see the repository's README.md.
+"""
+
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.fernet import Fernet
@@ -15,10 +34,6 @@ from typing import Union
 
 
 class EncHelper:
-    """
-    Encrypt/decrypt file data with symmetric encryption algorithm
-    """
-
     """
     Adjust the number of iterations for more security.
     Remember to re-encrypt the source.

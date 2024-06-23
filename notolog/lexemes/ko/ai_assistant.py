@@ -16,6 +16,10 @@ lexemes = {
     "dialog_usage_tokens_total": "총계: {tokens}",
 
     "dialog_button_send_request": "요청 보내기",
+    "dialog_button_stop_request": "중지",
+    "dialog_button_save_history": "대화 기록 저장",
+
+    "dialog_message_copied_tooltip": "복사됨",
 
     "dialog_error_loading_model": "사용자 정의 모델 로딩 오류",
 }

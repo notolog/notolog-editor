@@ -16,6 +16,10 @@ lexemes = {
     "dialog_usage_tokens_total": "totalt: {tokens}",
 
     "dialog_button_send_request": "Skicka förfrågan",
+    "dialog_button_stop_request": "Stoppa",
+    "dialog_button_save_history": "Spara dialoghistorik",
+
+    "dialog_message_copied_tooltip": "Kopierad",
 
     "dialog_error_loading_model": "Fel vid laddning av anpassad modell",
 }

@@ -1,3 +1,21 @@
+"""
+Notolog Editor
+Open-source markdown editor developed in Python.
+
+File Details:
+- Purpose: Example of an etree extension that allows processing and modifying the document's tree.
+
+Repository: https://github.com/notolog/notolog-editor
+Website: https://notolog.app
+PyPI: https://pypi.org/project/notolog
+
+Author: Vadim Bakhrenkov
+Copyright: 2024 Vadim Bakhrenkov
+License: MIT License
+
+For detailed instructions and project information, please see the repository's README.md.
+"""
+
 from xml.etree import ElementTree
 
 from markdown import Markdown

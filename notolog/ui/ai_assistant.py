@@ -1,14 +1,27 @@
 """
-AI Assistant Dialog Class
+Notolog Editor
+Open-source markdown editor developed in Python.
 
-This class is designed to facilitate and manage interactions between the user and various external plugins or APIs.
-It acts as a bridge to send queries to and receive responses from selected plugins, ensuring seamless integration and
-efficient data handling. The class leverages user inputs and contextual information to interact with APIs dynamically.
+File Details:
+- Purpose: AI Assistant Dialog Class.
+- Functionality: This class facilitates interactions between the user and various external plugins or APIs.
+  It acts as a bridge, sending queries to and receiving responses from selected plugins, ensuring seamless integration
+  and efficient data handling. It dynamically leverages user inputs and contextual information for API interactions.
 
 Features:
-- Sends requests and receives responses based on user inputs or context.
-- Supports robust error handling to manage API limitations or failures, ensuring consistent application performance.
-- Provides functionality that can be adjusted based on the app
+- Sends requests and receives responses based on user inputs or contextual cues.
+- Implements robust error handling to manage API limitations or failures, ensuring consistent application performance.
+- Adaptable functionality to suit different application needs.
+
+Repository: https://github.com/notolog/notolog-editor
+Website: https://notolog.app
+PyPI: https://pypi.org/project/notolog
+
+Author: Vadim Bakhrenkov
+Copyright: 2024 Vadim Bakhrenkov
+License: MIT License
+
+For detailed instructions and project information, please see the repository's README.md.
 """
 
 from PySide6.QtCore import Qt, QSize, Signal
@@ -134,8 +147,7 @@ class AIAssistant(QDialog):
         self.tokens_answer_label = Union[QLabel, None]
         self.tokens_total_label = Union[QLabel, None]
         self.send_button = Union[QPushButton, None]
-        self.stop_button = Union[QPushButton, None]
-        self.save_button = Union[QPushButton, None]
+        self.save_history_button = Union[QPushButton, None]
 
         # Last added message id
         self.message_id = 0
@@ -286,25 +298,16 @@ class AIAssistant(QDialog):
         buttons_widget = QWidget()
         buttons_widget.setLayout(buttons_layout)
 
-        # Submit button
-        self.stop_button = QPushButton()
-        self.stop_button.setFont(self.font())
-        self.stop_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.stop_button.setIcon(self.theme_helper.get_icon(theme_icon='stop-fill.svg'))
-        self.stop_button.clicked.connect(self.cancel_request)
-        self.stop_button.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.stop_button.setDisabled(True)
-        buttons_layout.addWidget(self.stop_button)
-
         # Save button
-        self.save_button = QPushButton()
-        self.save_button.setFont(self.font())
-        self.save_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.save_button.setIcon(self.theme_helper.get_icon(theme_icon='floppy2.svg'))
-        self.save_button.clicked.connect(self.save_history)
-        self.save_button.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.save_button.setDisabled(True)
-        buttons_layout.addWidget(self.save_button)
+        self.save_history_button = QPushButton()
+        self.save_history_button.setFont(self.font())
+        self.save_history_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.save_history_button.setIcon(self.theme_helper.get_icon(theme_icon='floppy2.svg'))
+        self.save_history_button.clicked.connect(self.save_history_action)
+        self.save_history_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.save_history_button.setDisabled(True)
+        self.save_history_button.setToolTip(self.lexemes.get('dialog_button_save_history'))
+        buttons_layout.addWidget(self.save_history_button)
 
         # To fill the space between
         spacer_widget = QWidget()
@@ -314,9 +317,10 @@ class AIAssistant(QDialog):
         # Submit button
         self.send_button = QPushButton(self.lexemes.get('dialog_button_send_request'), self)
         self.send_button.setFont(self.font())
+        self.send_button.setIcon(self.theme_helper.get_icon(theme_icon='play-fill.svg'))
         self.send_button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.send_button.clicked.connect(self.send_request)
-        buttons_layout.addWidget(self.send_button, 3)
+        buttons_layout.addWidget(self.send_button, 1)
 
         self.layout.addWidget(buttons_widget)
 
@@ -589,16 +593,10 @@ class AIAssistant(QDialog):
         self.prompt_input.setDisabled(True)
         # Clear prompt field as it have to be in the chat already
         self.prompt_input.clear()
-        # Clear response field from prev results if set
-        # self.response_output.clear()
-        # Disconnect send button click action
-        # self.send_button.clicked.disconnect()
         # Disable send request button
         self.send_button.setDisabled(True)
-        # Enable stop button
-        self.stop_button.setEnabled(True)
         # Disable save button
-        self.save_button.setDisabled(True)
+        self.save_history_button.setDisabled(True)
         # Show progress label
         self.background_label.show()
 
@@ -608,6 +606,10 @@ class AIAssistant(QDialog):
             self.setCursor(Qt.CursorShape.ArrowCursor)
             # Hide progress label
             self.background_label.hide()
+            # Replace with stop button
+            self.request_button_stop()
+            # Enable send request button
+            self.send_button.setEnabled(True)
         except RuntimeError:
             raise
 
@@ -618,23 +620,33 @@ class AIAssistant(QDialog):
             # Enable prompt input field
             self.prompt_input.setEnabled(True)
             self.prompt_input.setFocus()
-            # Restore send button click action
-            # self.send_button.clicked.connect(self.send_request)
-            # Enable send request button
-            self.send_button.setEnabled(True)
-            # Disable stop button
-            self.stop_button.setDisabled(True)
+            # Return request button
+            self.request_button_on()
             # Enable save button
-            self.save_button.setEnabled(True)
+            self.save_history_button.setEnabled(True)
             # Hide progress label
             self.background_label.hide()
         except RuntimeError:
             raise
 
+    def request_button_on(self):
+        # Sen request button
+        self.send_button.clicked.disconnect()
+        self.send_button.setText(self.lexemes.get('dialog_button_send_request'))
+        self.send_button.setIcon(self.theme_helper.get_icon(theme_icon='play-fill.svg'))
+        self.send_button.clicked.connect(self.send_request)
+
+    def request_button_stop(self):
+        # Stop request button
+        self.send_button.clicked.disconnect()
+        self.send_button.setText(self.lexemes.get('dialog_button_stop_request'))
+        self.send_button.setIcon(self.theme_helper.get_icon(theme_icon='stop-fill.svg'))
+        self.send_button.clicked.connect(self.cancel_request)
+
     def cancel_request(self):
         self.request_cancelled.emit()
 
-    def save_history(self):
+    def save_history_action(self):
         if not hasattr(self.parent, 'action_new_file'):
             if self.logging:
                 self.logger.error("Cannot save history to the file, no method available")
@@ -651,7 +663,7 @@ class AIAssistant(QDialog):
         self.parent.action_new_file(history)  # noqa
 
         # Disable save button until next update
-        self.save_button.setDisabled(True)
+        self.save_history_button.setDisabled(True)
 
     @asyncClose
     async def closeEvent(self, event):

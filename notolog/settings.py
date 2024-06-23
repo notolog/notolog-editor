@@ -1,3 +1,22 @@
+"""
+Notolog Editor
+Open-source markdown editor developed in Python.
+
+File Details:
+- Purpose: Settings functionality.
+- Functionality: Allows adding new setting elements via the config map and handling settings change signals.
+
+Repository: https://github.com/notolog/notolog-editor
+Website: https://notolog.app
+PyPI: https://pypi.org/project/notolog
+
+Author: Vadim Bakhrenkov
+Copyright: 2024 Vadim Bakhrenkov
+License: MIT License
+
+For detailed instructions and project information, please see the repository's README.md.
+"""
+
 from PySide6.QtCore import Signal, QSettings
 
 from .app_config import AppConfig
@@ -34,7 +53,7 @@ class Settings(QSettings):
                     cls._instance = super().__new__(cls)
         return cls._instance
 
-    @ classmethod
+    @classmethod
     def reload(cls, *args, **kwargs):
         """
         Reinitialize the singleton instance. This method allows for the controlled

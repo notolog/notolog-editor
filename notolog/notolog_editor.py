@@ -1,27 +1,35 @@
-# Notolog
-# An open-source markdown editor written in Python.
-
 """
+Notolog Editor
+Open-source markdown editor developed in Python.
+
+File Details:
+- Purpose: Central place of the app.
+
+Story:
 The project began as part of the developer's journey to learn Python, which may explain some seemingly redundant
 features. It was developed as a proof of concept to showcase what a markdown editor might look like and to assist
 the developer with daily tasks. Hopefully, you will find it useful too.
 
-The README.md file, located at the very beginning, was created using this editor and serves as a good demonstration
-of the app’s features.
-
-Code Style Disclaimer: While mixing code styles like camelCase and snake_case is generally avoided, many Qt methods
+Code Style Disclaimer:
+While mixing code styles like camelCase and snake_case is generally avoided, many Qt methods
 use camelCase. However, the preferred style for Python 3 is typically PEP-8, which advocates for snake_case. Therefore,
 a compromise has been made in the Notolog codebase to predominantly use snake_case. This deliberate choice helps
 distinguish between the Qt and Notolog codebases, making it easier to identify which methods or classes belong to each.
+
+Note:
+The README.md file, located at the very beginning, was created using this editor and serves as a good demonstration
+of the app’s features.
+
+Repository: https://github.com/notolog/notolog-editor
+Website: https://notolog.app
+PyPI: https://pypi.org/project/notolog
+
+Author: Vadim Bakhrenkov
+Copyright: 2024 Vadim Bakhrenkov
+License: MIT License
+
+For detailed instructions and project information, please see the repository's README.md.
 """
-
-# - GitHub Repository: https://github.com/notolog/notolog-editor
-# - PyPI: https://pypi.org/project/notolog
-# - WebSite: https://notolog.app
-# - Author: Vadim Bakhrenkov
-# - Copyright 2024 Vadim Bakhrenkov
-# - License: MIT License
-
 
 # Core classes
 from .settings import Settings

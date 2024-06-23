@@ -1,3 +1,21 @@
+"""
+Notolog Editor
+Open-source markdown editor developed in Python.
+
+File Details:
+- Purpose: Extends QTextBlockUserData to support data storage for text editing cross-actions.
+
+Repository: https://github.com/notolog/notolog-editor
+Website: https://notolog.app
+PyPI: https://pypi.org/project/notolog
+
+Author: Vadim Bakhrenkov
+Copyright: 2024 Vadim Bakhrenkov
+License: MIT License
+
+For detailed instructions and project information, please see the repository's README.md.
+"""
+
 from PySide6.QtGui import QTextBlockUserData
 
 from typing import Any, Type
@@ -19,7 +37,7 @@ class TextBlockData(QTextBlockUserData):
                 if data_row == new_data:
                     return
                 # Check either update needed or not
-                # TODO improve check algorythm as it's quite simple atm
+                # TODO: Improve the check algorithm as it's quite simple at the moment.
                 if data_row['start'] == new_data['start'] and data_row['end'] == new_data['end']:
                     existing_data[data_index].update(new_data)
             if isinstance(existing_data, list):

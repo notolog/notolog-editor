@@ -1,5 +1,19 @@
 """
-About the app dialog class for displaying app's info to the user.
+Notolog Editor
+Open-source markdown editor developed in Python.
+
+File Details:
+- Purpose: About the app dialog class for displaying app's info to the user.
+
+Repository: https://github.com/notolog/notolog-editor
+Website: https://notolog.app
+PyPI: https://pypi.org/project/notolog
+
+Author: Vadim Bakhrenkov
+Copyright: 2024 Vadim Bakhrenkov
+License: MIT License
+
+For detailed instructions and project information, please see the repository's README.md.
 """
 
 from PySide6.QtCore import Qt, QEvent, QUrl

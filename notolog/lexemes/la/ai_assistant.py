@@ -16,6 +16,10 @@ lexemes = {
     "dialog_usage_tokens_total": "totum: {tokens}",
 
     "dialog_button_send_request": "Postulationem mittere",
+    "dialog_button_stop_request": "Intermitte",
+    "dialog_button_save_history": "Conferensiae historia serva",
+
+    "dialog_message_copied_tooltip": "Exemplar",
 
     "dialog_error_loading_model": "Error loading mos proprius",
 }

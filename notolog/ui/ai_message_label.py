@@ -1,3 +1,21 @@
+"""
+Notolog Editor
+Open-source markdown editor developed in Python.
+
+File Details:
+- Purpose: Extends AI Assistant Dialog Class by formatting and displaying messages from and to the user.
+
+Repository: https://github.com/notolog/notolog-editor
+Website: https://notolog.app
+PyPI: https://pypi.org/project/notolog
+
+Author: Vadim Bakhrenkov
+Copyright: 2024 Vadim Bakhrenkov
+License: MIT License
+
+For detailed instructions and project information, please see the repository's README.md.
+"""
+
 from PySide6.QtWidgets import QStyle, QLabel, QPushButton
 from PySide6.QtGui import QTextDocument
 from PySide6.QtCore import Qt
@@ -71,10 +89,9 @@ class AiMessageLabel(QLabel):
 
     def copy_content(self):
         # Copy text to the clipboard
-        # TODO copy as markdown
         ClipboardHelper.set_text(self.get_plain_text())
         # Show tooltip
-        TooltipHelper.show_tooltip(widget=self.button, text='Copied')
+        TooltipHelper.show_tooltip(widget=self.button, text=self.lexemes.get('dialog_message_copied_tooltip'))
 
     def get_plain_text(self):
         # Create a QTextDocument from the label's HTML content

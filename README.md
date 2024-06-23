@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-06-16 22:51:40.408542"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-06-23 17:49:35.777044"}} -->
 # Notolog
 
 ![Notolog - Python Markdown Editor](https://raw.githubusercontent.com/notolog/notolog-editor/main/notolog/assets/notolog-example-image.png)
@@ -116,21 +116,21 @@ source venv/bin/activate  # On Windows use `venv\Scripts\activate`
 
 4. Install dependencies:
 ```sh
-pip install -r requirements.txt
+pip install .
 ```
 
 Start Notolog using:
 ```sh
-python -m notolog.main
+python -m notolog.app
 ```
 
 ### Tests and Test Coverage
 
-To minimize installation overhead and streamline dependency management, dependencies required solely for testing are isolated in `test_requirements.txt`. This separation helps manage test dependencies independently from the main application dependencies.
+To minimize installation overhead and streamline dependency management, dependencies required solely for testing are isolated in test-specific requirements.
 
-```sh
-pip install -r test_requirements.txt
-```
+To install these dependencies, run: `python dev_install.py test`. The `tomli` package is required to execute this script; you can install it using `pip install tomli`.
+
+This approach helps manage test dependencies independently from the main application dependencies, ensuring a cleaner and more manageable setup.
 
 <details>
 <summary>Run Tests</summary>
@@ -162,7 +162,21 @@ pytest tests/ --cov=notolog --cov-report=term --ignore=tests/ui_tests/
 
 ### Dev Tools
 
-To maintain high standards of code quality and ensure comprehensive test coverage, we utilize several development tools. Flake8, which combines PyFlakes, pycodestyle, and McCabe's complexity checker, is employed to enforce code quality, manage code complexity, and ensure adherence to PEP 8 style conventions. These tools can be installed using the `dev_requirements.txt` file.
+To maintain high standards of code quality and ensure comprehensive test coverage, we utilize several development tools. Flake8, which combines PyFlakes, pycodestyle, and McCabe's complexity checker, is employed to enforce code quality, manage code complexity, and ensure adherence to PEP 8 style conventions.
+
+To install these dependencies, run: `python dev_install.py dev`. The `tomli` package is required to execute this script; you can install it using `pip install tomli`.
+
+### Build Tools
+
+Make sure `poetry-core` and `build` are installed:
+```
+pip install poetry-core build
+```
+
+The following command generates distribution packages. Specifically, it creates both a source distribution and a wheel distribution:
+```
+python -m build
+```
 
 ### Virtual Environments
 

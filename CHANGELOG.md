@@ -1,6 +1,24 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [0.9.5] - 2024-06-23
+
+### Added
+- Added `pyproject.toml` file to support the modern way of building packages.
+- Added a development and test tools installation script that gets data directly from `pyproject.toml`.
+- Added a button to send requests and stop inference for the AI Assistant.
+
+### Changed
+- Renamed `main.py` to `app.py` to allow running the app with the `python -m notolog.app` command.
+- The application has been tested with less strict dependencies, using version ranges to ensure compatibility and flexibility.
+
+### Updated
+- Updated `README.md` with current and additional information about dev tools installation, and other changed parts.
+
+### Fixed
+- Fixed building the wheel on the Windows platform.
+- Added `QT_API` environment variable to fix Windows CLI run.
+
 ## [0.9.5b1] - 2024-06-16
 
 ### Added
