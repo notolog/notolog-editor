@@ -77,7 +77,7 @@ class ModuleCore(BaseAiCore):
         self.logging = AppConfig().get_logging()
         self.debug = AppConfig().get_debug()
 
-        # Default language setup, change to settings value to modify it via UI
+        # Load lexemes for selected language and scope
         self.lexemes = Lexemes(self.settings.app_language,
                                default_scope='settings_dialog',
                                lexemes_dir=self.get_lexemes_path())
@@ -180,7 +180,7 @@ class ModuleCore(BaseAiCore):
             if self.init_callback and callable(self.init_callback):
                 self.init_callback()
             # Error message to show in UI
-            outputs = f'Model not found error {e}'  # TODO lexeme
+            outputs = self.lexemes.get("module_ondevice_llm_model_exception", scope='common', error_msg=str(e))
             # Emit update message signal
             self.update_signal.emit(outputs, None, None, EnumMessageType.DEFAULT, EnumMessageStyle.ERROR)
             # Emit finished signal
@@ -213,7 +213,8 @@ class ModuleCore(BaseAiCore):
                         if self.logging:
                             self.logger.warning(f"Task raised an exception: {exception}")
                         # Error message to show in UI
-                        outputs = self.lexemes.get('module_ondevice_llm_task_exception', scope='common')
+                        outputs = self.lexemes.get('module_ondevice_llm_task_exception', scope='common',
+                                                   error_msg=str(exception))
                         # Emit update message signal
                         self.update_signal.emit(outputs, None, None, EnumMessageType.DEFAULT, EnumMessageStyle.ERROR)
                     else:
@@ -230,9 +231,10 @@ class ModuleCore(BaseAiCore):
                 self.logger.error(f'Cannot init model generator: {e}', exc_info=False)
             # Re-raise to indicate unresolved issues to the caller
             raise
-
-        if self.init_callback and callable(self.init_callback):
-            self.init_callback()
+        finally:
+            # The init stage has concluded
+            if self.init_callback and callable(self.init_callback):
+                self.init_callback()
 
         try:
             while not generator.is_done():

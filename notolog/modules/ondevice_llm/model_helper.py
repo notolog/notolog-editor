@@ -40,7 +40,7 @@ class ModelHelper:
 
     # Set the max length to something sensible by default,
     # since otherwise it will be set to the entire context length
-    search_options = {'max_length': 2048}
+    search_options = {'max_length': 4096}
 
     def __new__(cls, *args, **kwargs):
         if not cls._instance:

@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2024-03-26 00:19:36.466439", "updated": "2024-05-18 12:32:49.515851"}} -->
+<!-- {"notolog.app": {"created": "2024-03-26 00:19:36.466439", "updated": "2024-06-29 15:57:18.476894"}} -->
 # Markdown syntax
 
 ## Headings
@@ -236,13 +236,12 @@ The text contains abbreviation (hover mouse on it):
 ## Details and Summary
 
 <details>
-	<summary>Clickable Summary for Description</summary>
-	This block contains additional information and conceals it beneath an expandable short summary.
-
-	<details>
-		<summary>Nested blocks support</summary>
-	This feature is experimental, and some nested syntax highlighting may not function entirely as expected. Nonetheless, it proves helpful in condensing lengthy content into expandable links. Support for this block will be expanded in the future.
-	</details>
+    <summary>Clickable Summary for Description</summary>
+    This block contains additional information and conceals it beneath an expandable short summary.
+    <details>
+        <summary>Nested blocks support</summary>
+        This feature is experimental, and some nested syntax highlighting may not function entirely as expected. Nonetheless, it proves helpful in condensing lengthy content into expandable links. Support for this block will be expanded in the future.
+    </details>
 </details>
 
 ---

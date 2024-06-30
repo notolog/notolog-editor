@@ -23,7 +23,6 @@ import logging
 
 from threading import Lock
 from typing import Any, Union
-from datetime import datetime
 
 from .. import AppConfig
 from ...ui.ai_assistant import EnumMessageType
@@ -208,13 +207,8 @@ class PromptManager(QObject):
         return formatted_history
 
     def get_history(self) -> str:
-        # Get current date and time
-        current_datetime = datetime.now()
-        # Format the date and time in the specified format
-        formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
-
+        result = ''
         # Format each entry and combine them into a text
-        result = f'# Ai Assistant [{formatted_datetime}]\n\n'  # TODO lexeme
         for entry in self.history:
             # Extracting user information
             user = entry['user']

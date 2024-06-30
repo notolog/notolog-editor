@@ -21,5 +21,7 @@ lexemes = {
 
     "dialog_message_copied_tooltip": "Copied",
 
+    "dialog_prompt_history_file_header": "# Ai Assistant [{datetime}]",
+
     "dialog_error_loading_model": "Error loading custom model",
 }

@@ -1,6 +1,21 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [0.9.6] - 2024-06-30
+
+### Added
+- Added Markdown to HTML conversion within the expandable blocks.
+
+### Changed
+- Highlighted '@todo' token even if there is no space after it but before the end of the line.
+
+### Updated
+- Updated translations for the AI Assistant and related functionalities, including the On Device LLM module.
+
+### Fixed
+- Fixed a missing tooltip when copying messages from the AI Assistant dialog.
+- Fixed an issue where a button in the AI Assistant could become stuck if the request exceeded the length limit. Also added more service messages within the AI Assistant to address potential errors.
+
 ## [0.9.5] - 2024-06-23
 
 ### Added

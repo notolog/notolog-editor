@@ -3554,18 +3554,22 @@ class NotologEditor(QMainWindow):
                 if self.logging:
                     self.logger.warning('Extension error', e)
 
-        """
-        Convert data to html
-        """
-        html_data = self.convert_markdown_to_html(content)
-        """
-        Process raw content to modify it before any extra elements are being added to.
-        """
-        view_doc.setPlainText(html_data)  # This will set cursor position to the end of the content
         view_processor = ViewProcessor(highlighter=self.view_highlighter)
         # Connecting view's mouse press event to the view processor's method
         view_widget.mousePressEvent = view_processor.mouse_click_event
-        # Processing changes of the document passed within
+
+        # Pre-process content before markdown conversion
+        content = view_processor.pre_md_process(content)
+
+        # Convert data to html
+        html_data = self.convert_markdown_to_html(content)
+        # This will set cursor position to the end of the content
+        view_doc.setPlainText(html_data)
+
+        # Post-process content after markdown conversion
+        view_processor.post_md_process()
+
+        # Processing changes of the document passed within, to modify it before any extra elements are being added to.
         view_processor.process()
 
         """

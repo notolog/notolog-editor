@@ -242,7 +242,7 @@ class MdHighlighter(MainHighlighter):
         # emojis
         (r'(\:[a-zA-Z_]+\:)', 1, 'emoji', 'emoji', False, theme['emoji'], None),
         # To-do keywords
-        (r'([\s]*?)(@todo)(?=\s)', 2, 'todo', 'todo', False, theme['todo'], None),
+        (r'([\s]*?)(@todo)(?=\s|$)', 2, 'todo', 'todo', False, theme['todo'], None),
         # Excess indent at the end of the line
         # (r'([\s]+)$', 1, 'wrong_indent', 'general', False, theme['wrong_indent'], None),
         # Code operators, group 1

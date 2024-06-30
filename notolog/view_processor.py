@@ -80,6 +80,74 @@ class ViewProcessor:
         parent_widget = parent.get_view_widget()  # type: QTextBrowser
         parent_widget.setTextCursor(cursor)
 
+    @staticmethod
+    def replace_tags(content, replacements) -> str:
+        """
+        Function to perform replacements.
+
+        Args:
+            content (str): Source content.
+            replacements (dict): Replacements mapping.
+        """
+        for pattern, replacement in replacements.items():
+            content = re.sub(pattern, replacement, content)
+        return content
+
+    def pre_md_process(self, content: str):
+        """
+        Replaces expandable tokens from html-like to the meta-like,
+        to avoid ignoring them upon markdown conversion.
+
+        Args:
+            content (str): Source content.
+
+        Returns:
+            str: Pre-processed content.
+        """
+
+        # Define the replacements in a dictionary with regex patterns
+        forward_replacements = {
+            r'<details[^>]*>': '[details]',
+            r'</details>': '[/details]',
+            r'<summary[^>]*>': '[summary]',
+            r'</summary>': '[/summary]',
+        }
+
+        return self.replace_tags(content, forward_replacements)
+
+    def post_md_process(self, content: str = None):
+        """
+        Revert the replacements of the expandable tokens from meta-like back to the html-like,
+        to allow to recognize them upon html-rendering.
+
+        Args:
+            content (str, optional): Source content.
+
+        Returns:
+            str: Post-processed content.
+        """
+
+        # Whither to get the content from the doc or not
+        doc_processing = True if content is None else False
+        if doc_processing:
+            content = self.doc.toPlainText()
+
+        # Define the backward replacements in a dictionary
+        backward_replacements = {
+            r'\[details\]': '<details>',
+            r'\[/details\]': '</details>',
+            r'\[summary\]': '<summary>',
+            r'\[/summary\]': '</summary>',
+        }
+
+        # Perform the replacements
+        post_processed_text = self.replace_tags(content, backward_replacements)
+
+        if doc_processing:
+            self.doc.setPlainText(post_processed_text)
+
+        return post_processed_text
+
     def process(self):
         self.blocks.clear()
         cursor = QTextCursor(self.doc)
@@ -276,6 +344,9 @@ class ViewProcessor:
                 # pattern = r"<details.*?>[\s]*?(</p>)"
 
                 selected_text = selected_text.strip()
+                # Post-processing converts meta-like tokens '[details]' back to their HTML-like equivalents '<details>'
+                # before the actual encoding process.
+                selected_text = self.post_md_process(selected_text)
                 encoded_text = base64.b64encode(selected_text.encode('utf-8'))
                 """
                 Insert as a TEXT here, not as an HTML or tags will be stripped after.
@@ -340,15 +411,22 @@ class ViewProcessor:
 
         i = 0
         # Move to the anchor caption's start position
+        prev_pos = cursor.position()
         while cursor.charFormat().isAnchor() and (i := i + 1):
             cursor.movePosition(QTextCursor.MoveOperation.PreviousCharacter, QTextCursor.MoveMode.MoveAnchor)
+            # Check the cursor position is changing
+            if prev_pos == cursor.position():
+                break
+            prev_pos = cursor.position()
         # Move to the anchor caption's end position
+        prev_pos = cursor.position()
         while i > 0 or cursor.charFormat().isAnchor():
             i -= 1
             cursor.movePosition(QTextCursor.MoveOperation.NextCharacter, QTextCursor.MoveMode.KeepAnchor)
-            # Check it after, not in loop
-            if cursor.atBlockEnd():
+            # Check the cursor position is changing
+            if cursor.atBlockEnd() or prev_pos == cursor.position():
                 break
+            prev_pos = cursor.position()
 
         anchor_label = cursor.selectedText()
         if self.debug:

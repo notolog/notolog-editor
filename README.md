@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-06-23 17:49:35.777044"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-06-30 16:16:44.545828"}} -->
 # Notolog
 
 ![Notolog - Python Markdown Editor](https://raw.githubusercontent.com/notolog/notolog-editor/main/notolog/assets/notolog-example-image.png)
@@ -81,13 +81,21 @@ Using a virtual environment is highly recommended as it helps avoid version conf
 
 ### Using pip (Recommended)
 
-Install Notolog quickly using pip:
+Set up a virtual environment (highly recommended):
+```sh
+python3 -m venv notolog
+# On Unix-like systems (macOS and Linux):
+source notolog/bin/activate
+# On Windows:
+notolog\Scripts\activate
+```
 
+Install Notolog quickly using pip:
 ```sh
 pip install notolog
 ```
 
-That's it! Starting the app is as simple as `notolog`.
+That's it! Starting the app is as simple as running `notolog`.
 
 To update Notolog to the latest version:
 ```sh
@@ -110,8 +118,11 @@ cd notolog-editor
 
 3. Set up a virtual environment (highly recommended):
 ```sh
-python3 -m venv venv
-source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+python3 -m venv notolog
+# On Unix-like systems:
+source notolog/bin/activate
+# On Windows:
+notolog\Scripts\activate
 ```
 
 4. Install dependencies:

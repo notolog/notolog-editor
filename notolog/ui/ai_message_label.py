@@ -52,7 +52,7 @@ class AiMessageLabel(QLabel):
         self.debug = AppConfig().get_debug()
 
         # Load lexemes for selected language and scope
-        self.lexemes = Lexemes(self.settings.app_language, default_scope='common')
+        self.lexemes = Lexemes(self.settings.app_language, default_scope='ai_assistant')
 
         self.theme_helper = ThemeHelper()
 

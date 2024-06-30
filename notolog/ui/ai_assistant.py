@@ -47,6 +47,7 @@ from ..modules.base_ai_core import BaseAiCore
 from ..enums.enum_base import EnumBase
 
 from qasync import asyncClose
+from datetime import datetime
 
 import markdown
 
@@ -658,6 +659,14 @@ class AIAssistant(QDialog):
         prompt_manager = module_core.get_prompt_manager()
         # Get history
         history = prompt_manager.get_history()
+
+        # Get current date and time
+        current_datetime = datetime.now()
+        # Format the date and time in the specified format
+        formatted_datetime = current_datetime.strftime("%Y-%m-%d %H:%M:%S")
+        # Add header
+        history = (self.lexemes.get('dialog_prompt_history_file_header', datetime=formatted_datetime)
+                   + f'\n\n{history}')
 
         # Save history
         self.parent.action_new_file(history)  # noqa

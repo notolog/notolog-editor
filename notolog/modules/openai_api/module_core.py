@@ -79,7 +79,7 @@ class ModuleCore(BaseAiCore):
         self.logging = AppConfig().get_logging()
         self.debug = AppConfig().get_debug()
 
-        # Default language setup, change to settings value to modify it via UI
+        # Load lexemes for selected language and scope
         self.lexemes = Lexemes(self.settings.app_language,
                                default_scope='settings_dialog',
                                lexemes_dir=self.get_lexemes_path())

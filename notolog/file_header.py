@@ -170,12 +170,12 @@ class FileHeader:
             return header_line + delimiter + content
         elif content is not None:
             if self.logging:
-                self.logger.warning(f'File content exist but header is None {self}')
+                self.logger.warning(f'File contains content but lacks a header {self}')
             # Return content without header
             return content
         else:
             if self.logging:
-                self.logger.warning(f'File header exist but content is None {self}')
+                self.logger.warning(f'File contains header but lacks a content {self}')
             # Return header without content
             return header_line
 

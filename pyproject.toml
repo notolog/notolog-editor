@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "notolog"
-version = "0.9.5"
+version = "0.9.6"
 description = "Notolog - Python Markdown Editor"
 authors = ["Vadim Bakhrenkov"]
 license = "MIT"
