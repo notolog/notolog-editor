@@ -91,6 +91,7 @@ lexemes = {
     "save_active_file_error_occurred": "无法保存文件，发生错误",
 
     "expandable_block_default_title": "更多信息...",
+    "expandable_block_open_close_tags_mismatch_warning": "<details> 块打开/关闭标记不匹配",
 
     "dialog_color_picker_color_copied_to_the_clipboard": "格式化文本已复制到剪贴板",
 

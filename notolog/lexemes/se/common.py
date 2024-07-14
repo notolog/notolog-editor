@@ -94,6 +94,7 @@ lexemes = {
     "save_active_file_error_occurred": "Kan inte spara filen, ett fel inträffade",
 
     "expandable_block_default_title": "Mer information...",
+    "expandable_block_open_close_tags_mismatch_warning": "Mismatch i <details> block öppna/stänga taggar",
 
     "dialog_color_picker_color_copied_to_the_clipboard": "Formaterad text har kopierats till urklipp",
 

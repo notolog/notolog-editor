@@ -41,6 +41,8 @@ class ViewProcessor:
     View mode pre-result procession by modifying loaded QTextDocument
     """
 
+    zero_width_space = '\u200B'  # '&#8203;' or '​'
+
     def __init__(self, highlighter: Union[QSyntaxHighlighter, ViewHighlighter]):
         """
         Args:
@@ -107,9 +109,9 @@ class ViewProcessor:
 
         # Define the replacements in a dictionary with regex patterns
         forward_replacements = {
-            r'<details[^>]*>': '[details]',
+            r'<details([^>]*?)>': r'[details\1]',
             r'</details>': '[/details]',
-            r'<summary[^>]*>': '[summary]',
+            r'<summary([^>]*?)>': r'[summary\1]',
             r'</summary>': '[/summary]',
         }
 
@@ -134,9 +136,9 @@ class ViewProcessor:
 
         # Define the backward replacements in a dictionary
         backward_replacements = {
-            r'\[details\]': '<details>',
+            r'\[details([^>]*?)\]': r'<details\1>',
             r'\[/details\]': '</details>',
-            r'\[summary\]': '<summary>',
+            r'\[summary([^>]*?)\]': r'<summary\1>',
             r'\[/summary\]': '</summary>',
         }
 
@@ -164,18 +166,18 @@ class ViewProcessor:
             # Find all matches of the pattern in provided string
             matches = re.finditer(pattern, block.text())
             for match in matches:
-                open_start = match.start()
-                open_end = match.end()
-                open_length = open_end - open_start
-                self.blocks_start.append((block.position() + open_start, open_length))
+                _open_start = match.start()
+                _open_end = match.end()
+                _open_length = _open_end - _open_start
+                self.blocks_start.append((block.position() + _open_start, _open_length))
             pattern = r"</details>"
             # Find all matches of the pattern in provided string
             matches = re.finditer(pattern, block.text())
             for match in matches:
-                close_start = match.start()
-                close_end = match.end()
-                close_length = close_end - close_start
-                self.blocks_end.append((block.position() + close_start, close_length))
+                _close_start = match.start()
+                _close_end = match.end()
+                _close_length = _close_end - _close_start
+                self.blocks_end.append((block.position() + _close_start, _close_length))
 
         cursor.movePosition(QTextCursor.MoveOperation.Start)
         # Iterate through each block
@@ -245,9 +247,13 @@ class ViewProcessor:
                 group = i
                 self.blocks[i].update({'g': group})
             # Iterate through remaining elements to find possible nesting
+            self.doc.parent().statusbar.show_warning()
             for j, _other_data in enumerate(self.blocks[i + 1:], start=i + 1):
                 if _data['o'] is None or _other_data['o'] is None or _data['c'] is None or _other_data['c'] is None:
-                    # TODO show error sign at status bar
+                    # Show error sign at status bar
+                    self.doc.parent().statusbar.show_warning(
+                        visible=True,
+                        tooltip=self.lexemes.get('expandable_block_open_close_tags_mismatch_warning'))
                     return
                 # Check if other element is nested within the current element
                 if _data['o'] < _other_data['o'] and _data['c'] > _other_data['c']:
@@ -291,11 +297,10 @@ class ViewProcessor:
             """
             Text has been replaced with a new one, different length. Include it in length calculation.
             The value is from the previous iteration but can be modified at this one if the conditions match.
+
+            If the previous nesting level is the same as a current one re-write the length correction then.
             """
-            replacement_text_lengths[prev_level] += replacement_text_len
-            # If the previous nesting level is the same as a current one reset the length correction then
-            if pos_level == prev_level:
-                replacement_text_len = 0
+            replacement_text_lengths[prev_level] = replacement_text_len
 
             if pair['o'] is None or pair['c'] is None:
                 if self.debug:
@@ -310,7 +315,9 @@ class ViewProcessor:
             pos_close = (pair['c'] + pair['cl']  # text + closing token together to get the very end of the text
                          # Combined length correction of all nested elements inside (previous level), say each ones:
                          # [0]...[1][2][/2][/1]...[1][/1]...[/0]
-                         + (replacement_text_lengths[prev_level] if pos_level == 0 else replacement_text_len))
+                         + (replacement_text_lengths[prev_level] if pos_level == 0
+                            # Replacements on the same level shouldn't interfere each other
+                            else (replacement_text_len if pos_level != prev_level else 0)))
 
             if self.debug:
                 self.logger.debug('Cursor position open: %d, close: %d, level: %d ' % (pos_open, pos_close, pos_level))
@@ -348,17 +355,23 @@ class ViewProcessor:
                 # before the actual encoding process.
                 selected_text = self.post_md_process(selected_text)
                 encoded_text = base64.b64encode(selected_text.encode('utf-8'))
+                encoded_summary = base64.b64encode(summary.encode('utf-8'))
                 """
                 Insert as a TEXT here, not as an HTML or tags will be stripped after.
                 Place extra spaces on each side to allow smooth anchor detection upon click.
+
+                Note:
+                    - Do not use id="..." it makes anchor detection unstable, use data attributes instead.
+                    - Avoid using <div> as it produces extra <p> after conversion.
                 """
-                # Do not use id="..." it makes anchor detection unstable, use data attributes instead
-                replacement_text = ('<p class="_ds_expand">'
-                                    # <a>...</a> will replaced with table upon click
-                                    '<a href="expandable:{}" data-group="{}" data-level="{}">'
+                replacement_text = ('<p class="_ds_expand">{}'
+                                    # <a>...</a> will be replaced with a table upon a click
+                                    # zero-width space before expandable anchor to prevent never-ending anchor sequence
+                                    '<a href="expandable:{}#{}" data-group="{}" data-level="{}">'
                                     '<span class="_ds_expand_pointer">▼</span>&nbsp;{}</a>'
                                     '</p>'
-                                    .format(encoded_text.decode('utf-8'), pos_group, pos_level, summary))
+                                    .format(self.zero_width_space, encoded_text.decode('utf-8'),
+                                            encoded_summary.decode('utf-8'), pos_group, pos_level, summary))
                 replacement_text_len += len(replacement_text) - (pos_close - pos_open)
                 cursor.insertText(replacement_text)
                 if self.debug:
@@ -380,12 +393,9 @@ class ViewProcessor:
         if event.button() == Qt.MouseButton.LeftButton:
             anchor = parent_widget.anchorAt(event.pos())
             if anchor.startswith('expandable'):
-                return self.anchor_click_event(QUrl(anchor), cursor)
+                return self.expandable_click_event(QUrl(anchor), cursor)
             elif anchor.startswith('collapsible'):
-                # TODO collapsible block
-                if self.debug:
-                    self.logger.debug('Collapsible block clicked')
-                pass
+                return self.collapsible_click_event(QUrl(anchor), cursor)
             else:
                 if self.debug:
                     cursor.select(QTextCursor.SelectionType.WordUnderCursor)
@@ -395,14 +405,8 @@ class ViewProcessor:
                 cursor.clearSelection()
                 parent_widget.setTextCursor(cursor)
 
-    def anchor_click_event(self, url: QUrl, cursor: QTextCursor):
-        if self.debug:
-            # cursor.charFormat().anchorHref()
-            self.logger.debug('Anchor clicked, scheme: %s, path: %s' % (url.scheme(), url.path()))
-
-        # This may cause left-right click issue when either the start or end position of token is clicked
-        # cursor.movePosition(QTextCursor.MoveOperation.PreviousCharacter, QTextCursor.MoveMode.KeepAnchor)
-
+    def process_anchor_label(self, cursor):
+        # Start from the clicked position
         cursor.select(QTextCursor.SelectionType.WordUnderCursor)
 
         if self.debug:
@@ -412,15 +416,21 @@ class ViewProcessor:
         i = 0
         # Move to the anchor caption's start position
         prev_pos = cursor.position()
-        while cursor.charFormat().isAnchor() and (i := i + 1):
+        while (cursor.charFormat().isAnchor()
+               and (i := i + 1)
+               # Ensure that zero-width spaces are not affected.
+               and cursor.document().characterAt(cursor.position() - 1) != self.zero_width_space):
             cursor.movePosition(QTextCursor.MoveOperation.PreviousCharacter, QTextCursor.MoveMode.MoveAnchor)
             # Check the cursor position is changing
             if prev_pos == cursor.position():
                 break
             prev_pos = cursor.position()
+
         # Move to the anchor caption's end position
         prev_pos = cursor.position()
-        while i > 0 or cursor.charFormat().isAnchor():
+        # 0 if the mouse is clicked on the very first character '​▼'
+        while ((i >= 0 or cursor.charFormat().isAnchor())
+               and cursor.document().characterAt(cursor.position() + 1) != self.zero_width_space):
             i -= 1
             cursor.movePosition(QTextCursor.MoveOperation.NextCharacter, QTextCursor.MoveMode.KeepAnchor)
             # Check the cursor position is changing
@@ -428,18 +438,49 @@ class ViewProcessor:
                 break
             prev_pos = cursor.position()
 
-        anchor_label = cursor.selectedText()
+        # Remove all trailing spaces and save the cursor position
+        pre_cursor_char = cursor.document().characterAt(cursor.position() - 1)
+        pattern = r"([\s]+)"
+        match = re.search(pattern, pre_cursor_char, flags=re.DOTALL | re.UNICODE)
+        if match and match.group(1):
+            j = 0
+            while j < len(match.group(1)):
+                cursor.movePosition(QTextCursor.MoveOperation.PreviousCharacter, QTextCursor.MoveMode.KeepAnchor)
+                j += 1
+
         if self.debug:
-            self.logger.debug('Anchor text: %s' % anchor_label)
+            self.logger.debug(f'Anchor summary text: "{cursor.selectedText()}"')
 
         cursor.removeSelectedText()
-        to_decode = url.path()
-        if self.debug:
-            self.logger.debug('Text to decode: {%s}', to_decode)
 
-        decoded_text = (base64.b64decode(to_decode.encode('utf-8'))
+        return cursor
+
+    def expandable_click_event(self, url: QUrl, cursor: QTextCursor):
+        if self.debug:
+            # cursor.charFormat().anchorHref()
+            self.logger.debug('Expandable anchor clicked, scheme: %s, path: %s, fragment: %s'
+                              % (url.scheme(), url.path(), url.fragment()))
+
+        # This may cause left-right click issue when either the start or end position of token is clicked
+        # cursor.movePosition(QTextCursor.MoveOperation.PreviousCharacter, QTextCursor.MoveMode.KeepAnchor)
+
+        cursor = self.process_anchor_label(cursor)
+        # start_pos = cursor.position()
+
+        encoded_text = url.path()
+        if self.debug:
+            self.logger.debug('Text to decode: {%s}', encoded_text)
+
+        decoded_text = (base64.b64decode(encoded_text.encode('utf-8'))
                         .decode('utf-8')
                         .strip())
+
+        encoded_summary = url.fragment()
+        if self.debug:
+            self.logger.debug('Summary to decode: {%s}', encoded_summary)
+        decoded_summary = (base64.b64decode(encoded_summary.encode('utf-8'))
+                           .decode('utf-8')
+                           .strip())
 
         if self.debug:
             self.logger.debug('Decoded text: {%s}' % decoded_text)
@@ -448,12 +489,50 @@ class ViewProcessor:
         default_format = QTextCharFormat()
         cursor.setCharFormat(default_format)
         """
-        Insert decoded text, new line either "\n" or "<br/>" depending on insertText() or insertHtml() correspondingly.
-        Allow extra space as space symbols could be stripped during conversion.
+        - Insert decoded text, new line either "\n" or "<br/>" depending on insertText() or insertHtml() correspondingly.
+        - Allow extra space as space symbols could be stripped during conversion.
+        - Avoiding invisible separator allows the whole block to be an anchor and being replaced at once.
         """
-        cursor.insertHtml('<table class="_n_details">'
-                          '<tr><td class="_n_details_summary"><span class="_ds_collapse">{}</span></td></tr>'
-                          '<tr><td class="_n_details_content">{}</td></tr>'
-                          '</table>'
-                          # TODO make it collapsible with '▲'
-                          .format(anchor_label.replace('▼', '≡').strip(), decoded_text))
+        collapsible_html = ('{}<table class="_n_details _ds_collapse">'
+                            '<tr><th class="_n_details_summary">'
+                            '<a href="collapsible:{}#{}" class="_ds_collapse_summary">'
+                            '<span class="_ds_collapse_pointer">▲</span>&nbsp;{}</a></th></tr>'
+                            '<tr><td class="_n_details_content">{}</td></tr>'
+                            '</table>').format(self.zero_width_space, encoded_text, encoded_summary,
+                                               decoded_summary, decoded_text)
+        cursor.insertHtml(collapsible_html)
+
+        # The table's (<td>) tag and adjacent text are converted into a pseudo block,
+        # enclosed between \uFDD0 and \uFDD1:
+        # print(f'{ord(b'\xef\xb7\x90'.decode('utf-8')):04X}')  # \uFDD0
+        # print(f'{ord(b'\xef\xb7\x91'.decode('utf-8')):04X}')  # \uFDD1
+        # # The entire block above is processed as a single object:
+        # cursor.setPosition(start_pos, QTextCursor.MoveMode.MoveAnchor)
+        # cursor.movePosition(QTextCursor.MoveOperation.NextCharacter, QTextCursor.MoveMode.KeepAnchor)
+
+    def collapsible_click_event(self, url: QUrl, cursor: QTextCursor):
+        if self.debug:
+            # cursor.charFormat().anchorHref()
+            self.logger.debug('Collapsible anchor clicked, scheme: %s, path: %s' % (url.scheme(), url.path()))
+
+        cursor = self.process_anchor_label(cursor)
+
+        encoded_text = url.path()
+        if self.debug:
+            self.logger.debug('Text to decode: {%s}', encoded_text)
+
+        encoded_summary = url.fragment()
+        decoded_summary = (base64.b64decode(encoded_summary.encode('utf-8'))
+                           .decode('utf-8')
+                           .strip())
+
+        # Set default format for inserted text
+        default_format = QTextCharFormat()
+        cursor.setCharFormat(default_format)
+
+        cursor.insertHtml('<p class="_ds_expand">{}'
+                          '<a href="expandable:{}#{}" data-group="{}" data-level="{}">'
+                          '<span class="_ds_expand_pointer">▼</span>&nbsp;{}</a>'
+                          '</p>'
+                          # Group and level aren't set here as the blocks have been already rendered
+                          .format(self.zero_width_space, encoded_text, encoded_summary, 0, 0, decoded_summary))

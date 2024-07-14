@@ -93,6 +93,7 @@ lexemes = {
     "save_active_file_error_occurred": "फ़ाइल सहेजने में असमर्थ, त्रुटि हुई है",
 
     "expandable_block_default_title": "अधिक जानकारी...",
+    "expandable_block_open_close_tags_mismatch_warning": "<details> ब्लॉक ओपन/क्लोज टैग मेल नहीं खाते",
 
     "dialog_color_picker_color_copied_to_the_clipboard": "स्वरूपित पाठ क्लिपबोर्ड में कॉपी किया गया है",
 

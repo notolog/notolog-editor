@@ -93,6 +93,7 @@ lexemes = {
     "save_active_file_error_occurred": "Dosya kaydedilemedi, hata oluştu",
 
     "expandable_block_default_title": "Daha fazla bilgi...",
+    "expandable_block_open_close_tags_mismatch_warning": "<details> blok açma/kapama etiketleri uyuşmazlığı",
 
     "dialog_color_picker_color_copied_to_the_clipboard": "Biçimlendirilmiş metin panoya kopyalandı",
 

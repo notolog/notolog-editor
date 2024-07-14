@@ -68,8 +68,8 @@ class ViewWidget(QTextBrowser):
         cursor_pos = event.pos()
 
         anchor = self.anchorAt(cursor_pos)
-        # Double check not to process hyperlink click if an expandable block was clicked
-        if anchor and anchor.startswith('expandable'):
+        # Ensure hyperlink clicks are not processed when clicking on expandable/collapsible blocks.
+        if anchor and (anchor.startswith('expandable') or anchor.startswith('collapsible')):
             if self.debug:
                 self.logger.debug("Anchor URL at cursor:", anchor)
             return

@@ -93,6 +93,7 @@ lexemes = {
     "save_active_file_error_occurred": "Fasciculum servare non potest, error accidit",
 
     "expandable_block_default_title": "Amplius info...",
+    "expandable_block_open_close_tags_mismatch_warning": "<details> claudit/aperit block adsigna discongruitas",
 
     "dialog_color_picker_color_copied_to_the_clipboard": "Textus formatus in tabulam appensionis est copiatus",
 

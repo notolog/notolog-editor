@@ -97,6 +97,7 @@ lexemes = {
     "save_active_file_error_occurred": "Αδυναμία αποθήκευσης αρχείου, συνέβη σφάλμα",
 
     "expandable_block_default_title": "Περισσότερες πληροφορίες...",
+    "expandable_block_open_close_tags_mismatch_warning": "Αντιφατική ανοιχτή/κλειστή ετικέτα <details> μπλοκ",
 
     "dialog_color_picker_color_copied_to_the_clipboard": "Το μορφοποιημένο κείμενο έχει αντιγραφεί στο πρόχειρο",
 

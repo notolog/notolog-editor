@@ -91,6 +91,7 @@ lexemes = {
     "save_active_file_error_occurred": "파일을 저장할 수 없습니다. 오류가 발생했습니다",
 
     "expandable_block_default_title": "추가 정보...",
+    "expandable_block_open_close_tags_mismatch_warning": "<details> 블록 열기/닫기 태그 불일치",
 
     "dialog_color_picker_color_copied_to_the_clipboard": "서식이 지정된 텍스트가 클립보드에 복사되었습니다",
 

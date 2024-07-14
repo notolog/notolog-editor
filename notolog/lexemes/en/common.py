@@ -93,6 +93,7 @@ lexemes = {
     "save_active_file_error_occurred": "Cannot save file, error occurred",
 
     "expandable_block_default_title": "More info...",
+    "expandable_block_open_close_tags_mismatch_warning": "<details> block open/close tags mismatch",
 
     "dialog_color_picker_color_copied_to_the_clipboard": "Formatted text has been copied to the clipboard",
 

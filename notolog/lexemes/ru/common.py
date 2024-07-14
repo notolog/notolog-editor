@@ -93,6 +93,7 @@ lexemes = {
     "save_active_file_error_occurred": "Невозможно сохранить файл, произошла ошибка",
 
     "expandable_block_default_title": "Больше информации...",
+    "expandable_block_open_close_tags_mismatch_warning": "Несоответствие открывающих/закрывающих тегов блока <details>",
 
     "dialog_color_picker_color_copied_to_the_clipboard": "Форматированный текст был скопирован в буфер обмена",
 

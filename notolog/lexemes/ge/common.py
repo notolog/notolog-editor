@@ -94,6 +94,7 @@ lexemes = {
     "save_active_file_error_occurred": "ფაილის შენახვა ვერ ხერხდება, წარმოიშვა შეცდომა",
 
     "expandable_block_default_title": "მეტი ინფორმაცია...",
+    "expandable_block_open_close_tags_mismatch_warning": "<details> ბლოკის გახსნის/დახურვის თეგების არასწორი მოთხოვნები",
 
     "dialog_color_picker_color_copied_to_the_clipboard": "ფორმატირებული ტექსტი ბუფერში ასლი გადაიტანეს",
 

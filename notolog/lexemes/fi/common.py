@@ -93,6 +93,7 @@ lexemes = {
     "save_active_file_error_occurred": "Tiedostoa ei voi tallentaa, tapahtui virhe",
 
     "expandable_block_default_title": "Lisätietoja...",
+    "expandable_block_open_close_tags_mismatch_warning": "<details>-lohkon avaamis- ja sulkumerkkien epäjohdonmukaisuus",
 
     "dialog_color_picker_color_copied_to_the_clipboard": "Muotoiltu teksti on kopioitu leikepöydälle",
 

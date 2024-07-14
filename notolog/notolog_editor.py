@@ -1338,8 +1338,6 @@ class NotologEditor(QMainWindow):
     def get_any_file(self) -> Union[str, None]:
         """
         Open any file from the tree.
-
-        TODO: check the file is not the one to escape
         """
 
         # Get any file from root dir to show instead
@@ -1616,6 +1614,10 @@ class NotologEditor(QMainWindow):
             # Anchor is an internal doc link starts with '#'
             if execute:
                 self.get_view_widget().setSource(url)
+            return True
+
+        # Expandable/collapsible blocks
+        if url.toString().startswith('expandable') or url.toString().startswith('collapsible'):
             return True
 
         # Try external link

@@ -1,6 +1,22 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [0.9.7] - 2024-07-14
+
+### Added
+- Added a warning label to the status bar to indicate mismatches between `<details>` blocks' open and close tags.
+
+### Updated
+- Enhanced the processing of collapsible blocks with several updates:
+  - Inserted a zero-width space before expandable anchor tags to prevent continuous anchor sequences.
+  - Preserved 'class' attributes and other properties when processing `<details>` and `<summary>` tags.
+  - Included the block's summary within the QUrl fragment for better linkage.
+  - Updated corresponding UI styles for consistency and visual integration.
+
+### Fixed
+- Improved handling of nested expandable/collapsible blocks at the same level.
+- Corrected an issue where clicking on the very first character of an expanded block would misplace the expansion.
+
 ## [0.9.6] - 2024-06-30
 
 ### Added

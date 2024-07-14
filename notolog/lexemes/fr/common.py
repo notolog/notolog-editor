@@ -96,6 +96,7 @@ lexemes = {
     "save_active_file_error_occurred": "Impossible d'enregistrer le fichier, une erreur s'est produite",
 
     "expandable_block_default_title": "Plus d'infos...",
+    "expandable_block_open_close_tags_mismatch_warning": "Balises d'ouverture/fermeture du bloc <details> incompatibles",
 
     "dialog_color_picker_color_copied_to_the_clipboard": "Le texte formaté a été copié dans le presse-papiers",
 

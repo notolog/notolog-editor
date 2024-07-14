@@ -39,7 +39,8 @@ class ViewHighlighter(MainHighlighter):
 
     theme = {
         's': {'style': 'strikethrough'},
-        'todo': {'color': 'darkCyan', 'bg': {'color': 'yellow', 'pattern': Qt.BrushStyle.Dense5Pattern}}
+        'todo': {'color': 'darkCyan', 'bg': {'color': 'yellow', 'pattern': Qt.BrushStyle.Dense5Pattern}},
+        'inv_sep': {'font_size_ratio': 0.1},
     }
     # Keep it consistent with ini-file name, say 'viewer.ini', item prefix 'viewer_color_h1_text'
     theme_ini_prefix = 'viewer'
@@ -62,7 +63,9 @@ class ViewHighlighter(MainHighlighter):
         (r'(^|\s)(?<!~~)(~~(?!~|\s)[^~]*?)$', 2, 's_open', 's', True, theme['s'], None),
         (r'^([^~]*?[^\s~]~~)(?!~~)(?:\s|[\W^~]|$)', 1, 's_close', 's', True, theme['s'], None),
         # todos highlighting
-        (r'([\s]*?)(@todo)(?=\s)', 2, 'todo', 'todo', False, theme['todo'], None)
+        (r'([\s]*?)(@todo)(?=\s)', 2, 'todo', 'todo', False, theme['todo'], None),
+        # invisible separator
+        (r'(​)', 0, 'inv_sep', 'inv_sep', False, theme['inv_sep'], None),
     ]
 
     def get_regex(self, pattern: re) -> re:

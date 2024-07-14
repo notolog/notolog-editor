@@ -95,6 +95,7 @@ lexemes = {
     "save_active_file_error_occurred": "Datei kann nicht gespeichert werden, ein Fehler ist aufgetreten",
 
     "expandable_block_default_title": "Weitere Informationen...",
+    "expandable_block_open_close_tags_mismatch_warning": "Fehlerhafte <details>-Block Öffnen/Schließen-Tags",
 
     "dialog_color_picker_color_copied_to_the_clipboard": "Formatierter Text wurde in die Zwischenablage kopiert",
 

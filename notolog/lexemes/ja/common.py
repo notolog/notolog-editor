@@ -91,6 +91,7 @@ lexemes = {
     "save_active_file_error_occurred": "ファイルを保存できませんでした。エラーが発生しました",
 
     "expandable_block_default_title": "詳細情報...",
+    "expandable_block_open_close_tags_mismatch_warning": "<details> ブロックの開始/終了タグの不一致",
 
     "dialog_color_picker_color_copied_to_the_clipboard": "フォーマットされたテキストがクリップボードにコピーされました",
 

@@ -95,6 +95,8 @@ lexemes = {
     "save_active_file_error_occurred": "No se puede guardar el archivo, ocurrió un error",
 
     "expandable_block_default_title": "Más información...",
+    "expandable_block_open_close_tags_mismatch_warning":
+        "Incompatibilidad de etiquetas de apertura/cierre del bloque <details>",
 
     "dialog_color_picker_color_copied_to_the_clipboard": "El texto formateado ha sido copiado al portapapeles",
 

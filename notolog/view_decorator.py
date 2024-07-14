@@ -54,7 +54,9 @@ class ViewDecorator:
         ('s_close', 0, 2, 's', None),
         ('s_within', 0, 0, 's', None),
         # todos highlighting
-        ('todo', 0, 0, 'todo', None)
+        ('todo', 0, 0, 'todo', None),
+        # invisible separator
+        ('inv_sep', 0, 0, 'inv_sep', None),
     ]
 
     def __init__(self, highlighter: Union[QSyntaxHighlighter, ViewHighlighter]):

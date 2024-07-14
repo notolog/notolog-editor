@@ -94,6 +94,7 @@ lexemes = {
     "save_active_file_error_occurred": "Kan bestand niet opslaan, er is een fout opgetreden",
 
     "expandable_block_default_title": "Meer info...",
+    "expandable_block_open_close_tags_mismatch_warning": "Mismatch in <details> blok openen/sluiten tags",
 
     "dialog_color_picker_color_copied_to_the_clipboard": "Geformatteerde tekst is naar het klembord gekopieerd",
 

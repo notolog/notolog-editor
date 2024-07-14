@@ -27,6 +27,7 @@ from . import Settings
 from . import AppConfig
 from . import Lexemes
 from . import ThemeHelper
+from ..helpers.tooltip_helper import TooltipHelper
 
 from .sort_filter_proxy_model import SortFilterProxyModel
 from .vertical_line_spacer import VerticalLineSpacer
@@ -67,6 +68,8 @@ class StatusBar(QStatusBar):
         self.encryption_label = None  # type: Union[QLabel, None]
         self.source_label = None  # type: Union[QLabel, None]
         self.cursor_label = None  # type: Union[QLabel, None]
+
+        self.warning_label = None  # type: Union[QPushButton, None]
 
         self.init()
 
@@ -135,6 +138,18 @@ class StatusBar(QStatusBar):
         self.cursor_label.setFont(self.font())
         self.addPermanentWidget(self.cursor_label)
 
+        self.warning_label = QPushButton(self)
+        self.warning_label.setVisible(False)
+        self.warning_label.setFlat(True)
+        self.warning_label.setFont(self.font())
+        self.warning_label.setObjectName('statusbar_warning_label')
+        icon = self.theme_helper.get_icon(theme_icon='exclamation-triangle-fill.svg',
+                                          color=QColor(self.theme_helper.get_color('statusbar_warning_icon_color')))
+        self.warning_label.setIcon(icon)
+        self.addPermanentWidget(self.warning_label)
+        self.warning_label.clicked.connect(
+            lambda: TooltipHelper.show_tooltip(widget=self.warning_label, text=self.warning_label.toolTip()))
+
     def toggle_litter_bin_button(self):
         self.set_litter_bin_visibility(not self.settings.show_deleted_files)
 
@@ -158,6 +173,15 @@ class StatusBar(QStatusBar):
                     theme_icon='trash3.svg',
                     color=QColor(self.theme_helper.get_color('statusbar_litter_bin_icon_color'))))
                 self.settings.show_deleted_files = False
+
+    def show_warning(self, visible: bool = False, tooltip: str = None):
+        if visible:
+            self.warning_label.setVisible(True)
+            if tooltip:
+                self.warning_label.setToolTip(tooltip)
+        else:
+            self.warning_label.setVisible(False)
+            self.warning_label.setToolTip('')
 
     def __getitem__(self, name) -> QLabel:
         """

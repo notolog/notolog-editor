@@ -1,20 +1,15 @@
 body {
     max-width: 100%; /* Page not stretching upon resize without it */
     font-family: 'Arial', 'Liberation Sans', sans-serif;
-    line-height: 23px;
 }
-a { display: inline-block; }
+a {
+    display: inline-block;
+    color: red;
+}
 /* Fix new line issue within the p block */
 p { white-space: pre-line; }
-pre {
-    /*display: block;
-    white-space: pre;
-    max-width: 100%;
-    text-indent: 20px;
-    margin: 10px;*/
-}
+pre { /*display: block; white-space: pre; max-width: 100%; text-indent: 20px; margin: 10px;*/ }
 img { max-width: 100%; }
-a { color: red; }
 
 /* Somehow h5 and h6 are not balanced. Hence h6 adjusted in pt */
 h1 { font-size: xx-large; }
@@ -52,15 +47,15 @@ table._nl_tbl th {
 </p>
 */
 /* Expanded block (collapsible), which appears after expandable block click:
-<table class="_n_details">
-<tr><td class="_n_details_summary"><span class="_ds_collapse">{}</span></td></tr>
+<table class="_n_details _ds_collapse">
+<tr><td class="_n_details_summary"><a class="_ds_collapse_summary">{}</a></td></tr>
 <tr><td class="_n_details_content">{}</td></tr>
 </table>
 */
-/* anchor details-summary common */
+/* anchor details-summary expandable */
 ._ds_expand {
-    border: 1px solid grey !important;
     background: transparent;
+    font-family: 'Arial', 'Liberation Sans', sans-serif;
 }
 /* anchor details-summary expandable */
 ._ds_expand > a {
@@ -71,16 +66,24 @@ table._nl_tbl th {
 ._ds_expand ._ds_expand_pointer {
     color: red;
 }
+._ds_collapse ._ds_collapse_pointer {
+    color: red;
+}
 /* anchor details-summary collapsible */
-._ds_collapse {}
+a._ds_collapse_summary {
+    color: whitesmoke;
+    text-decoration: none;
+    font-weight: bold;
+    font-family: 'Arial', 'Liberation Sans', sans-serif;
+}
 /* root element of the block, usually table */
 ._n_details {
-    margin: 10px 0;
     padding: 0;
     border-collapse: collapse;
 }
-/* element which is contain a _ds (expandable or collapsable link) */
+/* element which is contain a _ds (expandable or collapsible link) */
 ._n_details_summary {
+    text-align: left;
     font-weight: bold;
     cursor: pointer;
     color: white;
