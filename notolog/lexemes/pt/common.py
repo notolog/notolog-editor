@@ -5,6 +5,7 @@ lexemes = {
 
     "tree_filter_accessible_desc": "Campo de filtro de arquivo",
 
+    "menu_action_copy_file_path": "Copiar caminho do arquivo",
     "menu_action_rename": "Renomear",
     "menu_action_delete": "Excluir",
     "menu_action_delete_completely": "Excluir completamente",

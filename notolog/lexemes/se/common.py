@@ -5,6 +5,7 @@ lexemes = {
 
     "tree_filter_accessible_desc": "Filterfält för filer",
 
+    "menu_action_copy_file_path": "Kopiera filsökväg",
     "menu_action_rename": "Byt namn",
     "menu_action_delete": "Radera",
     "menu_action_delete_completely": "Radera helt",

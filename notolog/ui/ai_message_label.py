@@ -23,9 +23,8 @@ from PySide6.QtCore import Qt
 from . import AppConfig
 from . import Lexemes
 from . import ThemeHelper
-
-from ..helpers.clipboard_helper import ClipboardHelper
-from ..helpers.tooltip_helper import TooltipHelper
+from . import ClipboardHelper
+from . import TooltipHelper
 
 import logging
 

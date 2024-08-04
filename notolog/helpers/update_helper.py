@@ -72,7 +72,7 @@ class UpdateHelper(QObject):
 
     def check_for_updates(self):
         # Updates url
-        release_url = AppConfig().get_repository_github_release_url()
+        release_url = AppConfig().get_repository_github_api_release_url()
         request = QNetworkRequest(QUrl(release_url))
         if self.logging:
             self.logger.info(f'Check for update request to {release_url}')
@@ -157,6 +157,7 @@ class UpdateHelper(QObject):
             latest_version = version.parse(latest_version_str)
 
             if latest_version > self.current_version:
+                # 'releases/latest' will redirect to 'releases/tag/v1.2.3'
                 update_link = ('<a href="%s">%s</a>'
                                % (AppConfig().get_repository_github_release_url(), latest_version))
                 result_message = self.lexemes.get('update_helper_new_version_is_available',

@@ -5,6 +5,7 @@ lexemes = {
 
     "tree_filter_accessible_desc": "Dosya filtre alanı",
 
+    "menu_action_copy_file_path": "Dosya yolunu kopyala",
     "menu_action_rename": "Yeniden Adlandır",
     "menu_action_delete": "Sil",
     "menu_action_delete_completely": "Tamamen Sil",

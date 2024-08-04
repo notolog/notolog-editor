@@ -11,7 +11,7 @@ from threading import Lock
 toml_base_app_config = """
 [app]
 name = "Notolog"
-version = "0.9.7"
+version = "0.9.8"
 license = "MIT License"
 date = "2024"
 website = "https://notolog.app"
@@ -24,7 +24,8 @@ author = "Vadim Bakhrenkov"
     [repository.github]
     username = "notolog"
     project = "notolog-editor"
-    release_url = "https://api.github.com/repos/notolog/notolog-editor/releases/latest"
+    api_release_url = "https://api.github.com/repos/notolog/notolog-editor/releases/latest"
+    release_url = "https://github.com/notolog/notolog-editor/releases/latest"
     bug_report_url = "https://github.com/notolog/notolog-editor/issues"
 
 [settings]
@@ -208,6 +209,9 @@ class AppConfig(QObject):
 
     def get_repository_github_project(self) -> str:
         return self.base_app_config['repository']['github']['username']
+
+    def get_repository_github_api_release_url(self) -> str:
+        return self.base_app_config['repository']['github']['api_release_url']
 
     def get_repository_github_release_url(self) -> str:
         return self.base_app_config['repository']['github']['release_url']

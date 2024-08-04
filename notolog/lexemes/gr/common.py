@@ -5,6 +5,7 @@ lexemes = {
 
     "tree_filter_accessible_desc": "Πεδίο φίλτρου αρχείου",
 
+    "menu_action_copy_file_path": "Αντιγραφή διαδρομής αρχείου",
     "menu_action_rename": "Μετονομασία",
     "menu_action_delete": "Διαγραφή",
     "menu_action_delete_completely": "Ολοκληρωτική διαγραφή",

@@ -27,7 +27,7 @@ from . import Settings
 from . import AppConfig
 from . import Lexemes
 from . import ThemeHelper
-from ..helpers.tooltip_helper import TooltipHelper
+from . import TooltipHelper
 
 from .sort_filter_proxy_model import SortFilterProxyModel
 from .vertical_line_spacer import VerticalLineSpacer

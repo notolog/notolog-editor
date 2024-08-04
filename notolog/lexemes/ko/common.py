@@ -5,6 +5,7 @@ lexemes = {
 
     "tree_filter_accessible_desc": "파일 필터 필드",
 
+    "menu_action_copy_file_path": "파일 경로 복사",
     "menu_action_rename": "이름 바꾸기",
     "menu_action_delete": "삭제",
     "menu_action_delete_completely": "완전히 삭제",

@@ -1,6 +1,16 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [0.9.8] - 2024-08-04
+
+### Added
+- Added the ability to copy the file path from the file tree context menu.
+- Added 'gpt-4o-mini' and 'gpt-4-turbo' to the list of supported models in the OpenAI API module.
+
+### Updated
+- Updated the URL for new version notifications to point to the latest version page.
+- Hid status bar warnings in Edit Mode, as the warnings are now relevant only in View Mode.
+
 ## [0.9.7] - 2024-07-14
 
 ### Added

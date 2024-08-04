@@ -5,6 +5,7 @@ lexemes = {
 
     "tree_filter_accessible_desc": "फ़ाइल फ़िल्टर फ़ील्ड",
 
+    "menu_action_copy_file_path": "फ़ाइल पथ की प्रतिलिपि बनाएँ",
     "menu_action_rename": "नाम बदलें",
     "menu_action_delete": "हटाएं",
     "menu_action_delete_completely": "पूरी तरह से हटाएं",

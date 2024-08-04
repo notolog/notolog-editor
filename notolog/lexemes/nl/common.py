@@ -5,6 +5,7 @@ lexemes = {
 
     "tree_filter_accessible_desc": "Bestandsfilterveld",
 
+    "menu_action_copy_file_path": "Kopieer bestandspad",
     "menu_action_rename": "Hernoemen",
     "menu_action_delete": "Verwijderen",
     "menu_action_delete_completely": "Volledig verwijderen",

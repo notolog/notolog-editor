@@ -54,6 +54,7 @@ from .ui.color_picker_dialog import ColorPickerDialog
 from .ui.settings_dialog import SettingsDialog
 from .ui.ai_assistant import AIAssistant
 from .ui.about_popup import AboutPopup
+from .ui.file_tree_context_menu import FileTreeContextMenu
 
 # Highlight
 from .highlight.md_highlighter import MdHighlighter
@@ -81,11 +82,11 @@ from .editor_state import EditorState, Mode, Source, Encryption
 
 from PySide6.QtCore import Slot, Qt, QDir, QPoint, QTimer, QSize, QUrl
 from PySide6.QtCore import QRegularExpression, QItemSelectionModel, QFileSystemWatcher
-from PySide6.QtGui import QGuiApplication, QIcon, QAction, QColor, QPalette, QShortcut, QFont, QKeySequence
+from PySide6.QtGui import QGuiApplication, QIcon, QAction, QPalette, QShortcut, QFont, QKeySequence
 from PySide6.QtGui import QTextDocument, QTextCursor, QTextBlock, QDesktopServices, QPixmap, QPixmapCache
 from PySide6.QtWidgets import QWidget, QMainWindow, QVBoxLayout, QSplitter, QListView, QTextBrowser
 from PySide6.QtWidgets import QPlainTextEdit, QSizePolicy
-from PySide6.QtWidgets import QLineEdit, QMenu, QDialog, QMessageBox, QStyle
+from PySide6.QtWidgets import QLineEdit, QDialog, QMessageBox, QStyle
 from PySide6.QtWidgets import QAbstractItemView, QFileSystemModel, QFileDialog
 
 from qasync import asyncClose
@@ -523,6 +524,10 @@ class NotologEditor(QMainWindow):
             # Clear search fields and statuses
             if hasattr(self, 'search_input'):
                 self.action_search_clear()
+            # Remove warning from the statusbar in edit mode
+            # TODO: Update to specify when warning sign should be visible in EDIT mode as well.
+            if hasattr(self, 'statusbar'):
+                self.statusbar.show_warning(visible=False)
         else:
             """
             Hide element first. It helps to avoid visual glitches upon switching.
@@ -1086,34 +1091,7 @@ class NotologEditor(QMainWindow):
             self.logger.warning('Trying to create context menu on a file that does not exist "%s"' % file_path)
             return
 
-        menu = QMenu(self)
-        menu.setFont(self.font())
-        rename_icon = self.theme_helper.get_icon(
-            theme_icon='cursor-text.svg', system_icon='document-properties',
-            color=QColor(self.theme_helper.get_color('main_tree_context_menu_rename')))
-        menu.addAction(rename_icon, self.lexemes.get('menu_action_rename'),
-                       lambda: self.rename_file_dialog(file_path))
-        if self.is_file_safely_deleted(file_path):
-            # Restore deleted file context action
-            restore_icon = self.theme_helper.get_icon(
-                theme_icon='box-arrow-up.svg', system_icon='edit-undo',
-                color=QColor(self.theme_helper.get_color('main_tree_context_menu_restore')))
-            menu.addAction(restore_icon, self.lexemes.get('menu_action_restore'),
-                           lambda: self.restore_file_dialog(file_path))
-            # Delete completely file context action
-            delete_icon = self.theme_helper.get_icon(
-                theme_icon='x-square-fill.svg', system_icon='edit-delete',
-                color=QColor(self.theme_helper.get_color('main_tree_context_menu_delete_completely')))
-            menu.addAction(delete_icon, self.lexemes.get('menu_action_delete_completely'),
-                           lambda: self.delete_completely_file_dialog(file_path))
-        else:
-            # Delete file context action
-            delete_icon = self.theme_helper.get_icon(
-                theme_icon='x-square.svg', system_icon='edit-delete',
-                color=QColor(self.theme_helper.get_color('main_tree_context_menu_delete')))
-            menu.addAction(delete_icon, self.lexemes.get('menu_action_delete'),
-                           lambda: self.delete_file_dialog(file_path))
-
+        menu = FileTreeContextMenu(file_path=file_path, parent=self)
         menu.exec(global_pos)
 
     def rename_file_dialog(self, file_path: str) -> None:

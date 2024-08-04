@@ -5,6 +5,7 @@ lexemes = {
 
     "tree_filter_accessible_desc": "ფაილის ფილტრის ველი",
 
+    "menu_action_copy_file_path": "ფაილის გზის კოპირება",
     "menu_action_rename": "გადარქმევა",
     "menu_action_delete": "წაშლა",
     "menu_action_delete_completely": "სრული წაშლა",

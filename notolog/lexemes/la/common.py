@@ -5,6 +5,7 @@ lexemes = {
 
     "tree_filter_accessible_desc": "Locus filtrationis fasciculorum",
 
+    "menu_action_copy_file_path": "Via fasciculi exemplum",
     "menu_action_rename": "Nomen Mutare",
     "menu_action_delete": "Delere",
     "menu_action_delete_completely": "Delere prorsus",

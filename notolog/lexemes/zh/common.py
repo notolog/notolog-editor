@@ -5,6 +5,7 @@ lexemes = {
 
     "tree_filter_accessible_desc": "文件过滤器字段",
 
+    "menu_action_copy_file_path": "复制文件路径",
     "menu_action_rename": "重命名",
     "menu_action_delete": "删除",
     "menu_action_delete_completely": "彻底删除",

@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-06-30 16:16:44.545828"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-08-04 16:58:29.040241"}} -->
 # Notolog
 
 ![Notolog - Python Markdown Editor](https://raw.githubusercontent.com/notolog/notolog-editor/main/notolog/assets/notolog-example-image.png)
@@ -7,7 +7,7 @@
 
 [![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/) [![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor)](https://github.com/notolog/notolog-editor/blob/master/LICENSE) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)](https://pypi.org/project/notolog/) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/notolog/notolog-editor/tests.yaml)](https://github.com/notolog/notolog-editor/actions/workflows/tests.yaml)
 
-Notolog is an open-source Python Markdown editor that blends simplicity with functionality. Designed with PySide6, it helps tackle daily programming challenges and enhance Python proficiency.
+Notolog is an open-source Python Markdown editor that blends simplicity with functionality. Designed using PySide6, it not only helps tackle daily programming challenges but also enhances proficiency in both Markdown and Python for those interested in diving deeper into the code.
 
 ---
 
@@ -19,9 +19,9 @@ Notolog is an open-source Python Markdown editor that blends simplicity with fun
 - **Open-source and Transparent**: Licensed under MIT, promoting transparency and collaboration.
 - **Markdown Support**:
     - Editor mode with smooth highlighting, line numbers, and extended syntax.
-    - View mode, which uses the Python Markdown library for accurate rendering.
-    - Enhances readability and structure with support for multi-line block open-close tokens.
-- **Multi-platform Compatibility**: Works across all major platforms supporting Python, ensuring wide accessibility.
+    - View mode, which uses the Python Markdown library for accurate rendering to HTML.
+    - Improves readability and structure through custom parsing of disclosure widgets, including nested hierarchies.
+    - Supports multi-line block open-close tokens.
 - **AI Assistant**: Incorporate module extensions able to work either with AI APIs or with on-device large language models (LLMs).
 - **Accessibility Features**:
     - Descriptive elements for enhanced usability.

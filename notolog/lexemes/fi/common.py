@@ -5,6 +5,7 @@ lexemes = {
 
     "tree_filter_accessible_desc": "Tiedostosuodattimen kenttä",
 
+    "menu_action_copy_file_path": "Kopioi tiedostopolku",
     "menu_action_rename": "Nimeä uudelleen",
     "menu_action_delete": "Poista",
     "menu_action_delete_completely": "Poista kokonaan",

@@ -5,6 +5,7 @@ lexemes = {
 
     "tree_filter_accessible_desc": "ファイルフィルタフィールド",
 
+    "menu_action_copy_file_path": "ファイルパスをコピー",
     "menu_action_rename": "名前を変更",
     "menu_action_delete": "削除",
     "menu_action_delete_completely": "完全に削除",

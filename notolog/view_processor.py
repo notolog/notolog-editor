@@ -197,6 +197,15 @@ class ViewProcessor:
         # Process block at the very end
         process_block(cursor)
 
+        # Reset warning if exists
+        self.doc.parent().statusbar.show_warning(visible=False)
+        # Check open/close tokens match
+        if len(self.blocks_start) != len(self.blocks_end):
+            # Show error sign at status bar
+            self.doc.parent().statusbar.show_warning(
+                visible=True,
+                tooltip=self.lexemes.get('expandable_block_open_close_tags_mismatch_warning'))
+
         res = []
         self.blocks_start.reverse()
         # Enumerate by end token to find the closest start token
@@ -247,7 +256,6 @@ class ViewProcessor:
                 group = i
                 self.blocks[i].update({'g': group})
             # Iterate through remaining elements to find possible nesting
-            self.doc.parent().statusbar.show_warning()
             for j, _other_data in enumerate(self.blocks[i + 1:], start=i + 1):
                 if _data['o'] is None or _other_data['o'] is None or _data['c'] is None or _other_data['c'] is None:
                     # Show error sign at status bar
