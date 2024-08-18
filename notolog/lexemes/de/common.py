@@ -10,6 +10,7 @@ lexemes = {
     "menu_action_delete": "Löschen",
     "menu_action_delete_completely": "Vollständig löschen",
     "menu_action_restore": "Wiederherstellen",
+    "menu_action_create_new_dir": "Neues Verzeichnis erstellen",
 
     "dialog_file_rename_title": "Datei umbenennen",
     "dialog_file_rename_field_label": "Neuen Dateinamen eingeben",
@@ -27,6 +28,20 @@ lexemes = {
     "dialog_file_restore_text": "Datei \"{file_name}\" wiederherstellen?",
     "dialog_file_restore_error": "Die Datei kann nicht wiederhergestellt werden, ein Fehler ist aufgetreten",
     "dialog_file_restore_warning_exists": "Eine Datei mit dem Namen {file_name} existiert bereits",
+
+    "dialog_create_new_dir_title": "Neues Verzeichnis erstellen",
+    "dialog_create_new_dir_label": "Neuer Verzeichnisname",
+    "dialog_create_new_dir_input_placeholder_text": "Verzeichnisnamen eingeben",
+    "dialog_create_new_dir_button_ok": "Erstellen",
+    "dialog_create_new_dir_button_cancel": "Abbrechen",
+    "dialog_create_new_dir_warning_empty_title": "Fehler bei neuem Verzeichnisnamen",
+    "dialog_create_new_dir_warning_empty_text": "Der Verzeichnisname darf nicht leer sein",
+    "dialog_create_new_dir_warning_too_long_title": "Fehler bei neuem Verzeichnisnamen",
+    "dialog_create_new_dir_warning_too_long_text": "Der Verzeichnisname ist zu lang; maximal "
+                                                   "{symbols} Zeichen erlaubt!",
+    "dialog_create_new_dir_error_existed": "Verzeichnis existiert bereits",
+    "dialog_create_new_dir_error": "Verzeichnis kann nicht erstellt werden. Stellen Sie sicher, "
+                                   "dass das Zielverzeichnis {base_dir} beschreibbar ist",
 
     "dialog_message_box_title": "Nachricht",
     "dialog_message_box_button_ok": "Schließen",

@@ -10,6 +10,7 @@ lexemes = {
     "menu_action_delete": "Verwijderen",
     "menu_action_delete_completely": "Volledig verwijderen",
     "menu_action_restore": "Herstellen",
+    "menu_action_create_new_dir": "Maak een nieuwe map",
 
     "dialog_file_rename_title": "Bestand hernoemen",
     "dialog_file_rename_field_label": "Voer nieuwe bestandsnaam in",
@@ -27,6 +28,18 @@ lexemes = {
     "dialog_file_restore_text": "Bestand \"{file_name}\" herstellen?",
     "dialog_file_restore_error": "Kan bestand niet herstellen, er is een fout opgetreden",
     "dialog_file_restore_warning_exists": "Bestand met de naam {file_name} bestaat al",
+
+    "dialog_create_new_dir_title": "Maak een nieuwe map",
+    "dialog_create_new_dir_label": "Nieuwe mapnaam",
+    "dialog_create_new_dir_input_placeholder_text": "Voer mapnaam in",
+    "dialog_create_new_dir_button_ok": "Maak",
+    "dialog_create_new_dir_button_cancel": "Annuleer",
+    "dialog_create_new_dir_warning_empty_title": "Nieuwe mapnaam fout",
+    "dialog_create_new_dir_warning_empty_text": "Mapnaam mag niet leeg zijn",
+    "dialog_create_new_dir_warning_too_long_title": "Nieuwe mapnaam fout",
+    "dialog_create_new_dir_warning_too_long_text": "Mapnaam is te lang; maximaal {symbols} tekens toegestaan!",
+    "dialog_create_new_dir_error_existed": "Map bestaat al",
+    "dialog_create_new_dir_error": "Kan map niet maken. Zorg ervoor dat de doelmap {base_dir} beschrijfbaar is",
 
     "dialog_message_box_title": "Bericht",
     "dialog_message_box_button_ok": "Sluiten",

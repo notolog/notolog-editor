@@ -10,6 +10,7 @@ lexemes = {
     "menu_action_delete": "Sil",
     "menu_action_delete_completely": "Tamamen Sil",
     "menu_action_restore": "Geri Yükle",
+    "menu_action_create_new_dir": "Yeni dizin oluştur",
 
     "dialog_file_rename_title": "Dosyayı Yeniden Adlandır",
     "dialog_file_rename_field_label": "Yeni dosya adını girin",
@@ -27,6 +28,18 @@ lexemes = {
     "dialog_file_restore_text": "\"{file_name}\" dosyasını geri yükle?",
     "dialog_file_restore_error": "Dosya geri yüklenemedi, hata oluştu",
     "dialog_file_restore_warning_exists": "Aynı isimde dosya zaten var",
+
+    "dialog_create_new_dir_title": "Yeni dizin oluştur",
+    "dialog_create_new_dir_label": "Yeni dizin adı",
+    "dialog_create_new_dir_input_placeholder_text": "Dizin adını girin",
+    "dialog_create_new_dir_button_ok": "Oluştur",
+    "dialog_create_new_dir_button_cancel": "İptal",
+    "dialog_create_new_dir_warning_empty_title": "Yeni dizin adı hatası",
+    "dialog_create_new_dir_warning_empty_text": "Dizin adı boş olamaz",
+    "dialog_create_new_dir_warning_too_long_title": "Yeni dizin adı hatası",
+    "dialog_create_new_dir_warning_too_long_text": "Dizin adı çok uzun; en fazla {symbols} karakter izin verilir!",
+    "dialog_create_new_dir_error_existed": "Dizin zaten var",
+    "dialog_create_new_dir_error": "Dizin oluşturulamıyor. Hedef dizinin {base_dir} yazılabilir olduğundan emin olun",
 
     "dialog_message_box_title": "Mesaj",
     "dialog_message_box_button_ok": "Kapat",

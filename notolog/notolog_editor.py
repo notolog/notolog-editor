@@ -275,6 +275,7 @@ class NotologEditor(QMainWindow):
         self.tree_filter = None  # type: Union[QLineEdit, None]
         self.tree_proxy_model = None  # type: Union[SortFilterProxyModel, None]
         self.file_watcher = None  # type: Union[QFileSystemWatcher, None]
+        self.tree_active_dir = None  # type: Union[str, None]
 
         self.supported_file_extensions = ['md', 'txt', 'html', 'enc']
 
@@ -933,7 +934,7 @@ class NotologEditor(QMainWindow):
         self.tree_proxy_model = SortFilterProxyModel(
             extensions=self.supported_file_extensions,
             sourceModel=self.file_model,  # Or tree_proxy_model.setSourceModel(self.file_model)
-            recursiveFilteringEnabled=True,
+            recursiveFilteringEnabled=True,  # It will also display '/' if any item is found in the path from the root
             # More info about the enum https://doc.qt.io/qt-6/qfilesystemmodel.html#Roles-enum
             filterRole=QFileSystemModel.Roles.FileNameRole | QFileSystemModel.Roles.FilePathRole,
             # To filter file names without case sensitivity
@@ -984,6 +985,12 @@ class NotologEditor(QMainWindow):
         @param text: string, can be empty, for example when deleting a text
         @return: None
         """
+
+        if self.debug:
+            self.logger.debug(
+                f'Tree filter is changed: {self.get_current_file_path()}, {self.get_tree_active_dir()}, '
+                f'row count: {self.file_model.rowCount()}/{self.tree_proxy_model.rowCount()}')
+
         if text:
             self.tree_proxy_model.setFilterRegularExpression(r'.*?{}'.format(text))
             """
@@ -993,7 +1000,13 @@ class NotologEditor(QMainWindow):
         else:
             self.tree_proxy_model.setFilterRegularExpression(r'')
 
+        # Restore active tree directory
+        self.set_current_path(self.get_tree_active_dir())
+
     def adjust_tree_current_root_index(self) -> None:
+        """
+        Note: Adjustment is based on the file path, not the active tree directory.
+        """
         # dir_path = QDir.homePath()
         # dir_path = QDir.currentPath()
         dir_path = os.path.dirname(str(self.get_current_file_path()))
@@ -1018,14 +1031,19 @@ class NotologEditor(QMainWindow):
         """
         return os.path.dirname(self.file_path) if is_base else self.file_path
 
-    def get_active_dir(self):
+    def get_tree_active_dir(self):
         """
         The directory where the navigation context is currently located. Please note that this directory
         may not necessarily be the same as the directory where the current file is opened.
         """
         root_index = self.tree_view.rootIndex()
         source_index = self.tree_proxy_model.mapToSource(root_index)
-        return self.file_model.filePath(source_index)
+        active_path = self.file_model.filePath(source_index)
+        if not active_path:
+            # Occasionally, the root index may disappear during tree element filtering
+            # when recursiveFilteringEnabled=True
+            active_path = self.tree_active_dir
+        return active_path
 
     def set_current_path(self, tree_path: str) -> None:
         """
@@ -1052,11 +1070,16 @@ class NotologEditor(QMainWindow):
 
             if self.file_watcher:
                 self.file_watcher.addPath(self.file_path)
+
+            # Save for back up
+            self.tree_active_dir = self.get_current_file_path(is_base=True)
         else:
             # Dir
             proxy_dir_index = self.tree_proxy_model.mapFromSource(index)
             # Just remove proxy index if there is no proxy model and use index
             self.tree_view.setRootIndex(proxy_dir_index)
+            # Save for back up
+            self.tree_active_dir = tree_path
 
     def confirm_current_path(self) -> None:
         """
@@ -1087,8 +1110,8 @@ class NotologEditor(QMainWindow):
         file_index = self.tree_proxy_model.mapToSource(tree_index)
         file_path = self.file_model.filePath(file_index)
 
-        if not os.path.isfile(file_path):
-            self.logger.warning('Trying to create context menu on a file that does not exist "%s"' % file_path)
+        if file_path and not os.path.exists(file_path):
+            self.logger.warning('Trying to create context menu on an element that does not exist "%s"' % file_path)
             return
 
         menu = FileTreeContextMenu(file_path=file_path, parent=self)
@@ -2357,7 +2380,7 @@ class NotologEditor(QMainWindow):
         i = 1
         new_file_name_tpl = 'new-document-%d.md'
         # Find the file name that is not exist
-        while (file_path := os.path.join(self.get_active_dir(), new_file_name_tpl % i)) and os.path.isfile(file_path):
+        while (file_path := os.path.join(self.get_tree_active_dir(), new_file_name_tpl % i)) and os.path.isfile(file_path):
             i += 1
             # Just to prevent never-ending cycle
             if i > 9999:
@@ -3613,7 +3636,7 @@ class NotologEditor(QMainWindow):
     def get_cached_resource_pixmap(self, image_url) -> QPixmap:
         # Convert url to local file name
         file_name = self.resource_downloader.url_to_filename(image_url)
-        res_folder = self.resource_downloader.get_resource_folder(self.get_active_dir())
+        res_folder = self.resource_downloader.get_resource_folder(self.get_tree_active_dir())
         file_path = os.path.join(res_folder.path(), file_name)
         if self.debug:
             self.logger.debug(f"Resource url '{image_url}', local file '{file_path}'")
@@ -3669,12 +3692,12 @@ class NotologEditor(QMainWindow):
         # Init image downloader instance
         if self.resource_downloader is None:
             # Init new instance and set up signal handlers
-            self.resource_downloader = ImageDownloader(self.get_active_dir())
+            self.resource_downloader = ImageDownloader(self.get_tree_active_dir())
             self.resource_downloader.downloaded.connect(self.resource_downloaded_handler)  # Single resource downloaded
             self.resource_downloader.finished.connect(self.resource_downloader_finished_handler)  # All tasks finished
         else:
             # Refresh active resource folder
-            self.resource_downloader.update_resource_folder(self.get_active_dir())
+            self.resource_downloader.update_resource_folder(self.get_tree_active_dir())
 
         block = text_document.begin()
         # Check doc's block

@@ -10,6 +10,7 @@ lexemes = {
     "menu_action_delete": "Διαγραφή",
     "menu_action_delete_completely": "Ολοκληρωτική διαγραφή",
     "menu_action_restore": "Επαναφορά",
+    "menu_action_create_new_dir": "Δημιουργία νέου καταλόγου",
 
     "dialog_file_rename_title": "Μετονομασία αρχείου",
     "dialog_file_rename_field_label": "Εισάγετε νέο όνομα αρχείου",
@@ -27,6 +28,20 @@ lexemes = {
     "dialog_file_restore_text": "Επαναφορά του αρχείου \"{file_name}\";",
     "dialog_file_restore_error": "Αδυναμία επαναφοράς αρχείου, συνέβη σφάλμα",
     "dialog_file_restore_warning_exists": "Ένα αρχείο με το όνομα {file_name} υπάρχει ήδη",
+
+    "dialog_create_new_dir_title": "Δημιουργία νέου καταλόγου",
+    "dialog_create_new_dir_label": "Όνομα νέου καταλόγου",
+    "dialog_create_new_dir_input_placeholder_text": "Εισαγάγετε το όνομα καταλόγου",
+    "dialog_create_new_dir_button_ok": "Δημιουργία",
+    "dialog_create_new_dir_button_cancel": "Ακύρωση",
+    "dialog_create_new_dir_warning_empty_title": "Σφάλμα ονόματος νέου καταλόγου",
+    "dialog_create_new_dir_warning_empty_text": "Το όνομα του καταλόγου δεν μπορεί να είναι κενό",
+    "dialog_create_new_dir_warning_too_long_title": "Σφάλμα ονόματος νέου καταλόγου",
+    "dialog_create_new_dir_warning_too_long_text": "Το όνομα του καταλόγου είναι πολύ μακρύ. Επιτρέπονται έως "
+                                                   "{symbols} χαρακτήρες!",
+    "dialog_create_new_dir_error_existed": "Ο κατάλογος υπάρχει ήδη",
+    "dialog_create_new_dir_error": "Δεν είναι δυνατή η δημιουργία του καταλόγου. Βεβαιωθείτε ότι ο κατάλογος "
+                                   "προορισμού {base_dir} είναι εγγράψιμος",
 
     "dialog_message_box_title": "Μήνυμα",
     "dialog_message_box_button_ok": "Κλείσιμο",

@@ -10,6 +10,7 @@ lexemes = {
     "menu_action_delete": "Radera",
     "menu_action_delete_completely": "Radera helt",
     "menu_action_restore": "Återställ",
+    "menu_action_create_new_dir": "Skapa en ny katalog",
 
     "dialog_file_rename_title": "Byt namn på fil",
     "dialog_file_rename_field_label": "Ange nytt filnamn",
@@ -27,6 +28,18 @@ lexemes = {
     "dialog_file_restore_text": "Återställ filen \"{file_name}\"?",
     "dialog_file_restore_error": "Kan inte återställa filen, ett fel inträffade",
     "dialog_file_restore_warning_exists": "En fil med namnet {file_name} finns redan",
+
+    "dialog_create_new_dir_title": "Skapa en ny katalog",
+    "dialog_create_new_dir_label": "Nytt katalognamn",
+    "dialog_create_new_dir_input_placeholder_text": "Ange katalognamn",
+    "dialog_create_new_dir_button_ok": "Skapa",
+    "dialog_create_new_dir_button_cancel": "Avbryt",
+    "dialog_create_new_dir_warning_empty_title": "Nytt katalognamn fel",
+    "dialog_create_new_dir_warning_empty_text": "Katalognamnet kan inte vara tomt",
+    "dialog_create_new_dir_warning_too_long_title": "Nytt katalognamn fel",
+    "dialog_create_new_dir_warning_too_long_text": "Katalognamnet är för långt; maximalt {symbols} tecken tillåtna!",
+    "dialog_create_new_dir_error_existed": "Katalogen finns redan",
+    "dialog_create_new_dir_error": "Det går inte att skapa katalogen. Se till att målkatalogen {base_dir} är skrivbar",
 
     "dialog_message_box_title": "Meddelande",
     "dialog_message_box_button_ok": "Stäng",

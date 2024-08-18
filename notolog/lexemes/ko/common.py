@@ -10,6 +10,7 @@ lexemes = {
     "menu_action_delete": "삭제",
     "menu_action_delete_completely": "완전히 삭제",
     "menu_action_restore": "복원",
+    "menu_action_create_new_dir": "새 디렉터리 만들기",
 
     "dialog_file_rename_title": "파일 이름 바꾸기",
     "dialog_file_rename_field_label": "새 파일 이름 입력",
@@ -27,6 +28,20 @@ lexemes = {
     "dialog_file_restore_text": "파일 \"{file_name}\"을(를) 복원하시겠습니까?",
     "dialog_file_restore_error": "파일을 복원할 수 없습니다. 오류가 발생했습니다",
     "dialog_file_restore_warning_exists": "{file_name} 이름의 파일이 이미 존재합니다",
+
+    "dialog_create_new_dir_title": "새 디렉터리 만들기",
+    "dialog_create_new_dir_label": "새 디렉터리 이름",
+    "dialog_create_new_dir_input_placeholder_text": "디렉터리 이름 입력",
+    "dialog_create_new_dir_button_ok": "만들기",
+    "dialog_create_new_dir_button_cancel": "취소",
+    "dialog_create_new_dir_warning_empty_title": "새 디렉터리 이름 오류",
+    "dialog_create_new_dir_warning_empty_text": "디렉터리 이름은 비워둘 수 없습니다",
+    "dialog_create_new_dir_warning_too_long_title": "새 디렉터리 이름 오류",
+    "dialog_create_new_dir_warning_too_long_text": "디렉터리 이름이 너무 깁니다. 최대 "
+                                                   "{symbols} 자까지 허용됩니다!",
+    "dialog_create_new_dir_error_existed": "디렉터리가 이미 존재합니다",
+    "dialog_create_new_dir_error": "디렉터리를 만들 수 없습니다. 대상 디렉터리 "
+                                   "{base_dir} 이 쓰기 가능한지 확인하십시오",
 
     "dialog_message_box_title": "메시지",
     "dialog_message_box_button_ok": "닫기",

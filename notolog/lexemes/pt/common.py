@@ -10,6 +10,7 @@ lexemes = {
     "menu_action_delete": "Excluir",
     "menu_action_delete_completely": "Excluir completamente",
     "menu_action_restore": "Restaurar",
+    "menu_action_create_new_dir": "Criar um novo diretório",
 
     "dialog_file_rename_title": "Renomear arquivo",
     "dialog_file_rename_field_label": "Digite o novo nome do arquivo",
@@ -27,6 +28,20 @@ lexemes = {
     "dialog_file_restore_text": "Restaurar o arquivo \"{file_name}\"?",
     "dialog_file_restore_error": "Não é possível restaurar o arquivo, ocorreu um erro",
     "dialog_file_restore_warning_exists": "Já existe um arquivo com o nome {file_name}",
+
+    "dialog_create_new_dir_title": "Criar um novo diretório",
+    "dialog_create_new_dir_label": "Nome do novo diretório",
+    "dialog_create_new_dir_input_placeholder_text": "Digite o nome do diretório",
+    "dialog_create_new_dir_button_ok": "Criar",
+    "dialog_create_new_dir_button_cancel": "Cancelar",
+    "dialog_create_new_dir_warning_empty_title": "Erro no nome do novo diretório",
+    "dialog_create_new_dir_warning_empty_text": "O nome do diretório não pode estar vazio",
+    "dialog_create_new_dir_warning_too_long_title": "Erro no nome do novo diretório",
+    "dialog_create_new_dir_warning_too_long_text": "O nome do diretório é muito longo; máximo de "
+                                                   "{symbols} caracteres permitidos!",
+    "dialog_create_new_dir_error_existed": "O diretório já existe",
+    "dialog_create_new_dir_error": "Não é possível criar o diretório. Certifique-se de que o diretório de destino "
+                                   "{base_dir} seja gravável",
 
     "dialog_message_box_title": "Mensagem",
     "dialog_message_box_button_ok": "Fechar",

@@ -10,6 +10,7 @@ lexemes = {
     "menu_action_delete": "हटाएं",
     "menu_action_delete_completely": "पूरी तरह से हटाएं",
     "menu_action_restore": "पुनर्स्थापित करें",
+    "menu_action_create_new_dir": "नई निर्देशिका बनाएँ",
 
     "dialog_file_rename_title": "फ़ाइल का नाम बदलें",
     "dialog_file_rename_field_label": "नया फ़ाइल नाम दर्ज करें",
@@ -27,6 +28,20 @@ lexemes = {
     "dialog_file_restore_text": "क्या आप वाकई फ़ाइल \"{file_name}\" को पुनर्स्थापित करना चाहते हैं?",
     "dialog_file_restore_error": "फ़ाइल को पुनर्स्थापित करने में असमर्थ, त्रुटि हुई है",
     "dialog_file_restore_warning_exists": "इस नाम की फ़ाइल पहले से मौजूद है",
+
+    "dialog_create_new_dir_title": "नई निर्देशिका बनाएँ",
+    "dialog_create_new_dir_label": "नई निर्देशिका का नाम",
+    "dialog_create_new_dir_input_placeholder_text": "निर्देशिका नाम दर्ज करें",
+    "dialog_create_new_dir_button_ok": "बनाएँ",
+    "dialog_create_new_dir_button_cancel": "रद्द करें",
+    "dialog_create_new_dir_warning_empty_title": "नई निर्देशिका नाम त्रुटि",
+    "dialog_create_new_dir_warning_empty_text": "निर्देशिका नाम खाली नहीं हो सकता",
+    "dialog_create_new_dir_warning_too_long_title": "नई निर्देशिका नाम त्रुटि",
+    "dialog_create_new_dir_warning_too_long_text": "निर्देशिका का नाम बहुत लंबा है; अधिकतम "
+                                                   "{symbols} वर्णों की अनुमति है!",
+    "dialog_create_new_dir_error_existed": "निर्देशिका पहले से मौजूद है",
+    "dialog_create_new_dir_error": "निर्देशिका नहीं बनाई जा सकती। सुनिश्चित करें कि गंतव्य निर्देशिका "
+                                   "{base_dir} लिखने योग्य है",
 
     "dialog_message_box_title": "संदेश",
     "dialog_message_box_button_ok": "बंद करें",

@@ -1,11 +1,11 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-08-04 16:58:29.040241"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-08-11 19:33:49.827586"}} -->
 # Notolog
 
 ![Notolog - Python Markdown Editor](https://raw.githubusercontent.com/notolog/notolog-editor/main/notolog/assets/notolog-example-image.png)
 
 ## Python Markdown Editor
 
-[![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/) [![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor)](https://github.com/notolog/notolog-editor/blob/master/LICENSE) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)](https://pypi.org/project/notolog/) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/notolog/notolog-editor/tests.yaml)](https://github.com/notolog/notolog-editor/actions/workflows/tests.yaml)
+[![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/) [![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor)](https://github.com/notolog/notolog-editor/blob/master/LICENSE) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)](https://pypi.org/project/notolog/) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/notolog/notolog-editor/tests.yaml)](https://github.com/notolog/notolog-editor/actions/workflows/tests.yaml) [![Anaconda-Server Badge](https://img.shields.io/badge/Anaconda.org-0.9.8-blue.svg)](https://anaconda.org/conda-forge/notolog)
 
 Notolog is an open-source Python Markdown editor that blends simplicity with functionality. Designed using PySide6, it not only helps tackle daily programming challenges but also enhances proficiency in both Markdown and Python for those interested in diving deeper into the code.
 
@@ -83,11 +83,11 @@ Using a virtual environment is highly recommended as it helps avoid version conf
 
 Set up a virtual environment (highly recommended):
 ```sh
-python3 -m venv notolog
+python3 -m venv notolog_env
 # On Unix-like systems (macOS and Linux):
-source notolog/bin/activate
+source notolog_env/bin/activate
 # On Windows:
-notolog\Scripts\activate
+notolog_env\Scripts\activate
 ```
 
 Install Notolog quickly using pip:
@@ -101,6 +101,28 @@ To update Notolog to the latest version:
 ```sh
 pip install --upgrade notolog
 ```
+
+### Using conda-forge
+
+To install Notolog using conda-forge, first ensure your conda environment is using Python 3.9 or higher. You can create a new environment with the required Python version using:
+```sh
+conda create -n notolog_env python=3.9
+conda activate notolog_env
+```
+
+Then, execute the installation command:
+```sh
+conda install -c conda-forge notolog
+```
+
+This will fetch and install the latest version of Notolog compatible with Python 3.9 or newer from the [conda-forge packages](https://anaconda.org/conda-forge/notolog).
+
+Run Notolog:
+```sh
+notolog
+```
+
+Just activate the environment and run the app next time.
 
 ### From Source
 

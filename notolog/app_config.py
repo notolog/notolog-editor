@@ -11,7 +11,7 @@ from threading import Lock
 toml_base_app_config = """
 [app]
 name = "Notolog"
-version = "0.9.8"
+version = "0.9.9"
 license = "MIT License"
 date = "2024"
 website = "https://notolog.app"

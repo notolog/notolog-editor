@@ -10,6 +10,7 @@ lexemes = {
     "menu_action_delete": "削除",
     "menu_action_delete_completely": "完全に削除",
     "menu_action_restore": "復元",
+    "menu_action_create_new_dir": "新しいディレクトリを作成",
 
     "dialog_file_rename_title": "ファイル名の変更",
     "dialog_file_rename_field_label": "新しいファイル名を入力",
@@ -27,6 +28,20 @@ lexemes = {
     "dialog_file_restore_text": "ファイル \"{file_name}\" を復元しますか？",
     "dialog_file_restore_error": "ファイルを復元できませんでした。エラーが発生しました",
     "dialog_file_restore_warning_exists": "{file_name} という名前のファイルがすでに存在します",
+
+    "dialog_create_new_dir_title": "新しいディレクトリを作成",
+    "dialog_create_new_dir_label": "新しいディレクトリ名",
+    "dialog_create_new_dir_input_placeholder_text": "ディレクトリ名を入力",
+    "dialog_create_new_dir_button_ok": "作成",
+    "dialog_create_new_dir_button_cancel": "キャンセル",
+    "dialog_create_new_dir_warning_empty_title": "新しいディレクトリ名エラー",
+    "dialog_create_new_dir_warning_empty_text": "ディレクトリ名を空にすることはできません",
+    "dialog_create_new_dir_warning_too_long_title": "新しいディレクトリ名エラー",
+    "dialog_create_new_dir_warning_too_long_text": "ディレクトリ名が長すぎます。最大 "
+                                                   "{symbols} 文字が許可されています！",
+    "dialog_create_new_dir_error_existed": "ディレクトリは既に存在します",
+    "dialog_create_new_dir_error": "ディレクトリを作成できません。ターゲットディレクトリ "
+                                   "{base_dir} が書き込み可能であることを確認してください",
 
     "dialog_message_box_title": "メッセージ",
     "dialog_message_box_button_ok": "閉じる",

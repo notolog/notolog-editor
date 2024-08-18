@@ -10,6 +10,7 @@ lexemes = {
     "menu_action_delete": "Poista",
     "menu_action_delete_completely": "Poista kokonaan",
     "menu_action_restore": "Palauta",
+    "menu_action_create_new_dir": "Luo uusi hakemisto",
 
     "dialog_file_rename_title": "Nimeä tiedosto uudelleen",
     "dialog_file_rename_field_label": "Anna uusi tiedostonimi",
@@ -27,6 +28,20 @@ lexemes = {
     "dialog_file_restore_text": "Palauta tiedosto \"{file_name}\"?",
     "dialog_file_restore_error": "Tiedostoa ei voi palauttaa, tapahtui virhe",
     "dialog_file_restore_warning_exists": "Samanniminen tiedosto on jo olemassa",
+
+    "dialog_create_new_dir_title": "Luo uusi hakemisto",
+    "dialog_create_new_dir_label": "Uuden hakemiston nimi",
+    "dialog_create_new_dir_input_placeholder_text": "Anna hakemiston nimi",
+    "dialog_create_new_dir_button_ok": "Luo",
+    "dialog_create_new_dir_button_cancel": "Peruuta",
+    "dialog_create_new_dir_warning_empty_title": "Uuden hakemiston nimen virhe",
+    "dialog_create_new_dir_warning_empty_text": "Hakemiston nimi ei voi olla tyhjä",
+    "dialog_create_new_dir_warning_too_long_title": "Uuden hakemiston nimen virhe",
+    "dialog_create_new_dir_warning_too_long_text": "Hakemiston nimi on liian pitkä; enintään "
+                                                   "{symbols} merkkiä sallittu!",
+    "dialog_create_new_dir_error_existed": "Hakemisto on jo olemassa",
+    "dialog_create_new_dir_error": "Hakemistoa ei voi luoda. Varmista, että kohdehakemisto "
+                                   "{base_dir} on kirjoitettavissa",
 
     "dialog_message_box_title": "Viesti",
     "dialog_message_box_button_ok": "Sulje",

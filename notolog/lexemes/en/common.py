@@ -10,6 +10,7 @@ lexemes = {
     "menu_action_delete": "Delete",
     "menu_action_delete_completely": "Delete completely",
     "menu_action_restore": "Restore",
+    "menu_action_create_new_dir": "Create a new directory",
 
     "dialog_file_rename_title": "Rename file",
     "dialog_file_rename_field_label": "Enter new file name",
@@ -27,6 +28,18 @@ lexemes = {
     "dialog_file_restore_text": "Restore file \"{file_name}\"?",
     "dialog_file_restore_error": "Cannot restore file, error occurred",
     "dialog_file_restore_warning_exists": "File with the name {file_name} already exists",
+
+    "dialog_create_new_dir_title": "Create a new directory",
+    "dialog_create_new_dir_label": "New directory name",
+    "dialog_create_new_dir_input_placeholder_text": "Enter directory name",
+    "dialog_create_new_dir_button_ok": "Create",
+    "dialog_create_new_dir_button_cancel": "Cancel",
+    "dialog_create_new_dir_warning_empty_title": "New directory name error",
+    "dialog_create_new_dir_warning_empty_text": "Directory name cannot be empty",
+    "dialog_create_new_dir_warning_too_long_title": "New directory name error",
+    "dialog_create_new_dir_warning_too_long_text": "Directory name is too long; maximum {symbols} characters allowed!",
+    "dialog_create_new_dir_error_existed": "Directory already exists",
+    "dialog_create_new_dir_error": "Cannot create directory. Ensure the destination directory {base_dir} is writable",
 
     "dialog_message_box_title": "Message",
     "dialog_message_box_button_ok": "Close",

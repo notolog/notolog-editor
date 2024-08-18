@@ -10,6 +10,7 @@ lexemes = {
     "menu_action_delete": "删除",
     "menu_action_delete_completely": "彻底删除",
     "menu_action_restore": "恢复",
+    "menu_action_create_new_dir": "创建新目录",
 
     "dialog_file_rename_title": "重命名文件",
     "dialog_file_rename_field_label": "输入新的文件名",
@@ -27,6 +28,18 @@ lexemes = {
     "dialog_file_restore_text": "恢复文件 \"{file_name}\"?",
     "dialog_file_restore_error": "无法恢复文件，发生错误",
     "dialog_file_restore_warning_exists": "{file_name} 名称的文件已存在",
+
+    "dialog_create_new_dir_title": "创建新目录",
+    "dialog_create_new_dir_label": "新目录名称",
+    "dialog_create_new_dir_input_placeholder_text": "输入目录名称",
+    "dialog_create_new_dir_button_ok": "创建",
+    "dialog_create_new_dir_button_cancel": "取消",
+    "dialog_create_new_dir_warning_empty_title": "新目录名称错误",
+    "dialog_create_new_dir_warning_empty_text": "目录名称不能为空",
+    "dialog_create_new_dir_warning_too_long_title": "新目录名称错误",
+    "dialog_create_new_dir_warning_too_long_text": "目录名称太长；最大允许 {symbols} 个字符！",
+    "dialog_create_new_dir_error_existed": "目录已存在",
+    "dialog_create_new_dir_error": "无法创建目录。请确保目标目录 {base_dir} 可写",
 
     "dialog_message_box_title": "消息",
     "dialog_message_box_button_ok": "关闭",

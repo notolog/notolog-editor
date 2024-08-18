@@ -62,6 +62,8 @@ class SortFilterProxyModel(QSortFilterProxyModel):
     def filterAcceptsRow(self, source_row: int, source_parent: QModelIndex) -> bool:
         source_model = self.sourceModel()
         index = source_model.index(source_row, 0, source_parent)
+        if not index.isValid():
+            return False
 
         regex = self.filterRegularExpression()  # Retrieve regex set with setFilterRegularExpression()
         if regex and regex.pattern():

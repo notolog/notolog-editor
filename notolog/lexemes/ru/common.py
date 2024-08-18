@@ -10,6 +10,7 @@ lexemes = {
     "menu_action_delete": "Удалить",
     "menu_action_delete_completely": "Удалить полностью",
     "menu_action_restore": "Восстановить",
+    "menu_action_create_new_dir": "Создать новую директорию",
 
     "dialog_file_rename_title": "Переименовать файл",
     "dialog_file_rename_field_label": "Введите новое имя файла",
@@ -27,6 +28,20 @@ lexemes = {
     "dialog_file_restore_text": "Восстановить файл \"{file_name}\"?",
     "dialog_file_restore_error": "Не удалось восстановить файл, произошла ошибка",
     "dialog_file_restore_warning_exists": "Файл с именем {file_name} уже существует",
+
+    "dialog_create_new_dir_title": "Создать новую директорию",
+    "dialog_create_new_dir_label": "Имя новой директории",
+    "dialog_create_new_dir_input_placeholder_text": "Введите имя директории",
+    "dialog_create_new_dir_button_ok": "Создать",
+    "dialog_create_new_dir_button_cancel": "Отмена",
+    "dialog_create_new_dir_warning_empty_title": "Ошибка имени новой директории",
+    "dialog_create_new_dir_warning_empty_text": "Имя директории не может быть пустым",
+    "dialog_create_new_dir_warning_too_long_title": "Ошибка имени новой директории",
+    "dialog_create_new_dir_warning_too_long_text": "Имя директории слишком длинное; максимально допустимое количество "
+                                                   "символов: {symbols}!",
+    "dialog_create_new_dir_error_existed": "Директория уже существует",
+    "dialog_create_new_dir_error": "Не удается создать директорию. Убедитесь, что директория назначения "
+                                   "{base_dir} доступна для записи",
 
     "dialog_message_box_title": "Сообщение",
     "dialog_message_box_button_ok": "Закрыть",

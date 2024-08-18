@@ -10,6 +10,7 @@ lexemes = {
     "menu_action_delete": "Delere",
     "menu_action_delete_completely": "Delere prorsus",
     "menu_action_restore": "Restituere",
+    "menu_action_create_new_dir": "Crea novum directory",
 
     "dialog_file_rename_title": "Fasciculum renominare",
     "dialog_file_rename_field_label": "Nomen novum fasciculi ingredi",
@@ -27,6 +28,20 @@ lexemes = {
     "dialog_file_restore_text": "Liber \"{file_name}\" restituere?",
     "dialog_file_restore_error": "Liber restituere non potest, error accidit",
     "dialog_file_restore_warning_exists": "Liber nomine {file_name} iam existit",
+
+    "dialog_create_new_dir_title": "Crea novum directory",
+    "dialog_create_new_dir_label": "Novum nomen directory",
+    "dialog_create_new_dir_input_placeholder_text": "Inserere nomen directory",
+    "dialog_create_new_dir_button_ok": "Crea",
+    "dialog_create_new_dir_button_cancel": "Cancel",
+    "dialog_create_new_dir_warning_empty_title": "Novum nomen directory error",
+    "dialog_create_new_dir_warning_empty_text": "Nomen directory vacuum esse non potest",
+    "dialog_create_new_dir_warning_too_long_title": "Novum nomen directory error",
+    "dialog_create_new_dir_warning_too_long_text": "Nomen directory nimis longum est; maxime "
+                                                   "{symbols} litterarum permissum est!",
+    "dialog_create_new_dir_error_existed": "Directory iam existit",
+    "dialog_create_new_dir_error": "Fieri non potest directory creare. Fac ut directory destinatum "
+                                   "{base_dir} scribibile sit",
 
     "dialog_message_box_title": "Nuntius",
     "dialog_message_box_button_ok": "Claudere",

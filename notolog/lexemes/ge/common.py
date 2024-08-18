@@ -10,6 +10,7 @@ lexemes = {
     "menu_action_delete": "წაშლა",
     "menu_action_delete_completely": "სრული წაშლა",
     "menu_action_restore": "აღდგენა",
+    "menu_action_create_new_dir": "ახალი დირექტორიის შექმნა",
 
     "dialog_file_rename_title": "ფაილის გადარქმევა",
     "dialog_file_rename_field_label": "შეიყვანეთ ახალი ფაილის სახელი",
@@ -27,6 +28,20 @@ lexemes = {
     "dialog_file_restore_text": "აღადგინოთ ფაილი \"{file_name}\"?",
     "dialog_file_restore_error": "ფაილის აღდგენა ვერ ხერხდება, წარმოიშვა შეცდომა",
     "dialog_file_restore_warning_exists": "ამ სახელით ფაილი უკვე არსებობს",
+
+    "dialog_create_new_dir_title": "ახალი დირექტორიის შექმნა",
+    "dialog_create_new_dir_label": "ახალი დირექტორიის სახელი",
+    "dialog_create_new_dir_input_placeholder_text": "შეიყვანეთ დირექტორიის სახელი",
+    "dialog_create_new_dir_button_ok": "შექმნა",
+    "dialog_create_new_dir_button_cancel": "გაუქმება",
+    "dialog_create_new_dir_warning_empty_title": "ახალი დირექტორიის სახელის შეცდომა",
+    "dialog_create_new_dir_warning_empty_text": "დირექტორიის სახელი არ შეიძლება იყოს ცარიელი",
+    "dialog_create_new_dir_warning_too_long_title": "ახალი დირექტორიის სახელის შეცდომა",
+    "dialog_create_new_dir_warning_too_long_text": "დირექტორიის სახელი ძალიან გრძელია; მაქსიმუმ "
+                                                   "{symbols} სიმბოლოებია ნებადართული!",
+    "dialog_create_new_dir_error_existed": "დირექტორია უკვე არსებობს",
+    "dialog_create_new_dir_error": "ვერ შევქმენით დირექტორია. დარწმუნდით, რომ სამიზნე დირექტორია "
+                                   "{base_dir} ჩაწერის შესაძლებლობით არის",
 
     "dialog_message_box_title": "შეტყობინება",
     "dialog_message_box_button_ok": "დახურვა",

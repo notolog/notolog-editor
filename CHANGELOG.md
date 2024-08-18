@@ -1,6 +1,18 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [0.9.9] - 2024-08-18
+
+### Added
+- Notolog is now available for installation via Conda Forge. Installation instructions and a version badge have been added to the `README.md` file.
+- Introduced the ability to create a new directory from the file tree context menu.
+
+### Changed
+- Adjusted palette highlight colors (e.g., selection, search, context menu active background) for the 'Default' and 'Noir Dark' themes.
+
+### Fixed
+- The tree filter now returns to the initial directory in the file tree when the filter text is cleared using the backspace key.
+
 ## [0.9.8] - 2024-08-04
 
 ### Added
