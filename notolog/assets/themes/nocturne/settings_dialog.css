@@ -1,10 +1,10 @@
 /* Tabs */
 QTabBar::tab {
-    color: lightgray;
+    color: lightGray;
 }
 /* Active tab */
 QTabBar::tab:selected {
-    color: red;
+    color: whiteSmoke;
 }
 QComboBox {}
 QComboBox::separator {
@@ -20,7 +20,7 @@ QLineEdit {
 }
 /* Group titles */
 QLabel.group-header-label {
-    color: #cccccc;
+    color: lightGoldenrodYellow;
 }
 QCheckBox {
     color: #eeeeee;
@@ -43,5 +43,5 @@ QSlider::handle:horizontal {
 /* Request submit button */
 QPushButton#settings_dialog_button_close {
     color: white;
-    background-color: red;
+    background-color: firebrick;
 }

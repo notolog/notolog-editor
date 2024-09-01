@@ -1,6 +1,18 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.0.0] - 2024-09-01
+
+### Added
+- New dark theme 'Nocturne' for nighttime coders.
+
+### Fixed
+- Fixed the issue with updating setting group titles during interactive language changes.
+- Resolved pytest warning regarding the default fixture loop scope in asyncio.
+
+### Changed
+- Updated the approach for assigning styles to setting group titles.
+
 ## [0.9.9] - 2024-08-18
 
 ### Added

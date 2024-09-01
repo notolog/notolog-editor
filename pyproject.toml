@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "notolog"
-version = "0.9.9"
+version = "1.0.0"
 description = "Notolog - Python Markdown Editor"
 authors = ["Vadim Bakhrenkov"]
 license = "MIT"
@@ -125,3 +125,6 @@ pytest-mock = "^3.14.0"
 [build-system]
 requires = ["poetry-core>=1.5.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+asyncio_default_fixture_loop_scope = "function"

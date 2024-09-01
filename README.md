@@ -1,11 +1,11 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-08-11 19:33:49.827586"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-09-01 17:41:41.187270"}} -->
 # Notolog
 
 ![Notolog - Python Markdown Editor](https://raw.githubusercontent.com/notolog/notolog-editor/main/notolog/assets/notolog-example-image.png)
 
 ## Python Markdown Editor
 
-[![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/) [![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor)](https://github.com/notolog/notolog-editor/blob/master/LICENSE) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)](https://pypi.org/project/notolog/) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/notolog/notolog-editor/tests.yaml)](https://github.com/notolog/notolog-editor/actions/workflows/tests.yaml) [![Anaconda-Server Badge](https://img.shields.io/badge/Anaconda.org-0.9.8-blue.svg)](https://anaconda.org/conda-forge/notolog)
+[![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/) [![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor)](https://github.com/notolog/notolog-editor/blob/master/LICENSE) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)](https://pypi.org/project/notolog/) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/notolog/notolog-editor/tests.yaml)](https://github.com/notolog/notolog-editor/actions/workflows/tests.yaml) [![Conda Version](https://img.shields.io/conda/vn/conda-forge/notolog)](https://anaconda.org/conda-forge/notolog)
 
 Notolog is an open-source Python Markdown editor that blends simplicity with functionality. Designed using PySide6, it not only helps tackle daily programming challenges but also enhances proficiency in both Markdown and Python for those interested in diving deeper into the code.
 

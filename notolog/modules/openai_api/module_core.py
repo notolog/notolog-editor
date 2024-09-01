@@ -371,7 +371,8 @@ class ModuleCore(BaseAiCore):
         return [
             # [OpenAI API config]
             # OpenAI API block label
-            {"type": QLabel, "name": "settings_dialog_header_label",
+            {"type": QLabel, "name": "settings_dialog_module_openai_api_label",
+             "props": {"setProperty": ("class", "group-header-label")},
              "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('module_openai_api_label'), "style": {"bold": True},
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj)},

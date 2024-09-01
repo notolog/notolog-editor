@@ -12,8 +12,7 @@ QLabel {
 }
 QLineEdit {}
 /* Group titles */
-QLabel#settings_dialog_header_label,
-QLabel#settings_dialog_general_app_font_size_label {
+QLabel.group-header-label {
     color: gray;
 }
 QCheckBox {

@@ -146,7 +146,8 @@ class SettingsDialog(QDialog):
         return [
             # [General]
             # General settings block label
-            {"type": QLabel, "name": "settings_dialog_header_label",
+            {"type": QLabel, "name": "settings_dialog_general_app_config_label",
+             "props": {"setProperty": ("class", "group-header-label")},
              "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('general_app_config_label'), "style": {"bold": True},
              "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
@@ -177,7 +178,8 @@ class SettingsDialog(QDialog):
             # Horizontal spacer
             {"type": HorizontalLineSpacer, "callback": lambda obj: tab_general_layout.addWidget(obj)},
             # Main menu label
-            {"type": QLabel, "name": "settings_dialog_header_label",
+            {"type": QLabel, "name": "settings_dialog_general_app_main_menu_label",
+             "props": {"setProperty": ("class", "group-header-label")},
              "alignment": Qt.AlignmentFlag.AlignLeft, "style": {"bold": True},
              "text": self.lexemes.get('general_app_main_menu_label'),
              "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
@@ -192,7 +194,8 @@ class SettingsDialog(QDialog):
             # Horizontal spacer
             {"type": HorizontalLineSpacer, "callback": lambda obj: tab_general_layout.addWidget(obj)},
             # Status bar settings block label
-            {"type": QLabel, "name": "settings_dialog_header_label", "alignment": Qt.AlignmentFlag.AlignLeft,
+            {"type": QLabel, "name": "settings_dialog_general_statusbar_label", "alignment": Qt.AlignmentFlag.AlignLeft,
+             "props": {"setProperty": ("class", "group-header-label")},
              "text": self.lexemes.get('general_statusbar_label'), "style": {"bold": True},
              "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # Either show or not global position at status bar
@@ -208,6 +211,7 @@ class SettingsDialog(QDialog):
             {"type": HorizontalLineSpacer, "callback": lambda obj: tab_general_layout.addWidget(obj)},
             # Main menu label
             {"type": QLabel, "name": "settings_dialog_general_app_font_size_label",
+             "props": {"setProperty": ("class", "group-header-label")},
              "alignment": Qt.AlignmentFlag.AlignLeft, "style": {"bold": True},
              "text": self.lexemes.get('general_app_font_size_label', size=self.settings.app_font_size),
              "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
@@ -238,7 +242,8 @@ class SettingsDialog(QDialog):
         return [
             # [Editor config]
             # Editor block label
-            {"type": QLabel, "name": "settings_dialog_header_label", "alignment": Qt.AlignmentFlag.AlignLeft,
+            {"type": QLabel, "name": "settings_dialog_editor_config_label", "alignment": Qt.AlignmentFlag.AlignLeft,
+             "props": {"setProperty": ("class", "group-header-label")},
              "text": self.lexemes.get('editor_config_label'), "style": {"bold": True},
              "callback": lambda obj: tab_editor_config_layout.addWidget(obj)},
             # Either to show or not editor's line numbers
@@ -267,7 +272,8 @@ class SettingsDialog(QDialog):
         return [
             # [Viewer config]
             # Viewer block label
-            {"type": QLabel, "name": "settings_dialog_header_label", "alignment": Qt.AlignmentFlag.AlignLeft,
+            {"type": QLabel, "name": "settings_dialog_viewer_config_label", "alignment": Qt.AlignmentFlag.AlignLeft,
+             "props": {"setProperty": ("class", "group-header-label")},
              "text": self.lexemes.get('viewer_config_label'), "style": {"bold": True},
              "callback": lambda obj: tab_viewer_config_layout.addWidget(obj)},
             # Either to show or not viewer's emojis
@@ -332,6 +338,7 @@ class SettingsDialog(QDialog):
             # [AI config]
             # Default inference model label
             {"type": QLabel, "name": "settings_dialog_ai_config_inference_module_label",
+             "props": {"setProperty": ("class", "group-header-label")},
              "alignment": Qt.AlignmentFlag.AlignLeft, "style": {"bold": True},
              "text": self.lexemes.get('ai_config_inference_module_label'),
              "callback": lambda obj: tab_ai_config_layout.addWidget(obj)},
@@ -348,6 +355,7 @@ class SettingsDialog(QDialog):
             {"type": HorizontalLineSpacer, "callback": lambda obj: tab_ai_config_layout.addWidget(obj)},
             # Base AI settings block label
             {"type": QLabel, "name": "settings_dialog_ai_config_base_label", "alignment": Qt.AlignmentFlag.AlignLeft,
+             "props": {"setProperty": ("class", "group-header-label")},
              "text": self.lexemes.get('ai_config_base_label'), "style": {"bold": True},
              "callback": lambda obj: tab_ai_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # Auto save downloaded resources on disk
@@ -378,7 +386,10 @@ class SettingsDialog(QDialog):
             # Get the method based on the property name
             setter = getattr(widget, prop, None)
             if callable(setter):
-                setter(value)  # Call the setter with the provided value
+                if type(value) is tuple:
+                    setter(*value)  # Call the setter with the provided values
+                else:
+                    setter(value)  # Call the setter with the provided value
 
     def create_setting_field(self, conf) \
             -> Union[QCheckBox, QLineEdit, QPlainTextEdit, QComboBox, QSpinBox, QSlider]:  # noqa: C901

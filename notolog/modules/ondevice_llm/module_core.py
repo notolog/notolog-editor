@@ -284,7 +284,8 @@ class ModuleCore(BaseAiCore):
         return [
             # [On Device LLM config]
             # Block label
-            {"type": QLabel, "name": "settings_dialog_ondevice_llm_config_label",
+            {"type": QLabel, "name": "settings_dialog_module_ondevice_llm_config_label",
+             "props": {"setProperty": ("class", "group-header-label")},
              "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('module_ondevice_llm_config_label'), "style": {"bold": True},
              "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj)},

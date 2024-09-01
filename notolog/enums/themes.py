@@ -27,3 +27,4 @@ class Themes(EnumBase):
     CALLIGRAPHY = "Calligraphy"
     NOIR_DARK = "Noir Dark"
     STRAWBERRY = "Strawberry"
+    NOCTURNE = "Nocturne"
