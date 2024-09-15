@@ -174,9 +174,10 @@ class UpdateHelper(QObject):
             else:
                 result_message = self.lexemes.get('update_helper_latest_version_installed')
                 if self.logging:
-                    self.logger.info(
-                        "No new version of the app is available, the current version is %s. Response: %s}"
-                        % (self.current_version, reply.errorString()))
+                    self.logger.info("No new version of the app is available, the current version is %s.}"
+                                     % self.current_version)
+                if self.debug:
+                    self.logger.debug("Version check response: %s, %s}" % (reply.readAll(), reply.errorString()))
                 # Emit the same version signal
                 self.new_version_check_response.emit(
                     {'status': self.STATUS_OK, 'msg': result_message, 'current_version': self.current_version})

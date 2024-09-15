@@ -17,9 +17,9 @@ License: MIT License
 For detailed instructions and project information, please see the repository's README.md.
 """
 
-from PySide6.QtCore import Qt, QSize
+from PySide6.QtCore import Qt, QSize, Signal
 from PySide6.QtGui import QAction, QColor
-from PySide6.QtWidgets import QToolBar, QWidget, QMenu, QLabel, QLineEdit, QCheckBox, QToolButton, QPushButton
+from PySide6.QtWidgets import QToolBar, QWidget, QMenu, QLabel, QLineEdit, QCheckBox, QToolButton, QPushButton, QHBoxLayout
 from PySide6.QtWidgets import QSizePolicy
 
 from . import Settings
@@ -38,12 +38,12 @@ if TYPE_CHECKING:
 class ToolBar(QToolBar):
     # Main window toolbar class
 
-    def __init__(self, parent=None, actions=None, buttons=None, refresh=None):
+    def __init__(self, parent=None, actions=None, search_buttons=None, refresh=None):
         """
         Args:
             parent (optional): Parent object
             actions (List[Dict[str, Any]], optional): The map with the toolbar's icons
-            buttons (List[Dict[str, Any]], optional): The map with the toolbar's buttons
+            search_buttons (List[Dict[str, Any]], optional): The map with the toolbar's search buttons
             refresh (Callable[[int, int], int], optional): A lambda function that refreshes a toolbar
         """
         super(ToolBar, self).__init__(parent)
@@ -58,7 +58,7 @@ class ToolBar(QToolBar):
         self.debug = AppConfig().get_debug()
 
         self.actions = actions if actions else {}
-        self.buttons = buttons if buttons else {}
+        self.search_buttons = search_buttons if search_buttons else {}
         self.refresh = refresh
 
         self.settings = Settings()
@@ -79,13 +79,10 @@ class ToolBar(QToolBar):
             if self.debug:
                 self.logger.info('Starting with default icons mask "%d"' % self.settings.toolbar_icons)
 
-        self.search_input = None  # type: Union[QLineEdit, None]
+        self.search_input = None  # type: Union[ToolBar.SearchLineEdit, QWidget, None]
         self.search_match_case = None  # type: Union[QCheckBox, None]
-        self.search_input = None  # type: Union[QLineEdit, None]
-        self.btn_search_clear = None  # type: Union[QPushButton, None]
-        self.btn_search_prev = None  # type: Union[QPushButton, None]
-        self.btn_search_next = None  # type: Union[QPushButton, None]
         self.search_match_case = None  # type: Union[QCheckBox, None]
+        # Search navigation button variables will be set via mapping
 
         self.toolbar_save_button = None  # type: Union[QToolButton, None]
         self.toolbar_edit_button = None  # type: Union[QToolButton, None]
@@ -93,6 +90,122 @@ class ToolBar(QToolBar):
         self.setMovable(False)
 
         self.init_ui()
+
+    class SearchLineEdit(QWidget):
+        """
+        Custom search line edit widget that integrates a QLineEdit for input, QLabel for input labels,
+        to show the actual label and count of search results.
+        This widget also exposes signals similar to a QLineEdit for external interaction.
+        """
+
+        # Signals to mimic QLineEdit's textChanged and returnPressed events.
+        textChanged = Signal(str)
+        returnPressed = Signal()
+
+        def __init__(self, lexemes):
+            super().__init__()
+
+            self.lexemes = lexemes
+
+            # Placeholder attributes for component widgets, initialized in init_ui.
+            self._search_input = None  # type: Union[QLineEdit, None]
+            self._search_input_label = None  # type: Union[QLabel, None]
+            self._search_count_label = None  # type: Union[QLabel, None]
+
+            self.init_ui()
+
+        def init_ui(self):
+            # Set up the main layout and internal components
+            search_layout = QHBoxLayout(self)
+            search_layout.setContentsMargins(0, 0, 0, 0)
+            search_layout.setSpacing(0)
+
+            self._search_input_label = QLabel(self)
+            # Apply font from the main window to the widget
+            self._search_input_label.sizeHint()
+            self._search_input_label.setText(self.lexemes.get('search_input_label'))
+            self._search_input_label.setObjectName('search_input_label')  # To differentiate it at styles file
+
+            search_layout.addWidget(self._search_input_label)
+
+            # Searched text
+            self._search_input = QLineEdit(self)
+            self._search_input.setObjectName('search_input')
+            self._search_input.sizeHint()
+            self._search_input.setReadOnly(False)
+            self._search_input.setMaxLength(128)
+            self._search_input.setPlaceholderText(self.lexemes.get('search_input_placeholder_text'))
+            self._search_input.setAccessibleDescription(self.lexemes.get('search_input_accessible_description'))
+
+            # Connect the QLineEdit's textChanged signal to the custom widget's textChanged signal
+            self._search_input.textChanged.connect(self.emit_text_changed)
+            self._search_input.returnPressed.connect(self.returnPressed.emit)
+
+            # Count occurrences of the searched text
+            self._search_count_label = QLabel('', self)
+            self._search_count_label.setObjectName('search_count_label')
+            self._search_count_label.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
+            self._search_count_label.setAlignment(Qt.AlignmentFlag.AlignCenter)  # Center text in QLabel
+
+            # Add UI component to the layout
+            search_layout.addWidget(self._search_input)
+
+            self.adjust_size()
+
+            self._search_count_label.raise_()  # Ensure QLabel is visually layered above other widgets if overlapping.
+
+        def emit_text_changed(self, text):
+            """ Emit the custom textChanged signal with the current text as the argument to notify of text changes. """
+            self.textChanged.emit(text)
+
+        def text(self):
+            return self._search_input.text()
+
+        def set_text(self, text):
+            """
+            Proxy method to set the text of the underlying QLineEdit.
+            """
+            return self._search_input.setText(text)
+
+        def set_focus(self):
+            self._search_input.setFocus()
+
+        def set_maximum_width(self, width):
+            self.setMaximumWidth(width)
+
+        def set_placeholder_text(self, text):
+            self._search_input.setPlaceholderText(text)
+
+        def set_counter_text(self, text):
+            """ Set the text of the embedded QLineEdit. """
+            self._search_count_label.setText(text)
+            self.adjust_size()
+
+        def adjust_size(self):
+            """
+            Adjusts the visibility and dimensions of the search count label based on its content and the search input's size.
+            Only shows the count label if there are search results to display.
+            """
+
+            # Show label if not an empty text
+            self._search_count_label.setVisible(True if len(self._search_count_label.text()) > 0 else False)
+
+            # First, calculate the width of the count label
+            digits = max(1, len(str(self._search_count_label.text())))
+            # '10' represents the total left and right padding
+            space = 10 + self.fontMetrics().horizontalAdvance("0") * digits
+            # Set the size of QLabel to achieve the desired overlap
+            self._search_count_label.resize(space, self._search_input.height())
+
+            # Adjust the label's size and position dynamically when the widget is resized
+            self._search_count_label.move(self._search_input_label.width() + self._search_input.width()
+                                          - self._search_count_label.width(), self._search_input.y())
+            self._search_count_label.resize(self._search_count_label.width(), self._search_input.height())
+
+        def resizeEvent(self, event):
+            super().resizeEvent(event)
+            # Adjust the size of the count label
+            self.adjust_size()
 
     def init_ui(self):
         prev_type = None
@@ -119,25 +232,10 @@ class ToolBar(QToolBar):
         central_spacer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.addWidget(central_spacer)
 
-        search_label = QLabel(self)
-        # Apply font from the main window to the widget
-        search_label.sizeHint()
-        search_label.setText(self.lexemes.get('search_input_label'))
-        search_label.setObjectName('search_input_label')  # To differentiate it at styles file
-        self.addWidget(search_label)
-
-        self.search_input = QLineEdit(self)
-        self.search_input.setObjectName('search_input')
-        self.search_input.sizeHint()
-        self.search_input.setReadOnly(False)
-        self.search_input.setMaxLength(128)
-        self.search_input.setPlaceholderText(self.lexemes.get('search_input_placeholder_text'))
-        self.search_input.setAccessibleDescription(
-            self.lexemes.get('search_input_accessible_description'))
-
+        self.search_input = self.SearchLineEdit(lexemes=self.lexemes)
         self.addWidget(self.search_input)
 
-        for button in self.buttons:
+        for button in self.search_buttons:
             if button['type'] == 'action':
                 # Create and append toolbar button
                 self.append_toolbar_button(button)
@@ -292,8 +390,8 @@ class ToolBar(QToolBar):
 
             menu.addAction(button)
 
-            if index in self.buttons:
-                self.buttons[index] = button
+            if index in self.search_buttons:
+                self.search_buttons[index] = button
 
             # Collect items already added to the context menu
             _weights |= settings_weight
@@ -318,8 +416,8 @@ class ToolBar(QToolBar):
         pi = pow(2, index)
         if self.debug:
             self.logger.info('checked:{} index:{} pi:{}' . format(checked, index, pi))
-        if index in self.buttons:
-            self.buttons[index].setChecked(checked)
+        if index in self.search_buttons:
+            self.search_buttons[index].setChecked(checked)
         if checked:
             self.settings.toolbar_icons |= pi
         else:

@@ -265,8 +265,6 @@ class NotologEditor(QMainWindow):
 
         # Resource Downloader
         self.resource_downloader = None  # type: Union[ImageDownloader, None]
-        # async download tasks queue
-        self.resource_tasks = []
 
         # File tree and variable
         self.tree_container = None  # type: Union[QWidget, None]
@@ -419,7 +417,7 @@ class NotologEditor(QMainWindow):
             self.create_icons_toolbar(refresh=True)
             if hasattr(self.toolbar, 'search_input'):
                 # Search field placeholder to empty
-                self.toolbar.search_input.setPlaceholderText(
+                self.toolbar.search_input.set_placeholder_text(
                     self.lexemes.get('search_input_placeholder_text', scope='toolbar'))
             # Re-draw main menu
             self.draw_menu()
@@ -1901,7 +1899,7 @@ class NotologEditor(QMainWindow):
 
         if hasattr(self, 'statusbar') and hasattr(self.statusbar, 'cursor_label'):
             # Update text at statusbar
-            self.statusbar['cursor_label'].setText(self.get_cursor_label_text(selected_text))
+            self.statusbar['cursor_label'].setText(self.get_cursor_label_text(selected_text=selected_text))
 
     def changeEvent(self, event) -> None:
         """
@@ -1973,6 +1971,24 @@ class NotologEditor(QMainWindow):
         self.settings.ui_pos_y = ui_pos_y
 
     def get_cursor_label_text(self, selected_text: str = None) -> str:
+        """
+        Generates status bar text showing cursor position and text selection details.
+
+        This method formats the cursor's line and column information. If `selected_text` is provided,
+        it includes the length of this selection. Configuration settings and lexemes determine the inclusion
+        of additional details such as the global cursor position, ensuring adaptability to different configurations
+        and text directions.
+
+        Parameters:
+            selected_text (str, optional): The text currently selected, used to display selection length.
+
+        Returns:
+            str: Formatted text for the status bar that includes cursor position and optionally, selection details.
+
+        Notes:
+            - This method accounts for text direction (e.g., right-to-left languages), ensuring the output respects
+              these orientations based on lexeme configurations set to handle such scenarios.
+        """
         if selected_text:
             if self.settings.show_global_cursor_position:
                 # Show status with selected text length and global cursor position
@@ -2348,7 +2364,7 @@ class NotologEditor(QMainWindow):
         self.toolbar = ToolBar(
             parent=self,
             actions=self.get_toolbar_actions(),
-            buttons=self.get_toolbar_search_buttons(),
+            search_buttons=self.get_toolbar_search_buttons(),
             refresh=lambda: self.create_icons_toolbar(refresh=True)  # Action to call if refresh needed
         )
 
@@ -2357,7 +2373,7 @@ class NotologEditor(QMainWindow):
             self.toolbar.search_input.textChanged.connect(self.action_search_on)
             self.toolbar.search_input.returnPressed.connect(self.action_search_next)
             # And adjust appearance
-            self.toolbar.search_input.setMaximumWidth(self.weight_to_px_uno)
+            self.toolbar.search_input.set_maximum_width(self.weight_to_px_uno * 2)
 
         self.addToolBar(self.toolbar)
 
@@ -2877,7 +2893,7 @@ class NotologEditor(QMainWindow):
 
         if self.ai_assistant:
             # Restores the window if it was minimized (optional)
-            if self.ai_assistant.isMinimized():
+            if self.ai_assistant.isMinimized() or self.ai_assistant.isHidden():
                 self.ai_assistant.showNormal()
 
             # Raise the dialog above other widgets
@@ -3286,8 +3302,8 @@ class NotologEditor(QMainWindow):
             self.logger.debug('Searching text "%s"' % selected_text)
 
         if hasattr(self.toolbar, 'search_input'):
-            self.toolbar.search_input.setText(selected_text)
-            self.toolbar.search_input.setFocus()
+            self.toolbar.search_input.set_text(selected_text)
+            self.toolbar.search_input.set_focus()
         self.action_search_next()
 
     def reload_active_file(self) -> None:
@@ -3833,10 +3849,40 @@ class NotologEditor(QMainWindow):
         if hasattr(self.toolbar, 'search_input'):
             text = self.toolbar.search_input.text()
 
+        check = False
+        if hasattr(self.toolbar, 'search_match_case'):
+            check = self.toolbar.search_match_case.isChecked()
+
+        # Case-sensitive option
+        if check:
+            find_flags = QTextDocument.FindFlag.FindCaseSensitively
+        else:
+            find_flags = QTextDocument.FindFlag(0)
+
+        # Get the source of the search (view or edit field)
+        if self.get_mode() == Mode.EDIT:
+            # Edit widget
+            edit_widget = self.get_edit_widget()  # type: Union[EditWidget, QPlainTextEdit]
+            search_source = edit_widget
+        else:
+            # View widget
+            view_widget = self.get_view_widget()  # type: Union[ViewWidget, QTextBrowser]
+            # Mode.VIEW | Mode.SOURCE
+            search_source = view_widget
+
+        # Count searched occurrences
+        search_occurrences = search_source.searched_text_count(text, find_flags)
+        # Display the count of searched occurrences
+        self.toolbar.search_input.set_counter_text(str(search_occurrences))
+
         if len(text) > 0 and hasattr(self.toolbar, 'btn_search_clear'):
             self.toolbar.btn_search_clear.setEnabled(True)
-            self.toolbar.btn_search_next.setEnabled(True)
-            self.toolbar.btn_search_prev.setEnabled(True)
+            if search_occurrences > 0:
+                self.toolbar.btn_search_next.setEnabled(True)  # noqa
+                self.toolbar.btn_search_prev.setEnabled(True)  # noqa
+            else:
+                self.toolbar.btn_search_next.setEnabled(False)  # noqa
+                self.toolbar.btn_search_prev.setEnabled(False)  # noqa
         else:
             self.action_search_clear()
 
@@ -3848,21 +3894,23 @@ class NotologEditor(QMainWindow):
         """
         if hasattr(self.toolbar, 'btn_search_clear'):
             self.toolbar.btn_search_clear.setEnabled(False)
-            self.toolbar.btn_search_next.setEnabled(False)
-            self.toolbar.btn_search_prev.setEnabled(False)
+            self.toolbar.btn_search_next.setEnabled(False)  # noqa
+            self.toolbar.btn_search_prev.setEnabled(False)  # noqa
+            # Hide the occurrences counter
+            self.toolbar.search_input.set_counter_text('')
 
     def action_search_clear(self) -> None:
         """
         Search field set to an empty text and reset the search state.
         """
         if hasattr(self.toolbar, 'search_input'):
-            self.toolbar.search_input.setText('')
+            self.toolbar.search_input.set_text('')
         if hasattr(self.toolbar, 'search_match_case'):
             # Case-sensitive checkbox
             self.toolbar.search_match_case.setCheckState(Qt.CheckState.Unchecked)
         # Reset buttons state
         self.action_search_off()
-        # Get source of the search
+        # Get the source of the search (view or edit field)
         if self.get_mode() == Mode.EDIT:
             # Edit widget
             edit_widget = self.get_edit_widget()  # type: Union[EditWidget, QPlainTextEdit]
@@ -3920,17 +3968,21 @@ class NotologEditor(QMainWindow):
         Search: Next occurrence of string in text (Forward search; Default)
         * https://doc.qt.io/qt-6/qtextdocument.html#FindFlag-enum
         """
+
         text = ''
         if hasattr(self.toolbar, 'search_input'):
             text = self.toolbar.search_input.text()
+
         check = False
         if hasattr(self.toolbar, 'search_match_case'):
             check = self.toolbar.search_match_case.isChecked()
+
         # Case-sensitive option
         if check:
             find_flags = QTextDocument.FindFlag.FindCaseSensitively
         else:
             find_flags = QTextDocument.FindFlag(0)
+
         # Find text with correct flags
         if self.get_mode() == Mode.EDIT:
             # Edit widget
@@ -3941,6 +3993,7 @@ class NotologEditor(QMainWindow):
             view_widget = self.get_view_widget()  # type: Union[ViewWidget, QTextBrowser]
             # Mode.VIEW | Mode.SOURCE
             search_source = view_widget
+
         # Apply search to the source
         res = search_source.find(text, find_flags)
         if self.debug:

@@ -126,7 +126,7 @@ lexemes = {
     "popup_about_pypi": "PyPi",
     "popup_about_date": "Date",
 
-    "update_helper_new_version_is_available": "Une nouvelle version '{latest_version}' de l'application est disponible",
+    "update_helper_new_version_is_available": "Une nouvelle version {latest_version} de l'application est disponible",
     "update_helper_latest_version_installed": "La dernière version de l'application est installée",
 
     "network_connection_error_empty": "Impossible d'obtenir des informations de réponse",

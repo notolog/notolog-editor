@@ -121,7 +121,7 @@ lexemes = {
     "popup_about_pypi": "PyPi",
     "popup_about_date": "Tarih",
 
-    "update_helper_new_version_is_available": "Uygulamanın yeni versiyonu '{latest_version}' mevcut",
+    "update_helper_new_version_is_available": "Uygulamanın yeni versiyonu {latest_version} mevcut",
     "update_helper_latest_version_installed": "Uygulamanın en güncel versiyonu yüklü",
 
     "network_connection_error_empty": "Yanıt bilgisi alınamıyor",

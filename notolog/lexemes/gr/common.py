@@ -127,7 +127,7 @@ lexemes = {
     "popup_about_pypi": "PyPi",
     "popup_about_date": "Ημερομηνία",
 
-    "update_helper_new_version_is_available": "Μια νέα έκδοση '{latest_version}' της εφαρμογής είναι διαθέσιμη",
+    "update_helper_new_version_is_available": "Μια νέα έκδοση {latest_version} της εφαρμογής είναι διαθέσιμη",
     "update_helper_latest_version_installed": "Η τελευταία έκδοση της εφαρμογής είναι εγκατεστημένη",
 
     "network_connection_error_empty": "Δεν είναι δυνατή η λήψη πληροφοριών απόκρισης",

@@ -1,17 +1,37 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.0.1] - 2024-09-15
+
+### Added
+- Count occurrences of searched text within a document, display the count in the search field, and enable/disable navigation buttons accordingly.
+- Added `get_by_scope()` method to the `Lexemes` class to retrieve all lexemes related to a particular scope.
+
+### Changed
+- Renamed the lexeme key from 'md_background_color_blockquote_friendly' to 'md_background_color_blockquote_inner', which contains the background color value for inner elements within a blockquote.
+
+### Updated
+- Modules tabs now respond to language changes in settings by reloading the `settings_dialog` scope.
+- Updated the 'Nocturne' theme styles (comments, blockquote inner elements background, and the selected tree element style), along with minor tweaks to other themes.
+- Updated tests related to the `Lexemes` class functionality.
+
+### Fixed
+- Fixed an issue where the Esc-key hidden AI Assistant dialog did not reopen after clicking its button.
+- Fixed markdown highlighting for header tags when the header content contains emojis.
+- Fixed the potential font size shift of the settings tab widget when changing themes.
+- Fixed the persisted code block background color in an open document when changing themes in the settings.
+
 ## [1.0.0] - 2024-09-01
 
 ### Added
 - New dark theme 'Nocturne' for nighttime coders.
 
 ### Fixed
-- Fixed the issue with updating setting group titles during interactive language changes.
-- Resolved pytest warning regarding the default fixture loop scope in asyncio.
+- Fixed the issue with updating settings group titles during interactive language changes.
+- Resolved `pytest` warning regarding the default fixture loop scope in `asyncio`.
 
 ### Changed
-- Updated the approach for assigning styles to setting group titles.
+- Updated the approach for assigning styles to settings group titles.
 
 ## [0.9.9] - 2024-08-18
 

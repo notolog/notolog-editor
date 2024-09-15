@@ -123,7 +123,7 @@ lexemes = {
     "popup_about_pypi": "PyPi",
     "popup_about_date": "Дата",
 
-    "update_helper_new_version_is_available": "Доступна новая версия '{latest_version}' приложения",
+    "update_helper_new_version_is_available": "Доступна новая версия {latest_version} приложения",
     "update_helper_latest_version_installed": "Установлена последняя версия приложения",
 
     "network_connection_error_empty": "Не удаётся получить информацию о ответе",

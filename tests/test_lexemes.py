@@ -155,6 +155,66 @@ class TestLexemes:
         ],
         indirect=True
     )
+    def test_lexemes_get_all(self, test_obj_lexemes: Lexemes, test_exp_params_fixture):
+        """
+        Test getter for correctly loaded and really existent lexemes.
+        """
+        param_scope, param_name, exp_result = test_exp_params_fixture
+
+        _all_lexemes = test_obj_lexemes.get_all()
+
+        if param_scope:
+            assert len(_all_lexemes) > 0
+            _scope_lexemes = _all_lexemes[param_scope] if param_scope in _all_lexemes else None
+            if _scope_lexemes:
+                if param_name in _scope_lexemes:
+                    assert _scope_lexemes[param_name] == exp_result
+                else:
+                    assert exp_result == ''
+            else:
+                assert exp_result is None
+
+    @pytest.mark.parametrize(
+        "test_obj_lexemes, test_exp_params_fixture",
+        [
+            ((None, None, None), (None, None, None)),
+            ((None, None, 'test_lexemes'), ('test_common', 'hello', 'Hello World!')),
+            ((None, None, 'test_lexemes'), ('test_common', 'test', 'Passed')),
+            ((None, None, 'test_lexemes'), ('test_scope', 123, 456)),
+            ((None, None, 'test_lexemes'), ('test_scope', 'undefined_name', '')),
+            ((None, None, 'test_lexemes'), ('test_scope_undefined', None, None)),
+            ((None, None, 'test_lexemes'), ('test_scope_undefined', 'undefined_name', None)),
+        ],
+        indirect=True
+    )
+    def test_lexemes_get_by_scope(self, test_obj_lexemes: Lexemes, test_exp_params_fixture):
+        """
+        Test getter for correctly loaded and really existent lexemes.
+        """
+        param_scope, param_name, exp_result = test_exp_params_fixture
+
+        _scope_lexemes = test_obj_lexemes.get_by_scope(param_scope)
+        if not _scope_lexemes:
+            assert exp_result is None
+        else:
+            if param_name in _scope_lexemes:
+                assert _scope_lexemes[param_name] == exp_result
+            else:
+                assert exp_result == ''
+
+    @pytest.mark.parametrize(
+        "test_obj_lexemes, test_exp_params_fixture",
+        [
+            ((None, None, None), (None, None, None)),
+            ((None, None, 'test_lexemes'), ('test_common', 'hello', 'Hello World!')),
+            ((None, None, 'test_lexemes'), ('test_common', 'test', 'Passed')),
+            ((None, None, 'test_lexemes'), ('test_scope', 123, 456)),
+            ((None, None, 'test_lexemes'), ('test_scope', 'undefined_name', '')),
+            ((None, None, 'test_lexemes'), ('test_scope_undefined', None, None)),
+            ((None, None, 'test_lexemes'), ('test_scope_undefined', 'undefined_name', None)),
+        ],
+        indirect=True
+    )
     def test_lexemes_get(self, test_obj_lexemes: Lexemes, test_exp_params_fixture):
         """
         Test getter for correctly loaded and really existent lexemes.

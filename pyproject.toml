@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "notolog"
-version = "1.0.0"
+version = "1.0.1"
 description = "Notolog - Python Markdown Editor"
 authors = ["Vadim Bakhrenkov"]
 license = "MIT"
@@ -25,7 +25,7 @@ repository = "https://github.com/notolog/notolog-editor"
 keywords = ["notolog", "python", "markdown", "editor", "ai", "llm", "text", "notes"]
 classifiers = [
     # Development Status
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
 
     # Intended Audience
     "Intended Audience :: Developers",

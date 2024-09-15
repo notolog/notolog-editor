@@ -99,7 +99,7 @@ class MdHighlighter(MainHighlighter):
         'hr': {'color': 'white', 'style': 'strikethrough', 'bg': {'color': 'darkOrange'}},
         'blockquote': {'color': 'white', 'bg': {'color': 'grey', 'pattern': Qt.BrushStyle.Dense2Pattern},
                        # Blockquote friendly elements inherited this background
-                       'bgf': {'color': 'lightGrey', 'pattern': Qt.BrushStyle.Dense3Pattern}},
+                       'bg_inner': {'color': 'lightGrey', 'pattern': Qt.BrushStyle.Dense3Pattern}},
         'html': {'color': 'darkCyan'},
         'html_open': {'color': 'green'},
         'html_close': {'color': 'darkRed'},
@@ -282,7 +282,7 @@ class MdHighlighter(MainHighlighter):
             {'group': 'u', 'open': 'u_open', 'close': 'u_close', 'theme': 'u'}
         ]
 
-    def is_blockquote_friendly(self, tag=str):
+    def is_blockquote_inner(self, tag=str):
         return tag in {
             'i', 'i_open', 'i_close', 'iu', 'iu_open', 'iu_close',
             'b', 'b_open', 'b_close', 'boo', 'boo_open', 'boo_close',
@@ -724,7 +724,13 @@ class MdHighlighter(MainHighlighter):
                     if self.debug:
                         self.logger.debug('Skipping table block')
                     continue
-                # No save to block's data as it will be self stored for next block re-highlight iteration
+                # Not saving the block's data here;
+                # it will be automatically stored during the next block re-highlighting iteration.
+
+                # Header tags correction (emoji)
+                if group == 'h':
+                    if end == len(text_str):
+                        length += 1
 
                 # Prevent passing reference of the dict
                 cfc = cf_data.copy()
@@ -823,9 +829,9 @@ class MdHighlighter(MainHighlighter):
                 and 'bg' not in cfc
                 """
                 if (self.is_in_blockquote()
-                        and self.is_blockquote_friendly(tag)
+                        and self.is_blockquote_inner(tag)
                         and 'bg' in self.theme['blockquote']):
-                    cfc['bg'] = self.theme['blockquote']['bgf']
+                    cfc['bg'] = self.theme['blockquote']['bg_inner']
 
                 # QTextCharFormat
                 tc_fmt = self.cf(**cfc)

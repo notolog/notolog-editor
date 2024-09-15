@@ -54,7 +54,7 @@ class TestQtUi:
 
     def test_search_elements(self, main_window):
         assert hasattr(main_window.toolbar, 'search_input')
-        main_window.toolbar.search_input.setText('Test search')
+        main_window.toolbar.search_input.set_text('Test search')
         assert main_window.toolbar.search_input.text() == 'Test search'
 
         assert hasattr(main_window.toolbar, 'btn_search_clear')

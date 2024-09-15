@@ -65,9 +65,9 @@ class AiMessageLabel(QLabel):
 
         self.button = QPushButton(self)
 
-        # folder_icon = self.style().standardIcon(QStyle.StandardPixmap.SP_DirIcon)  # Set an icon using standard icons
-        folder_icon = self.theme_helper.get_icon(theme_icon='copy.svg')
-        self.button.setIcon(folder_icon)
+        # copy_icon = self.style().standardIcon(QStyle.StandardPixmap.SP_DirIcon)  # Set an icon using standard icons
+        copy_icon = self.theme_helper.get_icon(theme_icon='copy.svg')
+        self.button.setIcon(copy_icon)
 
         self.button.clicked.connect(self.copy_content)
         self.button.setCursor(Qt.CursorShape.ArrowCursor)

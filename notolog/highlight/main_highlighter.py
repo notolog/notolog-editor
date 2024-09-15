@@ -109,6 +109,8 @@ class MainHighlighter(QSyntaxHighlighter):
             # For example: 'md_color_h1_text', where the 'md' is the theme prefix, and the 'h1_text' is the item
             _color = self.theme_helper.get_color(f'{self.theme_ini_prefix}_color_{item}')
             _background_color = self.theme_helper.get_color(f'{self.theme_ini_prefix}_background_color_{item}')
+            _background_color_inner = self.theme_helper.get_color(
+                f'{self.theme_ini_prefix}_background_color_{item}_inner')
             if self.debug:
                 self.logger.debug(
                     f"Prefix[{self.theme_ini_prefix}] '{item}', color: '{_color}', bg color: '{_background_color}'")
@@ -116,15 +118,23 @@ class MainHighlighter(QSyntaxHighlighter):
             if _color and isinstance(_color, str):
                 # Set up color no matter if it was set up or not
                 self.theme[item]['color'] = _color
+            # Background override
             if _background_color and isinstance(_background_color, str):
                 if 'bg' in self.theme[item]:
-                    if 'color' in self.theme[item]['bg'] and _background_color:
+                    if 'color' in self.theme[item]['bg']:
                         self.theme[item]['bg']['color'] = _background_color
                     elif isinstance(self.theme[item]['bg'], str):
                         self.theme[item]['bg'] = _background_color
                 else:
                     # Set up background color no matter if it was set up or not
                     self.theme[item]['bg'] = _background_color
+            # Inner color applied to elements within another element, such as Italic text within a Blockquote
+            if _background_color_inner and isinstance(_background_color_inner, str):
+                if 'bg_inner' in self.theme[item]:
+                    if 'color' in self.theme[item]['bg_inner']:
+                        self.theme[item]['bg_inner']['color'] = _background_color_inner
+                    elif isinstance(self.theme[item]['bg_inner'], str):
+                        self.theme[item]['bg_inner'] = _background_color_inner
 
     def get_regex(self, pattern) -> QRegularExpression:
         """

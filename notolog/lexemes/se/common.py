@@ -122,7 +122,7 @@ lexemes = {
     "popup_about_pypi": "PyPi",
     "popup_about_date": "Datum",
 
-    "update_helper_new_version_is_available": "En ny version '{latest_version}' av appen är tillgänglig",
+    "update_helper_new_version_is_available": "En ny version {latest_version} av appen är tillgänglig",
     "update_helper_latest_version_installed": "Den senaste versionen av appen är installerad",
 
     "network_connection_error_empty": "Kan inte hämta svarsinformation",

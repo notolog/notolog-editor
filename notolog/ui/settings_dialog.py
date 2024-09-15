@@ -601,6 +601,15 @@ class SettingsDialog(QDialog):
             self.lexemes = Lexemes(self.settings.app_language, default_scope='settings_dialog')
             # Get all the new lexemes
             app_language_lexemes = self.lexemes.get_all()
+
+            # Load modules to retrieve lexemes for the settings dialog
+            for module in Modules().get_by_extension('settings_dialog'):
+                # Pass settings object to avoid circular dependencies
+                module_instance = Modules().create(module)
+                if hasattr(module_instance, 'lexemes'):
+                    app_language_lexemes['settings_dialog'].update(
+                        module_instance.lexemes.get_by_scope('settings_dialog'))
+
             # Update dialog title at first
             self.setWindowTitle(self.lexemes.get('window_title'))
             # Iterate each lexeme's scope to match it with object name to update the text if applicable
@@ -636,7 +645,7 @@ class SettingsDialog(QDialog):
                     # found_objects = self.findChildren(QObject, object_name, Qt.FindChildrenRecursively)
 
                     for obj in found_objects:
-                        if ((isinstance(obj, (QLabel, QCheckBox, QComboBox, QPushButton)))
+                        if (isinstance(obj, (QLabel, QCheckBox, QComboBox, QPushButton))
                                 and hasattr(obj, 'setText')
                                 and callable(getattr(obj, 'setText'))):
                             if self.debug:
@@ -652,32 +661,37 @@ class SettingsDialog(QDialog):
                                 self.lexemes.get('general_app_font_size_label', size=self.settings.app_font_size))
 
         if setting_name == 'app_theme' or sender.objectName().endswith('app_theme'):
-            self.theme_helper = ThemeHelper()
             # Update self styles
             self.setStyleSheet(self.theme_helper.get_css('settings_dialog'))
+            # Update font size to correct the tab widget's font
+            self.update_font_size(font_size=self.settings.app_font_size)
 
         if setting_name == 'app_font_size' or sender.objectName().endswith('app_font_size'):
-            # Update font from parent as it should be updated and incorporates new font size as well.
-            # Simple update of the font size should also work.
-            self.setFont(self.parent.font())
-            widgets_to_update = [QLabel, QTabWidget, QPushButton, QCheckBox, QLineEdit, QPlainTextEdit, QComboBox,
-                                 QSpinBox, QSlider]
-            for _widget in widgets_to_update:
-                # Find all QLabel objects
-                found_objects = self.findChildren(_widget)
-                for obj in found_objects:
-                    # Align with the dialog font size (mostly for QLabel)
-                    if hasattr(obj, 'setFont'):
-                        # obj.sizeHint()
-                        obj.setFont(self.font())
-                    if obj.objectName() == "settings_dialog_general_app_font_size_label":
-                        """
-                        # Update the font size on the label
-                        font = QFont()
-                        font.setPointSize(setting_value)
-                        app_font_size_label.setFont(font)
-                        """
-                        obj.setText(self.lexemes.get('general_app_font_size_label', size=setting_value))
+            # Update the font size of elements
+            self.update_font_size(font_size=setting_value)
+
+    def update_font_size(self, font_size: int):
+        # Update the font from the parent to ensure it reflects the new font size.
+        # A simple font size update should also work.
+        self.setFont(self.parent.font())
+        widgets_to_update = [QLabel, QTabWidget, QPushButton, QCheckBox, QLineEdit, QPlainTextEdit, QComboBox,
+                             QSpinBox, QSlider]
+        for _widget in widgets_to_update:
+            # Find all QLabel objects
+            found_objects = self.findChildren(_widget)
+            for obj in found_objects:
+                # Align with the dialog font size (mostly for QLabel)
+                if hasattr(obj, 'setFont'):
+                    # obj.sizeHint()
+                    obj.setFont(self.font())
+                if obj.objectName() == "settings_dialog_general_app_font_size_label":
+                    """
+                    # Update the font size on the label
+                    font = QFont()
+                    font.setPointSize(setting_value)
+                    app_font_size_label.setFont(font)
+                    """
+                    obj.setText(self.lexemes.get('general_app_font_size_label', size=font_size))
 
     def set_tab_text(self, object_name, text):
         # Iterate through all the tabs

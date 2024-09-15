@@ -4,6 +4,12 @@ QToolBar > QCheckBox { /* QToolBar > QCheckBox: direct children of a QToolBar */
 QToolBar QLabel#search_input_label {
     margin: 2px;
 }
+QToolBar QLabel#search_count_label {
+    background-color: rgba(80, 127, 255, 0.8);
+    color: white;
+    border-radius: 2px;
+    margin: 2px;
+}
 QToolBar QLabel#search_case_sensitive {
     margin: 0 2px;
 }

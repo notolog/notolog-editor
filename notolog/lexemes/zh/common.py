@@ -119,7 +119,7 @@ lexemes = {
     "popup_about_pypi": "PyPi",
     "popup_about_date": "日期",
 
-    "update_helper_new_version_is_available": "应用的新版本 '{latest_version}' 现已可用",
+    "update_helper_new_version_is_available": "应用的新版本 {latest_version} 现已可用",
     "update_helper_latest_version_installed": "应用的最新版本已安装",
 
     "network_connection_error_empty": "无法获取响应信息",

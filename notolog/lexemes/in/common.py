@@ -123,7 +123,7 @@ lexemes = {
     "popup_about_pypi": "पाइपी",
     "popup_about_date": "तारीख",
 
-    "update_helper_new_version_is_available": "ऐप का नया संस्करण '{latest_version}' उपलब्ध है",
+    "update_helper_new_version_is_available": "ऐप का नया संस्करण {latest_version} उपलब्ध है",
     "update_helper_latest_version_installed": "ऐप का नवीनतम संस्करण स्थापित है",
 
     "network_connection_error_empty": "प्रतिक्रिया जानकारी प्राप्त करने में असमर्थ",

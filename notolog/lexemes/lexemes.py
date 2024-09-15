@@ -117,6 +117,9 @@ class Lexemes:
         # Return all lexemes set
         return self.lexemes
 
+    def get_by_scope(self, scope):
+        return self.lexemes[scope] if scope in self.lexemes else None
+
     def get_default_scope(self):
         # Default scope if set
         scope = self._default_scope

@@ -94,3 +94,30 @@ class ViewWidget(QTextBrowser):
         # Log the resource request
         if self.debug:
             self.logger.debug(f"Requesting resource of type {type} at URL: {url.toString()}")
+
+    def searched_text_count(self, searched_text, find_flags) -> int:
+        """
+        Counts the number of occurrences of a given text within the document.
+
+        Args:
+            searched_text (str): The text string to search for within the document.
+            find_flags (QTextDocument.FindFlags): Flags to control the search behavior,
+                                                  such as case sensitivity or whole word matching.
+
+        Returns:
+            int: The number of times the searched text appears in the document.
+        """
+        count = 0
+        # Create a temporary cursor for the search
+        # This way, the actual cursor position that the user sees will not be affected.
+        temp_cursor = self.textCursor()
+
+        # Move the temporary cursor to the start of the document
+        temp_cursor.movePosition(temp_cursor.MoveOperation.Start)
+
+        # Find and count occurrences
+        while temp_cursor := self.document().find(searched_text, temp_cursor, find_flags):
+            count += 1
+
+        # No need to reset the visual cursor since the original cursor was not moved
+        return count

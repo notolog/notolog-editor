@@ -2,9 +2,15 @@ QToolBar > QCheckBox { /* QToolBar > QCheckBox: direct children of a QToolBar */
     margin-right: 0;
 }
 QToolBar QLineEdit#search_input {
-    color: whitesmoke;
+    color: whiteSmoke;
 }
 QToolBar QLabel#search_input_label {
+    margin: 2px;
+}
+QToolBar QLabel#search_count_label {
+    background-color: rgba(255, 0, 0, 0.8);
+    color: whiteSmoke;
+    border-radius: 2px;
     margin: 2px;
 }
 QToolBar QLabel#search_case_sensitive {
