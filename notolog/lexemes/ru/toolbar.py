@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "Предыдущий результат поиска",
     "search_buttons_label_next": "Следующий поиск",
     "search_buttons_accessible_name_next": "Следующий результат поиска",
-    "search_case_sensitive": "Учитывать регистр",
-    "search_match_case_tooltip": "Поиск с учетом регистра",
+    "search_case_sensitive_label": "Учитывать регистр",
+    "search_case_sensitive_tooltip": "Поиск с учетом регистра",
 }

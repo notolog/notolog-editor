@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "Edellinen hakutulos",
     "search_buttons_label_next": "Seuraava haku",
     "search_buttons_accessible_name_next": "Seuraava hakutulos",
-    "search_case_sensitive": "Kirjainkoko merkitsee",
-    "search_match_case_tooltip": "Haku kirjainkoolla",
+    "search_case_sensitive_label": "Kirjainkoko merkitsee",
+    "search_case_sensitive_tooltip": "Haku kirjainkoolla",
 }

@@ -1,9 +1,13 @@
 # tests/test_notolog_editor.py
 
+from PySide6.QtGui import QTextDocument
+
 from notolog.notolog_editor import NotologEditor
 from notolog.settings import Settings
 from notolog.editor_state import Mode
 from notolog.lexemes.lexemes import Lexemes
+
+from unittest.mock import Mock
 
 import pytest
 
@@ -31,6 +35,13 @@ class TestNotologEditor:
         _obj = NotologEditor()
         # Set lexemes object
         setattr(_obj, 'lexemes', test_obj_lexemes)
+
+        # Create nested mocks for toolbar.search_form
+        search_form_mock = Mock()
+        toolbar_mock = Mock(search_form=search_form_mock)
+
+        # Assign the mock toolbar to the editor object
+        _obj.toolbar = toolbar_mock
 
         yield _obj
 
@@ -136,3 +147,65 @@ class TestNotologEditor:
         # assert str(mock_save_file_content.call_args) == "call('%s', '%s')" % (file_path, content)
         if content:
             assert str(content) in str(mock_save_file_content.call_args)
+
+    @pytest.mark.parametrize(
+        "test_exp_params_fixture",
+        [
+            (True, None, ''),
+            (False, '', ''),
+            (False, 'Test Text', 'Test Text'),
+        ],
+        indirect=True
+    )
+    def test_get_action_search_text(self, mocker, test_obj_notolog_editor, test_exp_params_fixture):
+        param_default, param_text, text_result = test_exp_params_fixture
+
+        setattr(test_obj_notolog_editor, 'debug', False)
+
+        # Mock the search_form directly on the already provided fixture object
+        search_form_mock = mocker.Mock()
+
+        mocker.patch.object(test_obj_notolog_editor.toolbar, 'search_form', new=search_form_mock)
+        # Set return values or side effects on this mock
+        search_form_mock.text.return_value = param_text
+
+        if param_default:
+            # Force the method to use its default value by omitting the required parameter
+            delattr(test_obj_notolog_editor.toolbar, 'search_form')
+
+        result = test_obj_notolog_editor.get_action_search_text()
+
+        assert result == text_result
+
+        if not param_default:
+            search_form_mock.text.assert_called_once()
+
+    @pytest.mark.parametrize(
+        "test_exp_params_fixture",
+        [
+            (None, None, QTextDocument.FindFlag(0)),
+            (False, None, QTextDocument.FindFlag(0)),
+            (True, None, QTextDocument.FindFlag.FindBackward),
+            (False, False, QTextDocument.FindFlag(0)),
+            (True, False, QTextDocument.FindFlag.FindBackward),
+            (False, True, QTextDocument.FindFlag.FindCaseSensitively),
+            (True, True, QTextDocument.FindFlag.FindBackward | QTextDocument.FindFlag.FindCaseSensitively),
+        ],
+        indirect=True
+    )
+    def test_get_action_search_flags(self, mocker, test_obj_notolog_editor, test_exp_params_fixture):
+        param_backward, param_case_sensitive, flags_result = test_exp_params_fixture
+
+        setattr(test_obj_notolog_editor, 'debug', False)
+
+        # Mock the search_form directly on the already provided fixture object
+        search_form_mock = mocker.Mock()
+        mocker.patch.object(test_obj_notolog_editor.toolbar, 'search_form', new=search_form_mock)
+
+        # Set return values or side effects on this mock
+        search_form_mock.case_sensitive.return_value = param_case_sensitive
+
+        result = test_obj_notolog_editor.get_action_search_flags(param_backward)
+
+        assert result == flags_result
+        search_form_mock.case_sensitive.assert_called_once()

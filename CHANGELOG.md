@@ -1,6 +1,22 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.0.2] - 2024-09-29
+
+### Added
+- Added the index of searched text occurrences within the document, alongside the count of such occurrences. This enhancement provides more detailed search results and helps users locate text more precisely.
+
+### Changed
+- Extracted SearchForm from the ToolBar class into a separate file and updated relevant lexeme names for case-sensitive search.
+
+### Updated
+- Updated themes to enhance the document's search field, ensuring compatibility with the new functionality.
+- Upgraded the `cryptography` package dependency from version '42.0.7' to '43.0.1' or later to incorporate the latest security improvements.
+- Updated tests, particularly for the ToolBar and SearchForm classes.
+
+### Fixed
+- Adjusted the searched occurrence counter to respond to the case-sensitive search checkbox for accurate results.
+
 ## [1.0.1] - 2024-09-15
 
 ### Added

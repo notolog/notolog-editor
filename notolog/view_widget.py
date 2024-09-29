@@ -50,6 +50,9 @@ class ViewWidget(QTextBrowser):
         self.logging = AppConfig().get_logging()
         self.debug = AppConfig().get_debug()
 
+        # Initialize storage for positions and indexes of searched text occurrences.
+        self._searched_text_positions = []
+
     def setDocument(self, document):
         # Override setDocument() to allow additional actions like emit the document set signal
         super().setDocument(document)
@@ -108,6 +111,8 @@ class ViewWidget(QTextBrowser):
             int: The number of times the searched text appears in the document.
         """
         count = 0
+        # Reset stored text positions from previous searches to prepare for a new search.
+        self._searched_text_positions = []
         # Create a temporary cursor for the search
         # This way, the actual cursor position that the user sees will not be affected.
         temp_cursor = self.textCursor()
@@ -118,6 +123,29 @@ class ViewWidget(QTextBrowser):
         # Find and count occurrences
         while temp_cursor := self.document().find(searched_text, temp_cursor, find_flags):
             count += 1
+            pos = temp_cursor.position()
+            if pos not in self._searched_text_positions:
+                self._searched_text_positions.append(pos)
+
+        # Reset the stored positions if no occurrence index is found.
+        if count == 0:
+            self._searched_text_positions = []
 
         # No need to reset the visual cursor since the original cursor was not moved
         return count
+
+    def searched_text_index(self, position) -> int:
+        """
+        Shows the index of the occurrence at a given cursor position within the document.
+
+        Args:
+            position (int): The cursor position within the document.
+
+        Returns:
+            int: The index of the occurrence at a given cursor position within the document.
+        """
+
+        if position in self._searched_text_positions:
+            return self._searched_text_positions.index(position) + 1
+        else:
+            return 0

@@ -415,9 +415,9 @@ class NotologEditor(QMainWindow):
             self.set_app_title()  # Generic title without sub part
             # Update toolbar
             self.create_icons_toolbar(refresh=True)
-            if hasattr(self.toolbar, 'search_input'):
+            if hasattr(self, 'toolbar') and hasattr(self.toolbar, 'search_form'):
                 # Search field placeholder to empty
-                self.toolbar.search_input.set_placeholder_text(
+                self.toolbar.search_form.set_placeholder_text(
                     self.lexemes.get('search_input_placeholder_text', scope='toolbar'))
             # Re-draw main menu
             self.draw_menu()
@@ -521,7 +521,7 @@ class NotologEditor(QMainWindow):
             if hasattr(self, 'text_edit'):
                 self.text_edit.show()
             # Clear search fields and statuses
-            if hasattr(self, 'search_input'):
+            if hasattr(self, 'toolbar') and hasattr(self.toolbar, 'search_form'):
                 self.action_search_clear()
             # Remove warning from the statusbar in edit mode
             # TODO: Update to specify when warning sign should be visible in EDIT mode as well.
@@ -543,7 +543,7 @@ class NotologEditor(QMainWindow):
                     # Save cursor position (for previous mode)
                     self.restore_doc_cursor_pos(mode=data['pv'], source_widget=self.text_view)
             # Clear search fields and statuses
-            if hasattr(self, 'search_input'):
+            if hasattr(self, 'toolbar') and hasattr(self.toolbar, 'search_form'):
                 self.action_search_clear()
 
         if hasattr(self, 'toolbar'):  # For updates only
@@ -1835,6 +1835,10 @@ class NotologEditor(QMainWindow):
         self.rehighlight_editor(full_rehighlight)
         """
 
+        # The searched text and its position can both be changed.
+        if hasattr(self, 'toolbar') and hasattr(self.toolbar, 'search_form'):
+            self.action_search_clear()
+
     def on_modification_changed(self, changed) -> None:
         """
         The content changes in a way that affects the modification state.
@@ -1867,17 +1871,11 @@ class NotologEditor(QMainWindow):
         Cursor position changed.
         More info about the signal: https://doc.qt.io/qt-6/qtextedit.html#cursorPositionChanged
         """
-        if self.get_mode() == Mode.EDIT:
-            # Edit widget
-            edit_widget = self.get_edit_widget()  # type: Union[EditWidget, QPlainTextEdit]
-            cursor = edit_widget.textCursor()
-        else:
-            """
-            These modes share the same widget (Mode.VIEW | Mode.SOURCE)
-            """
-            # View widget
-            view_widget = self.get_view_widget()  # type: Union[ViewWidget, QTextBrowser]
-            cursor = view_widget.textCursor()
+
+        # Retrieve the source widget to perform cursor operations.
+        active_widget = self.get_active_widget()
+        cursor = active_widget.textCursor()
+
         block = cursor.block()
         selected_text = cursor.selection().toPlainText()
 
@@ -1898,8 +1896,14 @@ class NotologEditor(QMainWindow):
             self.logger.debug('cursor %d x %d' % (self.line_num_hr, self.col_num))
 
         if hasattr(self, 'statusbar') and hasattr(self.statusbar, 'cursor_label'):
-            # Update text at statusbar
+            # Update cursor position and selected text attributes on the status bar label.
             self.statusbar['cursor_label'].setText(self.get_cursor_label_text(selected_text=selected_text))
+
+        if (hasattr(self, 'toolbar')
+                and hasattr(self.toolbar, 'search_form')
+                and self.toolbar.search_form.position_text() != ''):
+            # Hide the position of the current search result if set.
+            self.toolbar.search_form.set_position_text('')
 
     def changeEvent(self, event) -> None:
         """
@@ -2321,36 +2325,6 @@ class NotologEditor(QMainWindow):
             if 'name' in action and action['name'] == name:
                 return action
 
-    def get_toolbar_search_buttons(self) -> List[Dict[str, Any]]:
-        """
-        Toolbar's search buttons map.
-        """
-        return [
-            {'type': 'action', 'name': 'search_clear', 'system_icon': 'window-close', 'theme_icon': 'x-circle-fill.svg',
-             'action': self.action_search_clear, 'enabled': False, 'default': False,
-             'tooltip': self.lexemes.get('search_buttons_label_clear', scope='toolbar'),
-             'accessible_name': self.lexemes.get('search_buttons_accessible_name_clear', scope='toolbar'),
-             'var_name': 'btn_search_clear', 'color': self.theme_helper.get_color('toolbar_search_button_clear')},
-            {'type': 'action', 'name': 'search_prev', 'system_icon': 'go-up', 'theme_icon': 'caret-up-fill.svg',
-             'action': self.action_search_prev, 'enabled': False, 'default': False,
-             'tooltip': self.lexemes.get('search_buttons_label_prev', scope='toolbar'),
-             'accessible_name': self.lexemes.get('search_buttons_accessible_name_prev', scope='toolbar'),
-             'var_name': 'btn_search_prev', 'color': self.theme_helper.get_color('toolbar_search_button_prev')},
-            {'type': 'action', 'name': 'search_next', 'system_icon': 'go-down', 'theme_icon': 'caret-down-fill.svg',
-             'action': self.action_search_next, 'enabled': False, 'default': True,
-             'tooltip': self.lexemes.get('search_buttons_label_next', scope='toolbar'),
-             'accessible_name': self.lexemes.get('search_buttons_accessible_name_next', scope='toolbar'),
-             'var_name': 'btn_search_next', 'color': self.theme_helper.get_color('toolbar_search_button_next')},
-        ]
-
-    def get_toolbar_search_button_by_name(self, name: str) -> Dict:
-        """
-        Get particular button config by name.
-        """
-        for button in self.get_toolbar_search_buttons():
-            if 'name' in button and button['name'] == name:
-                return button
-
     def create_icons_toolbar(self, refresh: bool = False) -> None:
         """
         Main toolbar with icons.
@@ -2364,16 +2338,16 @@ class NotologEditor(QMainWindow):
         self.toolbar = ToolBar(
             parent=self,
             actions=self.get_toolbar_actions(),
-            search_buttons=self.get_toolbar_search_buttons(),
             refresh=lambda: self.create_icons_toolbar(refresh=True)  # Action to call if refresh needed
         )
 
-        if hasattr(self.toolbar, 'search_input'):
+        if hasattr(self.toolbar, 'search_form'):
             # Connect actions to the search field
-            self.toolbar.search_input.textChanged.connect(self.action_search_on)
-            self.toolbar.search_input.returnPressed.connect(self.action_search_next)
+            self.toolbar.search_form.textChanged.connect(self.action_search_on)
+            self.toolbar.search_form.returnPressed.connect(self.action_search_next)
+            self.toolbar.search_form.caseSensitive.connect(self.action_search_case_sensitive)
             # And adjust appearance
-            self.toolbar.search_input.set_maximum_width(self.weight_to_px_uno * 2)
+            self.toolbar.search_form.set_maximum_width(self.weight_to_px_uno * 2)
 
         self.addToolBar(self.toolbar)
 
@@ -3301,9 +3275,9 @@ class NotologEditor(QMainWindow):
         if self.debug:
             self.logger.debug('Searching text "%s"' % selected_text)
 
-        if hasattr(self.toolbar, 'search_input'):
-            self.toolbar.search_input.set_text(selected_text)
-            self.toolbar.search_input.set_focus()
+        if hasattr(self, 'toolbar') and hasattr(self.toolbar, 'search_form'):
+            self.toolbar.search_form.set_text(selected_text)
+            self.toolbar.search_form.set_focus()
         self.action_search_next()
 
     def reload_active_file(self) -> None:
@@ -3840,51 +3814,67 @@ class NotologEditor(QMainWindow):
         self.settings.cursor_pos = 0
         self.settings.viewport_pos = [0, 0]
 
-    def action_search_on(self) -> None:
-        """
-        Search: Started; related actions.
-        Could be called upon input field's textChanged event.
-        """
-        text = ''
-        if hasattr(self.toolbar, 'search_input'):
-            text = self.toolbar.search_input.text()
-
-        check = False
-        if hasattr(self.toolbar, 'search_match_case'):
-            check = self.toolbar.search_match_case.isChecked()
-
-        # Case-sensitive option
-        if check:
-            find_flags = QTextDocument.FindFlag.FindCaseSensitively
-        else:
-            find_flags = QTextDocument.FindFlag(0)
-
-        # Get the source of the search (view or edit field)
+    def get_active_widget(self) -> Union[EditWidget, ViewWidget, QPlainTextEdit, QTextBrowser]:
         if self.get_mode() == Mode.EDIT:
             # Edit widget
             edit_widget = self.get_edit_widget()  # type: Union[EditWidget, QPlainTextEdit]
-            search_source = edit_widget
-        else:
+            return edit_widget
+        else:  # These modes share the same widget (Mode.VIEW | Mode.SOURCE)
             # View widget
             view_widget = self.get_view_widget()  # type: Union[ViewWidget, QTextBrowser]
             # Mode.VIEW | Mode.SOURCE
-            search_source = view_widget
+            return view_widget
+
+    def action_search_on(self, searched_text=None) -> None:
+        """
+        Initiates a search operation based on the provided text.
+
+        This method could be triggered by the input field's textChanged event.
+
+        Args:
+            searched_text (str, optional): The text to search for. Defaults to None.
+        """
+
+        # Retrieve searched text, if not set
+        if searched_text is None:
+            searched_text = self.get_action_search_text()
+
+        # Retrieve the bitmask of FindFlag options for configuring the search.
+        find_flags = self.get_action_search_flags()
+
+        # Retrieve the source widget to perform the search operations.
+        search_source = self.get_active_widget()
 
         # Count searched occurrences
-        search_occurrences = search_source.searched_text_count(text, find_flags)
+        search_occurrences = search_source.searched_text_count(searched_text, find_flags)
         # Display the count of searched occurrences
-        self.toolbar.search_input.set_counter_text(str(search_occurrences))
+        self.toolbar.search_form.set_counter_text(str(search_occurrences if search_occurrences > 0 else ''))
 
-        if len(text) > 0 and hasattr(self.toolbar, 'btn_search_clear'):
-            self.toolbar.btn_search_clear.setEnabled(True)
-            if search_occurrences > 0:
-                self.toolbar.btn_search_next.setEnabled(True)  # noqa
-                self.toolbar.btn_search_prev.setEnabled(True)  # noqa
-            else:
-                self.toolbar.btn_search_next.setEnabled(False)  # noqa
-                self.toolbar.btn_search_prev.setEnabled(False)  # noqa
-        else:
+        # Update the state of search buttons
+        self.action_search_buttons_refresh()
+
+        if len(searched_text) == 0:
+            # Set the searched text to empty, clearing the search form content.
             self.action_search_clear()
+
+    def action_search_buttons_refresh(self):
+        """
+        Update the state of search buttons.
+        """
+
+        if hasattr(self, 'toolbar') and hasattr(self.toolbar, 'search_form'):
+            search_occurrences = self.toolbar.search_form.counter_text()
+
+            # Retrieve searched text.
+            text = self.get_action_search_text()
+            if hasattr(self.toolbar.search_form, 'btn_search_clear'):
+                self.toolbar.search_form.btn_search_clear.setEnabled(True if len(text) > 0 else False)
+
+            btn_state = True if len(search_occurrences) > 0 else False
+            if hasattr(self.toolbar.search_form, 'btn_search_next'):
+                self.toolbar.search_form.btn_search_next.setEnabled(btn_state)
+            if hasattr(self.toolbar.search_form, 'btn_search_prev'):
+                self.toolbar.search_form.btn_search_prev.setEnabled(btn_state)
 
     def action_search_off(self) -> None:
         """
@@ -3892,113 +3882,145 @@ class NotologEditor(QMainWindow):
         Could be called upon search clear action which could be called upon input field's 'textChanged' event
         in their turn.
         """
-        if hasattr(self.toolbar, 'btn_search_clear'):
-            self.toolbar.btn_search_clear.setEnabled(False)
-            self.toolbar.btn_search_next.setEnabled(False)  # noqa
-            self.toolbar.btn_search_prev.setEnabled(False)  # noqa
+
+        # Update the state of search buttons
+        self.action_search_buttons_refresh()
+
+        if hasattr(self, 'toolbar') and hasattr(self.toolbar, 'search_form'):
             # Hide the occurrences counter
-            self.toolbar.search_input.set_counter_text('')
+            self.toolbar.search_form.set_counter_text('')
+
+    def action_search_case_sensitive(self, state=None) -> None:
+        """
+        Adjust search sensitivity and update UI based on the checkbox state change.
+
+        This method updates search operations in response to changes in the case-sensitivity checkbox state.
+        It clears existing selections, updates the count of search occurrences, and refreshes the display
+        based on the current application mode (edit or view).
+
+        Args:
+            state (Qt.CheckState, optional): The state of the case-sensitive search checkbox, which
+                can be Checked (case-sensitive search enabled), Unchecked (disabled), or PartiallyChecked (unused).
+        """
+
+        # Retrieve searched text and FindFlag options for search configuration.
+        text = self.get_action_search_text()
+        find_flags = self.get_action_search_flags()
+
+        # Retrieve the source widget to perform the search operations.
+        search_source = self.get_active_widget()
+
+        # Clear the selected text related to the search, if the positions of searched text occurrence is set.
+        if self.toolbar.search_form.position_text() != '':
+            # Get the current cursor
+            cursor = search_source.textCursor()
+            # Clear the selection
+            cursor.clearSelection()
+            # Set the modified cursor back to the source
+            search_source.setTextCursor(cursor)
+
+        # Count searched occurrences
+        search_occurrences = search_source.searched_text_count(text, find_flags)
+        # Display the count of searched occurrences
+        self.toolbar.search_form.set_counter_text(str(search_occurrences if search_occurrences > 0 else ''))
+        # Remove the position of searched text occurrence within the document.
+        self.toolbar.search_form.set_position_text('')
+
+        # Update the state of search buttons
+        self.action_search_buttons_refresh()
 
     def action_search_clear(self) -> None:
         """
         Search field set to an empty text and reset the search state.
         """
-        if hasattr(self.toolbar, 'search_input'):
-            self.toolbar.search_input.set_text('')
-        if hasattr(self.toolbar, 'search_match_case'):
+
+        if hasattr(self, 'toolbar') and hasattr(self.toolbar, 'search_form'):
+            self.toolbar.search_form.set_text('')
             # Case-sensitive checkbox
-            self.toolbar.search_match_case.setCheckState(Qt.CheckState.Unchecked)
+            self.toolbar.search_form.set_case_sensitive(False)
+
         # Reset buttons state
         self.action_search_off()
-        # Get the source of the search (view or edit field)
-        if self.get_mode() == Mode.EDIT:
-            # Edit widget
-            edit_widget = self.get_edit_widget()  # type: Union[EditWidget, QPlainTextEdit]
-            search_source = edit_widget
-        else:
-            # View widget
-            view_widget = self.get_view_widget()  # type: Union[ViewWidget, QTextBrowser]
-            # Mode.VIEW | Mode.SOURCE
-            search_source = view_widget
+
+        # Retrieve the source widget to perform the search operations.
+        search_source = self.get_active_widget()
+
         """
         Start over again if not matches in this direction.
         Be careful with cursor position set as it may affect initial load of the document with editor_state_update_handler().
         This code may replace stored viewport or cursor positions, so avoid it here:
         search_source.moveCursor(QTextCursor.MoveOperation.Start)
         """
-        search_source.find('')  # Search a void
+        search_source.find('', QTextDocument.FindFlag(0))  # Search for a void value
 
     def action_search_prev(self) -> None:
         """
         Search: Previous occurrence of string in text (Backward search)
-        * https://doc.qt.io/qt-6/qtextdocument.html#FindFlag-enum
         """
-        text = ''
-        if hasattr(self.toolbar, 'search_input'):
-            text = self.toolbar.search_input.text()
-        check = False
-        if hasattr(self.toolbar, 'search_match_case'):
-            check = self.toolbar.search_match_case.isChecked()
-        # Case-sensitive option
-        if check:
-            find_flags = (QTextDocument.FindFlag.FindBackward | QTextDocument.FindFlag.FindCaseSensitively)
-        else:
-            find_flags = QTextDocument.FindFlag.FindBackward
-        # Find text with correct flags
-        if self.get_mode() == Mode.EDIT:
-            # Edit widget
-            edit_widget = self.get_edit_widget()  # type: Union[EditWidget, QPlainTextEdit]
-            search_source = edit_widget
-        else:
-            # View widget
-            view_widget = self.get_view_widget()  # type: Union[ViewWidget, QTextBrowser]
-            # Mode.VIEW | Mode.SOURCE
-            search_source = view_widget
+
+        # Retrieve searched text and FindFlag options for search configuration.
+        text = self.get_action_search_text()
+        find_flags = self.get_action_search_flags(backward=True)  # Perform a backward search
+
+        # Retrieve the source widget to perform the search operations.
+        search_source = self.get_active_widget()
+
         # Apply search to the source
         res = search_source.find(text, find_flags)
         if self.debug:
-            self.logger.debug('Search PREVIOUS result for "%s"', res)
+            self.logger.debug('Search PREVIOUS match result: "%s"', res)
         if not res:
             # Start over again if not matches in this direction
             search_source.moveCursor(QTextCursor.MoveOperation.End)
             search_source.find(text, find_flags)
 
+        # Highlight the positions of searched text occurrences within the document.
+        if search_source.cursor():
+            pos = search_source.textCursor().position()
+            self.toolbar.search_form.set_position_text(index=str(search_source.searched_text_index(pos)))
+
     def action_search_next(self) -> None:
         """
         Search: Next occurrence of string in text (Forward search; Default)
-        * https://doc.qt.io/qt-6/qtextdocument.html#FindFlag-enum
         """
 
-        text = ''
-        if hasattr(self.toolbar, 'search_input'):
-            text = self.toolbar.search_input.text()
+        # Retrieve searched text and FindFlag options for search configuration.
+        text = self.get_action_search_text()
+        find_flags = self.get_action_search_flags()
 
-        check = False
-        if hasattr(self.toolbar, 'search_match_case'):
-            check = self.toolbar.search_match_case.isChecked()
-
-        # Case-sensitive option
-        if check:
-            find_flags = QTextDocument.FindFlag.FindCaseSensitively
-        else:
-            find_flags = QTextDocument.FindFlag(0)
-
-        # Find text with correct flags
-        if self.get_mode() == Mode.EDIT:
-            # Edit widget
-            edit_widget = self.get_edit_widget()  # type: Union[EditWidget, QPlainTextEdit]
-            search_source = edit_widget
-        else:
-            # View widget
-            view_widget = self.get_view_widget()  # type: Union[ViewWidget, QTextBrowser]
-            # Mode.VIEW | Mode.SOURCE
-            search_source = view_widget
+        # Retrieve the source widget to perform the search operations.
+        search_source = self.get_active_widget()
 
         # Apply search to the source
         res = search_source.find(text, find_flags)
         if self.debug:
-            self.logger.debug('Search NEXT result "%s"', res)
+            self.logger.debug('Search NEXT match result: "%s"', res)
         if not res:
             # Start over again if not matches in this direction
             search_source.moveCursor(QTextCursor.MoveOperation.Start)
             search_source.find(text, find_flags)
+
+        # Highlight the positions of searched text occurrences within the document.
+        if search_source.cursor():
+            pos = search_source.textCursor().position()
+            self.toolbar.search_form.set_position_text(index=str(search_source.searched_text_index(pos)))
+
+    def get_action_search_text(self) -> str:
+        text = ''
+        if hasattr(self, 'toolbar') and hasattr(self.toolbar, 'search_form'):
+            text = self.toolbar.search_form.text()
+        return text
+
+    def get_action_search_flags(self, backward: bool = False) -> QTextDocument.FindFlag:
+        """
+        Retrieve the bitmask of FindFlag options for configuring the search.
+        * https://doc.qt.io/qt-6/qtextdocument.html#FindFlag-enum
+        """
+
+        find_flags = QTextDocument.FindFlag.FindBackward if backward else QTextDocument.FindFlag(0)
+        if hasattr(self, 'toolbar') and hasattr(self.toolbar, 'search_form'):
+            # Case-sensitive option
+            if self.toolbar.search_form.case_sensitive():
+                find_flags |= QTextDocument.FindFlag.FindCaseSensitively
+        # Return flags bitmask
+        return find_flags

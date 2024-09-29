@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "Vorig zoekresultaat",
     "search_buttons_label_next": "Volgende zoeken",
     "search_buttons_accessible_name_next": "Volgend zoekresultaat",
-    "search_case_sensitive": "Hoofdlettergevoelig",
-    "search_match_case_tooltip": "Zoeken met hoofdlettergevoeligheid",
+    "search_case_sensitive_label": "Hoofdlettergevoelig",
+    "search_case_sensitive_tooltip": "Zoeken met hoofdlettergevoeligheid",
 }

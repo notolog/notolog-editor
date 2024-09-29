@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "Resultado da pesquisa anterior",
     "search_buttons_label_next": "Próxima pesquisa",
     "search_buttons_accessible_name_next": "Resultado da próxima pesquisa",
-    "search_case_sensitive": "Diferenciar maiúsculas de minúsculas",
-    "search_match_case_tooltip": "Pesquisa diferenciando maiúsculas de minúsculas",
+    "search_case_sensitive_label": "Diferenciar maiúsculas de minúsculas",
+    "search_case_sensitive_tooltip": "Pesquisa diferenciando maiúsculas de minúsculas",
 }

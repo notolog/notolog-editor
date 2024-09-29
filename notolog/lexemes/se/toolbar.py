@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "Föregående sökresultat",
     "search_buttons_label_next": "Nästa sökning",
     "search_buttons_accessible_name_next": "Nästa sökresultat",
-    "search_case_sensitive": "Skiftlägeskänslig",
-    "search_match_case_tooltip": "Skiftlägeskänslig sökning"
+    "search_case_sensitive_label": "Skiftlägeskänslig",
+    "search_case_sensitive_tooltip": "Skiftlägeskänslig sökning"
 }

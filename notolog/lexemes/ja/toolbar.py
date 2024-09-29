@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "前の検索結果",
     "search_buttons_label_next": "次の検索",
     "search_buttons_accessible_name_next": "次の検索結果",
-    "search_case_sensitive": "大文字と小文字を区別",
-    "search_match_case_tooltip": "大文字と小文字を区別する検索",
+    "search_case_sensitive_label": "大文字と小文字を区別",
+    "search_case_sensitive_tooltip": "大文字と小文字を区別する検索",
 }

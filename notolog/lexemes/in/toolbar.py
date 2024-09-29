@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "पिछला खोज परिणाम",
     "search_buttons_label_next": "अगली खोज",
     "search_buttons_accessible_name_next": "अगली खोज परिणाम",
-    "search_case_sensitive": "मामूली जांच",
-    "search_match_case_tooltip": "मामूली जांच खोज"
+    "search_case_sensitive_label": "मामूली जांच",
+    "search_case_sensitive_tooltip": "मामूली जांच खोज"
 }

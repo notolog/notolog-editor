@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "Προηγούμενο αποτέλεσμα αναζήτησης",
     "search_buttons_label_next": "Επόμενη αναζήτηση",
     "search_buttons_accessible_name_next": "Επόμενο αποτέλεσμα αναζήτησης",
-    "search_case_sensitive": "Διάκριση πεζών-κεφαλαίων",
-    "search_match_case_tooltip": "Αναζήτηση με διάκριση πεζών-κεφαλαίων",
+    "search_case_sensitive_label": "Διάκριση πεζών-κεφαλαίων",
+    "search_case_sensitive_tooltip": "Αναζήτηση με διάκριση πεζών-κεφαλαίων",
 }

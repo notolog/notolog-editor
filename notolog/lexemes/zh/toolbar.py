@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "上一次搜索结果",
     "search_buttons_label_next": "下一次搜索",
     "search_buttons_accessible_name_next": "下一次搜索结果",
-    "search_case_sensitive": "区分大小写",
-    "search_match_case_tooltip": "区分大小写的搜索",
+    "search_case_sensitive_label": "区分大小写",
+    "search_case_sensitive_tooltip": "区分大小写的搜索",
 }

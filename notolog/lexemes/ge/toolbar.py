@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "წინა ძიების შედეგი",
     "search_buttons_label_next": "შემდეგი ძიება",
     "search_buttons_accessible_name_next": "შემდეგი ძიების შედეგი",
-    "search_case_sensitive": "რეგისტრის მნიშვნელობა",
-    "search_match_case_tooltip": "რეგისტრის მნიშვნელობით ძიება",
+    "search_case_sensitive_label": "რეგისტრის მნიშვნელობა",
+    "search_case_sensitive_tooltip": "რეგისტრის მნიშვნელობით ძიება",
 }

@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "Önceki arama sonucu",
     "search_buttons_label_next": "Sonraki arama",
     "search_buttons_accessible_name_next": "Sonraki arama sonucu",
-    "search_case_sensitive": "Büyük/küçük harfe duyarlı",
-    "search_match_case_tooltip": "Büyük/küçük harfe duyarlı arama",
+    "search_case_sensitive_label": "Büyük/küçük harfe duyarlı",
+    "search_case_sensitive_tooltip": "Büyük/küçük harfe duyarlı arama",
 }

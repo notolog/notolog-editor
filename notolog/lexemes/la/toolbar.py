@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "Eventus quaestionis praecedentis",
     "search_buttons_label_next": "Quaestio proxima",
     "search_buttons_accessible_name_next": "Eventus quaestionis proximae",
-    "search_case_sensitive": "Casu sensitivo",
-    "search_match_case_tooltip": "Quaerere casu sensitivo",
+    "search_case_sensitive_label": "Casu sensitivo",
+    "search_case_sensitive_tooltip": "Quaerere casu sensitivo",
 }

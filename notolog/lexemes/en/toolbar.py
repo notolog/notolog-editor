@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "Previous search result",
     "search_buttons_label_next": "Next search",
     "search_buttons_accessible_name_next": "Next search result",
-    "search_case_sensitive": "Case sensitive",
-    "search_match_case_tooltip": "Case sensitive search",
+    "search_case_sensitive_label": "Case sensitive",
+    "search_case_sensitive_tooltip": "Case sensitive search",
 }

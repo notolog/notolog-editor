@@ -1,15 +1,25 @@
-QToolBar > QCheckBox { /* QToolBar > QCheckBox: direct children of a QToolBar */
-    margin-right: 0;
-}
 QToolBar QLabel#search_input_label {
     margin: 2px;
 }
+QToolBar QPushButton {
+    margin-left: 2px;
+}
 QToolBar QLabel#search_count_label {
-    background-color: rgba(255, 0, 0, 1);
+    background-color: black;
     color: white;
     border-radius: 2px;
-    margin: 2px;
+    font-weight: bold;
+    margin: 1px;
 }
-QToolBar QLabel#search_case_sensitive {
+QToolBar QLabel#search_pos_label {
+    background-color: red;
+    color: white;
+    border-radius: 2px;
+    margin: 3px 2px;
+}
+QToolBar QLabel#search_case_sensitive_label {
+    margin: 0 2px;
+}
+QToolBar QCheckBox#search_case_sensitive {
     margin: 0 2px;
 }

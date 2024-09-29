@@ -53,11 +53,11 @@ class TestQtUi:
         assert main_window.statusbar['encryption_label'].text() == 'Simplicitas 🔓'
 
     def test_search_elements(self, main_window):
-        assert hasattr(main_window.toolbar, 'search_input')
-        main_window.toolbar.search_input.set_text('Test search')
-        assert main_window.toolbar.search_input.text() == 'Test search'
+        assert hasattr(main_window.toolbar, 'search_form')
+        main_window.toolbar.search_form.set_text('Test search')
+        assert main_window.toolbar.search_form.text() == 'Test search'
 
-        assert hasattr(main_window.toolbar, 'btn_search_clear')
+        assert hasattr(main_window.toolbar.search_form, 'btn_search_clear')
         # Test that clicking the button updates the search field
-        QTest.mouseClick(main_window.toolbar.btn_search_clear, Qt.MouseButton.LeftButton)
-        assert main_window.toolbar.search_input.text() == ''
+        QTest.mouseClick(main_window.toolbar.search_form.btn_search_clear, Qt.MouseButton.LeftButton)  # noqa
+        assert main_window.toolbar.search_form.text() == ''

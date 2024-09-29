@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "이전 검색 결과",
     "search_buttons_label_next": "다음 검색",
     "search_buttons_accessible_name_next": "다음 검색 결과",
-    "search_case_sensitive": "대소문자 구분",
-    "search_match_case_tooltip": "대소문자 구분 검색",
+    "search_case_sensitive_label": "대소문자 구분",
+    "search_case_sensitive_tooltip": "대소문자 구분 검색",
 }
