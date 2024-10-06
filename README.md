@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-09-01 17:41:41.187270"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-10-06 14:43:28.049258"}} -->
 # Notolog
 
 ![Notolog - Python Markdown Editor](https://raw.githubusercontent.com/notolog/notolog-editor/main/notolog/assets/notolog-example-image.png)
@@ -7,7 +7,7 @@
 
 [![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/) [![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor)](https://github.com/notolog/notolog-editor/blob/master/LICENSE) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)](https://pypi.org/project/notolog/) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/notolog/notolog-editor/tests.yaml)](https://github.com/notolog/notolog-editor/actions/workflows/tests.yaml) [![Conda Version](https://img.shields.io/conda/vn/conda-forge/notolog)](https://anaconda.org/conda-forge/notolog)
 
-Notolog is an open-source Python Markdown editor that blends simplicity with functionality. Designed using PySide6, it not only helps tackle daily programming challenges but also enhances proficiency in both Markdown and Python for those interested in diving deeper into the code.
+Notolog is an open-source Markdown editor that combines simplicity with advanced features. Developed entirely in Python using PySide6, it helps you tackle everyday programming challenges while offering an opportunity to deepen your Markdown and Python skills by exploring its codebase. Featuring a wide range of tools and integrated AI assistant support, Notolog is a valuable addition to any Python project requiring a versatile Markdown editor. Installation is as simple as: `pip install notolog`
 
 ---
 
@@ -47,11 +47,22 @@ Notolog is an open-source Python Markdown editor that blends simplicity with fun
 
 ## Translations
 
-Notolog supports multiple languages out of the box, enhancing its accessibility globally. Here are the languages currently supported:
+Notolog supports multiple languages out of the box, enhancing its accessibility on a global scale. In addition to English, here are the currently supported languages:
 
 - Chinese (Simplified), Dutch, Finnish, French, Georgian, German, Greek, Hindi, Italian, Japanese, Korean, Latin, Portuguese, Russian, Spanish, Swedish, Turkish
 
-Here's a glimpse of the UI in Japanese, featuring the Strawberry theme:
+
+## Themes
+
+Notolog offers several themes that allow users to choose their preferred UI color scheme:
+
+* **Default**: Every app should have a default theme.
+* **Calligraphy**: Inspired by the art of calligraphy, this theme resembles a rice paper sheet marked with black ink.
+* **Nocturne**: A dark-themed UI that plays a jazz nocturne at night.
+* **Noir Dark**: This theme's name says it all - mystery and style in every pixel.
+* **Strawberry**: The most playful theme, reminiscent of strawberry jam.
+
+Below is a glimpse of the UI in Japanese, featuring the Strawberry theme:
 
 ![Notolog UI translation example](https://raw.githubusercontent.com/notolog/notolog-editor/main/docs/notolog-ui-settings-strawberry-ja.png)
 
@@ -63,7 +74,7 @@ Ensure **Python 3.9 or higher** is installed on your system. For installation de
 Check the installed Python version:
 
 ```bash
-python3 -V
+python3 --version
 ```
 
 Verify pip availability:
@@ -74,7 +85,7 @@ pip --version
 
 **Virtual Environment**
 
-Using a virtual environment is highly recommended as it helps avoid version conflicts and interference from other packages.
+Using a virtual environment is highly recommended to avoid version conflicts and interference from other packages.
 
 
 ## Installation
@@ -84,22 +95,33 @@ Using a virtual environment is highly recommended as it helps avoid version conf
 Set up a virtual environment (highly recommended):
 ```sh
 python3 -m venv notolog_env
-# On Unix-like systems (macOS and Linux):
+```
+
+Activate the virtual environment:
+
+On Unix-like systems (macOS and Linux):
+```sh
 source notolog_env/bin/activate
-# On Windows:
+```
+
+On Windows:
+```sh
 notolog_env\Scripts\activate
 ```
 
-Install Notolog quickly using pip:
+Install Notolog using pip:
 ```sh
 pip install notolog
 ```
 
-That's it! Starting the app is as simple as running `notolog`.
+Starting the app is as simple as running:
+```sh
+notolog
+```
 
 To update Notolog to the latest version:
 ```sh
-pip install --upgrade notolog
+pip install notolog --upgrade
 ```
 
 ### Using conda-forge
@@ -107,6 +129,10 @@ pip install --upgrade notolog
 To install Notolog using conda-forge, first ensure your conda environment is using Python 3.9 or higher. You can create a new environment with the required Python version using:
 ```sh
 conda create -n notolog_env python=3.9
+```
+
+Activate the virtual environment:
+```sh
 conda activate notolog_env
 ```
 
@@ -126,7 +152,7 @@ Just activate the environment and run the app next time.
 
 ### From Source
 
-To install from source for more control over the installation process:
+To install from source:
 
 1. Clone the GitHub repository:
 ```sh
@@ -140,11 +166,19 @@ cd notolog-editor
 
 3. Set up a virtual environment (highly recommended):
 ```sh
-python3 -m venv notolog
-# On Unix-like systems:
-source notolog/bin/activate
-# On Windows:
-notolog\Scripts\activate
+python3 -m venv notolog_env
+```
+
+Activate the virtual environment:
+
+On Unix-like systems (macOS and Linux):
+```sh
+source notolog_env/bin/activate
+```
+
+On Windows:
+```sh
+notolog_env\Scripts\activate
 ```
 
 4. Install dependencies:
@@ -152,7 +186,7 @@ notolog\Scripts\activate
 pip install .
 ```
 
-Start Notolog using:
+5. Start Notolog using:
 ```sh
 python -m notolog.app
 ```

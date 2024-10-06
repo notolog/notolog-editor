@@ -1,6 +1,19 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.0.3] - 2024-10-06
+
+### Changed
+- Renamed lexeme key from 'search_case_sensitive_label' to 'search_case_sensitive_accessible_name' within the 'toolbar' lexeme scope.
+
+### Updated
+- Updated the search form to feature a case-sensitive button that is highlighted based on its state, replacing the previous checkbox and labels.
+- Moved search form buttons' configurations to the `SearchForm` class and refactored search button event handling.
+- Enhanced the README.md file with detailed information on color schemes and other minor updates.
+
+### Fixed
+- Fixed the font size for the settings dialog close button.
+
 ## [1.0.2] - 2024-09-29
 
 ### Added

@@ -40,7 +40,7 @@ lexemes = {
     "actions_accessible_name_settings": "Paramètres de l'application",
 
     "search_input_label": "Rechercher",
-    "search_input_placeholder_text": "texte dans le document",
+    "search_input_placeholder_text": "Rechercher du texte dans le document",
     "search_input_accessible_description": "Champ de recherche",
     "search_buttons_label_clear": "Effacer la recherche",
     "search_buttons_accessible_name_clear": "Effacer le champ de recherche",
@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "Résultat de recherche précédent",
     "search_buttons_label_next": "Recherche suivante",
     "search_buttons_accessible_name_next": "Résultat de recherche suivant",
-    "search_case_sensitive_label": "Sensible à la casse",
+    "search_case_sensitive_accessible_name": "Sensible à la casse",
     "search_case_sensitive_tooltip": "Recherche sensible à la casse",
 }

@@ -95,6 +95,7 @@ class SettingsDialog(QDialog):
 
         # Close button
         close_button = QPushButton(self.lexemes.get('button_close'))
+        close_button.setFont(self.font())
         close_button.setObjectName('settings_dialog_button_close')
         close_button.clicked.connect(self.close)
         layout.addWidget(close_button)

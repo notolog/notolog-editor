@@ -17,6 +17,7 @@ License: MIT License
 For detailed instructions and project information, please see the repository's README.md.
 """
 
+from PySide6.QtCore import QSize
 from PySide6.QtGui import QAction, QColor
 from PySide6.QtWidgets import QToolBar, QWidget, QMenu, QToolButton, QSizePolicy
 
@@ -27,7 +28,7 @@ from . import ThemeHelper
 
 from ..ui.search_form import SearchForm
 
-from typing import TYPE_CHECKING, Any, List, Dict
+from typing import TYPE_CHECKING
 
 import logging
 
@@ -84,45 +85,46 @@ class ToolBar(QToolBar):
 
         self.setMovable(False)
 
-        self.search_buttons = self.get_toolbar_search_buttons()
-
         self.init_ui()
 
     def init_ui(self):
+        """
+        Build the toolbar's UI components by dynamically creating toolbar icons and adding a search form
+        based on defined actions and settings.
+        """
+
+        # Initialize previous icon type to manage delimiters.
         prev_type = None
+
+        # Iterate over action configurations.
         for icon in self.actions:
             if icon['type'] == 'action':
-                # Check visible icon is checked in settings
+                # Skip the icon addition if it's not enabled in the settings.
                 if not (self.settings.toolbar_icons & pow(2, icon['weight'])):
-                    # Skip if not checked in settings
                     continue
-                # If the icon has an active state check, check it here
+                # Skip if the icon's active state check function returns False.
                 if ('active_state_check' in icon
                         and callable(icon['active_state_check'])
                         and not icon['active_state_check']()):
-                    # Skip if the icon isn't active
                     continue
-                # Create and append toolbar icon
+                # Add the toolbar icon if all conditions are met.
                 self.append_toolbar_icon(icon)
+            # Add a separator unless the last added item was also a delimiter.
             elif icon['type'] == 'delimiter' and prev_type != 'delimiter':
                 self.addSeparator()
-            # Save prev type
+            # Update previous icon type to manage delimiters correctly.
             prev_type = icon['type']
 
+        # Add a spacer to separate icons from the search form.
         central_spacer = QWidget(self)
         central_spacer.setSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.MinimumExpanding)
         self.addWidget(central_spacer)
 
-        self.search_form = SearchForm(parent=self, search_buttons=self.search_buttons)
+        # Initialize and add the search form.
+        self.search_form = SearchForm(parent=self)
         self.addWidget(self.search_form)
 
-        """
-        It can be done by setting inline styles, but this is not what can be convenient for customisation,
-        hence the theme:
-        """
-        # self.toolbar.setStyleSheet("""QCheckBox {
-        #    margin-right: 5px;
-        # }""")
+        # Set the toolbar's stylesheet from the theme helper.
         self.setStyleSheet(self.theme_helper.get_css('toolbar'))
 
     def append_toolbar_icon(self, conf):
@@ -148,7 +150,9 @@ class ToolBar(QToolBar):
         if 'name' in conf:
             icon_button.setObjectName(conf['name'])
         icon_button.setToolTip(label)
-        # icon_button.setIconSize(QSize(16, 16));
+        # Set the button height to match the search input field height, maintaining the aspect ratio.
+        icon_width = icon_height = int(icon_button.height() * 0.8)
+        icon_button.setIconSize(QSize(icon_width, icon_height))
         icon_button.setDefaultAction(icon_action)
         # icon_action.setChecked(True)
         if 'accessible_name' in conf:
@@ -168,42 +172,6 @@ class ToolBar(QToolBar):
                 and conf['switched_off_check']()):
             # Switch the icon off
             icon_button.setDisabled(True)
-
-    def get_toolbar_search_buttons(self) -> List[Dict[str, Any]]:
-        """
-        Retrieves the configuration map for search-related toolbar buttons.
-
-        Note: The 'var_name' parameter will be initialized in the final object that utilizes this map.
-
-        Returns:
-            List[Dict[str, Any]]: A list of dictionaries detailing the configuration of each toolbar search button.
-        """
-
-        return [
-            {'type': 'action', 'name': 'search_clear', 'system_icon': 'window-close', 'theme_icon': 'x-circle-fill.svg',
-             'action': self.parent.action_search_clear, 'enabled': False, 'default': False,
-             'tooltip': self.lexemes.get('search_buttons_label_clear', scope='toolbar'),
-             'accessible_name': self.lexemes.get('search_buttons_accessible_name_clear', scope='toolbar'),
-             'var_name': 'btn_search_clear', 'color': self.theme_helper.get_color('toolbar_search_button_clear')},
-            {'type': 'action', 'name': 'search_prev', 'system_icon': 'go-up', 'theme_icon': 'caret-up-fill.svg',
-             'action': self.parent.action_search_prev, 'enabled': False, 'default': False,
-             'tooltip': self.lexemes.get('search_buttons_label_prev', scope='toolbar'),
-             'accessible_name': self.lexemes.get('search_buttons_accessible_name_prev', scope='toolbar'),
-             'var_name': 'btn_search_prev', 'color': self.theme_helper.get_color('toolbar_search_button_prev')},
-            {'type': 'action', 'name': 'search_next', 'system_icon': 'go-down', 'theme_icon': 'caret-down-fill.svg',
-             'action': self.parent.action_search_next, 'enabled': False, 'default': True,
-             'tooltip': self.lexemes.get('search_buttons_label_next', scope='toolbar'),
-             'accessible_name': self.lexemes.get('search_buttons_accessible_name_next', scope='toolbar'),
-             'var_name': 'btn_search_next', 'color': self.theme_helper.get_color('toolbar_search_button_next')},
-        ]
-
-    def get_toolbar_search_button_by_name(self, name: str) -> Dict:
-        """
-        Get particular search button config by name.
-        """
-        for button in self.get_toolbar_search_buttons():
-            if 'name' in button and button['name'] == name:
-                return button
 
     def contextMenuEvent(self, event):
         """

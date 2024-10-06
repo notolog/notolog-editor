@@ -40,7 +40,7 @@ lexemes = {
     "actions_accessible_name_settings": "アプリ設定",
 
     "search_input_label": "検索",
-    "search_input_placeholder_text": "ドキュメント内のテキスト",
+    "search_input_placeholder_text": "ドキュメント内のテキストを検索",
     "search_input_accessible_description": "検索入力フィールド",
     "search_buttons_label_clear": "検索をクリア",
     "search_buttons_accessible_name_clear": "検索入力フィールドをクリア",
@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "前の検索結果",
     "search_buttons_label_next": "次の検索",
     "search_buttons_accessible_name_next": "次の検索結果",
-    "search_case_sensitive_label": "大文字と小文字を区別",
+    "search_case_sensitive_accessible_name": "大文字と小文字を区別",
     "search_case_sensitive_tooltip": "大文字と小文字を区別する検索",
 }

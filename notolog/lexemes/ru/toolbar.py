@@ -40,7 +40,7 @@ lexemes = {
     "actions_accessible_name_settings": "Настройки приложения",
 
     "search_input_label": "Поиск",
-    "search_input_placeholder_text": "текст в документе",
+    "search_input_placeholder_text": "Поиск текста в документе",
     "search_input_accessible_description": "Поле ввода поиска",
     "search_buttons_label_clear": "Очистить поиск",
     "search_buttons_accessible_name_clear": "Очистить поле поиска",
@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "Предыдущий результат поиска",
     "search_buttons_label_next": "Следующий поиск",
     "search_buttons_accessible_name_next": "Следующий результат поиска",
-    "search_case_sensitive_label": "Учитывать регистр",
+    "search_case_sensitive_accessible_name": "Учитывать регистр",
     "search_case_sensitive_tooltip": "Поиск с учетом регистра",
 }

@@ -521,8 +521,7 @@ class NotologEditor(QMainWindow):
             if hasattr(self, 'text_edit'):
                 self.text_edit.show()
             # Clear search fields and statuses
-            if hasattr(self, 'toolbar') and hasattr(self.toolbar, 'search_form'):
-                self.action_search_clear()
+            self.action_search_clear()
             # Remove warning from the statusbar in edit mode
             # TODO: Update to specify when warning sign should be visible in EDIT mode as well.
             if hasattr(self, 'statusbar'):
@@ -543,8 +542,7 @@ class NotologEditor(QMainWindow):
                     # Save cursor position (for previous mode)
                     self.restore_doc_cursor_pos(mode=data['pv'], source_widget=self.text_view)
             # Clear search fields and statuses
-            if hasattr(self, 'toolbar') and hasattr(self.toolbar, 'search_form'):
-                self.action_search_clear()
+            self.action_search_clear()
 
         if hasattr(self, 'toolbar'):  # For updates only
             self.create_icons_toolbar(refresh=True)
@@ -1836,8 +1834,7 @@ class NotologEditor(QMainWindow):
         """
 
         # The searched text and its position can both be changed.
-        if hasattr(self, 'toolbar') and hasattr(self.toolbar, 'search_form'):
-            self.action_search_clear()
+        self.action_search_clear()
 
     def on_modification_changed(self, changed) -> None:
         """
@@ -2345,6 +2342,9 @@ class NotologEditor(QMainWindow):
             # Connect actions to the search field
             self.toolbar.search_form.textChanged.connect(self.action_search_on)
             self.toolbar.search_form.returnPressed.connect(self.action_search_next)
+            self.toolbar.search_form.searchButtonClear.connect(self.action_search_clear)
+            self.toolbar.search_form.searchButtonNext.connect(self.action_search_next)
+            self.toolbar.search_form.searchButtonPrev.connect(self.action_search_prev)
             self.toolbar.search_form.caseSensitive.connect(self.action_search_case_sensitive)
             # And adjust appearance
             self.toolbar.search_form.set_maximum_width(self.weight_to_px_uno * 2)
@@ -3263,6 +3263,7 @@ class NotologEditor(QMainWindow):
         Search text in the content view.
         If any text selected and Ctrl + F pressed autofill the search field with it.
         """
+
         if self.get_mode() == Mode.EDIT:
             # Edit widget
             edit_widget = self.get_edit_widget()  # type: Union[EditWidget, QPlainTextEdit]
@@ -3278,6 +3279,7 @@ class NotologEditor(QMainWindow):
         if hasattr(self, 'toolbar') and hasattr(self.toolbar, 'search_form'):
             self.toolbar.search_form.set_text(selected_text)
             self.toolbar.search_form.set_focus()
+
         self.action_search_next()
 
     def reload_active_file(self) -> None:
@@ -3850,45 +3852,9 @@ class NotologEditor(QMainWindow):
         # Display the count of searched occurrences
         self.toolbar.search_form.set_counter_text(str(search_occurrences if search_occurrences > 0 else ''))
 
-        # Update the state of search buttons
-        self.action_search_buttons_refresh()
-
         if len(searched_text) == 0:
             # Set the searched text to empty, clearing the search form content.
             self.action_search_clear()
-
-    def action_search_buttons_refresh(self):
-        """
-        Update the state of search buttons.
-        """
-
-        if hasattr(self, 'toolbar') and hasattr(self.toolbar, 'search_form'):
-            search_occurrences = self.toolbar.search_form.counter_text()
-
-            # Retrieve searched text.
-            text = self.get_action_search_text()
-            if hasattr(self.toolbar.search_form, 'btn_search_clear'):
-                self.toolbar.search_form.btn_search_clear.setEnabled(True if len(text) > 0 else False)
-
-            btn_state = True if len(search_occurrences) > 0 else False
-            if hasattr(self.toolbar.search_form, 'btn_search_next'):
-                self.toolbar.search_form.btn_search_next.setEnabled(btn_state)
-            if hasattr(self.toolbar.search_form, 'btn_search_prev'):
-                self.toolbar.search_form.btn_search_prev.setEnabled(btn_state)
-
-    def action_search_off(self) -> None:
-        """
-        Search: Stopped; related actions.
-        Could be called upon search clear action which could be called upon input field's 'textChanged' event
-        in their turn.
-        """
-
-        # Update the state of search buttons
-        self.action_search_buttons_refresh()
-
-        if hasattr(self, 'toolbar') and hasattr(self.toolbar, 'search_form'):
-            # Hide the occurrences counter
-            self.toolbar.search_form.set_counter_text('')
 
     def action_search_case_sensitive(self, state=None) -> None:
         """
@@ -3926,21 +3892,15 @@ class NotologEditor(QMainWindow):
         # Remove the position of searched text occurrence within the document.
         self.toolbar.search_form.set_position_text('')
 
-        # Update the state of search buttons
-        self.action_search_buttons_refresh()
-
     def action_search_clear(self) -> None:
         """
         Search field set to an empty text and reset the search state.
         """
 
-        if hasattr(self, 'toolbar') and hasattr(self.toolbar, 'search_form'):
-            self.toolbar.search_form.set_text('')
-            # Case-sensitive checkbox
-            self.toolbar.search_form.set_case_sensitive(False)
+        if not (hasattr(self, 'toolbar') and hasattr(self.toolbar, 'search_form')):
+            return
 
-        # Reset buttons state
-        self.action_search_off()
+        self.toolbar.search_form.action_search_clear()
 
         # Retrieve the source widget to perform the search operations.
         search_source = self.get_active_widget()

@@ -40,7 +40,7 @@ lexemes = {
     "actions_accessible_name_settings": "应用设置",
 
     "search_input_label": "搜索",
-    "search_input_placeholder_text": "文档中的文本",
+    "search_input_placeholder_text": "在文档中搜索文本",
     "search_input_accessible_description": "搜索输入字段",
     "search_buttons_label_clear": "清除搜索",
     "search_buttons_accessible_name_clear": "清除搜索输入字段",
@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "上一次搜索结果",
     "search_buttons_label_next": "下一次搜索",
     "search_buttons_accessible_name_next": "下一次搜索结果",
-    "search_case_sensitive_label": "区分大小写",
+    "search_case_sensitive_accessible_name": "区分大小写",
     "search_case_sensitive_tooltip": "区分大小写的搜索",
 }

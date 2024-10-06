@@ -43,7 +43,7 @@ class TestSearchForm:
         # No modules
         mocker.patch.object(Modules, 'get_by_extension', return_value=[])
         # Fixture to initialize object.
-        ui_obj = SearchForm(parent=toolbar_obj, search_buttons=[])
+        ui_obj = SearchForm(parent=toolbar_obj)
         yield ui_obj
 
     def test_ui_object_state(self, mocker, ui_obj: SearchForm, settings_obj):

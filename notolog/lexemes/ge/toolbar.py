@@ -40,7 +40,7 @@ lexemes = {
     "actions_accessible_name_settings": "აპლიკაციის პარამეტრები",
 
     "search_input_label": "ძიება",
-    "search_input_placeholder_text": "ტექსტი დოკუმენტში",
+    "search_input_placeholder_text": "ტექსტის ძიება დოკუმენტში",
     "search_input_accessible_description": "ძიების ველი",
     "search_buttons_label_clear": "ძიების გასუფთავება",
     "search_buttons_accessible_name_clear": "ძიების ველის გასუფთავება",
@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "წინა ძიების შედეგი",
     "search_buttons_label_next": "შემდეგი ძიება",
     "search_buttons_accessible_name_next": "შემდეგი ძიების შედეგი",
-    "search_case_sensitive_label": "რეგისტრის მნიშვნელობა",
+    "search_case_sensitive_accessible_name": "რეგისტრის მნიშვნელობა",
     "search_case_sensitive_tooltip": "რეგისტრის მნიშვნელობით ძიება",
 }

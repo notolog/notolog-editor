@@ -40,7 +40,7 @@ lexemes = {
     "actions_accessible_name_settings": "Appinställningar",
 
     "search_input_label": "Sök",
-    "search_input_placeholder_text": "text i dokumentet",
+    "search_input_placeholder_text": "Sök text i dokumentet",
     "search_input_accessible_description": "Sökfält",
     "search_buttons_label_clear": "Rensa sökning",
     "search_buttons_accessible_name_clear": "Rensa sökfält",
@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "Föregående sökresultat",
     "search_buttons_label_next": "Nästa sökning",
     "search_buttons_accessible_name_next": "Nästa sökresultat",
-    "search_case_sensitive_label": "Skiftlägeskänslig",
+    "search_case_sensitive_accessible_name": "Skiftlägeskänslig",
     "search_case_sensitive_tooltip": "Skiftlägeskänslig sökning"
 }

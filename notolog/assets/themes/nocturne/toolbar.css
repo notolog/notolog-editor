@@ -4,9 +4,6 @@ QToolBar QLineEdit#search_input {
 QToolBar QPushButton {
     margin-left: 2px;
 }
-QToolBar QLabel#search_input_label {
-    margin: 2px;
-}
 QToolBar QLabel#search_count_label {
     background-color: rgba(255, 127, 80, 0.9);
     color: whiteSmoke;
@@ -19,10 +16,4 @@ QToolBar QLabel#search_pos_label {
     color: palette(base);
     border-radius: 2px;
     margin: 3px 2px;
-}
-QToolBar QLabel#search_case_sensitive_label {
-    margin: 0 2px;
-}
-QToolBar QCheckBox#search_case_sensitive {
-    margin: 0 2px;
 }

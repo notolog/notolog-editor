@@ -40,7 +40,7 @@ lexemes = {
     "actions_accessible_name_settings": "Sovelluksen asetukset",
 
     "search_input_label": "Haku",
-    "search_input_placeholder_text": "teksti asiakirjassa",
+    "search_input_placeholder_text": "Etsi tekstiä asiakirjasta",
     "search_input_accessible_description": "Hakukenttä",
     "search_buttons_label_clear": "Tyhjennä haku",
     "search_buttons_accessible_name_clear": "Tyhjennä hakukenttä",
@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "Edellinen hakutulos",
     "search_buttons_label_next": "Seuraava haku",
     "search_buttons_accessible_name_next": "Seuraava hakutulos",
-    "search_case_sensitive_label": "Kirjainkoko merkitsee",
+    "search_case_sensitive_accessible_name": "Kirjainkoko merkitsee",
     "search_case_sensitive_tooltip": "Haku kirjainkoolla",
 }

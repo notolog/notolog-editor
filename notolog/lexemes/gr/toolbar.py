@@ -40,7 +40,7 @@ lexemes = {
     "actions_accessible_name_settings": "Ρυθμίσεις εφαρμογής",
 
     "search_input_label": "Αναζήτηση",
-    "search_input_placeholder_text": "κείμενο στο έγγραφο",
+    "search_input_placeholder_text": "Αναζήτηση κειμένου στο έγγραφο",
     "search_input_accessible_description": "Πεδίο εισόδου αναζήτησης",
     "search_buttons_label_clear": "Καθαρισμός αναζήτησης",
     "search_buttons_accessible_name_clear": "Καθαρισμός πεδίου εισόδου αναζήτησης",
@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "Προηγούμενο αποτέλεσμα αναζήτησης",
     "search_buttons_label_next": "Επόμενη αναζήτηση",
     "search_buttons_accessible_name_next": "Επόμενο αποτέλεσμα αναζήτησης",
-    "search_case_sensitive_label": "Διάκριση πεζών-κεφαλαίων",
+    "search_case_sensitive_accessible_name": "Διάκριση πεζών-κεφαλαίων",
     "search_case_sensitive_tooltip": "Αναζήτηση με διάκριση πεζών-κεφαλαίων",
 }

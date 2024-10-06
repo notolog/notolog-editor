@@ -40,7 +40,7 @@ lexemes = {
     "actions_accessible_name_settings": "App-Einstellungen",
 
     "search_input_label": "Suchen",
-    "search_input_placeholder_text": "Text im Dokument",
+    "search_input_placeholder_text": "Text im Dokument suchen",
     "search_input_accessible_description": "Sucheingabefeld",
     "search_buttons_label_clear": "Suche löschen",
     "search_buttons_accessible_name_clear": "Sucheingabefeld löschen",
@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "Vorheriges Suchergebnis",
     "search_buttons_label_next": "Nächste Suche",
     "search_buttons_accessible_name_next": "Nächstes Suchergebnis",
-    "search_case_sensitive_label": "Groß-/Kleinschreibung beachten",
+    "search_case_sensitive_accessible_name": "Groß-/Kleinschreibung beachten",
     "search_case_sensitive_tooltip": "Suche unter Berücksichtigung der Groß-/Kleinschreibung",
 }

@@ -40,7 +40,7 @@ lexemes = {
     "actions_accessible_name_settings": "ऐप सेटिंग्स",
 
     "search_input_label": "खोज",
-    "search_input_placeholder_text": "दस्तावेज़ में पाठ",
+    "search_input_placeholder_text": "दस्तावेज़ में टेक्स्ट खोजें",
     "search_input_accessible_description": "खोज इनपुट फ़ील्ड",
     "search_buttons_label_clear": "खोज साफ़ करें",
     "search_buttons_accessible_name_clear": "खोज इनपुट फ़ील्ड को साफ़ करें",
@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "पिछला खोज परिणाम",
     "search_buttons_label_next": "अगली खोज",
     "search_buttons_accessible_name_next": "अगली खोज परिणाम",
-    "search_case_sensitive_label": "मामूली जांच",
+    "search_case_sensitive_accessible_name": "मामूली जांच",
     "search_case_sensitive_tooltip": "मामूली जांच खोज"
 }

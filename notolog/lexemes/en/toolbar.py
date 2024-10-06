@@ -40,7 +40,7 @@ lexemes = {
     "actions_accessible_name_settings": "App settings",
 
     "search_input_label": "Search",
-    "search_input_placeholder_text": "text in document",
+    "search_input_placeholder_text": "Search text in document",
     "search_input_accessible_description": "Search input field",
     "search_buttons_label_clear": "Clear search",
     "search_buttons_accessible_name_clear": "Clear search input field",
@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "Previous search result",
     "search_buttons_label_next": "Next search",
     "search_buttons_accessible_name_next": "Next search result",
-    "search_case_sensitive_label": "Case sensitive",
+    "search_case_sensitive_accessible_name": "Case sensitive",
     "search_case_sensitive_tooltip": "Case sensitive search",
 }

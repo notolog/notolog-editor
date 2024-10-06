@@ -40,7 +40,7 @@ lexemes = {
     "actions_accessible_name_settings": "Configurationes Applicatio",
 
     "search_input_label": "Quaerere",
-    "search_input_placeholder_text": "textus in documento",
+    "search_input_placeholder_text": "Quaere textum in documento",
     "search_input_accessible_description": "Campus input quaerere",
     "search_buttons_label_clear": "Quaestionem purare",
     "search_buttons_accessible_name_clear": "Campum quaestionis purare",
@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "Eventus quaestionis praecedentis",
     "search_buttons_label_next": "Quaestio proxima",
     "search_buttons_accessible_name_next": "Eventus quaestionis proximae",
-    "search_case_sensitive_label": "Casu sensitivo",
+    "search_case_sensitive_accessible_name": "Casu sensitivo",
     "search_case_sensitive_tooltip": "Quaerere casu sensitivo",
 }

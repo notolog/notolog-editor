@@ -40,7 +40,7 @@ lexemes = {
     "actions_accessible_name_settings": "Uygulama ayarları",
 
     "search_input_label": "Arama",
-    "search_input_placeholder_text": "belgedeki metin",
+    "search_input_placeholder_text": "Belgede metin ara",
     "search_input_accessible_description": "Arama giriş alanı",
     "search_buttons_label_clear": "Aramayı temizle",
     "search_buttons_accessible_name_clear": "Arama giriş alanını temizle",
@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "Önceki arama sonucu",
     "search_buttons_label_next": "Sonraki arama",
     "search_buttons_accessible_name_next": "Sonraki arama sonucu",
-    "search_case_sensitive_label": "Büyük/küçük harfe duyarlı",
+    "search_case_sensitive_accessible_name": "Büyük/küçük harfe duyarlı",
     "search_case_sensitive_tooltip": "Büyük/küçük harfe duyarlı arama",
 }

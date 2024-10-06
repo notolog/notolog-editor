@@ -40,7 +40,7 @@ lexemes = {
     "actions_accessible_name_settings": "앱 설정",
 
     "search_input_label": "검색",
-    "search_input_placeholder_text": "문서 내 텍스트",
+    "search_input_placeholder_text": "문서에서 텍스트 검색",
     "search_input_accessible_description": "검색 입력 필드",
     "search_buttons_label_clear": "검색 지우기",
     "search_buttons_accessible_name_clear": "검색 입력 필드 지우기",
@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "이전 검색 결과",
     "search_buttons_label_next": "다음 검색",
     "search_buttons_accessible_name_next": "다음 검색 결과",
-    "search_case_sensitive_label": "대소문자 구분",
+    "search_case_sensitive_accessible_name": "대소문자 구분",
     "search_case_sensitive_tooltip": "대소문자 구분 검색",
 }

@@ -40,7 +40,7 @@ lexemes = {
     "actions_accessible_name_settings": "App instellingen",
 
     "search_input_label": "Zoeken",
-    "search_input_placeholder_text": "tekst in document",
+    "search_input_placeholder_text": "Zoek tekst in document",
     "search_input_accessible_description": "Zoekveld",
     "search_buttons_label_clear": "Zoekopdracht wissen",
     "search_buttons_accessible_name_clear": "Zoekveld leegmaken",
@@ -48,6 +48,6 @@ lexemes = {
     "search_buttons_accessible_name_prev": "Vorig zoekresultaat",
     "search_buttons_label_next": "Volgende zoeken",
     "search_buttons_accessible_name_next": "Volgend zoekresultaat",
-    "search_case_sensitive_label": "Hoofdlettergevoelig",
+    "search_case_sensitive_accessible_name": "Hoofdlettergevoelig",
     "search_case_sensitive_tooltip": "Zoeken met hoofdlettergevoeligheid",
 }
