@@ -40,7 +40,7 @@ lexemes = {
     "actions_accessible_name_settings": "App settings",
 
     "search_input_label": "Search",
-    "search_input_placeholder_text": "Search text in document",
+    "search_input_placeholder_text": "Search text in the document",
     "search_input_accessible_description": "Search input field",
     "search_buttons_label_clear": "Clear search",
     "search_buttons_accessible_name_clear": "Clear search input field",

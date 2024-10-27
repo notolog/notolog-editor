@@ -108,7 +108,9 @@ lexemes = {
     "load_file_encryption_password_incorrect": "Falsches Verschlüsselungspasswort!",
     "load_file_none_content_error": "Datei kann nicht geladen werden.",
 
-    "save_active_file_error_occurred": "Datei kann nicht gespeichert werden, ein Fehler ist aufgetreten",
+    "action_new_file_error_occurred": "Datei kann nicht erstellt werden; ein Fehler ist aufgetreten."
+                                      "\nÜberprüfen Sie die Dateisystemberechtigungen.",
+    "save_active_file_error_occurred": "Datei kann nicht gespeichert werden; ein Fehler ist aufgetreten.",
 
     "expandable_block_default_title": "Weitere Informationen...",
     "expandable_block_open_close_tags_mismatch_warning": "Fehlerhafte <details>-Block Öffnen/Schließen-Tags",

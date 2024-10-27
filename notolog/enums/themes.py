@@ -28,3 +28,4 @@ class Themes(EnumBase):
     NOIR_DARK = "Noir Dark"
     STRAWBERRY = "Strawberry"
     NOCTURNE = "Nocturne"
+    SPOOKY = "Spooky"

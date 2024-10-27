@@ -104,7 +104,8 @@ lexemes = {
     "load_file_encryption_password_incorrect": "Şifreleme şifresi yanlış!",
     "load_file_none_content_error": "Dosya yüklenemedi.",
 
-    "save_active_file_error_occurred": "Dosya kaydedilemedi, hata oluştu",
+    "action_new_file_error_occurred": "Dosya oluşturulamıyor; bir hata oluştu.\nDosya sistemi izinlerini kontrol edin.",
+    "save_active_file_error_occurred": "Dosya kaydedilemiyor; bir hata oluştu.",
 
     "expandable_block_default_title": "Daha fazla bilgi...",
     "expandable_block_open_close_tags_mismatch_warning": "<details> blok açma/kapama etiketleri uyuşmazlığı",

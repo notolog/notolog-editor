@@ -105,7 +105,9 @@ lexemes = {
     "load_file_encryption_password_incorrect": "Onjuist versleutelingswachtwoord!",
     "load_file_none_content_error": "Bestand kan niet worden geladen.",
 
-    "save_active_file_error_occurred": "Kan bestand niet opslaan, er is een fout opgetreden",
+    "action_new_file_error_occurred": "Kan bestand niet maken; er is een fout opgetreden."
+                                      "\nControleer bestandsysteemrechten.",
+    "save_active_file_error_occurred": "Kan bestand niet opslaan; er is een fout opgetreden.",
 
     "expandable_block_default_title": "Meer info...",
     "expandable_block_open_close_tags_mismatch_warning": "Mismatch in <details> blok openen/sluiten tags",

@@ -106,7 +106,8 @@ lexemes = {
     "load_file_encryption_password_incorrect": "Väärä salaussalasana!",
     "load_file_none_content_error": "Tiedostoa ei voi ladata.",
 
-    "save_active_file_error_occurred": "Tiedostoa ei voi tallentaa, tapahtui virhe",
+    "action_new_file_error_occurred": "Tiedostoa ei voida luoda; virhe tapahtui.\nTarkista tiedostojärjestelmän oikeudet.",
+    "save_active_file_error_occurred": "Tiedostoa ei voida tallentaa; virhe tapahtui.",
 
     "expandable_block_default_title": "Lisätietoja...",
     "expandable_block_open_close_tags_mismatch_warning": "<details>-lohkon avaamis- ja sulkumerkkien epäjohdonmukaisuus",

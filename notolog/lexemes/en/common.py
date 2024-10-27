@@ -104,7 +104,8 @@ lexemes = {
     "load_file_encryption_password_incorrect": "Incorrect encryption password!",
     "load_file_none_content_error": "File cannot be loaded.",
 
-    "save_active_file_error_occurred": "Cannot save file, error occurred",
+    "action_new_file_error_occurred": "Cannot create file; an error occurred.\nCheck file system permissions.",
+    "save_active_file_error_occurred": "Cannot save file; an error occurred.",
 
     "expandable_block_default_title": "More info...",
     "expandable_block_open_close_tags_mismatch_warning": "<details> block open/close tags mismatch",

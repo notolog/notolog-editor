@@ -106,7 +106,8 @@ lexemes = {
     "load_file_encryption_password_incorrect": "Неверный пароль шифрования!",
     "load_file_none_content_error": "Невозможно загрузить файл.",
 
-    "save_active_file_error_occurred": "Невозможно сохранить файл, произошла ошибка",
+    "action_new_file_error_occurred": "Не удается создать файл; произошла ошибка.\nПроверьте разрешения файловой системы.",
+    "save_active_file_error_occurred": "Не удается сохранить файл; произошла ошибка.",
 
     "expandable_block_default_title": "Больше информации...",
     "expandable_block_open_close_tags_mismatch_warning": "Несоответствие открывающих/закрывающих тегов блока <details>",

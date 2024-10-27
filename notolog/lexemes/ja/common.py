@@ -104,7 +104,8 @@ lexemes = {
     "load_file_encryption_password_incorrect": "暗号化パスワードが正しくありません！",
     "load_file_none_content_error": "ファイルを読み込めません。",
 
-    "save_active_file_error_occurred": "ファイルを保存できませんでした。エラーが発生しました",
+    "action_new_file_error_occurred": "ファイルを作成できませんでした；エラーが発生しました。\nファイルシステムの権限を確認してください。",
+    "save_active_file_error_occurred": "ファイルを保存できませんでした；エラーが発生しました。",
 
     "expandable_block_default_title": "詳細情報...",
     "expandable_block_open_close_tags_mismatch_warning": "<details> ブロックの開始/終了タグの不一致",

@@ -105,7 +105,9 @@ lexemes = {
     "load_file_encryption_password_incorrect": "Fel krypteringslösenord!",
     "load_file_none_content_error": "Filen kan inte laddas.",
 
-    "save_active_file_error_occurred": "Kan inte spara filen, ett fel inträffade",
+    "action_new_file_error_occurred": "Kan inte skapa fil; ett fel inträffade."
+                                      "\nKontrollera behörigheterna i filsystemet.",
+    "save_active_file_error_occurred": "Kan inte spara fil; ett fel inträffade.",
 
     "expandable_block_default_title": "Mer information...",
     "expandable_block_open_close_tags_mismatch_warning": "Mismatch i <details> block öppna/stänga taggar",

@@ -102,7 +102,8 @@ lexemes = {
     "load_file_encryption_password_incorrect": "加密密码错误!",
     "load_file_none_content_error": "无法加载文件。",
 
-    "save_active_file_error_occurred": "无法保存文件，发生错误",
+    "action_new_file_error_occurred": "无法创建文件；发生错误。\n检查文件系统权限。",
+    "save_active_file_error_occurred": "无法保存文件；发生错误。",
 
     "expandable_block_default_title": "更多信息...",
     "expandable_block_open_close_tags_mismatch_warning": "<details> 块打开/关闭标记不匹配",

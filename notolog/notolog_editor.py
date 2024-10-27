@@ -2387,9 +2387,14 @@ class NotologEditor(QMainWindow):
         header = FileHeader().get_new()
         content = header.pack(content)
 
-        self.save_file_content(file_path, content)
-        # Load new file content
-        return self.load_file(file_path)
+        if self.save_file_content(file_path, content):
+            # Load new file content
+            return self.load_file(file_path)
+        else:
+            if self.logging:
+                self.logger.warning('Cannot save file "%s"' % file_path)
+                self.message_box(self.lexemes.get('action_new_file_error_occurred'), icon_type=2)
+            return False
 
     def action_open_file(self) -> None:
         """
@@ -3305,12 +3310,31 @@ class NotologEditor(QMainWindow):
 
     def save_file_content(self, file_path: str, content: str) -> bool:
         """
-        Helper: Save file content.
+        Saves the content to the specified file path.
+
+        This method writes the given content to a file located at `file_path`.
+        If writing fails, a warning is displayed on the status bar, if available.
+
+        Args:
+            file_path (str): The path where the file will be saved.
+            content (str): The content to write to the file.
+
+        Returns:
+            bool: True if the file was successfully saved, False otherwise.
         """
+
         if self.debug:
             self.logger.debug('Saving file "%s"' % file_path)
 
-        return save_file(file_path, content)
+        # Save the file
+        write_res = save_file(file_path, content)
+
+        if write_res is False:
+            # Display a warning in the status bar if the save fails
+            if hasattr(self, 'statusbar'):
+                self.statusbar.show_warning(visible=True)
+
+        return write_res
 
     def save_active_file(self, clear_after: bool = False, allow_save_empty_content: bool = None) -> None:  # noqa: C901
         """

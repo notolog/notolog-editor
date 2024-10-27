@@ -106,7 +106,8 @@ lexemes = {
     "load_file_encryption_password_incorrect": "एन्क्रिप्शन पासवर्ड गलत है!",
     "load_file_none_content_error": "फ़ाइल लोड नहीं की जा सकती।",
 
-    "save_active_file_error_occurred": "फ़ाइल सहेजने में असमर्थ, त्रुटि हुई है",
+    "action_new_file_error_occurred": "फ़ाइल नहीं बनाई जा सकती; एक त्रुटि हुई।\nफ़ाइल सिस्टम अनुमतियों की जाँच करें।",
+    "save_active_file_error_occurred": "फ़ाइल सहेज नहीं सकते; एक त्रुटि हुई।",
 
     "expandable_block_default_title": "अधिक जानकारी...",
     "expandable_block_open_close_tags_mismatch_warning": "<details> ब्लॉक ओपन/क्लोज टैग मेल नहीं खाते",

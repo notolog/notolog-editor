@@ -104,7 +104,8 @@ lexemes = {
     "load_file_encryption_password_incorrect": "암호화 비밀번호가 정확하지 않습니다!",
     "load_file_none_content_error": "파일을 불러올 수 없습니다.",
 
-    "save_active_file_error_occurred": "파일을 저장할 수 없습니다. 오류가 발생했습니다",
+    "action_new_file_error_occurred": "파일을 생성할 수 없습니다; 오류가 발생했습니다。\n파일 시스템 권한을 확인하십시오。",
+    "save_active_file_error_occurred": "파일을 저장할 수 없습니다; 오류가 발생했습니다。",
 
     "expandable_block_default_title": "추가 정보...",
     "expandable_block_open_close_tags_mismatch_warning": "<details> 블록 열기/닫기 태그 불일치",

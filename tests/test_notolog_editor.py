@@ -129,6 +129,7 @@ class TestNotologEditor:
         mocker.patch.object(test_obj_notolog_editor, 'get_mode', return_value=mode)
         mocker.patch.object(test_obj_notolog_editor, 'toggle_mode', return_value=None)
         setattr(test_obj_notolog_editor, 'debug', False)
+        setattr(test_obj_notolog_editor, 'logging', False)
 
         mock_res_path = mocker.patch.object(test_obj_notolog_editor, 'get_tree_active_dir', return_value=file_path)
         # mock_res_path = mocker.patch('app.notolog_editor.res_path', return_value=file_path)

@@ -1,6 +1,21 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.0.4] - 2024-10-27
+
+### Added
+- Introduced the 'Spooky' theme to celebrate the Halloween season with its vivid colors.
+
+### Updated
+- Upgraded the `PySide6` package dependencies to support the installation of the most recent versions.
+- Extended support for Python 3.13 to ensure compatibility with the latest Python releases.
+- Updated README.md to include a description of the 'Spooky' theme.
+- Updated lexemes to reflect recent changes.
+
+### Fixed
+- Fixed an issue with creating new files due to incorrect directory permission checks.
+- Resolved potential issues with the 'css_format' parameter when creating new themes.
+
 ## [1.0.3] - 2024-10-06
 
 ### Changed

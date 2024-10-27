@@ -110,7 +110,9 @@ lexemes = {
     "load_file_encryption_password_incorrect": "Λάθος κωδικός κρυπτογράφησης!",
     "load_file_none_content_error": "Το αρχείο δεν μπορεί να φορτωθεί.",
 
-    "save_active_file_error_occurred": "Αδυναμία αποθήκευσης αρχείου, συνέβη σφάλμα",
+    "action_new_file_error_occurred": "Δεν είναι δυνατή η δημιουργία αρχείου· προέκυψε σφάλμα."
+                                      "\nΕλέγξτε τα δικαιώματα του συστήματος αρχείων.",
+    "save_active_file_error_occurred": "Δεν είναι δυνατή η αποθήκευση αρχείου· προέκυψε σφάλμα.",
 
     "expandable_block_default_title": "Περισσότερες πληροφορίες...",
     "expandable_block_open_close_tags_mismatch_warning": "Αντιφατική ανοιχτή/κλειστή ετικέτα <details> μπλοκ",

@@ -40,7 +40,7 @@ lexemes = {
     "actions_accessible_name_settings": "App instellingen",
 
     "search_input_label": "Zoeken",
-    "search_input_placeholder_text": "Zoek tekst in document",
+    "search_input_placeholder_text": "Zoek tekst in het document",
     "search_input_accessible_description": "Zoekveld",
     "search_buttons_label_clear": "Zoekopdracht wissen",
     "search_buttons_accessible_name_clear": "Zoekveld leegmaken",

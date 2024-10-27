@@ -1,0 +1,19 @@
+QToolBar QLineEdit#search_input {
+    color: #fbfaf5;
+}
+QToolBar QPushButton {
+    margin-left: 2px;
+}
+QToolBar QLabel#search_count_label {
+    background-color: rgba(255, 154, 0, 0.9);
+    color: palette(base);
+    border-radius: 2px;
+    font-weight: bold;
+    margin: 1px;
+}
+QToolBar QLabel#search_pos_label {
+    background-color: rgba(201, 0, 255, 0.9);
+    color: #fbfaf5;
+    border-radius: 2px;
+    margin: 3px 2px;
+}

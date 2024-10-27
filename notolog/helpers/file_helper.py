@@ -112,8 +112,14 @@ def save_file(file_path: str, data: Union[str, bytearray], as_bytearray: bool = 
     Returns:
         bool: True if the content was successfully saved, False otherwise.
     """
+
+    # Check if the file has write permissions
+    if not os.access(os.path.dirname(file_path), os.W_OK):
+        return False
+
     # a bytes-like object or string
     mode = 'wb' if as_bytearray else 'w'
+
     # without 3-char extension: crypted_file_path[:-4]
     with (open(file_path, mode) if as_bytearray
           else open(file_path, mode, encoding='utf-8') as file):  # No encoding in bin mode

@@ -1,0 +1,50 @@
+/* Tabs */
+QTabBar::tab {
+    color: #c900ff;
+}
+/* Active tab */
+QTabBar::tab:selected {
+    color: #c900ff;
+    font-weight: bold;
+}
+QComboBox {
+    color: #cc1313;
+}
+QComboBox::separator {
+    height: 1px;
+    background: #666666;
+}
+/*QComboBox::down-arrow { top: 1px; }*/
+QLabel {
+    color: #ff9a00;
+}
+QLineEdit {
+    color: #09ff00;
+}
+/* Group titles */
+QLabel.group-header-label {
+    color: #666666;
+}
+QCheckBox {
+    color: #ff9a00;
+}
+/* Custom slider (no ticks color supported) */
+QSlider::groove:horizontal {
+    color: #fbfaf5;
+    border: 1px solid #cc1313;
+    height: 7px;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #c00000, stop:1 #cc1313);
+    margin: 2px 0;
+}
+QSlider::handle:horizontal {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #ff1313, stop:1 #dd1313);
+    border: 1px solid #cc1313;
+    width: 17px;
+    margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
+    border-radius: 3px;
+}
+/* Request submit button */
+QPushButton#settings_dialog_button_close {
+    color: #cc1313;
+    background-color: #131313;
+}

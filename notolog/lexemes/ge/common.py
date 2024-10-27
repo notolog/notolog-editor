@@ -107,7 +107,8 @@ lexemes = {
     "load_file_encryption_password_incorrect": "დაშიფრვის პაროლი არასწორია!",
     "load_file_none_content_error": "ფაილი ვერ იტვირთება.",
 
-    "save_active_file_error_occurred": "ფაილის შენახვა ვერ ხერხდება, წარმოიშვა შეცდომა",
+    "action_new_file_error_occurred": "ფაილის შექმნა ვერ ხერხდება; მოხდა შეცდომა.\nგადამოწმეთ ფაილის სისტემის ნებართვები.",
+    "save_active_file_error_occurred": "ფაილის შენახვა ვერ ხერხდება; მოხდა შეცდომა.",
 
     "expandable_block_default_title": "მეტი ინფორმაცია...",
     "expandable_block_open_close_tags_mismatch_warning": "<details> ბლოკის გახსნის/დახურვის თეგების არასწორი მოთხოვნები",

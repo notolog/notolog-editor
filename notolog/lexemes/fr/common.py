@@ -109,7 +109,9 @@ lexemes = {
     "load_file_encryption_password_incorrect": "Mot de passe de chiffrement incorrect !",
     "load_file_none_content_error": "Impossible de charger le fichier.",
 
-    "save_active_file_error_occurred": "Impossible d'enregistrer le fichier, une erreur s'est produite",
+    "action_new_file_error_occurred": "Impossible de créer le fichier ; une erreur est survenue."
+                                      "\nVérifiez les autorisations du système de fichiers.",
+    "save_active_file_error_occurred": "Impossible de sauvegarder le fichier ; une erreur est survenue.",
 
     "expandable_block_default_title": "Plus d'infos...",
     "expandable_block_open_close_tags_mismatch_warning": "Balises d'ouverture/fermeture du bloc <details> incompatibles",

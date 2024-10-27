@@ -1,0 +1,26 @@
+/* Request field */
+QLineEdit {
+    color: #fbfaf5;
+}
+/* Response field */
+QTextEdit {
+    color: #fbfaf5;
+}
+/* Buttons within messages */
+QLabel > QPushButton {
+    background-color: none;
+}
+/* Token usage labels by id */
+QLabel#ai_assistant_dialog_usage_module_name_label,
+QLabel#ai_assistant_dialog_usage_model_name_label,
+QLabel#ai_assistant_dialog_usage_tokens_label {
+    color: #666666;
+}
+/* Request submit button */
+QPushButton {
+    color: #cc1313;
+    background-color: #131313;
+}
+QPushButton:disabled {
+    background-color: #666666;
+}

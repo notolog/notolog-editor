@@ -67,7 +67,8 @@ class EncPasswordDialog(QDialog):
         hint_layout.addWidget(QLabel(self.lexemes.get('dialog_encrypt_password_hint_label')))
         hint_description = QLabel(hint)
         hint_description.setFont(QFont(hint_description.font().family(), italic=True))
-        hint_description.setStyleSheet("color: %s" % self.theme_helper.get_color('dialog_encrypt_password_hint'))
+        hint_description.setStyleSheet("color: %s" % self.theme_helper.get_color('dialog_encrypt_password_hint',
+                                                                                 css_format=True))
         hint_layout.addWidget(hint_description)
 
         buttons_layout = QHBoxLayout()

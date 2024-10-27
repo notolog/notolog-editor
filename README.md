@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-10-06 14:43:28.049258"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-10-27 19:35:26.710490"}} -->
 # Notolog
 
 ![Notolog - Python Markdown Editor](https://raw.githubusercontent.com/notolog/notolog-editor/main/notolog/assets/notolog-example-image.png)
@@ -60,6 +60,7 @@ Notolog offers several themes that allow users to choose their preferred UI colo
 * **Calligraphy**: Inspired by the art of calligraphy, this theme resembles a rice paper sheet marked with black ink.
 * **Nocturne**: A dark-themed UI that plays a jazz nocturne at night.
 * **Noir Dark**: This theme's name says it all - mystery and style in every pixel.
+* **Spooky**: Embrace the spooky season with vivid Halloween-themed colors.
 * **Strawberry**: The most playful theme, reminiscent of strawberry jam.
 
 Below is a glimpse of the UI in Japanese, featuring the Strawberry theme:

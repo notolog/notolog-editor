@@ -108,7 +108,9 @@ lexemes = {
     "load_file_encryption_password_incorrect": "Senha de criptografia incorreta!",
     "load_file_none_content_error": "Não foi possível carregar o arquivo.",
 
-    "save_active_file_error_occurred": "Não foi possível salvar o arquivo, ocorreu um erro",
+    "action_new_file_error_occurred": "Não é possível criar o arquivo; ocorreu um erro."
+                                      "\nVerifique as permissões do sistema de arquivos.",
+    "save_active_file_error_occurred": "Não é possível salvar o arquivo; ocorreu um erro.",
 
     "expandable_block_default_title": "Mais informações...",
     "expandable_block_open_close_tags_mismatch_warning":

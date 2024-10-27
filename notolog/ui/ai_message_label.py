@@ -17,7 +17,7 @@ For detailed instructions and project information, please see the repository's R
 """
 
 from PySide6.QtWidgets import QStyle, QLabel, QPushButton
-from PySide6.QtGui import QTextDocument
+from PySide6.QtGui import QTextDocument, QColor
 from PySide6.QtCore import Qt
 
 from . import AppConfig
@@ -66,7 +66,10 @@ class AiMessageLabel(QLabel):
         self.button = QPushButton(self)
 
         # copy_icon = self.style().standardIcon(QStyle.StandardPixmap.SP_DirIcon)  # Set an icon using standard icons
-        copy_icon = self.theme_helper.get_icon(theme_icon='copy.svg')
+        copy_icon = self.theme_helper.get_icon(
+            theme_icon='copy.svg',
+            color=QColor(self.theme_helper.get_color('ai_assistant_message_icon_color', css_format=True))
+        )
         self.button.setIcon(copy_icon)
 
         self.button.clicked.connect(self.copy_content)

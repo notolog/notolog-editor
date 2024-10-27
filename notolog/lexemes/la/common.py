@@ -106,7 +106,8 @@ lexemes = {
     "load_file_encryption_password_incorrect": "Signum codicis incorrectum!",
     "load_file_none_content_error": "Fasciculum onerare non potest.",
 
-    "save_active_file_error_occurred": "Fasciculum servare non potest, error accidit",
+    "action_new_file_error_occurred": "Filem creare non potest; error occurrit.\nPermissiones systematis file inspice.",
+    "save_active_file_error_occurred": "Filem servare non potest; error occurrit.",
 
     "expandable_block_default_title": "Amplius info...",
     "expandable_block_open_close_tags_mismatch_warning": "<details> claudit/aperit block adsigna discongruitas",

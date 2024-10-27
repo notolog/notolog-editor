@@ -40,7 +40,7 @@ lexemes = {
     "actions_accessible_name_settings": "Sovelluksen asetukset",
 
     "search_input_label": "Haku",
-    "search_input_placeholder_text": "Etsi tekstiä asiakirjasta",
+    "search_input_placeholder_text": "Hae tekstiä dokumentista",
     "search_input_accessible_description": "Hakukenttä",
     "search_buttons_label_clear": "Tyhjennä haku",
     "search_buttons_accessible_name_clear": "Tyhjennä hakukenttä",

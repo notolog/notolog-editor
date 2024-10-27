@@ -107,7 +107,7 @@ class MainHighlighter(QSyntaxHighlighter):
             """
             # Get color values from the theme helper
             # For example: 'md_color_h1_text', where the 'md' is the theme prefix, and the 'h1_text' is the item
-            _color = self.theme_helper.get_color(f'{self.theme_ini_prefix}_color_{item}')
+            _color = self.theme_helper.get_color(f'{self.theme_ini_prefix}_color_{item}', css_format=True)
             _background_color = self.theme_helper.get_color(f'{self.theme_ini_prefix}_background_color_{item}')
             _background_color_inner = self.theme_helper.get_color(
                 f'{self.theme_ini_prefix}_background_color_{item}_inner')
