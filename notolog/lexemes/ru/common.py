@@ -100,6 +100,9 @@ lexemes = {
     "dialog_reset_settings_text":
         "Все сохранённые данные в настройках будут очищены, и приложение будет перезапущено для применения изменений.",
 
+    "dialog_exit_unsaved_title": "Подтвердить Выход",
+    "dialog_exit_unsaved_text": "Открытый файл '{file_name}' не может быть сохранен. Продолжить выход?",
+
     "field_dir_path_line_edit": "Выбрать каталог",
 
     "load_file_encryption_password_mismatch": "Несоответствие пароля шифрования!",

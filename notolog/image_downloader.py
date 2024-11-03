@@ -75,7 +75,7 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
 
     def initialize(self):
         self.update_resource_folder(self.base_folder)
-        self.network_manager = QNetworkAccessManager()
+        self.network_manager = QNetworkAccessManager(self)
 
     def get_resource_folder(self, base_folder: str = None) -> QDir:
         # Check folder and make it QDir
@@ -136,8 +136,6 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
         if self.debug:
             self.logger.debug(f'Network reply, reply: {reply}, status_code: {status_code}')
 
-        reply.deleteLater()  # Clean up the QNetworkReply object
-
         # Make sure there is no error
         if reply.error() == QNetworkReply.NetworkError.NoError:
             # No error, processing the image
@@ -165,6 +163,10 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
                 # Emit the file downloaded signal
                 self.downloaded.emit({'resource_name': url})
                 self.downloaded_cnt += 1
+
+        reply.finished.disconnect()
+        reply.errorOccurred.disconnect()
+        reply.deleteLater()  # Clean up the QNetworkReply object
 
     def cache_pixmap(self, url: str, data: QByteArray):
         # Store the image within the app's cache first
@@ -199,6 +201,10 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
         if self.logging:
             self.logger.warning(result_message)
             self.logger.warning(f'Failed to download resource "{reply.errorString()}" with error code [{error_code}]')
+
+        reply.finished.disconnect()
+        reply.errorOccurred.disconnect()
+        reply.deleteLater()  # Clean up the QNetworkReply object
 
     @asyncSlot()
     async def download_resource_in_queue(self, resource_url) -> None:

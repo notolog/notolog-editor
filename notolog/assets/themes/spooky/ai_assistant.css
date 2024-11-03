@@ -18,9 +18,9 @@ QLabel#ai_assistant_dialog_usage_tokens_label {
 }
 /* Request submit button */
 QPushButton {
-    color: #cc1313;
-    background-color: #131313;
+    color: #fbfaf5;
+    background-color: #660000;
 }
 QPushButton:disabled {
-    background-color: #666666;
+    background-color: #330000;
 }

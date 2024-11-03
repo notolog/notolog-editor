@@ -102,6 +102,9 @@ lexemes = {
         "Todos os dados armazenados nas configurações serão apagados, e o aplicativo será reiniciado para aplicar "
         "as mudanças.",
 
+    "dialog_exit_unsaved_title": "Confirmar Saída",
+    "dialog_exit_unsaved_text": "O arquivo aberto '{file_name}' não pode ser salvo. Continuar com a saída?",
+
     "field_dir_path_line_edit": "Selecionar Diretório",
 
     "load_file_encryption_password_mismatch": "Senha de criptografia não confere!",

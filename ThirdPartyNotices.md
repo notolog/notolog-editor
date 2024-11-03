@@ -31,24 +31,15 @@ This document details the third-party libraries used in the Notolog project, inc
 - **License Details**: [Qt Licensing](https://www.qt.io/licensing)
 - **Open Source Obligations**: [Qt Open Source Obligations](https://www.qt.io/licensing/open-source-lgpl-obligations)
 
-#### PySide6
-- **Description**: Provides Python bindings for the Qt application framework.
+#### PySide6_Essentials
+- **Description**: Core libraries for PySide6, providing essential modules.
 - **License**: GNU Lesser General Public License v3.0 (LGPLv3)
-- **Source**: [Official Qt for Python (PySide6) Page](https://wiki.qt.io/Qt_for_Python)
-- **PyPI**: [PySide6 on PyPI](https://pypi.org/project/PySide6/)
-- **License Text**: [Full Text of the LGPLv3](#gnu-lesser-general-public-license-v3)
+- **PyPI**: [PySide6 Essentials on PyPI](https://pypi.org/project/PySide6-Essentials/)
 
-##### Additional Packages Installed with PySide6
-All additional packages listed below are licensed under the **same GNU Lesser General Public License v3.0 (LGPLv3)** as PySide6:
-- **PySide6_Addons**
-    - **Description**: Provides additional modules for PySide6.
-    - **PyPI**: [PySide6 Addons on PyPI](https://pypi.org/project/PySide6-Addons/)
-- **PySide6_Essentials**
-    - **Description**: Core libraries for PySide6.
-    - **PyPI**: [PySide6 Essentials on PyPI](https://pypi.org/project/PySide6-Essentials/)
-- **Shiboken6**
-    - **Description**: Binding generator for the Qt framework; automatically installed with PySide6.
-    - **PyPI**: [Shiboken6 module on PyPI](https://pypi.org/project/shiboken6/)
+#### Shiboken6
+- **Description**: A binding generator used to create Python bindings for the Qt framework; it is automatically installed as a dependency of PySide6.
+- **License**: GNU Lesser General Public License v3.0 (LGPLv3)
+- **PyPI**: [Shiboken6 module on PyPI](https://pypi.org/project/shiboken6/)
 
 *Note: While PySide6 is also available under other licenses (GPLv2 and a commercial license), this project utilizes the LGPLv3 to maintain compatibility with the open source MIT license under which this project is released.*
 

@@ -98,6 +98,9 @@ lexemes = {
     "dialog_reset_settings_text":
         "All stored data in settings will be cleared, and the app will restart to apply changes.",
 
+    "dialog_exit_unsaved_title": "Confirm Exit",
+    "dialog_exit_unsaved_text": "The opened file '{file_name}' cannot be saved. Continue with exit?",
+
     "field_dir_path_line_edit": "Select Directory",
 
     "load_file_encryption_password_mismatch": "Encryption password mismatch!",

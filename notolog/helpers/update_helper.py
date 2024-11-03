@@ -81,19 +81,20 @@ class UpdateHelper(QObject):
         reply = self.manager.get(request)  # GET
 
         # Connect finished signal
-        reply.finished.connect(lambda _reply=reply: self.handle_network_reply(_reply))
+        reply.finished.connect(self.handle_network_reply)
         # Connect error signal
-        reply.errorOccurred.connect(lambda error, _reply=reply: self.handle_network_reply(_reply, error))
+        reply.errorOccurred.connect(lambda error: self.handle_network_reply(error))
 
-    @Slot()
-    def handle_network_reply(self, reply: QNetworkReply, error_code=None):
+    @Slot(str)
+    def handle_network_reply(self, error_code=None):
+        # Get reply object that emitted the signal.
+        reply = self.sender()  # type: QNetworkReply
+
         # Get received status code, say 200
         status_code = reply.attribute(QNetworkRequest.Attribute.HttpStatusCodeAttribute)
 
         if self.debug:
             self.logger.debug(f'Update response, reply: {reply}, error_code: {error_code}, status_code: {status_code}')
-
-        reply.deleteLater()  # Clean up the QNetworkReply object
 
         # Make sure there is no error
         if reply.error() == QNetworkReply.NetworkError.NoError:
@@ -121,6 +122,10 @@ class UpdateHelper(QObject):
                 self.logger.warning(f"Failed to fetch update information: {reply.errorString()}")
             # Emit error signal
             self.new_version_check_response.emit({'status': self.STATUS_ERROR, 'msg': result_message})
+
+        reply.finished.disconnect()
+        reply.errorOccurred.disconnect()
+        reply.deleteLater()  # Clean up the QNetworkReply object
 
     def process_response(self, reply: QNetworkReply, status_code) -> str:
         # The request was successful

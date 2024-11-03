@@ -102,6 +102,9 @@ lexemes = {
         "Tutti i dati memorizzati nelle impostazioni verranno cancellati, e l'app verrà riavviata per applicare "
         "le modifiche.",
 
+    "dialog_exit_unsaved_title": "Conferma Uscita",
+    "dialog_exit_unsaved_text": "Il file aperto '{file_name}' non può essere salvato. Continuare con l'uscita?",
+
     "field_dir_path_line_edit": "Seleziona directory",
 
     "load_file_encryption_password_mismatch": "La password di crittografia non corrisponde!",

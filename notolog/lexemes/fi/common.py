@@ -100,6 +100,9 @@ lexemes = {
     "dialog_reset_settings_text":
         "Kaikki asetuksissa tallennetut tiedot poistetaan, ja sovellus käynnistetään uudelleen muutosten soveltamiseksi.",
 
+    "dialog_exit_unsaved_title": "Vahvista Poistuminen",
+    "dialog_exit_unsaved_text": "Avattua tiedostoa '{file_name}' ei voi tallentaa. Jatketaanko poistumista?",
+
     "field_dir_path_line_edit": "Valitse hakemisto",
 
     "load_file_encryption_password_mismatch": "Salaussalasana ei täsmää!",

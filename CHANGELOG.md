@@ -1,6 +1,34 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.0.5] - 2024-11-03
+
+### Added
+- Added a check to allow saving an opened file if the file no longer exists but directory permissions permit saving.
+- Added an exit confirmation dialog for cases where the file cannot be saved due to a lack of write permissions.
+- Added test cases for saving active files to cover crucial functionality and emulate permission checks, as well as to validate overall expected behavior.
+- Added a new color setting, 'ai_assistant_button_icon_color', for AI Assistant button icons.
+- Added a rejected dialog callback for the `CommonDialog` class.
+- Added a callback for the app's `message_box()` method.
+- Added corresponding lexeme translations.
+
+### Changed
+- Removed `PySide6` and `PySide6_Addons` packages from the dependencies, retaining `PySide6_Essentials` to streamline installation. To keep the working environment clean, please remove them using `pip uninstall -y pyside6 pyside6-addons`.
+- Made minor adjustments to the About popup for the Nocturne, Dark Noir, and Spooky themes, along with other tweaks.
+
+### Updated
+- Updated active line number highlighting in edit mode to align with line height and handle word-wrapped blocks that span multiple lines.
+- Updated version dependencies for `numpy` and `onnxruntime-genai` to keep package dependencies concise.
+- Improved the waiting indicator for the OpenAI API module during requests and updated related tests.
+- Enhanced processing of `QNetworkReply` where applicable.
+- Revised permission checks for the app's configuration file.
+- Updated corresponding tests.
+
+### Fixed
+- Fixed a potential issue with the update check that could lead to a sudden app closing event.
+- Fixed an issue with file permission checks for existing files when saving content.
+- Fixed a background reset issue for line numbers that could occur after line changes in word-wrapped blocks when working in edit mode.
+
 ## [1.0.4] - 2024-10-27
 
 ### Added

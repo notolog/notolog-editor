@@ -11,7 +11,7 @@ from threading import Lock
 toml_base_app_config = """
 [app]
 name = "Notolog"
-version = "1.0.4"
+version = "1.0.5"
 license = "MIT License"
 date = "2024"
 website = "https://notolog.app"
@@ -152,9 +152,22 @@ class AppConfig(QObject):
             # Backup option
             self.app_config = tomli.loads(toml_app_config)
         else:
-            # Read actual app_config.toml
-            with open(self.toml_file_path, 'r') as config_file:
-                self.app_config = tomli.loads(config_file.read())
+            try:
+                # Read from the actual app_config.toml file
+                with open(self.toml_file_path, 'r') as config_file:
+                    self.app_config = tomli.loads(config_file.read())
+            except FileNotFoundError:
+                if self.logging:
+                    self.logger.warning(f"The configuration file {self.toml_file_path} was not found.")
+            except PermissionError:
+                if self.logging:
+                    self.logger.warning(f"Permission denied when accessing the file {self.toml_file_path}.")
+            except tomli.TOMLDecodeError:
+                if self.logging:
+                    self.logger.warning(f"Error decoding TOML from the file {self.toml_file_path}.")
+            except Exception as e:
+                if self.logging:
+                    self.logger.warning(f"An unexpected error occurred while loading the config: {str(e)}")
 
         # Font settings
         self._font_size = self.app_config['font']['base_size']  # Base value
@@ -172,9 +185,20 @@ class AppConfig(QObject):
         if self.debug:
             self.logger.debug('App config handler is in use "%s"' % data)
 
-        with open(self.toml_file_path, 'wb') as f:
-            f.write(toml_app_config_header.encode('utf-8'))
-            tomli_w.dump(self.app_config, f)
+        try:
+            # Regenerate the app_config.toml file with new settings
+            with open(self.toml_file_path, 'wb') as f:
+                f.write(toml_app_config_header.encode('utf-8'))
+                tomli_w.dump(self.app_config, f)
+        except PermissionError:
+            if self.logging:
+                self.logger.warning(f"Permission denied: Cannot write to the file {self.toml_file_path}.")
+        except IOError as e:
+            if self.logging:
+                self.logger.warning(f"Failed to write config to file {self.toml_file_path}: {e}")
+        except Exception as e:
+            if self.logging:
+                self.logger.warning(f"An unexpected error occurred: {e}")
 
     """
     Constant values with getters.

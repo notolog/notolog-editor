@@ -100,6 +100,9 @@ lexemes = {
     "dialog_reset_settings_text":
         "Omnia in configurationibus data delebuntur, et app ad mutationes applicandas restituetur.",
 
+    "dialog_exit_unsaved_title": "Confirma Exitus",
+    "dialog_exit_unsaved_text": "Apertum lima '{file_name}' servari non potest. Exitus procedere?",
+
     "field_dir_path_line_edit": "Select Directory",
 
     "load_file_encryption_password_mismatch": "Signi codicis discrepantia!",

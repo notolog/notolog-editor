@@ -303,7 +303,9 @@ class AIAssistant(QDialog):
         self.save_history_button = QPushButton()
         self.save_history_button.setFont(self.font())
         self.save_history_button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.save_history_button.setIcon(self.theme_helper.get_icon(theme_icon='floppy2.svg'))
+        self.save_history_button.setIcon(self.theme_helper.get_icon(
+            theme_icon='floppy2.svg',
+            color=QColor(self.theme_helper.get_color('ai_assistant_button_icon_color', css_format=True))))
         self.save_history_button.clicked.connect(self.save_history_action)
         self.save_history_button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.save_history_button.setDisabled(True)
@@ -318,7 +320,9 @@ class AIAssistant(QDialog):
         # Submit button
         self.send_button = QPushButton(self.lexemes.get('dialog_button_send_request'), self)
         self.send_button.setFont(self.font())
-        self.send_button.setIcon(self.theme_helper.get_icon(theme_icon='play-fill.svg'))
+        self.send_button.setIcon(self.theme_helper.get_icon(
+            theme_icon='play-fill.svg',
+            color=QColor(self.theme_helper.get_color('ai_assistant_button_icon_color', css_format=True))))
         self.send_button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.send_button.clicked.connect(self.send_request)
         buttons_layout.addWidget(self.send_button, 1)
@@ -634,14 +638,18 @@ class AIAssistant(QDialog):
         # Sen request button
         self.send_button.clicked.disconnect()
         self.send_button.setText(self.lexemes.get('dialog_button_send_request'))
-        self.send_button.setIcon(self.theme_helper.get_icon(theme_icon='play-fill.svg'))
+        self.send_button.setIcon(self.theme_helper.get_icon(
+            theme_icon='play-fill.svg',
+            color=QColor(self.theme_helper.get_color('ai_assistant_button_icon_color', css_format=True))))
         self.send_button.clicked.connect(self.send_request)
 
     def request_button_stop(self):
         # Stop request button
         self.send_button.clicked.disconnect()
         self.send_button.setText(self.lexemes.get('dialog_button_stop_request'))
-        self.send_button.setIcon(self.theme_helper.get_icon(theme_icon='stop-fill.svg'))
+        self.send_button.setIcon(self.theme_helper.get_icon(
+            theme_icon='stop-fill.svg',
+            color=QColor(self.theme_helper.get_color('ai_assistant_button_icon_color', css_format=True))))
         self.send_button.clicked.connect(self.cancel_request)
 
     def cancel_request(self):

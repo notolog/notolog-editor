@@ -39,8 +39,6 @@ class TestImageDownloader:
         # The test_core_app fixture sets up the app environment explicitly.
         yield Settings()
 
-        # settings.deleteLater()
-
     def test_initialize_called(self):
         with patch.object(ImageDownloader, 'initialize', MagicMock(name='initialize')) as mock_initialize:
             ImageDownloader()
@@ -85,6 +83,7 @@ class TestImageDownloader:
         # signal.emit = MagicMock(name='emit')
         # Explicitly add 'connect' to the signal
         signal.connect = lambda v: callback()
+        signal.disconnect = lambda: None
 
         return signal
 

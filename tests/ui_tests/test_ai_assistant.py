@@ -4,12 +4,12 @@ import asyncio
 from PySide6.QtCore import Qt
 from PySide6.QtTest import QTest
 
-from notolog.ui.ai_assistant import AIAssistant, EnumMessageType
+from notolog.ui.ai_assistant import AIAssistant
 from notolog.ui.ai_message_label import AiMessageLabel
 from notolog.notolog_editor import NotologEditor
 from notolog.settings import Settings
 from notolog.enums.languages import Languages
-# from notolog.modules.openai_api import ModuleCore as TestModuleCore
+from notolog.modules.openai_api import ModuleCore
 
 from . import test_app  # noqa: F401
 
@@ -88,12 +88,13 @@ class TestAiAssistant:
         mock_status_ready = mocker.patch.object(ui_obj, 'set_status_ready')
 
         mock_init_module = mocker.patch.object(ui_obj, 'init_module', wraps=ui_obj.init_module)
+        mock_cancel_request = mocker.patch.object(ui_obj, 'cancel_request', wraps=ui_obj.cancel_request)
 
         mock_send_request_finished_callback = mocker.patch.object(
             ui_obj, 'send_request_finished_callback', wraps=ui_obj.send_request_finished_callback)
 
         # Wraps doesn't work
-        # mock_request = mocker.patch.object(TestModuleCore, 'request', wraps=TestModuleCore.request)
+        mock_request = mocker.patch.object(ModuleCore, 'request', return_value=None)
 
         def _check_message_added(message_text):
             assert test_exp_params_fixture in message_text
@@ -124,15 +125,16 @@ class TestAiAssistant:
         # To allow completion of an async task
         await asyncio.sleep(0.05)
 
-        # Module core methods
-        # mock_request.assert_called_once()
-
-        # Check these methods weren't called
-        mock_status_ready.assert_called()
+        # Verify that the method was called
+        mock_status_ready.assert_not_called()
 
         # Finished signal with expected results
-        _expected_params = {'message_type': EnumMessageType.RESPONSE, 'request_msg_id': 3, 'response_msg_id': 6}
-        mock_send_request_finished_callback.assert_called_once_with(**_expected_params)
+        # _expected_params = {'message_type': EnumMessageType.RESPONSE, 'request_msg_id': 3, 'response_msg_id': 6}
+        # mock_send_request_finished_callback.assert_called_once_with(**_expected_params)
+        mock_send_request_finished_callback.assert_not_called()
 
         # Ensure the method is not called, as it originates from the actual network response handling method.
         mock_update_usage.assert_not_called()
+
+        mock_request.assert_called_once()
+        mock_cancel_request.assert_not_called()  # Either an exception or stop button click

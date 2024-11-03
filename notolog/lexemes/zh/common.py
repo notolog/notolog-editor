@@ -96,6 +96,9 @@ lexemes = {
     "dialog_reset_settings_title": "重置设置？",
     "dialog_reset_settings_text": "将清除设置中的所有存储数据，并将重新启动应用程序以应用更改。",
 
+    "dialog_exit_unsaved_title": "确认退出",
+    "dialog_exit_unsaved_text": "无法保存已打开的文件 '{file_name}'。是否继续退出？",
+
     "field_dir_path_line_edit": "选择目录",
 
     "load_file_encryption_password_mismatch": "加密密码不匹配!",

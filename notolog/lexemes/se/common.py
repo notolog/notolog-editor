@@ -99,6 +99,9 @@ lexemes = {
         "All lagrad data i inställningarna kommer att rensas, och appen kommer att startas om för att tillämpa "
         "ändringarna.",
 
+    "dialog_exit_unsaved_title": "Bekräfta Avslut",
+    "dialog_exit_unsaved_text": "Den öppnade filen '{file_name}' kan inte sparas. Fortsätt med att avsluta?",
+
     "field_dir_path_line_edit": "Välj katalog",
 
     "load_file_encryption_password_mismatch": "Krypteringslösenordet stämmer inte!",

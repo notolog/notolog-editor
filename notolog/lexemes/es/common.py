@@ -102,6 +102,9 @@ lexemes = {
         "Todos los datos almacenados en las configuraciones serán borrados, y la aplicación se reiniciará para aplicar "
         "los cambios.",
 
+    "dialog_exit_unsaved_title": "Confirmar Salida",
+    "dialog_exit_unsaved_text": "El archivo abierto '{file_name}' no puede ser guardado. ¿Continuar con la salida?",
+
     "field_dir_path_line_edit": "Seleccionar Directorio",
 
     "load_file_encryption_password_mismatch": "¡La contraseña de encriptación no coincide!",

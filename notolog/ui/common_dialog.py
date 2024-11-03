@@ -31,7 +31,7 @@ class CommonDialog(QDialog):
     logging = AppConfig().get_logging()
     debug = AppConfig().get_debug()
 
-    def __init__(self, title=str, text=str, callback=None, parent=None):
+    def __init__(self, title=str, text=str, callback=None, reject_callback=None, parent=None):
         super().__init__(parent)
 
         self.parent = parent
@@ -91,10 +91,15 @@ class CommonDialog(QDialog):
             button_box.accepted.connect(lambda: callback(self.reject))
         else:
             if self.debug:
-                self.logger.warning('No callback method provided for the dialog!')
+                self.logger.warning('No callback method was provided for the dialog!')
             button_box.accepted.connect(self.close)
 
-        button_box.rejected.connect(self.reject)
+        if callable(reject_callback):
+            button_box.rejected.connect(lambda: reject_callback(self.reject))
+        else:
+            if self.debug:
+                self.logger.warning('No reject callback method was provided for the dialog!')
+            button_box.rejected.connect(self.reject)
 
     def resizeEvent(self, event) -> None:
         """

@@ -98,6 +98,9 @@ lexemes = {
     "dialog_reset_settings_title": "設定をリセットしますか？",
     "dialog_reset_settings_text": "設定に保存されているすべてのデータがクリアされ、変更を適用するためにアプリが再起動されます。",
 
+    "dialog_exit_unsaved_title": "終了の確認",
+    "dialog_exit_unsaved_text": "開いているファイル '{file_name}' は保存できません。終了しますか？",
+
     "field_dir_path_line_edit": "ディレクトリを選択",
 
     "load_file_encryption_password_mismatch": "暗号化パスワードが一致しません！",

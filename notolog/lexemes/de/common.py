@@ -102,6 +102,9 @@ lexemes = {
         "Alle gespeicherten Daten in den Einstellungen werden gelöscht, und die App wird neu gestartet, "
         "um die Änderungen anzuwenden.",
 
+    "dialog_exit_unsaved_title": "Beenden Bestätigen",
+    "dialog_exit_unsaved_text": "Die geöffnete Datei '{file_name}' kann nicht gespeichert werden. Trotzdem beenden?",
+
     "field_dir_path_line_edit": "Verzeichnis auswählen",
 
     "load_file_encryption_password_mismatch": "Verschlüsselungspasswort stimmt nicht überein!",

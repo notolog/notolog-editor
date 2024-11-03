@@ -1,7 +1,6 @@
 QDialog {
-    background-color: #9900cc;
-    border: 1px solid black;
-    border-radius: 3px;
+    background-color: #8013b0;
+    border: none;
 }
 QFrame {
     border: none;

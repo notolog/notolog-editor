@@ -45,6 +45,6 @@ QSlider::handle:horizontal {
 }
 /* Request submit button */
 QPushButton#settings_dialog_button_close {
-    color: #cc1313;
-    background-color: #131313;
+    color: #fbfaf5;
+    background-color: #660000;
 }

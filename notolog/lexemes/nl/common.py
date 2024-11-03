@@ -99,6 +99,9 @@ lexemes = {
         "Alle opgeslagen gegevens in de instellingen worden gewist, en de app wordt opnieuw opgestart om wijzigingen "
         "toe te passen.",
 
+    "dialog_exit_unsaved_title": "Bevestig Afsluiten",
+    "dialog_exit_unsaved_text": "Het geopende bestand '{file_name}' kan niet worden opgeslagen. Toch afsluiten?",
+
     "field_dir_path_line_edit": "Selecteer map",
 
     "load_file_encryption_password_mismatch": "Versleutelingswachtwoord komt niet overeen!",

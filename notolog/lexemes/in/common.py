@@ -100,6 +100,9 @@ lexemes = {
     "dialog_reset_settings_text":
         "सेटिंग्स में संग्रहीत सभी डेटा मिटाया जाएगा, और एप्लिकेशन परिवर्तन लागू करने के लिए पुनः आरंभ होगा।",
 
+    "dialog_exit_unsaved_title": "बाहर जाने की पुष्टि करें",
+    "dialog_exit_unsaved_text": "खुली हुई फ़ाइल '{file_name}' को सहेजा नहीं जा सकता। क्या बाहर जाना जारी रखें?",
+
     "field_dir_path_line_edit": "डायरेक्टरी चुनें",
 
     "load_file_encryption_password_mismatch": "एन्क्रिप्शन पासवर्ड मेल नहीं खाता!",

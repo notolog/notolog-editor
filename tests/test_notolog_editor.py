@@ -1,13 +1,20 @@
 # tests/test_notolog_editor.py
 
+from PySide6.QtCore import QTimer
 from PySide6.QtGui import QTextDocument
 
 from notolog.notolog_editor import NotologEditor
 from notolog.settings import Settings
 from notolog.editor_state import Mode
 from notolog.lexemes.lexemes import Lexemes
+from notolog.edit_widget import EditWidget
+from notolog.file_header import FileHeader
+from notolog.encrypt.enc_helper import EncHelper
+from notolog.editor_state import Encryption
 
-from unittest.mock import Mock
+from unittest.mock import Mock, MagicMock
+
+from types import SimpleNamespace
 
 import pytest
 
@@ -116,15 +123,16 @@ class TestNotologEditor:
     @pytest.mark.parametrize(
         "test_exp_params_fixture",
         [
-            (Mode.VIEW, 'new-document-1.md', None, None, 1),
-            (Mode.VIEW, 'new-document-1.md', False, None, 1),
-            (Mode.VIEW, 'new-document-9999.md', True, None, 9999),
-            (Mode.VIEW, 'new-document-1.md', False, 'Lorem ipsum', 1),
+            (Mode.VIEW, 'new-document-1.md', None, None, 1, True, True),
+            (Mode.VIEW, 'new-document-1.md', None, None, 1, False, False),
+            (Mode.VIEW, 'new-document-1.md', False, None, 1, True, True),
+            (Mode.VIEW, 'new-document-9999.md', True, None, 9999, True, False),
+            (Mode.VIEW, 'new-document-1.md', False, 'Lorem ipsum', 1, True, True),
         ],
         indirect=True
     )
     def test_notolog_editor_action_new_file(self, mocker, test_obj_notolog_editor, test_exp_params_fixture):
-        mode, file_path, isfile, content, res_path_call_cnt = test_exp_params_fixture
+        mode, file_path, isfile, content, res_path_call_cnt, res_save_file, res_exp = test_exp_params_fixture
 
         mocker.patch.object(test_obj_notolog_editor, 'get_mode', return_value=mode)
         mocker.patch.object(test_obj_notolog_editor, 'toggle_mode', return_value=None)
@@ -137,17 +145,177 @@ class TestNotologEditor:
         # monkeypatch.setattr('app.notolog_editor.res_path', lambda _file_path: _file_path == file_path)
         mocker.patch.object(os.path, 'isfile', return_value=isfile)
 
-        mock_save_file_content = mocker.patch.object(test_obj_notolog_editor, 'save_file_content', return_value=None)
-        mocker.patch.object(test_obj_notolog_editor, 'load_file', return_value=None)
+        mock_save_file_content = mocker.patch.object(test_obj_notolog_editor, 'save_file_content', return_value=res_save_file)
+        mocker.patch.object(test_obj_notolog_editor, 'load_file', return_value=True)
 
-        test_obj_notolog_editor.action_new_file(content)
+        result = test_obj_notolog_editor.action_new_file(content)
 
+        assert result == res_exp
         assert mock_res_path.call_count == res_path_call_cnt
         # Check the parameters passed to the mocked function(s)
         # assert str(mock_res_path.call_args) == "call('%s')" % file_path
         # assert str(mock_save_file_content.call_args) == "call('%s', '%s')" % (file_path, content)
         if content:
             assert str(content) in str(mock_save_file_content.call_args)
+
+    @pytest.mark.parametrize(
+        "test_exp_params_fixture",
+        [
+            # mode, encryption, file_path, file_exists, file_write_ok, dir_write_ok
+            (None, None, 'some-doc-1.md', None, None, None,
+             # content, prev_content, clear_after, allow_save_empty_content, res_save_file, res_exp
+             '', None, None, None, None, None),
+            # Verify behavior when running in an unexpected mode
+            (Mode.VIEW, Encryption.PLAIN, 'some-doc-1.md', False, False, False,
+             '', None, False, None, False, None),
+            (Mode.VIEW, Encryption.PLAIN, 'some-doc-1.md', False, False, False,
+             'Lorem ipsum', 'To be or not to be?', False, None, False, None),
+            # Manage scenarios involving saving empty content to the file
+            (Mode.EDIT, Encryption.PLAIN, 'some-doc-1.md', None, None, None,
+             '', None, False, None, False, False),
+            (Mode.EDIT, Encryption.PLAIN, 'some-doc-1.md', True, True, True,
+             '', 'Essentiam vel non essentiam? Hoc quaestio est.', False, None, False, None),
+            (Mode.EDIT, Encryption.PLAIN, 'some-doc-1.md', True, True, True,
+             '', 'Essentiam vel non essentiam? Hoc quaestio est.', False, True, False, False),
+            (Mode.EDIT, Encryption.PLAIN, 'some-doc-1.md', True, True, True,
+             '', 'Essentiam vel non essentiam? Hoc quaestio est.', False, True, True, True),
+            # Insufficient permissions to save the file
+            (Mode.EDIT, Encryption.PLAIN, 'some-doc-1.md', False, False, False,
+             'Lorem ipsum', 'To be or not to be?', False, None, False, False),
+            (Mode.EDIT, Encryption.PLAIN, 'some-doc-1.md', True, False, True,
+             'Lorem ipsum', 'To be or not to be?', False, None, False, False),
+            (Mode.EDIT, Encryption.ENCRYPTED, 'some-doc-1.md', False, False, False,
+             'Lorem ipsum', 'To be or not to be?', False, None, False, False),
+            # Handle other unexpected errors when saving the file
+            (Mode.EDIT, Encryption.ENCRYPTED, 'some-doc-1.md', True, True, True,
+             'Lorem ipsum', 'To be or not to be?', False, None, False, False),
+            # Handle cases where the file can be saved
+            (Mode.EDIT, Encryption.PLAIN, 'some-doc-1.md', False, True, True,
+             'Lorem ipsum', 'To be or not to be?', False, None, True, True),
+            (Mode.EDIT, Encryption.PLAIN, 'some-doc-1.md', True, True, False,
+             'Lorem ipsum', 'To be or not to be?', False, None, True, True),
+            (Mode.EDIT, Encryption.PLAIN, 'some-doc-1.md', True, True, True,
+             'Lorem ipsum', 'To be or not to be?', False, None, True, True),
+            (Mode.EDIT, Encryption.ENCRYPTED, 'some-doc-1.md', True, True, True,
+             'Lorem ipsum', 'To be or not to be?', False, None, True, True),
+            (Mode.EDIT, Encryption.ENCRYPTED, 'some-doc-1.md', True, True, True,
+             'Lorem ipsum', 'To be or not to be?', True, None, True, True),
+        ],
+        indirect=True
+    )
+    def test_notolog_editor_save_active_file(self, mocker, test_obj_notolog_editor, test_exp_params_fixture):
+        (mode, encryption, file_path, file_exists, file_write_ok, dir_write_ok, content, prev_content,
+         clear_after, allow_save_empty_content, res_save_file, res_exp) \
+            = test_exp_params_fixture
+
+        mocker.patch.object(test_obj_notolog_editor, 'get_mode', return_value=mode)
+        mocker.patch.object(test_obj_notolog_editor, 'toggle_mode', return_value=None)
+        setattr(test_obj_notolog_editor, 'debug', False)
+        setattr(test_obj_notolog_editor, 'logging', False)
+
+        mocker.patch.object(test_obj_notolog_editor, 'get_current_file_path', return_value=file_path)
+
+        mock_store_doc_cursor_pos = mocker.patch.object(test_obj_notolog_editor, 'store_doc_cursor_pos',
+                                                        return_value=None)
+        mock_toggle_save_timer = mocker.patch.object(test_obj_notolog_editor, 'toggle_save_timer', return_value=None)
+        mock_message_box = mocker.patch.object(test_obj_notolog_editor, 'message_box', return_value=None)
+        mock_common_dialog = mocker.patch.object(test_obj_notolog_editor, 'common_dialog', return_value=None)
+        mock_get_encryption = mocker.patch.object(test_obj_notolog_editor, 'get_encryption', return_value=encryption)
+
+        mock_edit_widget = MagicMock(spec=EditWidget)
+        mock_edit_widget_to_plain_text = mocker.patch.object(mock_edit_widget, 'toPlainText', return_value=content)
+        mock_edit_widget_clear = mocker.patch.object(mock_edit_widget, 'clear', return_value=None)
+        mocker.patch.object(test_obj_notolog_editor, 'get_edit_widget', return_value=mock_edit_widget)
+
+        setattr(test_obj_notolog_editor, 'content', prev_content)
+        setattr(test_obj_notolog_editor, 'estate', SimpleNamespace(**{'allow_save_empty': allow_save_empty_content}))
+
+        mock_save_timer_ui_icon = mocker.patch.object(QTimer, 'singleShot', return_value=None)
+
+        # Handle file system permissions
+        mocker.patch.object(os.path, 'exists', return_value=file_exists)
+        write_permissions_matrix = {file_path: file_write_ok, os.path.dirname(file_path): dir_write_ok}
+        mocker.patch.object(os, 'access',
+                            side_effect=lambda key, _mode: getattr(SimpleNamespace(**write_permissions_matrix), key, None))
+
+        # Lexemes
+        mock_lexemes_get = mocker.patch.object(test_obj_notolog_editor.lexemes, 'get')
+
+        # Process the file's header information
+        mock_header = MagicMock(spec=FileHeader)
+        mock_header_refresh = mocker.patch.object(mock_header, 'refresh', return_value=None)
+        mock_header_pack = mocker.patch.object(mock_header, 'pack', wraps=mock_header.pack)
+        header_line_tpl = '<!-- %s -->'  # To simplify the emulation of header processing operations
+        mocker.patch.object(mock_header, '__repr__', return_value=(header_line_tpl % file_path))
+        mocker.patch.object(mock_header, 'is_valid', return_value=True)
+        mock_header_validate_enc = mocker.patch.object(mock_header, 'validate_enc', return_value=None)
+        mocker.patch.object(mock_header, 'get_enc_param',
+                            side_effect=lambda key: getattr(SimpleNamespace(**{'slt': 'any-salt', 'itr': 1}), key, None))
+        setattr(test_obj_notolog_editor, 'header', mock_header)
+
+        mock_enc_helper = MagicMock(spec=EncHelper)
+        mock_enc_helper_encrypt_data = mocker.patch.object(mock_enc_helper, 'encrypt_data',
+                                                           return_value=('ENCRYPTED' + content).encode('utf-8'))
+        mock_get_encrypt_helper = mocker.patch.object(test_obj_notolog_editor, 'get_encrypt_helper',
+                                                      return_value=mock_enc_helper)
+
+        mock_save_file_content = mocker.patch.object(test_obj_notolog_editor, 'save_file_content',
+                                                     return_value=res_save_file)
+
+        # Save the active file
+        result = test_obj_notolog_editor.save_active_file(clear_after, allow_save_empty_content)
+
+        assert result == res_exp
+        mock_store_doc_cursor_pos.assert_called_once()
+
+        if res_save_file:
+            mock_header_refresh.assert_called_once()
+            mock_header_pack.assert_called_once()
+            # Verify the parameters passed to the mocked function(s)
+            # assert str(mock_res_path.call_args) == "call('%s')" % file_path
+            # assert str(mock_save_file_content.call_args) == "call('%s', '%s')" % (file_path, content)
+            assert str(content) in str(mock_header_pack.call_args)
+            mock_edit_widget_to_plain_text.assert_called_once()
+            assert mock_edit_widget_clear.call_count == int(clear_after)
+            mock_get_encryption.assert_called_once()
+            mock_toggle_save_timer.assert_not_called()
+            mock_message_box.assert_not_called()
+            assert test_obj_notolog_editor.content == content
+            assert repr(test_obj_notolog_editor.header) == header_line_tpl % file_path
+            # Encrypted file
+            if encryption == Encryption.ENCRYPTED:
+                mock_header_validate_enc.assert_called_once()
+                mock_get_encrypt_helper.assert_called_once_with(salt='any-salt', iterations=1)
+                mock_enc_helper_encrypt_data.assert_called_once_with(content.encode('utf-8'))
+            else:
+                mock_header_validate_enc.assert_not_called()
+                mock_get_encrypt_helper.assert_not_called()
+        elif mock_save_timer_ui_icon.call_count > 0:
+            mock_message_box.assert_called_once()
+            # Checks if the method was called with the parameter at least once
+            mock_lexemes_get.assert_any_call('save_active_file_error_occurred')
+
+        if (file_exists and file_write_ok) or (not file_exists and dir_write_ok):
+            if not content:
+                if allow_save_empty_content:
+                    mock_save_timer_ui_icon.assert_called_once()
+                else:
+                    mock_save_timer_ui_icon.assert_not_called()
+                    mock_common_dialog.assert_called_once()
+                    # Checks if the method was called with the parameter at least once
+                    mock_lexemes_get.assert_any_call('dialog_save_empty_file_title')
+            elif mode == Mode.EDIT:
+                mock_save_file_content.assert_called_once()
+                mock_save_timer_ui_icon.assert_called_once()
+                if res_save_file:
+                    # No lexemes were retrieved for any dialog
+                    mock_lexemes_get.assert_not_called()
+
+        if not file_exists and not dir_write_ok and mode == Mode.EDIT:
+            mock_toggle_save_timer.assert_called_once()
+            mock_message_box.assert_called_once()
+            # Checks if the method was called with the parameter at least once
+            mock_lexemes_get.assert_any_call('save_active_file_error_occurred')
 
     @pytest.mark.parametrize(
         "test_exp_params_fixture",

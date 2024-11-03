@@ -316,8 +316,9 @@ class NotologEditor(QMainWindow):
         self.set_mode(mode)
         self.set_source(source)
 
+        # Timer for auto-saving
         self.save_timer = QTimer(interval=15000, timeout=self.auto_save_file)  # noqa
-        self.save_timer.start()
+        self.toggle_save_timer()
 
         """
         Ctrl+S save current file.
@@ -1352,7 +1353,8 @@ class NotologEditor(QMainWindow):
                 return any_file_path
         return None
 
-    def message_box(self, text: str, icon_type: int = 0, frameless: bool = False, timer_sec: int = None) -> None:
+    def message_box(self, text: str, icon_type: int = 0, frameless: bool = False, timer_sec: int = None,
+                    callback=None) -> None:
         """
         Show popup message box
 
@@ -1419,6 +1421,9 @@ class NotologEditor(QMainWindow):
         if box.clickedButton() == button_ok:
             if self.debug:
                 self.logger.debug('Message box button clicked')
+            # Execute the callback if it is defined
+            if callable(callback):
+                callback()
 
     def enc_new_password_dialog(self) -> Union[EncPassword, None]:
         """
@@ -1501,7 +1506,8 @@ class NotologEditor(QMainWindow):
         """
         dialog.deleteLater()
 
-    def common_dialog(self, title: str, text: str, callback: Callable[..., Any]) -> None:
+    def common_dialog(self, title: str, text: str,
+                      callback: Callable[..., Any], reject_callback: Callable[..., Any] = None) -> None:
         """
         Generic dialog with settable texts and callback.
         """
@@ -1509,7 +1515,7 @@ class NotologEditor(QMainWindow):
         if self.debug:
             self.logger.debug('Common dialog "%s": "%s"' % (title, text))
 
-        dialog = CommonDialog(title, text, callback, self)
+        dialog = CommonDialog(title=title, text=text, callback=callback, reject_callback=reject_callback, parent=self)
         dialog.exec()
 
         """
@@ -1754,10 +1760,20 @@ class NotologEditor(QMainWindow):
 
         if self.get_mode() == Mode.EDIT:
             # Save any unsaved changes
-            self.save_active_file(clear_after=False)
+            if self.save_active_file(clear_after=False) is False:
+                self.common_dialog(
+                    self.lexemes.get('dialog_exit_unsaved_title'),
+                    self.lexemes.get(name='dialog_exit_unsaved_text',
+                                     file_name=os.path.basename(self.get_current_file_path())),
+                    callback=lambda dialog_callback: dialog_callback(),
+                    reject_callback=lambda dialog_callback: (event.ignore(), dialog_callback()))
         else:
             # Save cursor position (block start)
             self.store_doc_cursor_pos(self.get_mode())
+
+        # Check the event is not accepted in any prior dialogue
+        if not event.isAccepted():
+            return
 
         self.settings.mode = self.get_mode().value
         self.settings.source = self.get_source().value
@@ -2017,39 +2033,39 @@ class NotologEditor(QMainWindow):
         return [
             {'name': 'main_menu_group_file', 'text': self.lexemes.get('group_file_label', scope='main_menu'),
              'items': [
-                {'type': 'action', 'name': 'actions_file_label_new_document',
+                {'type': 'action', 'name': 'main_menu_actions_file_label_new_document',
                  'system_icon': 'document-new', 'theme_icon': 'file-earmark-plus-fill.svg',
                  'label': self.lexemes.get('actions_file_label_new_document', scope='main_menu'),
                  'accessible_name': self.lexemes.get('actions_file_accessible_name_new_document', scope='main_menu'),
                  'action': self.action_new_file},
-                {'type': 'action', 'name': 'actions_file_label_open',
+                {'type': 'action', 'name': 'main_menu_actions_file_label_open',
                  'system_icon': 'document-open', 'theme_icon': 'folder-fill.svg',
                  'label': self.lexemes.get('actions_file_label_open', scope='main_menu'),
                  'accessible_name': self.lexemes.get('actions_file_accessible_name_open', scope='main_menu'),
                  'action': self.action_open_file},
-                {'type': 'action', 'name': 'actions_file_label_save',
+                {'type': 'action', 'name': 'main_menu_actions_file_label_save',
                  'system_icon': 'media-floppy', 'theme_icon': 'floppy2-fill.svg',
                  'label': self.lexemes.get('actions_file_label_save', scope='main_menu'),
                  'accessible_name': self.lexemes.get('actions_file_accessible_name_save', scope='main_menu'),
                  'action': self.action_save_file},
-                {'type': 'action', 'name': 'actions_file_label_save_as',
+                {'type': 'action', 'name': 'main_menu_actions_file_label_save_as',
                  'system_icon': 'media-floppy', 'theme_icon': 'floppy2.svg',
                  'label': self.lexemes.get('actions_file_label_save_as', scope='main_menu'),
                  'accessible_name': self.lexemes.get('actions_file_accessible_name_save_as', scope='main_menu'),
                  'action': self.action_save_as_file},
                 {'type': 'delimiter'},
-                {'type': 'action', 'name': 'actions_file_label_settings',
+                {'type': 'action', 'name': 'main_menu_actions_file_label_settings',
                  'theme_icon': 'three-dots.svg',
                  'label': self.lexemes.get('actions_file_label_settings', scope='main_menu'),
                  'accessible_name': self.lexemes.get('actions_file_accessible_name_settings', scope='main_menu'),
                  'action': self.action_settings},
-                {'type': 'action', 'name': 'actions_file_label_reset_settings',
+                {'type': 'action', 'name': 'main_menu_actions_file_label_reset_settings',
                  'theme_icon': 'x-square.svg',
                  'label': self.lexemes.get('actions_file_label_reset_settings', scope='main_menu'),
                  'accessible_name': self.lexemes.get('actions_file_accessible_name_reset_settings', scope='main_menu'),
                  'action': self.action_reset_settings},
                 {'type': 'delimiter'},
-                {'type': 'action', 'name': 'actions_file_label_exit',
+                {'type': 'action', 'name': 'main_menu_actions_file_label_exit',
                  'system_icon': 'application-exit', 'theme_icon': 'power.svg',
                  'label': self.lexemes.get('actions_file_label_exit', scope='main_menu'),
                  'accessible_name': self.lexemes.get('actions_file_accessible_name_exit', scope='main_menu'),
@@ -2107,22 +2123,22 @@ class NotologEditor(QMainWindow):
              ]},
             {'name': 'main_menu_group_help', 'text': self.lexemes.get('group_help_label', scope='main_menu'),
              'items': [
-                {'type': 'action', 'name': 'actions_help_label_check_for_updates', 'theme_icon': 'arrow-clockwise.svg',
+                {'type': 'action', 'name': 'main_menu_actions_help_label_check_for_updates',
+                 'theme_icon': 'arrow-clockwise.svg',
                  'label': self.lexemes.get('actions_help_label_check_for_updates', scope='main_menu'),
                  'accessible_name': self.lexemes.get('actions_help_accessible_name_check_for_updates',
                                                      scope='main_menu'),
                  'action': self.action_check_for_updates},
-                {'type': 'action', 'name': 'actions_help_label_bug_report', 'theme_icon': 'bandaid.svg',
+                {'type': 'action', 'name': 'main_menu_actions_help_label_bug_report', 'theme_icon': 'bandaid.svg',
                  'label': self.lexemes.get('actions_help_label_bug_report', scope='main_menu'),
                  'accessible_name': self.lexemes.get('actions_help_accessible_name_bug_report', scope='main_menu'),
                  'action': self.action_bug_report},
                 {'type': 'delimiter'},
-                {'type': 'action', 'name': 'actions_help_label_about',
+                {'type': 'action', 'name': 'main_menu_actions_help_label_about',
                  'system_icon': 'help-about', 'theme_icon': 'balloon.svg',
                  'label': self.lexemes.get('actions_help_label_about', scope='main_menu'),
                  'accessible_name': self.lexemes.get('actions_help_accessible_name_about', scope='main_menu'),
                  'action': self.action_about},
-
             ]},
         ]
 
@@ -2165,6 +2181,7 @@ class NotologEditor(QMainWindow):
                     if item['action'] is not None:
                         icon_action.triggered.connect(item['action'])
                     if 'accessible_name' in item and item['accessible_name'] is not None:
+                        # Displays tip in the status bar when hovering
                         icon_action.setStatusTip(item['accessible_name'])  # This can be read by some screen readers
                     menu_group.addAction(icon_action)
                     # If the action has a switched off check, check it here
@@ -3003,8 +3020,6 @@ class NotologEditor(QMainWindow):
         """
         Action: Exit from the app.
         """
-        # Save any unsaved changes, keep content in place in case of pending tasks
-        self.save_active_file(clear_after=False)
 
         if self.debug:
             self.logger.debug('Exiting...')
@@ -3336,7 +3351,8 @@ class NotologEditor(QMainWindow):
 
         return write_res
 
-    def save_active_file(self, clear_after: bool = False, allow_save_empty_content: bool = None) -> None:  # noqa: C901
+    def save_active_file(self, clear_after: bool = False,  # noqa: C901
+                         allow_save_empty_content: bool = None) -> Union[bool, None]:
         """
         Helper: Save currently opened file.
         @param clear_after: bool, clear edit field after saving (when applicable, say switching view mode)
@@ -3351,7 +3367,7 @@ class NotologEditor(QMainWindow):
             # Nothing to save
             if self.debug:
                 self.logger.debug('Nothing to save in a non-edit mode')
-            return
+            return None
 
         # Get current file path
         current_file_path = self.get_current_file_path()
@@ -3363,14 +3379,22 @@ class NotologEditor(QMainWindow):
         if self.debug:
             self.logger.debug(f"Save active file '{current_file_path}' (clear field after: '{clear_after}')")
 
-        if not os.path.exists(current_file_path):
+        # Handle the case where the file no longer exists and cannot be saved
+        if ((os.path.exists(current_file_path) and not os.access(current_file_path, os.W_OK))
+                or (not os.path.exists(current_file_path) and not os.access(os.path.dirname(current_file_path), os.W_OK))):
             if self.logging:
                 self.logger.warning(f"Cannot save active file '{current_file_path}', check if it was moved or deleted")
-            return
+            self.toggle_save_timer(state=False)
+            self.message_box(self.lexemes.get('save_active_file_error_occurred'), icon_type=2,
+                             callback=self.toggle_save_timer)
+            return False
 
         # Edit widget
         edit_widget = self.get_edit_widget()  # type: Union[EditWidget, QPlainTextEdit]
         file_content = edit_widget.toPlainText()
+
+        if self.content == file_content:
+            return None
 
         # If new content is empty ask confirmation to be sure
         if (not file_content
@@ -3447,11 +3471,24 @@ class NotologEditor(QMainWindow):
                 if clear_after:
                     edit_widget.clear()
             else:
-                self.message_box(self.lexemes.get('save_active_file_error_occurred'), icon_type=2)
+                self.toggle_save_timer(state=False)
+                self.message_box(self.lexemes.get('save_active_file_error_occurred'), icon_type=2,
+                                 callback=self.toggle_save_timer)
 
             # Grayscale save button at the toolbar
             if hasattr(self.toolbar, 'toolbar_save_button'):
-                self.toolbar.toolbar_save_button.setDisabled(True)
+                self.toolbar.toolbar_save_button.setDisabled(save_result)
+
+            return save_result
+
+    def toggle_save_timer(self, state=True):
+        """
+        Toggle auto-save timer state
+        """
+        if state:
+            self.save_timer.start()
+        else:
+            self.save_timer.stop()
 
     def toggle_mode(self) -> None:
         """

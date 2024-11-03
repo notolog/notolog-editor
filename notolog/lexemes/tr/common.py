@@ -98,6 +98,9 @@ lexemes = {
     "dialog_reset_settings_text":
         "Ayarlar içinde saklanan tüm veriler silinecek ve uygulama değişiklikleri uygulamak için yeniden başlatılacak.",
 
+    "dialog_exit_unsaved_title": "Çıkışı Onayla",
+    "dialog_exit_unsaved_text": "Açık olan dosya '{file_name}' kaydedilemiyor. Çıkışa devam edilsin mi?",
+
     "field_dir_path_line_edit": "Dizin Seç",
 
     "load_file_encryption_password_mismatch": "Şifreleme şifresi uyuşmuyor!",

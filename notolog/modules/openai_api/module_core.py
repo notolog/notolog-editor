@@ -190,11 +190,12 @@ class ModuleCore(BaseAiCore):
             self.generator_task = asyncio.ensure_future(
                 self.run_generator(user_prompt, request_msg_id, response_msg_id))
             # Finished callback
-            if self.finished_callback and callable(self.finished_callback):
-                self.generator_task.add_done_callback(
-                    lambda _task, _request_msg_id=request_msg_id, _response_msg_id=response_msg_id:
-                    self.finished_callback(request_msg_id=_request_msg_id, response_msg_id=_response_msg_id,
-                                           message_type=EnumMessageType.RESPONSE))
+            # This part will be completed in the handle_response() method after the async network reply.
+            # if self.finished_callback and callable(self.finished_callback):
+            #    self.generator_task.add_done_callback(
+            #        lambda _task, _request_msg_id=request_msg_id, _response_msg_id=response_msg_id:
+            #        self.finished_callback(request_msg_id=_request_msg_id, response_msg_id=_response_msg_id,
+            #                               message_type=EnumMessageType.RESPONSE))
             # Run task asynchronously
             done, pending = await asyncio.wait([self.generator_task], return_when=asyncio.FIRST_COMPLETED)
 
@@ -244,10 +245,6 @@ class ModuleCore(BaseAiCore):
         if self.debug:
             self.logger.debug(f'API response: {reply}, {error_code}, {status_code}')
 
-        # Return the QNetworkReply object that emitted the signal.
-        # For example: NetworkError.UnknownNetworkError
-        # reply = self.sender()  # type: QNetworkReply
-
         # Make sure there is no error
         if reply.error() == QNetworkReply.NetworkError.NoError:
             result_message = self.process_response(reply, request_msg_id, response_msg_id, status_code)
@@ -273,9 +270,9 @@ class ModuleCore(BaseAiCore):
         if error_code is not None:
             if self.logging:
                 self.logger.warning(result_message)
-                self.logger.warning(f"Failed to fetch information: {reply.errorString()}")
+                self.logger.warning(f"Failed to fetch information [{status_code}]: {reply.errorString()}")
             # Emit update message signal
-            self.update_signal.emit(result_message if result_message else reply.errorString(),
+            self.update_signal.emit(result_message if result_message else '[%s] %s' % (status_code, reply.errorString()),
                                     None, None, EnumMessageType.DEFAULT, EnumMessageStyle.ERROR)
 
         # Call API initialized callback here to update waiting status
@@ -287,14 +284,16 @@ class ModuleCore(BaseAiCore):
             self.finished_callback(request_msg_id=request_msg_id, response_msg_id=response_msg_id,
                                    message_type=EnumMessageType.RESPONSE)
 
+        reply.finished.disconnect()
+        reply.errorOccurred.disconnect()
+        reply.deleteLater()  # Clean up the QNetworkReply object
+
     def process_response(self, reply: QNetworkReply, request_msg_id, response_msg_id, status_code) -> str:
         # The request was successful
         data = reply.readAll()  # type: QByteArray
 
         if self.debug:
             self.logger.debug(f'Raw RESPONSE [{status_code}]: {data}')
-
-        reply.deleteLater()  # Clean up the QNetworkReply object
 
         # json_document = QJsonDocument.fromJson(data)
         # json_data = json_document.object()

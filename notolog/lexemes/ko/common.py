@@ -98,6 +98,9 @@ lexemes = {
     "dialog_reset_settings_title": "설정을 재설정하시겠습니까?",
     "dialog_reset_settings_text": "설정에 저장된 모든 데이터가 삭제되며, 변경 사항을 적용하기 위해 앱이 재시작됩니다.",
 
+    "dialog_exit_unsaved_title": "종료 확인",
+    "dialog_exit_unsaved_text": "열린 파일 '{file_name}'을(를) 저장할 수 없습니다. 종료하시겠습니까?",
+
     "field_dir_path_line_edit": "디렉토리 선택",
 
     "load_file_encryption_password_mismatch": "암호화 비밀번호가 일치하지 않습니다!",
