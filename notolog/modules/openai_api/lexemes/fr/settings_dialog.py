@@ -16,7 +16,14 @@ lexemes = {
     "module_openai_api_base_system_prompt_edit_placeholder_text": "Invite de système de base qui précède chaque demande",
     "module_openai_api_base_system_prompt_edit_accessible_description":
         "Invite de système de base qui précède chaque demande. Texte brut.",
+
+    "module_openai_api_base_response_temperature_label": "Température : {temperature}",
+    "module_openai_api_base_response_temperature_input_accessible_description":
+        "Ajuste l'aléatoire de la sortie du modèle. Des valeurs plus élevées augmentent la créativité ; "
+        "des valeurs plus basses renforcent le déterminisme.",
+
     "module_openai_api_base_response_max_tokens_label": "Nombre maximal de jetons de réponse",
     "module_openai_api_base_response_max_tokens_input_accessible_description":
-        "Nombre maximal de jetons à recevoir en réponse",
+        "Nombre maximal de jetons à recevoir en réponse, tels que les mots et la ponctuation, "
+        "contrôlant la longueur de la sortie.",
 }

@@ -14,10 +14,18 @@ import pytest
 
 class TestSearchForm:
 
-    @pytest.fixture
+    @pytest.fixture(scope="class", autouse=True)
     def settings_obj(self):
+        """
+        Use 'autouse=True' to enable automatic setup, or pass 'settings_obj' directly to main_window()
+        """
         # Fixture to create and return settings instance
         settings = Settings()
+        # Clear settings to be sure start over without side effects
+        settings.clear()
+        # Reset singleton (qa functionality)
+        Settings.reload()
+
         yield settings
 
     @pytest.fixture
@@ -27,10 +35,11 @@ class TestSearchForm:
 
         # Do not show actual window; return object instance only
         mocker.patch.object(NotologEditor, 'show', return_value=None)
+        # Prevent resource processing, including 'process_document_images'
+        mocker.patch.object(NotologEditor, 'load_content_html', return_value=None)
 
         # Fixture to create and return main window instance
-        window = NotologEditor(screen=test_app.screens()[0])
-        yield window
+        yield NotologEditor(screen=test_app.screens()[0])
 
     @pytest.fixture(autouse=True)
     def toolbar_obj(self, main_window):

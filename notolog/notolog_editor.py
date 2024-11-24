@@ -110,6 +110,8 @@ import logging
 if TYPE_CHECKING:
     from PySide6.QtGui import QScreen  # noqa: F401
     from PySide6.QtWidgets import QStatusBar, QToolBar  # noqa: F401
+    from PySide6.QtGui import QTextBlockUserData  # noqa: F401
+    from .text_block_data import TextBlockData  # noqa: F401
 
 
 class NotologEditor(QMainWindow):
@@ -311,6 +313,13 @@ class NotologEditor(QMainWindow):
 
         # Init UI by setting up widgets and variables
         self.init_ui()
+
+        # Check the application configuration file permissions
+        app_config_path = AppConfig().get_app_config_path()
+        if (not os.path.exists(app_config_path) and not os.access(os.path.dirname(app_config_path), os.W_OK)
+                or not os.access(AppConfig().get_app_config_path(), os.W_OK)):
+            self.message_box(self.lexemes.get('message_app_config_file_access',
+                                              file_path=AppConfig().get_app_config_path()), icon_type=2)
 
         # Run once again to refresh all dependant UI elements that have been initialized
         self.set_mode(mode)
@@ -1362,6 +1371,9 @@ class NotologEditor(QMainWindow):
         NoIcon(0) | Information(1) | Warning(2) | Critical(3) | Question(4)
         """
 
+        if self.is_quiet_mode():
+            return
+
         box = QMessageBox(self)
         box.setFont(self.font())
 
@@ -1511,6 +1523,9 @@ class NotologEditor(QMainWindow):
         """
         Generic dialog with settable texts and callback.
         """
+
+        if self.is_quiet_mode():
+            return
 
         if self.debug:
             self.logger.debug('Common dialog "%s": "%s"' % (title, text))
@@ -1813,15 +1828,15 @@ class NotologEditor(QMainWindow):
         * https://doc.qt.io/qt-6/qtextblock.html#userData
         * https://doc.qt.io/qt-6/qtextblockuserdata.html
         """
-        block = edit_widget.get_current_block()
-        data_storage = block.userData()
+        current_block = edit_widget.get_current_block()
+        data_storage = current_block.userData()  # type: Union[QTextBlockUserData, TextBlockData]
         if data_storage is not None and hasattr(data_storage, 'block_number'):
             block_data = data_storage.get_one(tag)
             if block_data:
                 if self.debug:
                     self.logger.debug('Current code block data [%d]~[%d] "%s", in:%r, o:%r, c:%r'
-                                      % (block.blockNumber(), data_storage.block_number, tag, block_data['within'],
-                                         block_data['opened'], block_data['closed']))
+                                      % (current_block.blockNumber(), data_storage.block_number, tag,
+                                         block_data['within'], block_data['opened'], block_data['closed']))
                 return getattr(block_data, param) if hasattr(block_data, param) else None
         return None
 
@@ -2957,8 +2972,10 @@ class NotologEditor(QMainWindow):
         # Sync to ensure changes are written back to the storage
         self.settings.sync()
 
-        # Delete app config file
-        AppConfig().delete_app_config()
+        # Delete the application configuration file
+        if not AppConfig().delete_app_config():
+            self.message_box(self.lexemes.get('message_app_config_file_access',
+                                              file_path=AppConfig().get_app_config_path()), icon_type=2)
 
         if callable(callback):
             callback()
@@ -3380,8 +3397,7 @@ class NotologEditor(QMainWindow):
             self.logger.debug(f"Save active file '{current_file_path}' (clear field after: '{clear_after}')")
 
         # Handle the case where the file no longer exists and cannot be saved
-        if ((os.path.exists(current_file_path) and not os.access(current_file_path, os.W_OK))
-                or (not os.path.exists(current_file_path) and not os.access(os.path.dirname(current_file_path), os.W_OK))):
+        if not os.path.exists(current_file_path) and not os.access(os.path.dirname(current_file_path), os.W_OK):
             if self.logging:
                 self.logger.warning(f"Cannot save active file '{current_file_path}', check if it was moved or deleted")
             self.toggle_save_timer(state=False)
@@ -3393,8 +3409,18 @@ class NotologEditor(QMainWindow):
         edit_widget = self.get_edit_widget()  # type: Union[EditWidget, QPlainTextEdit]
         file_content = edit_widget.toPlainText()
 
+        # If there are no changes to save, do nothing.
         if self.content == file_content:
             return None
+
+        # Handle the case where the file no longer exists and cannot be saved
+        if os.path.exists(current_file_path) and not os.access(current_file_path, os.W_OK):
+            if self.logging:
+                self.logger.warning(f"Cannot save active file '{current_file_path}'")
+            self.toggle_save_timer(state=False)
+            self.message_box(self.lexemes.get('save_active_file_error_occurred'), icon_type=2,
+                             callback=self.toggle_save_timer)
+            return False
 
         # If new content is empty ask confirmation to be sure
         if (not file_content
@@ -3433,8 +3459,8 @@ class NotologEditor(QMainWindow):
             if self.header is None or not self.header.is_valid():
                 # Get empty file header here, it's needed for compatibility and will not be applied to the file
                 header = FileHeader()
-                if self.logging:
-                    self.logger.info('File "%s" has no header info' % current_file_path)
+                if self.debug:
+                    self.logger.debug('File "%s" has no header info' % current_file_path)
             else:
                 header = self.header
 
@@ -4045,3 +4071,8 @@ class NotologEditor(QMainWindow):
                 find_flags |= QTextDocument.FindFlag.FindCaseSensitively
         # Return flags bitmask
         return find_flags
+
+    @staticmethod
+    def is_quiet_mode():
+        """ Setting quiet mode for test purposes. """
+        return AppConfig().get_test_mode()

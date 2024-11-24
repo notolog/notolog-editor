@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2024-03-26 00:19:36.466439", "updated": "2024-06-29 15:57:18.476894"}} -->
+<!-- {"notolog.app": {"created": "2024-03-26 00:19:36.466439", "updated": "2024-11-19 19:26:13.521180"}} -->
 # Markdown syntax
 
 ## Headings
@@ -167,14 +167,14 @@ feel free to use it whenever you find it helpful.
 
 ### Multi-line blocks
 
-Code block within fences
+Code block within fences:
 
 ```python
 # My first code
 print('Hello World!')
 ```
 
-Code block with colons example
+Code block with colons example:
 
 	::::py
 	# My first code
@@ -186,6 +186,17 @@ Code block with colons example
 <html>
 <p>HTML Document</p>
 </html>
+```
+
+Code blocks are perfect for monospace text, such as ASCII art:
+
+```
+███╗   ██╗ ██████╗ ████████╗ ██████╗ ██╗      ██████╗  ██████╗ 
+████╗  ██║██╔═══██╗╚══██╔══╝██╔═══██╗██║     ██╔═══██╗██╔════╝ 
+██╔██╗ ██║██║   ██║   ██║   ██║   ██║██║     ██║   ██║██║  ███╗
+██║╚██╗██║██║   ██║   ██║   ██║   ██║██║     ██║   ██║██║   ██║
+██║ ╚████║╚██████╔╝   ██║   ╚██████╔╝███████╗╚██████╔╝╚██████╔╝
+╚═╝  ╚═══╝ ╚═════╝    ╚═╝    ╚═════╝ ╚══════╝ ╚═════╝  ╚═════╝ 
 ```
 
 ### One-line blocks

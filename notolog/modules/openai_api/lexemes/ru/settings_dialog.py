@@ -16,7 +16,14 @@ lexemes = {
     "module_openai_api_base_system_prompt_edit_placeholder_text": "Базовый системный запрос, предшествующий каждому запросу",
     "module_openai_api_base_system_prompt_edit_accessible_description":
         "Базовый системный запрос, предшествующий каждому запросу. Простой текст.",
+
+    "module_openai_api_base_response_temperature_label": "Температура: {temperature}",
+    "module_openai_api_base_response_temperature_input_accessible_description":
+        "Регулирует случайность вывода модели. Более высокие значения увеличивают креативность; "
+        "более низкие значения усиливают детерминизм.",
+
     "module_openai_api_base_response_max_tokens_label": "Максимальное количество токенов ответа",
     "module_openai_api_base_response_max_tokens_input_accessible_description":
-        "Максимальное количество токенов для получения в ответе",
+        "Максимальное количество токенов, которые можно получить в ответе, таких как слова и пунктуация, "
+        "контролирующее длину результата.",
 }

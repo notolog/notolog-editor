@@ -131,7 +131,11 @@ class TestImageDownloader:
         mock_save_image = mocker.patch.object(test_downloader_obj, 'save_image', return_value=None)
         mock_cache_pixmap = mocker.patch.object(test_downloader_obj, 'cache_pixmap', return_value=None)
 
-        # Check local task pool is empty
+        # AsyncMock mock class is designed to simulate asynchronous calls and can be awaited.
+        mocker.patch.object(asyncio, 'wait', AsyncMock(return_value=(None, None)))
+
+        # Check that the local task pool is empty.
+        # An error here indicates that the queue was used in previous tests.
         assert len(test_downloader_obj.resource_tasks) == 0
         # Check default resource folder
         assert test_downloader_obj.folder.path().endswith(ImageDownloader.RESOURCE_DIR)
@@ -168,12 +172,14 @@ class TestImageDownloader:
 
         await test_downloader_obj.download_resource_in_queue(resource_url)
         assert test_downloader_obj.downloaded_cnt == 0
+
         await asyncio.sleep(0.025)  # Faster sleeps may not work on macOS or Windows test environments
+
         mock_callback.assert_called_once()
-        mock_download_resource_in_queue.assert_awaited_once()
+        mock_download_resource_in_queue.assert_awaited_once_with(resource_url)
+
         await test_downloader_obj.download_resource_in_queue(resource_url)
         await asyncio.sleep(0.05)  # Or 0.251, slightly more than described in a queue method, to get all completed
-        mock_callback.assert_called()
 
         assert mock_callback.call_count == 2
 
@@ -191,6 +197,7 @@ class TestImageDownloader:
         if error_code is None:
             mock_handle_network_reply.assert_called()
             mock_resource_download_async.assert_called_with(resource_url)
+            mock_resource_download_async.assert_awaited_with(resource_url)
             mock_download_image.assert_called_with(resource_url)
             mock_cache_pixmap.assert_called_with(resource_url, resource_data)
         else:

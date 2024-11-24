@@ -105,6 +105,9 @@ lexemes = {
     "dialog_exit_unsaved_title": "Confirmar Saída",
     "dialog_exit_unsaved_text": "O arquivo aberto '{file_name}' não pode ser salvo. Continuar com a saída?",
 
+    "message_app_config_file_access": "Permissão negada ao acessar o arquivo de configuração do aplicativo em {file_path}. "
+                                      "Defina as permissões corretas para garantir a operação adequada.",
+
     "field_dir_path_line_edit": "Selecionar Diretório",
 
     "load_file_encryption_password_mismatch": "Senha de criptografia não confere!",

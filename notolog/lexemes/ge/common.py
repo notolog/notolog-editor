@@ -104,6 +104,9 @@ lexemes = {
     "dialog_exit_unsaved_title": "გასვლის დადასტურება",
     "dialog_exit_unsaved_text": "გახსნილი ფაილი '{file_name}' ვერ ინახება. გავაგრძელოთ გასვლა?",
 
+    "message_app_config_file_access": "დაშვების უფლებები უარყოფილია {file_path} აპლიკაციის კონფიგურაციული ფაილის წვდომისას. "
+                                      "დააყენეთ სწორი უფლებები სწორი ოპერაციის გარანტირებლად.",
+
     "field_dir_path_line_edit": "აირჩიეთ დირექტორია",
 
     "load_file_encryption_password_mismatch": "დაშიფრვის პაროლის უთანასწორობა!",

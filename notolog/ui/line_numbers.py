@@ -61,10 +61,9 @@ class LineNumbers(QWidget):
         self.settings = Settings(parent=self)
 
         # Connect editor's change events to line numbers updates
-        editor.updateRequest.connect(self.update_request)
-        editor.blockCountChanged.connect(self.update_width)
+        self.editor.updateRequest.connect(self.update_request)
+        self.editor.blockCountChanged.connect(self.update_width)
 
-        # TODO: Improve line highlighting on hover.
         # The current method of mixing background colors does not yield clear results.
         # editor.cursorPositionChanged.connect(self.highlight_current_line)
 
@@ -75,6 +74,34 @@ class LineNumbers(QWidget):
 
     def sizeHint(self) -> QSize:
         return QSize(self.line_numbers_width(), 0)
+
+    def get_numbers_area(self, area_block) -> QRect:
+        """
+        Calculates the area occupied by the line numbers widget for a given block, adjusted for
+        the block's position within the document.
+
+        For more information on QPainter usage, see: https://doc.qt.io/qt-6/qpainter.html#translate-2
+
+        Args:
+            area_block (QTextBlock): The text block for which to calculate the area,
+                                     typically retrieved with self.editor.firstVisibleBlock().
+
+        Returns:
+            QRect: The calculated rectangular area that the line numbers widget occupies.
+        """
+
+        # Get the bounding rectangle adjusted for the block's position within the document,
+        # which can include translation offsets:
+        area_top = self.editor.blockBoundingGeometry(area_block).translated(self.editor.contentOffset()).top()
+
+        # Calculate the height of the block's bounding rectangle (local coordinates)
+        area_height = self.editor.blockBoundingRect(area_block).height()
+
+        # Alternative approach (constant line height):
+        # self.fontMetrics().height() * block.lineCount()
+
+        # Return the computed QRect for the area
+        return QRect(0, int(area_top) + 1, self.width(), int(area_height))
 
     def paintEvent(self, event) -> None:
         painter = QPainter(self)
@@ -94,35 +121,31 @@ class LineNumbers(QWidget):
         block = self.editor.firstVisibleBlock()
         block_number = block.blockNumber()
 
-        def get_area(area_block):
-            """
-            More info about painter https://doc.qt.io/qt-6/qpainter.html#translate-2
-            Example: painter.translate(3, 0)
-            """
-            # The bounding rectangle adjusted for the block's position within the document,
-            # which can include translation offsets:
-            area_top = self.editor.blockBoundingGeometry(area_block).translated(self.editor.contentOffset()).top()
-            # The bounding rectangle relative to the block itself (local coordinates):
-            area_height = self.editor.blockBoundingRect(area_block).height()
-            # Alternative approach (constant line height):
-            # - self.fontMetrics().height() * block.lineCount()
-            return QRect(0, int(area_top) + 1, self.width(), int(area_height))
+        # Calculate the line numbers area for the specified block
+        numbers_area = self.get_numbers_area(block)
 
-        area = get_area(block)
-        painter.fillRect(area, number_background)
+        # Get the editor's geometry (position and size)
+        background_area = self.editor.geometry()
+        background_area.adjust(1, 1, 0, -1)  # Reduce by 1 pixel on each corresponding side
 
-        while block.isValid() and area.top() <= event.rect().bottom():
-            if area.bottom() >= event.rect().top():
+        # Set the width of the background area to match the line numbers widget
+        background_area.setWidth(self.width())
+
+        # Fill the adjusted area with the background color
+        painter.fillRect(background_area, number_background)
+
+        while block.isValid() and numbers_area.top() <= event.rect().bottom():
+            if numbers_area.bottom() >= event.rect().top():
                 if current_line_block_number == block_number:
                     """
                     Highlight current line number
                     More info of how to fill rectangle area https://doc.qt.io/qt-6/qpainter.html#fillRect-4
                     """
-                    painter.fillRect(area, current_number_background)
+                    painter.fillRect(numbers_area, current_number_background)
                     painter.setPen(current_number_color)
                 else:
                     # Not selected number color
-                    painter.fillRect(area, number_background)
+                    painter.fillRect(numbers_area, Qt.GlobalColor.transparent)
                     """
                     Also:
                     - painter.setPen(Qt.GlobalColor.darkGray)
@@ -134,13 +157,13 @@ class LineNumbers(QWidget):
 
                 number = str(block_number + 1)
                 # Shift to the left to get the right padding from the overall padding
-                painter.drawText(-2, area.top() + 1, self.width(), self.fontMetrics().height(),
+                painter.drawText(-2, numbers_area.top(), self.width(), self.fontMetrics().height(),
                                  Qt.AlignmentFlag.AlignRight, number)
 
             block = block.next()
             if block.isValid():
                 block_number = block.blockNumber()
-                area = get_area(block)
+                numbers_area = self.get_numbers_area(block)
 
         painter.end()
 
@@ -181,6 +204,7 @@ class LineNumbers(QWidget):
             _format.setBackground(line_color)
             _format.setProperty(QTextFormat.Property.FullWidthSelection, True)
             # extra_selections.append(selection)
+            selection.format = _format
             self.editor.setExtraSelections([selection])
 
     def update_numbers(self) -> None:

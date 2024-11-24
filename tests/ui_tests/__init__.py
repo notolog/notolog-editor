@@ -14,7 +14,7 @@ os.environ["QT_STYLE_OVERRIDE"] = "Fusion"
 
 
 @pytest.fixture
-def test_app():
+def test_app(mocker):
     # Main widgets application; new
     # More info: https://doc.qt.io/qt-6/qcoreapplication.html#details
     app = QApplication.instance()
@@ -30,6 +30,8 @@ def test_app():
         # To correctly set up app settings
         app.setOrganizationName(AppConfig().get_settings_org_name())
         app.setApplicationName(AppConfig().get_settings_app_name_qa())
+
+        AppConfig().set_test_mode(True)
 
     yield app
 

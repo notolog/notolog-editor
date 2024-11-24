@@ -91,8 +91,8 @@ class ApiHelper:
             "stream": False,
         }
         # If response max tokens set
-        if 'response_max_tokens' in options:
-            post_params.update({"max_tokens": options['response_max_tokens']})
+        if 'max_tokens' in options:
+            post_params.update({"max_tokens": options['max_tokens']})
         # Other params to override
         if 'temperature' in options:
             post_params.update({"temperature": options['temperature']})
@@ -113,3 +113,8 @@ class ApiHelper:
     # def get_prompt_from_text(self, text):
     #    prompt = f'{self.chat_template.format(input=text)}'
     #    return prompt
+
+    @staticmethod
+    def convert_temperature(temperature: int = 0):
+        """ Convert the integer value of temperature to a float. """
+        return temperature / 100

@@ -80,7 +80,7 @@ class MdHighlighter(MainHighlighter):
                    'bg': {'color': 'magenta', 'pattern': Qt.BrushStyle.Dense2Pattern}},
         'code_lang': {'color': 'magenta', 'style': 'bold'},
         'code_indent': {'bg': {'color': 'pink', 'pattern': Qt.BrushStyle.Dense6Pattern}},
-        'code_content': {'color': 'brown'},
+        'code_content': {'color': 'brown', 'style': 'monospace'},
         # Debug: 'bg': {'color': 'darkGrey', 'pattern': Qt.BrushStyle.Dense2Pattern}
         'wrong_indent': {'bg': {'color': 'red', 'pattern': Qt.BrushStyle.DiagCrossPattern}},
         'comment': {'color': 'grey', 'bg': {'color': 'lightGrey', 'pattern': Qt.BrushStyle.Dense6Pattern}},

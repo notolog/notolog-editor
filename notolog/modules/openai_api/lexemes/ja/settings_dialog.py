@@ -16,6 +16,13 @@ lexemes = {
     "module_openai_api_base_system_prompt_edit_placeholder_text": "各リクエストに先立つ基本システムプロンプト",
     "module_openai_api_base_system_prompt_edit_accessible_description":
         "各リクエストに先立つ基本システムプロンプト。プレーンテキスト。",
-    "module_openai_api_base_response_max_tokens_label": "応答の最大トークン数",
-    "module_openai_api_base_response_max_tokens_input_accessible_description": "応答で受け取る最大トークン数",
+
+    "module_openai_api_base_response_temperature_label": "温度: {temperature}",
+    "module_openai_api_base_response_temperature_input_accessible_description":
+        "モデル出力のランダム性を調整します。高い値は創造性を増加させ、低い値は決定論を強化します。",
+
+    "module_openai_api_base_response_max_tokens_label": "最大レスポンストークン数",
+    "module_openai_api_base_response_max_tokens_input_accessible_description":
+        "レスポンスで受け取るトークンの最大数、例えば単語や句読点など、"
+        "出力の長さを制御します。",
 }

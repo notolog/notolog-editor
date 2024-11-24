@@ -101,6 +101,9 @@ lexemes = {
     "dialog_exit_unsaved_title": "Confirm Exit",
     "dialog_exit_unsaved_text": "The opened file '{file_name}' cannot be saved. Continue with exit?",
 
+    "message_app_config_file_access": "Permission denied when accessing the app configuration file at {file_path}. "
+        "Set the correct permissions to ensure proper operation.",
+
     "field_dir_path_line_edit": "Select Directory",
 
     "load_file_encryption_password_mismatch": "Encryption password mismatch!",

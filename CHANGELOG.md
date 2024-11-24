@@ -1,6 +1,37 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.0.6] - 2024-11-24
+
+### Added
+- Introduced the `AppPackage` class to distinguish different sources of app code installations.
+- Added a 'Temperature' slider to both the 'On Device LLM' and 'OpenAI API' modules, and a 'Maximum Response Tokens' field to the 'On Device LLM' module.
+- Added support for ONNX Runtime GenAI 0.5.1 on macOS, along with numpy 2.1.0 or newer, compatible with Python versions 3.10 to 3.12.
+- Added the `argparse` package to process CLI arguments in `app.py`.
+- Added the 'on_value_change' callback to handle object value changes within the settings UI, event parameters include the object itself and source widget.
+- Added 'ai_assistant_status_icon_color' parameter to the color management to set the loading icon color in the AI Assistant and adjusted corresponding themes.
+
+### Changed
+- Settings now depend on the app package type, allowing different installation types to function independently. A new app config parameter 'package' was added.
+- Changed the location of the app config TOML file, which now automatically imports settings from a previous installation once, if they weren't set before.
+- Modified app config checks to merge base data and validate the configuration, falling back to default values if any required parameter is unset or invalid.
+- Changed the warning message about the missing file header to a debug message as it may be a valid situation.
+
+### Updated
+- Updated project dependencies: `Markdown` to version 3.7, the `emoji` library to version 2.14.0, and the `cffi` package to version 1.17.0.
+- Optimized the settings file path retrieval based on the actual package set.
+- Enhanced the line numbers area by adding extra background fill and reducing padding between the edit widget's edges and the line numbers widget.
+- Improved various tests and implemented a quiet mode for testing UI elements without interruptions.
+- Updated lexemes related to the app's corresponding changes.
+- The content in code blocks in edit mode now uses monospace formatting to preview the result's style.
+- Updated the README.md with information about app features, refined other texts, and updated the UI example images.
+
+### Fixed
+- Fixed collapsible/expandable blocks behavior where reopening of a collapsed block might produce duplicated text artifacts.
+- Addressed a potential logger message issue in `AppConfig` related to missing `self.logging`.
+- Fixed an issue where an unchanged file was attempted to be saved without write permissions. Similar fixes were made regarding the app config file and when creating the 'images' resource directory.
+- Fixed the blockquote color for the 'Calligraphy' theme.
+
 ## [1.0.5] - 2024-11-03
 
 ### Added
@@ -18,7 +49,6 @@ All notologable changes to this project will be documented in this file.
 
 ### Updated
 - Updated active line number highlighting in edit mode to align with line height and handle word-wrapped blocks that span multiple lines.
-- Updated version dependencies for `numpy` and `onnxruntime-genai` to keep package dependencies concise.
 - Improved the waiting indicator for the OpenAI API module during requests and updated related tests.
 - Enhanced processing of `QNetworkReply` where applicable.
 - Revised permission checks for the app's configuration file.

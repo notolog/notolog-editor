@@ -103,6 +103,9 @@ lexemes = {
     "dialog_exit_unsaved_title": "Confirma Exitus",
     "dialog_exit_unsaved_text": "Apertum lima '{file_name}' servari non potest. Exitus procedere?",
 
+    "message_app_config_file_access": "Permissio negata cum accedere ad configurationem applicationis limam in {file_path}. "
+                                      "Constitue rectas permissiones ut operationem debitam asseguras.",
+
     "field_dir_path_line_edit": "Select Directory",
 
     "load_file_encryption_password_mismatch": "Signi codicis discrepantia!",

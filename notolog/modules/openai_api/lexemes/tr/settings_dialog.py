@@ -16,6 +16,14 @@ lexemes = {
     "module_openai_api_base_system_prompt_edit_placeholder_text": "Her istekten önce gelen temel sistem istemcisi",
     "module_openai_api_base_system_prompt_edit_accessible_description":
         "Her istekten önce gelen temel sistem istemcisi. Bu düz metindir.",
-    "module_openai_api_base_response_max_tokens_label": "Maksimum Yanıt Token'ları",
-    "module_openai_api_base_response_max_tokens_input_accessible_description": "Yanıtta alınabilecek maksimum token sayısı",
+
+    "module_openai_api_base_response_temperature_label": "Sıcaklık: {temperature}",
+    "module_openai_api_base_response_temperature_input_accessible_description":
+        "Model çıktısının rastgeleliğini ayarlar. Yüksek değerler yaratıcılığı artırır; "
+        "düşük değerler determinizmi güçlendirir.",
+
+    "module_openai_api_base_response_max_tokens_label": "Maksimum Yanıt Token Sayısı",
+    "module_openai_api_base_response_max_tokens_input_accessible_description":
+        "Yanıtta alınacak maksimum token sayısı, kelimeler ve noktalama işaretleri gibi,"
+        "çıktının uzunluğunu kontrol eder.",
 }

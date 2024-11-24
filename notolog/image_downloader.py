@@ -118,7 +118,12 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
         # file_extension = self.mime_to_extension(mime_type)
         # file_name = f"{file_name}{file_extension}"
         # Create resource folder if not yet created
-        os.makedirs(self.folder.path(), exist_ok=True)
+        if os.access(os.path.dirname(self.folder.path()), os.W_OK):
+            os.makedirs(self.folder.path(), exist_ok=True)
+        else:
+            if self.logging:
+                self.logger.warning(f"Permission denied: Cannot create directory {self.folder.path()}")
+            return
         # File path to save
         file_path = os.path.join(self.folder.path(), file_name)
         # Save received data
@@ -211,7 +216,7 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
         # Check async loop is running
         if not asyncio.get_event_loop().is_running():
             if self.logging:
-                self.logger.debug('Async loop is not running, skip task')
+                self.logger.debug('Skipping the task because the async loop is not running.')
             return
 
         if self.debug:

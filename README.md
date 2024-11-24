@@ -1,60 +1,78 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-10-27 19:35:26.710490"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-11-24 18:11:38.151764"}} -->
 # Notolog
 
-![Notolog - Python Markdown Editor](https://raw.githubusercontent.com/notolog/notolog-editor/main/notolog/assets/notolog-example-image.png)
+[![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/) [![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor)](https://github.com/notolog/notolog-editor/blob/master/LICENSE) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)](https://pypi.org/project/notolog/) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/notolog/notolog-editor/tests.yaml)](https://github.com/notolog/notolog-editor/actions/workflows/tests.yaml) [![Conda Version](https://img.shields.io/conda/vn/conda-forge/notolog)](https://anaconda.org/conda-forge/notolog) [![PyPI - Downloads](https://img.shields.io/pypi/dm/notolog)](https://pypistats.org/packages/notolog)
 
-## Python Markdown Editor
+Notolog is an open-source Markdown Editor licensed under the MIT License, combining simplicity with a wide range of tools and an integrated AI assistant. Developed entirely in Python using PySide6, it helps you tackle everyday programming challenges while offering an opportunity to deepen your Markdown skills.
 
-[![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/) [![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor)](https://github.com/notolog/notolog-editor/blob/master/LICENSE) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)](https://pypi.org/project/notolog/) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/notolog/notolog-editor/tests.yaml)](https://github.com/notolog/notolog-editor/actions/workflows/tests.yaml) [![Conda Version](https://img.shields.io/conda/vn/conda-forge/notolog)](https://anaconda.org/conda-forge/notolog)
 
-Notolog is an open-source Markdown editor that combines simplicity with advanced features. Developed entirely in Python using PySide6, it helps you tackle everyday programming challenges while offering an opportunity to deepen your Markdown and Python skills by exploring its codebase. Featuring a wide range of tools and integrated AI assistant support, Notolog is a valuable addition to any Python project requiring a versatile Markdown editor. Installation is as simple as: `pip install notolog`
+## Instant Setup
+
+Using pip:
+```sh
+pip install notolog
+```
+
+Via conda:
+```sh
+conda install notolog -c conda-forge
+```
+
+To start 🚀 the app, simply run:
+```
+notolog
+```
 
 ---
 
-![Notolog UI example](https://raw.githubusercontent.com/notolog/notolog-editor/main/docs/notolog-ui-settings.png)
-
+![Notolog - Python Markdown Editor - UI Example](https://raw.githubusercontent.com/notolog/notolog-editor/main/docs/notolog-ui-examples.png)
 
 ## Features
 
-- **Open-source and Transparent**: Licensed under MIT, promoting transparency and collaboration.
 - **Markdown Support**:
-    - Editor mode with smooth highlighting, line numbers, and extended syntax.
-    - View mode, which uses the Python Markdown library for accurate rendering to HTML.
-    - Improves readability and structure through custom parsing of disclosure widgets, including nested hierarchies.
-    - Supports multi-line block open-close tokens.
-- **AI Assistant**: Incorporate module extensions able to work either with AI APIs or with on-device large language models (LLMs).
-- **Accessibility Features**:
-    - Descriptive elements for enhanced usability.
-    - Adjustable font sizes for improved readability.
-- **Auto-Save**: Changes are saved automatically, ensuring that data is not lost unexpectedly.
-- **Enhanced Search Functionality**:
-    - In-file content search.
-    - Quick file name search within the file tree.
-- **File Encryption**:
-    - Securely encrypts files using Fernet, which employs AES-128 in CBC mode, providing strong encryption.
-- **File Meta-Headers**:
-    - Stores essential file information securely in meta-headers formatted as HTML comments, thus enhancing privacy and security.
-- **Multi-language Support**: Available in several languages, with easy addition of new languages.
-- **Customizable UI**:
-    - Multiple color themes for personalization.
-    - Supports hotkeys like Ctrl+S (save) and Ctrl+F (search).
-    - Right-click context menus for file management in the file tree.
-- **TODOs Highlighting**: Notolog includes specialized highlighting for TODOs. By typing '@todo something,' users can mark tasks, thus enhancing the ability to track and manage future plans efficiently.
-- **Unit Testing Suite**: Ensures reliability and maintainability of the code.
-
-*Remember: Strong password enforcement is recommended to protect access to encrypted files.*
+    - Text editor equipped with exclusive Markdown syntax highlighting and extended syntax support.
+    - Line numbers adapt to each line's height, enhancing readability.
+    - Viewer for precise text rendering, utilizing the integrated Python Markdown library.
+    - Processes both multi-line and single-line code blocks, along with custom parsing for `details` and `summary` blocks.
+- **AI Assistant**: Provides a chat-style dialogue, supporting both the OpenAI API and on-device local LLM options.
+- **Accessibility**: Features adjustable font sizes and descriptive elements to enhance usability.
+- **Auto-Save**: Automatically saves changes to prevent data loss.
+- **Enhanced Search**:
+    - Offers in-file content search with optional case sensitivity.
+    - Quick file search within the file tree to efficiently filter results.
+- **Encryption**: Provides secure AES-128 encryption with Fernet for files (optional).
+- **Meta-Headers**: Securely stores essential file information within HTML-comment-formatted meta-headers.
+- **Multi-Language**: Supports multiple languages out of the box.
+- **Customizable UI**: Includes a variety of color themes to keep the UI fancy.
+- **TODO Highlighting**: Marks @todo statements for efficient task management.
 
 
 ## Translations
 
-Notolog supports multiple languages out of the box, enhancing its accessibility on a global scale. In addition to English, here are the currently supported languages:
+Notolog supports multiple languages out of the box, enhancing its accessibility globally. In addition to English, here are the currently supported languages:
 
-- Chinese (Simplified), Dutch, Finnish, French, Georgian, German, Greek, Hindi, Italian, Japanese, Korean, Latin, Portuguese, Russian, Spanish, Swedish, Turkish
+- 简体中文 (Chinese Simplified)
+- Nederlands (Dutch)
+- Suomi (Finnish)
+- Français (French)
+- ქართული (Georgian)
+- Deutsch (German)
+- Ελληνικά (Greek)
+- हिन्दी (Hindi)
+- Italiano (Italian)
+- 日本語 (Japanese)
+- 한국어 (Korean)
+- Latina (Latin)
+- Português (Portuguese)
+- Русский (Russian)
+- Español (Spanish)
+- Svenska (Swedish)
+- Türkçe (Turkish)
 
 
 ## Themes
 
-Notolog offers several themes that allow users to choose their preferred UI color scheme:
+Notolog offers several themes to customize the UI:
 
 * **Default**: Every app should have a default theme.
 * **Calligraphy**: Inspired by the art of calligraphy, this theme resembles a rice paper sheet marked with black ink.
@@ -63,51 +81,23 @@ Notolog offers several themes that allow users to choose their preferred UI colo
 * **Spooky**: Embrace the spooky season with vivid Halloween-themed colors.
 * **Strawberry**: The most playful theme, reminiscent of strawberry jam.
 
-Below is a glimpse of the UI in Japanese, featuring the Strawberry theme:
+Below is a glimpse of the UI, featuring the Strawberry theme:
 
-![Notolog UI translation example](https://raw.githubusercontent.com/notolog/notolog-editor/main/docs/notolog-ui-settings-strawberry-ja.png)
-
-
-## Prerequisites
-
-Ensure **Python 3.9 or higher** is installed on your system. For installation details, visit [python.org](https://python.org).
-
-Check the installed Python version:
-
-```bash
-python3 --version
-```
-
-Verify pip availability:
-
-```bash
-pip --version
-```
-
-**Virtual Environment**
-
-Using a virtual environment is highly recommended to avoid version conflicts and interference from other packages.
-
+![Notolog - Python Markdown Editor - UI Example](https://raw.githubusercontent.com/notolog/notolog-editor/main/docs/notolog-ui-settings-strawberry-ja.png)
 
 ## Installation
 
-### Using pip (Recommended)
+Ensure **Python 3.9 or higher** is installed. For more details, visit [python.org](https://python.org).
 
-Set up a virtual environment (highly recommended):
+Using a virtual environment is recommended to avoid version conflicts. From Python 3.6, venv is the recommended method to create virtual environments. For more information check [Creation of virtual environments](https://docs.python.org/3/library/venv.html). Alternatively, you can execute the Notolog source code and set up virtual environment with your favorite Python code editor.
+
+### Install with pip
+
+Create and activate a virtual environment:
 ```sh
 python3 -m venv notolog_env
-```
-
-Activate the virtual environment:
-
-On Unix-like systems (macOS and Linux):
-```sh
-source notolog_env/bin/activate
-```
-
-On Windows:
-```sh
-notolog_env\Scripts\activate
+source notolog_env/bin/activate  # macOS and Linux systems
+notolog_env\Scripts\activate  # Windows
 ```
 
 Install Notolog using pip:
@@ -120,26 +110,41 @@ Starting the app is as simple as running:
 notolog
 ```
 
-To update Notolog to the latest version:
+The app includes a 'Check for Updates' option accessible through the main menu under 'Help'. Where applicable, run the following command to update Notolog to the latest version: `pip install notolog --upgrade`
+
+<details>
+<summary>How to install venv on Linux systems 🔧 </summary>
+
+While Python itself usually comes pre-installed on many Linux distributions, including Ubuntu, some distributions may not include the venv module by default. Therefore, you need to install it separately using the package manager before you can use it to create virtual environments.
+
+**Ubuntu/Debian**
 ```sh
-pip install notolog --upgrade
+sudo apt-get update
+sudo apt-get install python3-venv
 ```
 
-### Using conda-forge
-
-To install Notolog using conda-forge, first ensure your conda environment is using Python 3.9 or higher. You can create a new environment with the required Python version using:
+**Fedora**
 ```sh
-conda create -n notolog_env python=3.9
+sudo dnf install python3-venv
 ```
 
-Activate the virtual environment:
+**CentOS/RHEL**
 ```sh
+sudo yum install python3-venv
+```
+</details>
+
+### Install via conda-forge
+
+Create and activate a new environment:
+```sh
+conda create -n notolog_env python=3.11
 conda activate notolog_env
 ```
 
 Then, execute the installation command:
 ```sh
-conda install -c conda-forge notolog
+conda install notolog -c conda-forge
 ```
 
 This will fetch and install the latest version of Notolog compatible with Python 3.9 or newer from the [conda-forge packages](https://anaconda.org/conda-forge/notolog).
@@ -151,9 +156,7 @@ notolog
 
 Just activate the environment and run the app next time.
 
-### From Source
-
-To install from source:
+### Install from Source
 
 1. Clone the GitHub repository:
 ```sh
@@ -165,21 +168,11 @@ git clone https://github.com/notolog/notolog-editor.git
 cd notolog-editor
 ```
 
-3. Set up a virtual environment (highly recommended):
+3. Create and activate a virtual environment:
 ```sh
 python3 -m venv notolog_env
-```
-
-Activate the virtual environment:
-
-On Unix-like systems (macOS and Linux):
-```sh
-source notolog_env/bin/activate
-```
-
-On Windows:
-```sh
-notolog_env\Scripts\activate
+source notolog_env/bin/activate  # macOS and Linux systems
+notolog_env\Scripts\activate  # Windows
 ```
 
 4. Install dependencies:
@@ -192,7 +185,8 @@ pip install .
 python -m notolog.app
 ```
 
-### Tests and Test Coverage
+
+## Tests and Test Coverage
 
 To minimize installation overhead and streamline dependency management, dependencies required solely for testing are isolated in test-specific requirements.
 
@@ -228,13 +222,15 @@ pytest tests/ --cov=notolog --cov-report=term --ignore=tests/ui_tests/
 ```
 </details>
 
-### Dev Tools
+
+## Dev Tools
 
 To maintain high standards of code quality and ensure comprehensive test coverage, we utilize several development tools. Flake8, which combines PyFlakes, pycodestyle, and McCabe's complexity checker, is employed to enforce code quality, manage code complexity, and ensure adherence to PEP 8 style conventions.
 
 To install these dependencies, run: `python dev_install.py dev`. The `tomli` package is required to execute this script; you can install it using `pip install tomli`.
 
-### Build Tools
+
+## Build Tools
 
 Make sure `poetry-core` and `build` are installed:
 ```
@@ -246,69 +242,6 @@ The following command generates distribution packages. Specifically, it creates 
 python -m build
 ```
 
-### Virtual Environments
-
-The instructions below contain steps of how to set up **venv** virtual environment to run a Python app safely. Starting from Python 3.6 **venv** is a recommended way to create virtual environments. For more information check [Creation of virtual environments](https://docs.python.org/3/library/venv.html). Alternatively, you can execute the Notolog code and set up virtual environment with your favorite Python code editor.
-
-#### Linux and macOS
-
-##### Set Up Virtual Environment
-1. Open Terminal.
-2. Navigate to your project directory using the cd command.
-3. Create a virtual environment by running `python3 -m venv notolog`. Replace **notolog** with the desired name for your virtual environment.
-
-##### Activate Virtual Environment:
-To activate the virtual environment, run:
-```sh
-source notolog/bin/activate
-```
-
-To deactivate environment just run this command:
-```sh
-deactivate
-```
-
-<details>
-<summary>Install venv on Linux systems</summary>
-
-While Python itself comes pre-installed on many Linux distributions, including Ubuntu, some distributions may not include the venv module by default. Therefore, you need to install it separately using the package manager before you can use it to create virtual environments.
-
-**Ubuntu/Debian**
-
-```sh
-sudo apt-get update
-sudo apt-get install python3-venv
-```
-
-**Fedora**
-
-```sh
-sudo dnf install python3-venv
-```
-
-**CentOS/RHEL**
-
-```sh
-sudo yum install python3-venv
-```
-</details>
-
-#### Windows
-
-##### Set Up Virtual Environment
-
-1. Open Command Prompt or PowerShell.
-2. Navigate to your project directory using the `cd` command.
-3. Create a virtual environment by running `python -m venv notolog`. Replace **notolog** with the name you want to give to your virtual environment.
-
-##### Activate Virtual Environment
-
-To activate the virtual environment, run:
-```
-notolog\Scripts\activate
-```
-_Mind the environment name (**notolog** or any other selected before)._
-
 
 ## Contributing
 
@@ -317,59 +250,58 @@ If you encounter any issues or would like to contribute to the project, please d
 
 ## License
 
-The Notolog project is licensed under the MIT License - see the [LICENSE](https://github.com/notolog/notolog-editor/blob/main/LICENSE) file for details.
+Notolog is open-source software licensed under the MIT License, which provides flexibility and freedom to use, modify, and distribute the software. To comply with the license when redistributing this software or derivative works, you must include a copy of the original MIT License, found in the [LICENSE](https://github.com/notolog/notolog-editor/blob/main/LICENSE) file.
 
 
 ## Third-Party Acknowledgements
 
-This project incorporates various third-party libraries and components, each subject to their own licenses. These packages may also install additional dependencies necessary for their functionality. For detailed information about these components and their licenses, please see the [ThirdPartyNotices.md](https://github.com/notolog/notolog-editor/blob/main/ThirdPartyNotices.md) file.
-
-Users and contributors are encouraged to consult this document to fully understand the licensing obligations and acknowledgements related to these third-party components.
+This project uses third-party libraries and components, each subject to its own license. Additional dependencies may be installed as necessary. For details on licensing, see [ThirdPartyNotices.md](https://github.com/notolog/notolog-editor/blob/main/ThirdPartyNotices.md).
 
 
 ## AI Integration Disclaimers
 
 ### OpenAI API
 
-**Disclaimer**: This project is independent and not affiliated with, endorsed by, or sponsored by OpenAI. The OpenAI API is integrated 'as is'. The creators disclaim liability for misuse or any consequences arising from this integration.
+**Disclaimer**: This project integrates the OpenAI API 'as is' and is independent, not affiliated with OpenAI. The creators disclaim any liability for misuse or resulting consequences.
 
-**Usage**: This project uses the OpenAI API to access AI assistant capabilities, and enhance natural language processing. Users must provide their own OpenAI API keys and should refer to the [OpenAI API reference](https://platform.openai.com/docs/api-reference) for detailed usage guidelines.
+**Usage**: Users are required to supply their own API keys and adhere to the [OpenAI API reference](https://platform.openai.com/docs/api-reference) guidelines.
 
-**Responsibility**: Users are responsible for obtaining and managing their OpenAI API keys in compliance with OpenAI's terms of service.
-
-**Security**: Users are expected to handle their API keys securely to avoid unauthorized access.
-
-*This section was generated with the assistance of AI to ensure accurate and concise information regarding the use of the OpenAI API.*
+**Security**: Proper management of API keys is essential for maintaining the security of your data. Ensure that API keys are stored and handled securely to prevent unauthorized access.
 
 ### ONNX Runtime GenAI
 
-**Disclaimer**: The 'On Device LLM' module, part of this application, utilizes the ONNX Runtime functionality to provide specialized capabilities for generative AI features. The application is an independent project and is not officially associated with ONNX Runtime, maintained by Microsoft, or with any other third-party entities.
+**Disclaimer**: The 'On Device LLM' module uses ONNX Runtime to enable generative AI features and is not associated with Microsoft or ONNX Runtime.
 
 
 ## Security Disclaimer
 
 ### File Encryption
 
-- **Encryption Details**: Notolog uses PBKDF2HMAC for key derivation and Fernet for encryption, which employs AES-128 in CBC mode. Although 256-bit key material is generated, only the first 128 bits are utilized for encryption. Future updates aim to enhance security by employing the full 256 bits.
+- **Details**: Notolog uses PBKDF2HMAC for key derivation and Fernet (AES-128 CBC mode) for encryption. Future updates may enhance encryption strength.
 
 ### File Meta-Headers
 
-- **Privacy by Design**: Essential file information is stored securely in meta-headers formatted as HTML comments, enhancing privacy and security.
+- **Privacy by Design**: Essential information is stored in HTML-comment-formatted meta-headers to preserve essential data.
 
 ### Data Integrity and Security
 
-- **Auto-Save Feature**: Changes are automatically saved, minimizing the risk of data loss.
-- **Password Protection**: Strong password practices are recommended to safeguard access to encrypted files.
+- **Auto-Save Feature**: Automatically saves changes to minimize data loss.
+- **Password Protection**: Strong password practices are recommended to protect access to encrypted files.
 
-### General Information
+### Legal and Compliance
 
-- **Open Source**: This application is open-source, licensed under the MIT License. Users must comply with applicable laws and regulations when using this software.
-- **Liability**: The developers disclaim any liability for misuse or legal non-compliance related to the use of this software.
+- **Open Source Compliance**: Licensed under the MIT License. Users are responsible for ensuring that their use of the software complies with applicable local laws and regulations.
+- **Liability**: Developers disclaim liability for misuse or non-compliance with legal and regulatory standards.
 
 
 ## Trademark Disclaimer
 
-All company names, product names, logos, and brands mentioned in this document, code, or comments are the property of their respective owners. All company, product, and service names used in this document, code, or comments are for identification purposes only. Use of these names, logos, and brands does not imply endorsement or affiliation. Mention of third-party names, logos, and brands is solely for identification and does not constitute an endorsement or affiliation with any trademark holder.
+All trademarks, registered trademarks, product names, and company names or logos mentioned herein are the property of their respective owners. References to these trademarks in any documentation, code, or API communications are for identification purposes only and do not imply endorsement or affiliation.
+
+
+## Support Us
+
+If you find Notolog useful, please consider giving us a star 🌟 on our [GitHub page](https://github.com/notolog/notolog-editor). This helps more people discover our project and contributes to its growth. Thank you for your support!
 
 ---
 _This README.md file has been carefully crafted and edited using the Notolog editor itself._

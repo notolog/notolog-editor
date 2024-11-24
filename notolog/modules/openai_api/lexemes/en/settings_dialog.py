@@ -16,7 +16,13 @@ lexemes = {
     "module_openai_api_base_system_prompt_edit_placeholder_text": "Base system prompt that precedes each request",
     "module_openai_api_base_system_prompt_edit_accessible_description":
         "Base system prompt that precedes each request. This is plain text.",
+
+    "module_openai_api_base_response_temperature_label": "Temperature: {temperature}",
+    "module_openai_api_base_response_temperature_input_accessible_description":
+        "Adjusts model output randomness. Higher values increase creativity; lower values enhance determinism.",
+
     "module_openai_api_base_response_max_tokens_label": "Maximum Response Tokens",
     "module_openai_api_base_response_max_tokens_input_accessible_description":
-        "Maximum number of tokens to receive in response",
+        "Maximum number of tokens to receive in response, such as words and punctuation, "
+        "controlling the length of the output.",
 }

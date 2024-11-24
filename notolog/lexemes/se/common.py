@@ -102,6 +102,9 @@ lexemes = {
     "dialog_exit_unsaved_title": "Bekräfta Avslut",
     "dialog_exit_unsaved_text": "Den öppnade filen '{file_name}' kan inte sparas. Fortsätt med att avsluta?",
 
+    "message_app_config_file_access": "Åtkomst nekad när man försöker komma åt appens konfigurationsfil på {file_path}. "
+                                      "Ställ in rätt behörigheter för att säkerställa korrekt drift.",
+
     "field_dir_path_line_edit": "Välj katalog",
 
     "load_file_encryption_password_mismatch": "Krypteringslösenordet stämmer inte!",

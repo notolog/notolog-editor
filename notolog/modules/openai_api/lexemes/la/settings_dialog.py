@@ -17,7 +17,13 @@ lexemes = {
         "Monitum systēmatis basis quod præcedit singulas postulationes",
     "module_openai_api_base_system_prompt_edit_accessible_description":
         "Monitum systēmatis basis quod præcedit singulas postulationes. Textus simpliciter.",
-    "module_openai_api_base_response_max_tokens_label": "Maxima Responsionis Signa",
+
+    "module_openai_api_base_response_temperature_label": "Temperatura: {temperature}",
+    "module_openai_api_base_response_temperature_input_accessible_description":
+        "Moderatur casus exitus modeli. Valores altiores creativitatem augent; valores inferiores determinismum augent.",
+
+    "module_openai_api_base_response_max_tokens_label": "Maximum Responsionis Signa",
     "module_openai_api_base_response_max_tokens_input_accessible_description":
-        "Maximum signorum quæ in responsione accipiuntur",
+        "Maximum numerum signorum in responsione accipiendum, ut verba et punctuationem, "
+        "quod longitudinem exitus moderatur.",
 }

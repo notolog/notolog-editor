@@ -18,7 +18,7 @@ For detailed instructions and project information, please see the repository's R
 """
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QVBoxLayout, QWidget, QLabel, QSizePolicy
+from PySide6.QtWidgets import QVBoxLayout, QWidget, QLabel, QSpinBox, QSlider, QSizePolicy
 
 import os
 import logging
@@ -92,8 +92,9 @@ class ModuleCore(BaseAiCore):
         self.settings.ai_config_inference_modules = inference_modules
 
         model_path = self.settings.module_ondevice_llm_model_path
+        search_options = self.get_search_options()
         # Cached helper instance
-        self.model_helper = ModelHelper(model_path=model_path)
+        self.model_helper = ModelHelper(model_path=model_path, search_options=search_options)
 
         # Just in case of debug of async events
         # if self.debug:
@@ -101,6 +102,14 @@ class ModuleCore(BaseAiCore):
 
         if self.logging:
             self.logger.info(f'Module {__name__} loaded')
+
+    def get_search_options(self):
+        search_options = {}
+        if hasattr(self.settings, 'module_ondevice_llm_response_temperature'):
+            search_options.update({'temperature': self.settings.module_ondevice_llm_response_temperature})
+        if hasattr(self.settings, 'module_ondevice_llm_response_max_tokens'):
+            search_options.update({'max_length': self.settings.module_ondevice_llm_response_max_tokens})
+        return search_options
 
     def init_prompt_manager(self, ai_dialog):
         """
@@ -289,7 +298,7 @@ class ModuleCore(BaseAiCore):
              "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('module_ondevice_llm_config_label'), "style": {"bold": True},
              "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj)},
-            # Base response max tokens label
+            # Model path line input label
             {"type": QLabel, "name": "settings_dialog_ondevice_llm_config_path_label",
              "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('module_ondevice_llm_config_path_label'),
@@ -302,6 +311,41 @@ class ModuleCore(BaseAiCore):
              "placeholder_text": self.lexemes.get('module_ondevice_llm_config_path_input_placeholder_text'),
              "accessible_description":
                  self.lexemes.get('module_ondevice_llm_config_path_input_accessible_description')},
+            # Spacer
+            {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum),
+             "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj)},
+            # Base response temperature label
+            {"type": QLabel, "name": "settings_dialog_module_ondevice_llm_config_response_temperature_label",
+             "alignment": Qt.AlignmentFlag.AlignLeft,
+             "text": self.lexemes.get('module_ondevice_llm_config_response_temperature_label',
+                                      temperature=self.settings.module_ondevice_llm_response_temperature),
+             "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
+            # Base response temperature slider
+            {"type": QSlider, "args": [Qt.Orientation.Horizontal],
+             "props": {'setFocusPolicy': Qt.FocusPolicy.StrongFocus, 'setTickPosition': QSlider.TickPosition.TicksAbove,
+                       'setTickInterval': 5, 'setSingleStep': 5, 'setMinimum': 0, 'setMaximum': 100},
+             "name": "settings_dialog_module_ondevice_llm_config_response_temperature:"
+                     "module_ondevice_llm_response_temperature",  # Lexeme key : Object name
+             "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj),
+             "on_value_change": self.temperature_change_handler,
+             "accessible_description":
+                 self.lexemes.get('module_ondevice_llm_config_response_temperature_input_accessible_description')},
+            # Spacer
+            {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum),
+             "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj)},
+            # Base response max tokens label
+            {"type": QLabel, "name": "settings_dialog_module_ondevice_llm_config_response_max_tokens_label",
+             "alignment": Qt.AlignmentFlag.AlignLeft,
+             "text": self.lexemes.get('module_ondevice_llm_config_response_max_tokens_label'),
+             "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
+            # Base response max tokens input
+            {"type": QSpinBox, "props": {'setMinimum': 1, 'setMaximum': 65536},  # Update the highest range
+             "size_policy": (QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred),
+             "name": "settings_dialog_module_ondevice_llm_config_response_max_tokens:"
+                     "module_ondevice_llm_response_max_tokens",
+             "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
+             "accessible_description":
+                 self.lexemes.get('module_ondevice_llm_config_response_max_tokens_input_accessible_description')},
             # Spacer to keep elements above on top
             {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding),
              "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj)},
@@ -315,6 +359,8 @@ class ModuleCore(BaseAiCore):
     def extend_settings_create_property(extend_func: Callable):
         if callable(extend_func):
             extend_func("module_ondevice_llm_model_path", str, "")
+            extend_func("module_ondevice_llm_response_temperature", int, 20)
+            extend_func("module_ondevice_llm_response_max_tokens", int, 2048)
 
     def settings_update_handler(self, data) -> None:
         """
@@ -332,14 +378,39 @@ class ModuleCore(BaseAiCore):
         if AppConfig().get_debug():
             AppConfig().logger.debug('Settings update handler is in use "%s"' % data)
 
-        if 'module_ondevice_llm_model_path' in data or 'ai_config_inference_module' in data:
-
-            # Reload model helper
-            ModelHelper.reload()
-
+        options = [
+            'module_ondevice_llm_model_path',
+            'module_ondevice_llm_response_temperature',
+            'module_ondevice_llm_response_max_tokens',
+        ]
+        if any(option in data for option in options) or 'ai_config_inference_module' in data:
             # Set up updated value or one from settings
-            model_path = (self.settings.module_ondevice_llm_model_path if 'ai_config_inference_module' in data
-                          else data['module_ondevice_llm_model_path'])
+            model_path = self.settings.module_ondevice_llm_model_path
+            if 'module_ondevice_llm_model_path' in data:
+                model_path = data['module_ondevice_llm_model_path']
 
-            # The model will be reloaded next time with
-            self.model_helper = ModelHelper(model_path=model_path)
+            if model_path:
+                # Reload model helper
+                ModelHelper.reload()
+
+                search_options = self.get_search_options()
+
+                # The model will be reloaded next time with
+                self.model_helper = ModelHelper(model_path=model_path, search_options=search_options)
+
+    def temperature_change_handler(self, source_object, source_widget):
+        if source_object.objectName() and source_widget:
+            # Parse the object name in case it contains a combination of lexeme and setting keys
+            _lexeme_key, setting_name = self.settings.settings_helper.parse_object_name(source_object.objectName())
+            if setting_name == 'module_ondevice_llm_response_temperature':
+                # Get the latest value from the object, as settings might not yet be updated
+                temperature_int = source_object.value()  # source_object type: QSlider
+                temperature_float = self.model_helper.convert_temperature(temperature_int)
+                temperature_label = source_widget.findChild(
+                    QLabel,
+                    'settings_dialog_module_ondevice_llm_config_response_temperature_label'
+                )
+                if temperature_label:
+                    temperature_label.setText(
+                        self.lexemes.get('module_ondevice_llm_config_response_temperature_label',
+                                         temperature=temperature_float))

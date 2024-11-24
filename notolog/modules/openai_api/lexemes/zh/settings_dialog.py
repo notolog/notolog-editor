@@ -16,6 +16,12 @@ lexemes = {
     "module_openai_api_base_system_prompt_edit_placeholder_text": "基础系统提示，位于每个请求之前",
     "module_openai_api_base_system_prompt_edit_accessible_description":
         "基础系统提示，位于每个请求之前。纯文本。",
-    "module_openai_api_base_response_max_tokens_label": "响应的最大令牌数",
-    "module_openai_api_base_response_max_tokens_input_accessible_description": "响应中接收的最大令牌数",
+
+    "module_openai_api_base_response_temperature_label": "温度：{temperature}",
+    "module_openai_api_base_response_temperature_input_accessible_description":
+        "调整模型输出的随机性。较高的值增加创造性；较低的值增强决定性。",
+
+    "module_openai_api_base_response_max_tokens_label": "最大响应令牌数",
+    "module_openai_api_base_response_max_tokens_input_accessible_description":
+        "接收响应中的最大令牌数，如单词和标点符号，控制输出的长度。",
 }

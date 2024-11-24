@@ -214,7 +214,10 @@ class AIAssistant(QDialog):
         self.layout.addWidget(self.prompt_input)
 
         label_size = QSize(48, 48)
-        label_pixmap = QPixmap(self.theme_helper.get_icon(theme_icon='clock-fill.svg').pixmap(label_size))
+        label_pixmap = QPixmap(self.theme_helper.get_icon(
+            theme_icon='clock-fill.svg',
+            color=QColor(self.theme_helper.get_color('ai_assistant_status_icon_color', css_format=True)))
+                               .pixmap(label_size))
         # Use custom Pixmap class to assure the transformation (rotation)
         self.background_label = RotatingLabel(pixmap=label_pixmap, parent=self)
         self.background_label.resize(label_size)
@@ -589,7 +592,7 @@ class AIAssistant(QDialog):
                 self.message_added.emit(plain_text, request_msg_id, response_msg_id, EnumMessageType.RESPONSE)
         except RuntimeError as e:  # Object is already deleted
             if self.logging:
-                self.logger.warning(f'Finished event callback interrupted, probably an object already deleted {e}')
+                self.logger.warning(f'Finished event callback interrupted; probably an object was already deleted: {e}')
 
     def set_status_waiting(self):
         # Set loader cursor whilst loading content

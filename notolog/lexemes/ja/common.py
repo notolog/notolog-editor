@@ -101,6 +101,9 @@ lexemes = {
     "dialog_exit_unsaved_title": "終了の確認",
     "dialog_exit_unsaved_text": "開いているファイル '{file_name}' は保存できません。終了しますか？",
 
+    "message_app_config_file_access": "{file_path} でアプリ設定ファイルにアクセスする際に許可が拒否されました。"
+                                      "適切な操作を確保するために正しい許可を設定してください。",
+
     "field_dir_path_line_edit": "ディレクトリを選択",
 
     "load_file_encryption_password_mismatch": "暗号化パスワードが一致しません！",

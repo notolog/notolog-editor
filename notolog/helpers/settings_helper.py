@@ -60,6 +60,9 @@ class SettingsHelper:
         except (InvalidToken, InvalidSignature, TypeError) as e:
             if self.logging:
                 self.logger.warning(f'Settings helper encryption token error: {e}')
+        except Exception as e:
+            if self.logging:
+                self.logger.warning(f'An unexpected error occurred while encrypting data: {e}')
         return None
 
     def decrypt_data(self, encrypted_data: Any) -> Union[str, None]:
@@ -76,6 +79,9 @@ class SettingsHelper:
         except (InvalidToken, InvalidSignature, TypeError) as e:
             if self.logging:
                 self.logger.warning(f'Settings helper encryption token error: {e}')
+        except Exception as e:
+            if self.logging:
+                self.logger.warning(f'An unexpected error occurred while decrypting data: {e}')
         return None
 
     def get_app_key(self) -> bytes:
@@ -126,3 +132,16 @@ class SettingsHelper:
         # Update settings value(s) upon that
         # value = self.encrypt_data(value)
         # settings.setValue(param_name, value)
+
+    def parse_object_name(self, object_name: str):
+        if object_name.__contains__(":"):
+            object_name_parts = object_name.split(":")
+            if len(object_name_parts) == 2:
+                # lexeme_key, setting_name
+                return object_name_parts
+            else:
+                if self.logging:
+                    self.logger.warning(f"Object name in a wrong format '{object_name}'")
+        else:
+            # lexeme_key, setting_name
+            return object_name, object_name

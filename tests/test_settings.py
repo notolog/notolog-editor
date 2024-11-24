@@ -18,7 +18,7 @@ class TestSettings:
         # Clear settings to be sure start over without side effects
         settings.clear()
         # Reset singleton (qa functionality)
-        settings.reload()
+        Settings.reload()
 
         yield settings
 
@@ -45,9 +45,6 @@ class TestSettings:
         # Sync changes
         test_obj_settings.sync()
 
-        # Reset singleton (qa functionality)
-        test_obj_settings.reload()
-
         # Get fresh settings instance
         settings = Settings()
 
@@ -65,5 +62,24 @@ class TestSettings:
         assert AppConfig().get_settings_app_name_qa() in settings.fileName()
         assert test_obj_settings.fileName() == settings.fileName()
 
-        # Reset to restore
+        # Clear all settings to reset to default state
         settings.clear()
+
+        # Sync changes
+        settings.sync()
+
+        # Assert values were restored correctly
+        assert settings.ui_width == 0
+        assert settings.ui_height == 0
+        assert settings.ui_pos_x == 0
+        assert settings.ui_pos_y == 0
+        assert settings.file_path == ''
+        assert settings.toolbar_icons == 0
+
+    def test_settings_clear(self, test_obj_settings: Settings):
+        # Verify the test file's suffix
+        settings_file_path = test_obj_settings.get_filename()
+        assert '_qa' in settings_file_path
+        # Clear the settings
+        test_obj_settings.clear()
+        assert not os.path.exists(settings_file_path)

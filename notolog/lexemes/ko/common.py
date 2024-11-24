@@ -101,6 +101,9 @@ lexemes = {
     "dialog_exit_unsaved_title": "종료 확인",
     "dialog_exit_unsaved_text": "열린 파일 '{file_name}'을(를) 저장할 수 없습니다. 종료하시겠습니까?",
 
+    "message_app_config_file_access": "{file_path}에서 앱 구성 파일에 접근할 때 권한이 거부되었습니다. "
+                                      "제대로된 작동을 보장하기 위해 올바른 권한을 설정하세요.",
+
     "field_dir_path_line_edit": "디렉토리 선택",
 
     "load_file_encryption_password_mismatch": "암호화 비밀번호가 일치하지 않습니다!",

@@ -23,10 +23,12 @@ from .app_config import AppConfig
 from .enums.themes import Themes
 from .enums.languages import Languages
 from .helpers.settings_helper import SettingsHelper
+from .helpers.file_helper import is_writable_path
 
 from typing import TYPE_CHECKING, Any
 from threading import Lock
 
+import os
 import logging
 
 if TYPE_CHECKING:
@@ -86,7 +88,7 @@ class Settings(QSettings):
             self.logging = AppConfig().get_logging()
             self.debug = AppConfig().get_debug()
 
-            self.settings = QSettings()
+            self.settings = self.get_instance()
             self.settings_helper = SettingsHelper()
 
             if self.debug:
@@ -97,6 +99,32 @@ class Settings(QSettings):
 
             self.protected_attr = []
             self.init_fields()
+
+    def get_instance(self):
+        settings_file_path = self.get_filename()
+        # Check file permissions
+        if not is_writable_path(settings_file_path):
+            if self.logging:
+                self.logger.warning(f"Permission denied: Cannot write to the file {settings_file_path}")
+            settings_file_path = None
+        # Initialize settings with either a custom or the default path
+        if settings_file_path:
+            return QSettings(settings_file_path, QSettings.Format.NativeFormat)
+        else:
+            return QSettings()
+
+    def get_filename(self):
+        # Get app's package
+        app_package = AppConfig().get_package_type()
+        # Get default path based on the application config
+        settings_file_path = self.fileName()
+        # Adjust path if the specific package is in use
+        if app_package != AppConfig.default_package:
+            # Split the file path into directory, filename without extension, and extension
+            directory, file = os.path.split(settings_file_path)
+            _file_name, _file_ext = os.path.splitext(file)
+            settings_file_path = os.path.join(directory, f'{_file_name}_{app_package}{_file_ext}')
+        return settings_file_path
 
     def init_fields(self):
         # App's UI settings
@@ -211,3 +239,23 @@ class Settings(QSettings):
             return self.__dict__[name]
         else:
             raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+
+    def clear(self):
+        # Clear all entries in the QSettings instance to reset settings
+        self.settings.clear()
+
+        # Delete the settings file
+        settings_file_path = self.get_filename()
+        # Check if file exists and is writable
+        if os.path.exists(settings_file_path) and os.access(settings_file_path, os.W_OK):
+            try:
+                os.remove(settings_file_path)
+                return True
+            except OSError as e:
+                if self.logging:
+                    self.logger.warning(f"Error deleting settings file {settings_file_path}: {e}")
+                return False
+        else:
+            if self.logging:
+                self.logger.warning(f"Settings file does not exist or is not writable: {settings_file_path}")
+            return False

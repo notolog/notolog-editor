@@ -107,6 +107,9 @@ lexemes = {
     "dialog_exit_unsaved_title": "Επιβεβαίωση Εξόδου",
     "dialog_exit_unsaved_text": "Το ανοιχτό αρχείο '{file_name}' δεν μπορεί να αποθηκευτεί. Να συνεχίσουμε με την έξοδο;",
 
+    "message_app_config_file_access": "Άρνηση πρόσβασης κατά την πρόσβαση στο αρχείο διαμόρφωσης εφαρμογής στο {file_path}. "
+                                      "Ορίστε τα σωστά δικαιώματα για να διασφαλίσετε τη σωστή λειτουργία.",
+
     "field_dir_path_line_edit": "Επιλέξτε Κατάλογο",
 
     "load_file_encryption_password_mismatch": "Αναντιστοιχία κωδικού κρυπτογράφησης!",

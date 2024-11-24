@@ -99,6 +99,8 @@ lexemes = {
     "dialog_exit_unsaved_title": "确认退出",
     "dialog_exit_unsaved_text": "无法保存已打开的文件 '{file_name}'。是否继续退出？",
 
+    "message_app_config_file_access": "访问应用配置文件 {file_path} 时权限被拒绝。请设置正确的权限以确保正常操作。",
+
     "field_dir_path_line_edit": "选择目录",
 
     "load_file_encryption_password_mismatch": "加密密码不匹配!",

@@ -103,6 +103,9 @@ lexemes = {
     "dialog_exit_unsaved_title": "Подтвердить Выход",
     "dialog_exit_unsaved_text": "Открытый файл '{file_name}' не может быть сохранен. Продолжить выход?",
 
+    "message_app_config_file_access": "Доступ запрещен при обращении к файлу настроек приложения в {file_path}. "
+                                      "Установите корректные разрешения для обеспечения правильной работы.",
+
     "field_dir_path_line_edit": "Выбрать каталог",
 
     "load_file_encryption_password_mismatch": "Несоответствие пароля шифрования!",

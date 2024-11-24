@@ -19,7 +19,7 @@ For detailed instructions and project information, please see the repository's R
 
 from PySide6.QtCore import Qt, QObject, QRegularExpression
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QTabWidget, QWidget, QSizePolicy, QPlainTextEdit
-from PySide6.QtWidgets import QLabel, QCheckBox, QLineEdit, QPushButton, QComboBox, QSpinBox, QSlider
+from PySide6.QtWidgets import QLabel, QCheckBox, QLineEdit, QPushButton, QComboBox, QSpinBox, QDoubleSpinBox, QSlider
 
 import logging
 from typing import Union
@@ -393,7 +393,7 @@ class SettingsDialog(QDialog):
                     setter(value)  # Call the setter with the provided value
 
     def create_setting_field(self, conf) \
-            -> Union[QCheckBox, QLineEdit, QPlainTextEdit, QComboBox, QSpinBox, QSlider]:  # noqa: C901
+            -> Union[QCheckBox, QLineEdit, QPlainTextEdit, QComboBox, QSpinBox, QDoubleSpinBox, QSlider]:  # noqa: C901
         """
         Method to create setting field with ease.
         @param conf: Config of the field. As the param bounded to the particular method it will be called then.
@@ -438,6 +438,9 @@ class SettingsDialog(QDialog):
         if 'callback' in conf and callable(conf['callback']):
             # Add object to the layout via the callback
             conf['callback'](obj)
+        if 'on_value_change' in conf and callable(conf['on_value_change']):
+            # Add a callback to handle value changes
+            obj.valueChanged.connect(lambda: conf['on_value_change'](source_object=obj, source_widget=self))
         if 'style' in conf:
             styles = []
             if 'bold' in conf['style']:
@@ -457,24 +460,14 @@ class SettingsDialog(QDialog):
         return obj
 
     def parse_object_name(self, object_name: str):
-        if object_name.__contains__(":"):
-            object_name_parts = object_name.split(":")
-            if len(object_name_parts) == 2:
-                # lexeme_key, setting_name
-                return object_name_parts
-            else:
-                if self.logging:
-                    self.logger.warning(f"Object name in a wrong format {object_name}")
-        else:
-            # lexeme_key, setting_name
-            return object_name, object_name
+        return self.settings.settings_helper.parse_object_name(object_name)
 
     def connect_widgets(self):  # noqa: C901 - consider simplifying this method
         # Find children of type QCheckBox
         checkboxes = self.findChildren(QCheckBox)
         for checkbox in checkboxes:
             if isinstance(checkbox, QCheckBox):
-                # Parse object name in case it consists of composed data of lexeme and setting names
+                # Parse the object name in case it contains a combination of lexeme and setting keys
                 _lexeme_key, setting_name = self.parse_object_name(checkbox.objectName())
                 if hasattr(self.settings, setting_name):
                     checkbox.setChecked(getattr(self.settings, setting_name, False))
@@ -485,7 +478,7 @@ class SettingsDialog(QDialog):
         combo_boxes = self.findChildren(QComboBox)
         for combo_box in combo_boxes:
             if isinstance(combo_box, EnumComboBox):
-                # Parse object name in case it consists of composed data of lexeme and setting names
+                # Parse the object name in case it contains a combination of lexeme and setting keys
                 _lexeme_key, setting_name = self.parse_object_name(combo_box.objectName())
                 if hasattr(self.settings, setting_name):
                     setting_value = getattr(self.settings, setting_name, None)
@@ -503,17 +496,27 @@ class SettingsDialog(QDialog):
         spin_boxes = self.findChildren(QSpinBox)
         for spin_box in spin_boxes:
             if isinstance(spin_box, QSpinBox):
-                # Parse object name in case it consists of composed data of lexeme and setting names
+                # Parse the object name in case it contains a combination of lexeme and setting keys
                 _lexeme_key, setting_name = self.parse_object_name(spin_box.objectName())
                 if hasattr(self.settings, setting_name):
                     spin_box.setValue(getattr(self.settings, setting_name, 0))
                 spin_box.valueChanged.connect(self.save_settings)
 
+        # Find children of type QDoubleSpinBox
+        double_spin_boxes = self.findChildren(QDoubleSpinBox)
+        for double_spin_box in double_spin_boxes:
+            if isinstance(double_spin_box, QDoubleSpinBox):
+                # Parse the object name in case it contains a combination of lexeme and setting keys
+                _lexeme_key, setting_name = self.parse_object_name(double_spin_box.objectName())
+                if hasattr(self.settings, setting_name):
+                    double_spin_box.setValue(getattr(self.settings, setting_name, 0))
+                double_spin_box.valueChanged.connect(self.save_settings)
+
         # Find children of type QLineEdit
         line_edits = self.findChildren(QLineEdit)
         for line_edit in line_edits:
             if isinstance(line_edit, QLineEdit):
-                # Parse object name in case it consists of composed data of lexeme and setting names
+                # Parse the object name in case it contains a combination of lexeme and setting keys
                 _lexeme_key, setting_name = self.parse_object_name(line_edit.objectName())
                 if hasattr(self.settings, setting_name):
                     line_edit.setText(str(getattr(self.settings, setting_name, '')))
@@ -524,18 +527,18 @@ class SettingsDialog(QDialog):
         text_edits = self.findChildren(QPlainTextEdit)
         for text_edit in text_edits:
             if isinstance(text_edit, QPlainTextEdit):
-                # Parse object name in case it consists of composed data of lexeme and setting names
+                # Parse the object name in case it contains a combination of lexeme and setting keys
                 _lexeme_key, setting_name = self.parse_object_name(text_edit.objectName())
                 if hasattr(self.settings, setting_name):
                     text_edit.setPlainText(getattr(self.settings, setting_name, ''))
                 # Connect signal after set up defaults or restore saved value to avoid signal emitting right after.
                 text_edit.textChanged.connect(self.save_settings)
 
-        # Find children of type QSpinBox
+        # Find children of type QSlider
         sliders = self.findChildren(QSlider)
         for slider in sliders:
             if isinstance(slider, QSlider):
-                # Parse object name in case it consists of composed data of lexeme and setting names
+                # Parse the object name in case it contains a combination of lexeme and setting keys
                 _lexeme_key, setting_name = self.parse_object_name(slider.objectName())
                 if hasattr(self.settings, setting_name):
                     slider.setValue(getattr(self.settings, setting_name, 0))
@@ -549,7 +552,7 @@ class SettingsDialog(QDialog):
         sender_widget = self.sender()
         sender_name = sender_widget.objectName()
 
-        # Parse object name in case it consists of composed data of lexeme and setting names
+        # Parse the object name in case it contains a combination of lexeme and setting keys
         lexeme_key, setting_name = self.parse_object_name(sender_name)
 
         setting_value = None
@@ -569,6 +572,9 @@ class SettingsDialog(QDialog):
             """
             setting_value = sender_widget.currentData().name.lower()  # Save in lower case
         elif isinstance(sender_widget, QSpinBox):
+            setting_value = sender_widget.value()
+            setting_text = sender_widget.text()
+        elif isinstance(sender_widget, QDoubleSpinBox):
             setting_value = sender_widget.value()
             setting_text = sender_widget.text()
         elif isinstance(sender_widget, QLineEdit):
@@ -623,7 +629,7 @@ class SettingsDialog(QDialog):
                     Some objects may have name set with ":" delimiter, which means "lexeme_key:setting_name".
                     It may help to transfer more params with object name with ease.
                     """
-                    # Parse object name in case it consists of composed data of lexeme and setting names
+                    # Parse the object name in case it contains a combination of lexeme and setting keys
                     lexeme_key, setting_name = self.parse_object_name(lexeme_key)
 
                     # Get lexeme in the new language set
@@ -676,7 +682,7 @@ class SettingsDialog(QDialog):
         # A simple font size update should also work.
         self.setFont(self.parent.font())
         widgets_to_update = [QLabel, QTabWidget, QPushButton, QCheckBox, QLineEdit, QPlainTextEdit, QComboBox,
-                             QSpinBox, QSlider]
+                             QSpinBox, QDoubleSpinBox, QSlider]
         for _widget in widgets_to_update:
             # Find all QLabel objects
             found_objects = self.findChildren(_widget)

@@ -53,7 +53,7 @@ class AsyncHighlighter:
         # Check async loop is running
         if not asyncio.get_event_loop().is_running():
             if self.logging:
-                self.logger.debug('Async loop is not running, skip task')
+                self.logger.debug('Skipping the task because the async loop is not running.')
             return
 
         if self.debug:

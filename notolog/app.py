@@ -28,6 +28,7 @@ For detailed instructions and project information, please see the repository's R
 """
 
 
+import argparse
 import logging
 import asyncio
 import sys
@@ -53,13 +54,34 @@ os.environ["QT_STYLE_OVERRIDE"] = "Fusion"
 def main():
     # Check if any command line arguments are present
     if len(sys.argv) > 1:
-        if any(arg.lower() in ('--version', '-v') for arg in sys.argv):
-            print(f'{AppConfig().get_app_name()} {AppConfig().get_app_version()}')
-        else:
-            print("░░░░░░░░░░░░░░░░░░░░░░░▒▒▒▒▒▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓███■███▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░░")
-            print("╔═══════════════════════════════════════════════════════════════════════════════════════════╗")
-            print("║ Notolog Editor is a GUI application. Simply run the command without any options to start. ║")
-            print("╚═══════════════════════════════════════════════════════════════════════════════════════════╝")
+        class NotologArgumentParser(argparse.ArgumentParser):
+            def print_help(self, file=None):
+                # Default command line intro
+                print("\033[92m", end='')
+                print("░░░░░░░░░░░░░░░░░░░░░░░▒▒▒▒▒▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓███■███▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░░")
+                print("╔═══════════════════════════════════════════════════════════════════════════════════════════╗")
+                print("║ Notolog Editor is a GUI application. Simply run the command without any options to start. ║")
+                print("╚═══════════════════════════════════════════════════════════════════════════════════════════╝")
+                print("\033[0m")
+                # Call the super method to print the standard help message
+                super().print_help()
+
+        # Create the parser
+        parser = NotologArgumentParser(description="Notolog Editor: Open-source markdown editor developed in Python.")
+
+        # Add a version argument
+        parser.add_argument('-v', '--version', action='version',
+                            version=f'{AppConfig().get_app_name()} {AppConfig().get_app_version()}',
+                            help='show the version information and exit')
+
+        # Parse the arguments
+        # parser.parse_args()
+        args = parser.parse_args()
+
+        # Check if the --init=package option was provided
+        if args.version:
+            pass
+
         sys.exit(0)
 
     """

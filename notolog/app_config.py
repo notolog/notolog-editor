@@ -1,17 +1,20 @@
-from PySide6.QtCore import QObject, Signal
+from PySide6.QtCore import QObject, QStandardPaths, Signal
 
 import os
 import tomli
 import tomli_w
 import logging
+import shutil
 
-from typing import Any
+from notolog.app_package import AppPackage
+
+from typing import Union
 from threading import Lock
 
 toml_base_app_config = """
 [app]
 name = "Notolog"
-version = "1.0.5"
+version = "1.0.6"
 license = "MIT License"
 date = "2024"
 website = "https://notolog.app"
@@ -67,6 +70,9 @@ app_secret = ""
 
 [editor]
 media_dir = "images"
+
+[package]
+type = ""
 """
 
 
@@ -79,6 +85,8 @@ class AppConfig(QObject):
     _lock = Lock()
 
     value_changed = Signal(dict)  # type: Signal[dict]
+
+    default_package = AppPackage().default_package
 
     def __new__(cls, *args, **kwargs):
         # Overriding __new__ to control the instantiation process
@@ -102,22 +110,22 @@ class AppConfig(QObject):
             # Initialize the QObject part only once
             super(AppConfig, self).__init__()
 
+            self.logger = logging.getLogger('app_config')
+
             # Config variables
-            self.base_app_config = Any
-            self.toml_file_path = Any
-            self.app_config = Any
+            self.base_app_config = None  # type: Union[dict, None]
+            self.toml_file_path = None  # type: Union[str, None]
+            self.app_config = None  # type: Union[dict, None]
 
             # Font settings
-            self._font_size = Any  # Base value
-            self._prev_font_size = Any  # Previous value
+            self._font_size = None  # Base value
+            self._prev_font_size = None  # Previous value
 
             # For pytest to allow override some params
-            self._test_mode = Any
+            self._test_mode = False
 
             # Initialize
             self.load_initial_conf()
-
-            self.logger = logging.getLogger('app_config')
 
             self.logging = self.get_logging()
             self.debug = self.get_debug()
@@ -135,70 +143,195 @@ class AppConfig(QObject):
         return cls._instance
 
     def get_app_config_path(self):
-        # Get this file dir path
-        script_dir = os.path.dirname(os.path.realpath(__file__))
-        # Get parent dir path
-        parent_dir = os.path.dirname(script_dir)
-        # Get app_config.toml file path which is located at parent dir
-        return os.path.join(parent_dir, 'app_config.toml')
+        """
+        Method to get app config file path which is depends on the app package type stored in the 'package' file.
+        The method can be called before the actual package type if the 'package' file yet not exists in some cases.
+
+        Package file purpose to distinguish the actual installation whither through pip, deb or similar packages.
+        This approach allows to keep app config and it's settings separately from each other.
+
+        returns: str path to the config file stored in a preferred system location (QStandardPaths.ApplicationsLocation).
+        """
+
+        # Get the standard configuration path
+        config_dir = QStandardPaths.writableLocation(QStandardPaths.StandardLocation.ApplicationsLocation)
+
+        try:
+            # Ensure the config directory exists
+            os.makedirs(config_dir, exist_ok=True)
+        except OSError as e:
+            # Handle specific errors, e.g., permission errors
+            self.logger.warning(f"Error: Unable to create directory '{config_dir}'; error occurred {e}")
+
+        # Suffix for testing to avoid modifying the real configuration
+        file_name_suffix = '_qa' if self.get_test_mode() else ''
+
+        # Add package type suffix if it's not the default
+        app_package = self.get_package_type()
+        if app_package != self.default_package:
+            file_name_suffix += f'_{app_package}'
+
+        # Get complete app_config.toml file path
+        config_path = os.path.join(
+            config_dir,
+            f'notolog_app_config{file_name_suffix}.toml'
+        )
+
+        # For compatibility with previous versions, clone config from the previous location
+        if not os.path.exists(config_path):
+            # Get this file dir path
+            script_dir = os.path.dirname(os.path.realpath(__file__))
+            prev_conf_path = os.path.join(os.path.dirname(script_dir), 'app_config.toml')
+            if os.path.exists(prev_conf_path):
+                # Copy previous version of the config to the new one
+                shutil.copy(prev_conf_path, config_path)
+                # Delete previous file
+                os.remove(prev_conf_path)
+
+        return config_path
+
+    @staticmethod
+    def get_base_app_config():
+        return tomli.loads(toml_base_app_config)
+
+    @staticmethod
+    def get_default_app_config():
+        return tomli.loads(toml_app_config)
+
+    def get_config(self):
+        return self.app_config
+
+    def load_config(self, config_file_path) -> Union[dict, None]:
+        if not (os.path.exists(config_file_path) and os.access(config_file_path, os.R_OK)):
+            return None
+        try:
+            # Read from the actual app_config.toml file
+            with open(config_file_path, 'r') as config_file:
+                return tomli.loads(config_file.read())
+        except FileNotFoundError:
+            self.logger.warning(f"The configuration file '{config_file_path}' was not found.")
+        except PermissionError:
+            self.logger.warning(f"Permission denied while accessing the file '{config_file_path}'.")
+        except tomli.TOMLDecodeError:
+            self.logger.warning(f"Error decoding TOML from the file '{config_file_path}'.")
+        except Exception as e:
+            self.logger.warning(f"An unexpected error occurred while loading the config: {e}")
+        return None
 
     def load_initial_conf(self):
-        self.base_app_config = tomli.loads(toml_base_app_config)
+        # Clear stored data if set
+        self.app_config = {}
 
-        # Get app_config.toml file path
+        # Get base config
+        self.base_app_config = self.get_base_app_config()
+
+        # Load the default configuration schema from a TOML string
+        self.app_config = self.get_default_app_config()
+
+        # Load package config to update the configuration file if needed
+        app_config_package = AppPackage().get_config()
+        if not AppPackage().validate_config(app_config_package):
+            # self.logger.warning(f"Package config contains unsupported data '{str(app_config_package)[:255]}' or missing.")
+            pass
+        else:
+            # Merge the existing package config into the default one
+            self.app_config.update(app_config_package)
+
+        # Get the current app config file path (it might have just been updated)
         self.toml_file_path = self.get_app_config_path()
 
-        if not os.path.exists(self.toml_file_path):
-            # Backup option
-            self.app_config = tomli.loads(toml_app_config)
-        else:
-            try:
-                # Read from the actual app_config.toml file
-                with open(self.toml_file_path, 'r') as config_file:
-                    self.app_config = tomli.loads(config_file.read())
-            except FileNotFoundError:
-                if self.logging:
-                    self.logger.warning(f"The configuration file {self.toml_file_path} was not found.")
-            except PermissionError:
-                if self.logging:
-                    self.logger.warning(f"Permission denied when accessing the file {self.toml_file_path}.")
-            except tomli.TOMLDecodeError:
-                if self.logging:
-                    self.logger.warning(f"Error decoding TOML from the file {self.toml_file_path}.")
-            except Exception as e:
-                if self.logging:
-                    self.logger.warning(f"An unexpected error occurred while loading the config: {str(e)}")
+        # In case the config file is missing
+        if not os.path.exists(self.toml_file_path) and os.access(os.path.dirname(self.toml_file_path), os.W_OK):
+            # Create the config.
+            self.save_app_config()
+
+        stored_app_config = self.load_config(self.toml_file_path)
+        # Check if existing config is available
+        if self.validate_config(stored_app_config):
+            # Merge the existing app config into the default one
+            self.app_config.update(stored_app_config)
+            if ('package' in self.app_config
+                    and 'package' in app_config_package
+                    and self.app_config['package'] != app_config_package['package']):
+                # Such discrepancy can possibly occur for various reasons
+                self.logger.warning(f"The configuration file package {self.app_config['package']} "
+                                    f"and {app_config_package['package']} are differ.")
+                # Merge the package config into the combined one again to restore
+                self.app_config.update(app_config_package)
 
         # Font settings
         self._font_size = self.app_config['font']['base_size']  # Base value
         self._prev_font_size = self.app_config['font']['base_size']  # Previous value
 
-        # For pytest to allow override some params
-        self._test_mode = False
+    def delete_app_config(self) -> bool:
+        """
+        Attempts to delete configuration file if it exists and is writable.
 
-    def delete_app_config(self):
-        if os.path.exists(self.toml_file_path):
-            # Delete file
-            os.remove(self.toml_file_path)
+        Returns:
+            bool: True if the file was successfully deleted, False otherwise.
+        """
 
-    def app_config_update_handler(self, data: dict) -> None:
-        if self.debug:
-            self.logger.debug('App config handler is in use "%s"' % data)
+        # Check if file exists and is writable
+        if os.path.exists(self.toml_file_path) and os.access(self.toml_file_path, os.W_OK):
+            try:
+                os.remove(self.toml_file_path)
+                self.toml_file_path = None
+                return True
+            except OSError as e:
+                if self.logging:
+                    self.logger.warning(f"Error deleting configuration file {self.toml_file_path}: {e}")
+                return False
+        else:
+            if self.logging:
+                self.logger.warning(f"Configuration file does not exist or is not writable: {self.toml_file_path}")
+            return False
 
+    def save_app_config(self):
         try:
             # Regenerate the app_config.toml file with new settings
             with open(self.toml_file_path, 'wb') as f:
                 f.write(toml_app_config_header.encode('utf-8'))
                 tomli_w.dump(self.app_config, f)
         except PermissionError:
-            if self.logging:
-                self.logger.warning(f"Permission denied: Cannot write to the file {self.toml_file_path}.")
+            self.logger.warning(f"Permission denied: Cannot write to the file {self.toml_file_path}.")
         except IOError as e:
-            if self.logging:
-                self.logger.warning(f"Failed to write config to file {self.toml_file_path}: {e}")
+            self.logger.warning(f"Failed to write config to file {self.toml_file_path}: {e}")
         except Exception as e:
-            if self.logging:
-                self.logger.warning(f"An unexpected error occurred: {e}")
+            self.logger.warning(f"An unexpected error occurred: {e}")
+
+    def app_config_update_handler(self, data: dict) -> None:
+        # Data contains information about the changes made
+        if self.debug:
+            self.logger.debug('App config handler is in use "%s"' % data)
+
+        # Save the current config
+        self.save_app_config()
+
+    def setup_package(self, app_package) -> None:
+        # Validate package
+        if not AppPackage().validate_type(app_package):
+            self.logger.warning(
+                f"Trying to setup unsupported package '{str(app_package)[:16]}'; "
+                f"fallback to the default package '{self.default_package}'")
+            app_package = self.default_package
+
+        # Save default config
+        AppPackage().set_type(app_package)
+
+        # Reinitialize the updated config and its path
+        self.load_initial_conf()
+
+        # Block signals
+        was_blocked = self.blockSignals(True)
+
+        # Verify the initial setup and update the config
+        self.save_app_config()
+
+        # Restore signals
+        self.blockSignals(was_blocked)
+
+    def validate_config(self, app_config):
+        return all(key in app_config for key in self.get_default_app_config())
 
     """
     Constant values with getters.
@@ -300,9 +433,29 @@ class AppConfig(QObject):
     def get_security_app_secret(self) -> str:
         return self.app_config['security']['app_secret']
 
+    def set_package_type(self, value) -> None:
+        self.app_config['package']['type'] = value
+        self.value_changed.emit({'package_type': value})
+
+    def get_package_type(self) -> str:
+        """
+        Retrieves the package type specified in the app's configuration.
+        If no package is found, the method returns `self.default_package` as a fallback.
+
+        Returns:
+            str: The package name or `self.default_package` if no package is found.
+        """
+
+        package = None
+        if self.app_config and 'package' in self.app_config and 'type' in self.app_config['package']:
+            package = self.app_config['package']['type']
+
+        # Return the package
+        return package if package else self.default_package
+
     """
     Class system variables.
-    Do not emit signal upon theirs update.
+    Do not emit signals upon their update.
     """
 
     def set_font_size(self, value) -> None:

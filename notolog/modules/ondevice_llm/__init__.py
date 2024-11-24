@@ -32,8 +32,8 @@ def get_name():
 
 
 def is_available() -> bool:
-    # The required packages are not supported yet
-    if sys.platform == "darwin":
+    # The required packages are not supported
+    if sys.platform == "darwin" and sys.version_info < (3, 10):
         if AppConfig().get_logging():
             AppConfig().logger.info(f"The system is not supported by the module '{get_name()}'")
         return False

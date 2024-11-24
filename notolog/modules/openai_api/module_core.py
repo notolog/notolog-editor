@@ -18,7 +18,7 @@ For detailed instructions and project information, please see the repository's R
 """
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QVBoxLayout, QWidget, QLabel, QLineEdit, QSizePolicy, QPlainTextEdit, QSpinBox
+from PySide6.QtWidgets import QVBoxLayout, QWidget, QLabel, QLineEdit, QSizePolicy, QPlainTextEdit, QSpinBox, QSlider
 from PySide6.QtNetwork import QNetworkRequest, QNetworkAccessManager, QNetworkReply
 
 import os
@@ -73,6 +73,8 @@ class ModuleCore(BaseAiCore):
         super(ModuleCore, self).__init__()
 
         self.settings = Settings(parent=self)
+        self.settings.value_changed.connect(
+            lambda v: self.settings_update_handler(v))
 
         self.logger = logging.getLogger('openai_api_module')
 
@@ -103,6 +105,7 @@ class ModuleCore(BaseAiCore):
         self.prompt_user = "%s"
 
         # Additional request params
+        self.response_temperature = self.settings.module_openai_api_base_response_temperature
         self.response_max_tokens = self.settings.module_openai_api_base_response_max_tokens
 
         # API helper
@@ -220,7 +223,8 @@ class ModuleCore(BaseAiCore):
         Other params:
             "temperature": 0.2, "top_p": 1, "n": 1, "stream": False, ...
         """
-        options = {'response_max_tokens': self.response_max_tokens}
+        temperature_float = self.api_helper.convert_temperature(self.response_temperature)
+        options = {'max_tokens': self.response_max_tokens, 'temperature': temperature_float}
         # Request
         request = self.api_helper.init_request(api_url=self.openai_api_url, api_key=self.openai_api_key)
         # Request data
@@ -413,11 +417,31 @@ class ModuleCore(BaseAiCore):
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # Base system prompt text edit
             {"type": QPlainTextEdit,
-             "name": "settings_dialog_module_openai_api_base_system_prompt:module_openai_api_base_system_prompt",
+             "name": "settings_dialog_module_openai_api_base_system_prompt:"
+                     "module_openai_api_base_system_prompt",
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
              "placeholder_text": self.lexemes.get('module_openai_api_base_system_prompt_edit_placeholder_text'),
              "accessible_description":
                  self.lexemes.get('module_openai_api_base_system_prompt_edit_accessible_description'), "text_lines": 7},
+            # Spacer
+            {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum),
+             "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj)},
+            # Base response temperature label
+            {"type": QLabel, "name": "settings_dialog_module_openai_api_base_response_temperature_label",
+             "alignment": Qt.AlignmentFlag.AlignLeft,
+             "text": self.lexemes.get('module_openai_api_base_response_temperature_label',
+                                      temperature=self.settings.module_openai_api_base_response_temperature),
+             "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
+            # Base response temperature slider
+            {"type": QSlider, "args": [Qt.Orientation.Horizontal],
+             "props": {'setFocusPolicy': Qt.FocusPolicy.StrongFocus, 'setTickPosition': QSlider.TickPosition.TicksAbove,
+                       'setTickInterval': 5, 'setSingleStep': 5, 'setMinimum': 0, 'setMaximum': 100},
+             "name": "settings_dialog_module_openai_api_base_response_temperature:"
+                     "module_openai_api_base_response_temperature",  # Lexeme key : Object name
+             "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj),
+             "on_value_change": self.temperature_change_handler,
+             "accessible_description":
+                 self.lexemes.get('module_openai_api_base_response_temperature_input_accessible_description')},
             # Spacer
             {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum),
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj)},
@@ -447,4 +471,49 @@ class ModuleCore(BaseAiCore):
             extend_func("module_openai_api_model", str, str(OpenAiModelNames.default()))
 
             extend_func("module_openai_api_base_system_prompt", str, "")
+            extend_func("module_openai_api_base_response_temperature", int, 20)
             extend_func("module_openai_api_base_response_max_tokens", int, 512)
+
+    def settings_update_handler(self, data) -> None:
+        """
+        Perform actions upon settings change.
+        Data comes in a view of a dictionary, where is the key is the setting name, and the value is the actual value.
+        Can be resource greedy.
+
+        Args:
+            data dict: say {"module_openai_api_model": "..."}
+
+        Return:
+            None
+        """
+
+        if AppConfig().get_debug():
+            AppConfig().logger.debug('Settings update handler is in use "%s"' % data)
+
+        options = [
+            'module_openai_api_url',
+            'module_openai_api_key',
+            'module_openai_api_model',
+            'module_openai_api_base_system_prompt',
+            'module_openai_api_base_response_temperature',
+            'module_openai_api_base_response_max_tokens',
+        ]
+        if any(option in data for option in options) or 'ai_config_inference_module' in data:
+            pass
+
+    def temperature_change_handler(self, source_object, source_widget):
+        if source_object.objectName() and source_widget:
+            # Parse the object name in case it contains a combination of lexeme and setting keys
+            _lexeme_key, setting_name = self.settings.settings_helper.parse_object_name(source_object.objectName())
+            if setting_name == 'module_openai_api_base_response_temperature':
+                # Get the latest value from the object, as settings might not yet be updated
+                temperature_int = source_object.value()  # source_object type: QSlider
+                temperature_float = self.api_helper.convert_temperature(temperature_int)
+                temperature_label = source_widget.findChild(
+                    QLabel,
+                    'settings_dialog_module_openai_api_base_response_temperature_label'
+                )
+                if temperature_label:
+                    temperature_label.setText(
+                        self.lexemes.get('module_openai_api_base_response_temperature_label',
+                                         temperature=temperature_float))

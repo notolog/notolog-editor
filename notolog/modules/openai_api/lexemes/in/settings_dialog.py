@@ -16,7 +16,14 @@ lexemes = {
     "module_openai_api_base_system_prompt_edit_placeholder_text": "प्रत्येक अनुरोध से पहले मूल सिस्टम प्रॉम्प्ट",
     "module_openai_api_base_system_prompt_edit_accessible_description":
         "प्रत्येक अनुरोध से पहले मूल सिस्टम प्रॉम्प्ट। यह सादा पाठ है।",
-    "module_openai_api_base_response_max_tokens_label": "अधिकतम प्रतिसाद टोकन्स",
+
+    "module_openai_api_base_response_temperature_label": "तापमान: {temperature}",
+    "module_openai_api_base_response_temperature_input_accessible_description":
+        "मॉडल आउटपुट की यादृच्छिकता को समायोजित करता है। उच्च मान सृजनात्मकता को बढ़ाते हैं; "
+        "निम्न मान निर्धारणीयता को बढ़ाते हैं।",
+
+    "module_openai_api_base_response_max_tokens_label": "अधिकतम प्रतिक्रिया टोकन",
     "module_openai_api_base_response_max_tokens_input_accessible_description":
-        "प्रतिसाद में प्राप्त करने के लिए अधिकतम टोकन्स की संख्या",
+        "प्रतिक्रिया में प्राप्त होने वाले टोकनों की अधिकतम संख्या, जैसे कि शब्द और विराम चिह्न, "
+        "आउटपुट की लंबाई को नियंत्रित करता है।",
 }

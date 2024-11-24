@@ -102,6 +102,9 @@ lexemes = {
     "dialog_exit_unsaved_title": "Bevestig Afsluiten",
     "dialog_exit_unsaved_text": "Het geopende bestand '{file_name}' kan niet worden opgeslagen. Toch afsluiten?",
 
+    "message_app_config_file_access": "Toegang geweigerd bij het openen van het applicatie configuratiebestand op "
+                                      "{file_path}. Stel de juiste machtigingen in om een correcte werking te garanderen.",
+
     "field_dir_path_line_edit": "Selecteer map",
 
     "load_file_encryption_password_mismatch": "Versleutelingswachtwoord komt niet overeen!",

@@ -501,13 +501,12 @@ class ViewProcessor:
         - Allow extra space as space symbols could be stripped during conversion.
         - Avoiding invisible separator allows the whole block to be an anchor and being replaced at once.
         """
-        collapsible_html = ('{}<table class="_n_details _ds_collapse">'
+        collapsible_html = ('<table class="_n_details _ds_collapse">'
                             '<tr><th class="_n_details_summary">'
                             '<a href="collapsible:{}#{}" class="_ds_collapse_summary">'
                             '<span class="_ds_collapse_pointer">▲</span>&nbsp;{}</a></th></tr>'
                             '<tr><td class="_n_details_content">{}</td></tr>'
-                            '</table>').format(self.zero_width_space, encoded_text, encoded_summary,
-                                               decoded_summary, decoded_text)
+                            '</table>').format(encoded_text, encoded_summary, decoded_summary, decoded_text)
         cursor.insertHtml(collapsible_html)
 
         # The table's (<td>) tag and adjacent text are converted into a pseudo block,

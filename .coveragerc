@@ -1,5 +1,10 @@
-# Skip, because of: --include is ignored because --source is set (include-ignored)
-# Command line run: pytest tests/ --ignore=tests/ui_tests/ --cov=notolog --cov-report=term
+# Command line usage for pytest with coverage:
+#   pytest tests/ --ignore=tests/ui_tests/ --cov=notolog --cov-report=term
+# Alternatively, run coverage directly:
+#   coverage run -m pytest --ignore=tests/ui_tests/
+#   coverage report -i
+# Skip the instruction below, because of "--include is ignored because --source is set (include-ignored)".
+# Both --include and --source were specified, but only --source is used to limit code measurement scope.
 # [run]
 # include = notolog/*
 

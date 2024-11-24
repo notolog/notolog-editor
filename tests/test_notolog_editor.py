@@ -38,6 +38,10 @@ class TestNotologEditor:
     def test_obj_notolog_editor(self, mocker, test_obj_lexemes):
         # Mock __init__ method
         mocker.patch.object(NotologEditor, '__init__', return_value=None)
+        # Prevent resource processing
+        mocker.patch.object(NotologEditor, 'process_document_images', return_value=None)
+        # Activate quiet mode
+        mocker.patch.object(NotologEditor, 'is_quiet_mode', return_value=True)
 
         _obj = NotologEditor()
         # Set lexemes object
@@ -378,3 +382,6 @@ class TestNotologEditor:
 
         assert result == flags_result
         search_form_mock.case_sensitive.assert_called_once()
+
+    def test_is_quiet_mode(self, test_obj_notolog_editor):
+        assert test_obj_notolog_editor.is_quiet_mode()

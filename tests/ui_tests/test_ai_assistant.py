@@ -1,31 +1,37 @@
 # tests/ui_tests/test_ai_assistant.py
+
 import asyncio
 
 from PySide6.QtCore import Qt
 from PySide6.QtTest import QTest
+from PySide6.QtWidgets import QMainWindow
 
 from notolog.ui.ai_assistant import AIAssistant
 from notolog.ui.ai_message_label import AiMessageLabel
-from notolog.notolog_editor import NotologEditor
 from notolog.settings import Settings
 from notolog.enums.languages import Languages
-from notolog.modules.openai_api import ModuleCore
+from notolog.modules.base_ai_core import BaseAiCore
 
 from . import test_app  # noqa: F401
+
+from unittest.mock import Mock
 
 import pytest
 
 
 class TestAiAssistant:
 
-    @pytest.fixture
-    def settings_obj(self, mocker):
+    @pytest.fixture(scope="class", autouse=True)
+    def settings_obj(self):
+        """
+        Use 'autouse=True' to enable automatic setup, or pass 'settings_obj' directly to main_window()
+        """
         # Fixture to create and return settings instance
         settings = Settings()
         # Clear settings to be sure start over without side effects
         settings.clear()
         # Reset singleton (qa functionality)
-        settings.reload()
+        Settings.reload()
 
         # Remember to pass the fixture to the other fixtures (check ui_obj())
         yield settings
@@ -35,16 +41,11 @@ class TestAiAssistant:
         # Force to override system language as a default
         mocker.patch.object(Languages, 'default', return_value='la')
 
-        # Do not show actual window; return object instance only
-        mocker.patch.object(NotologEditor, 'show', return_value=None)
-
         # Fixture to create and return main window instance
-        window = NotologEditor(screen=test_app.screens()[0])
-
-        yield window
+        yield QMainWindow()
 
     @pytest.fixture(autouse=True)
-    def ui_obj(self, mocker, settings_obj, main_window):
+    def ui_obj(self, settings_obj, main_window):
         # Fixture to initialize object.
         ui_obj = AIAssistant(parent=main_window)
         yield ui_obj
@@ -87,20 +88,27 @@ class TestAiAssistant:
         mock_status_waiting = mocker.patch.object(ui_obj, 'set_status_waiting')
         mock_status_ready = mocker.patch.object(ui_obj, 'set_status_ready')
 
-        mock_init_module = mocker.patch.object(ui_obj, 'init_module', wraps=ui_obj.init_module)
+        module_core = Mock(spec=BaseAiCore)
+        mock_init_module = mocker.patch.object(ui_obj, 'init_module', return_value=module_core)
         mock_cancel_request = mocker.patch.object(ui_obj, 'cancel_request', wraps=ui_obj.cancel_request)
 
         mock_send_request_finished_callback = mocker.patch.object(
             ui_obj, 'send_request_finished_callback', wraps=ui_obj.send_request_finished_callback)
 
-        # Wraps doesn't work
-        mock_request = mocker.patch.object(ModuleCore, 'request', return_value=None)
+        setattr(ui_obj.settings, 'ai_config_convert_to_md', False)
+
+        mock_request = mocker.patch.object(module_core, 'request', return_value=Mock)
+
+        self.assert_check_message_added = False
 
         def _check_message_added(message_text):
             assert test_exp_params_fixture in message_text
+            self.assert_check_message_added = True
 
-        # Assert 'downloaded' signal
+        # Verify the 'message_added' signal
         ui_obj.message_added.connect(_check_message_added)
+
+        assert not self.assert_check_message_added
 
         # Check the there are no messages in conversation
         messages = ui_obj.messages_area.findChildren(AiMessageLabel)
@@ -121,6 +129,8 @@ class TestAiAssistant:
         # Check these methods were called
         mock_status_waiting.assert_called_once()
         mock_init_module.assert_called_once()
+
+        assert self.assert_check_message_added
 
         # To allow completion of an async task
         await asyncio.sleep(0.05)

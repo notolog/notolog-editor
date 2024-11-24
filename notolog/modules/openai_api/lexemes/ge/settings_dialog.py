@@ -17,7 +17,14 @@ lexemes = {
         "საბაზო სისტემური პრომპტი, რომელიც ყოველ მოთხოვნას წინასწარ მიდის",
     "module_openai_api_base_system_prompt_edit_accessible_description":
         "საბაზო სისტემური პრომპტი, რომელიც ყოველ მოთხოვნას წინასწარ მიდის. ეს ტექსტია.",
-    "module_openai_api_base_response_max_tokens_label": "პასუხის მაქსიმალური ტოკენები",
+
+    "module_openai_api_base_response_temperature_label": "ტემპერატურა: {temperature}",
+    "module_openai_api_base_response_temperature_input_accessible_description":
+        "მოდელის გამოტანის შემთხვევითობის რეგულირება. მაღალი მნიშვნელობები გაზრდის კრეატიულობას; "
+        "დაბალი მნიშვნელობები გაზრდის დეტერმინიზმს.",
+
+    "module_openai_api_base_response_max_tokens_label": "პასუხის ტოკენების მაქსიმუმი",
     "module_openai_api_base_response_max_tokens_input_accessible_description":
-        "პასუხში მისაღები ტოკენების მაქსიმალური რაოდენობა",
+        "პასუხში მიღებული ტოკენების მაქსიმუმის რიცხვი, როგორიცაა სიტყვები და პუნქტუაცია, "
+        "რაც კონტროლებს გამოტანის სიგრძეს.",
 }

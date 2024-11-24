@@ -99,3 +99,21 @@ class TestSettingsHelper:
         # If decoding is successful, check if encoding back gives the same string
         # This ensures padding and character checks are adhered to
         assert base64.b64encode(decoded_bytes) == test_obj_settings_helper.key
+
+    @pytest.mark.parametrize(
+        "test_obj_settings_helper, test_exp_param_fixture",
+        [
+            (({}, None, b''), ('', '', '')),
+            (({}, None, b''), ('object_name1', 'object_name1', 'object_name1')),
+            (({}, None, b''), ('lexeme1:key1', 'lexeme1', 'key1')),
+            (({}, None, b''), (':key1', '', 'key1')),
+        ],
+        indirect=True
+    )
+    def test_parse_object_name(self, test_obj_settings_helper: SettingsHelper, test_exp_param_fixture):
+        # Get testing parameters
+        object_name, exp_lexeme, exp_setting_key = test_exp_param_fixture
+        # Parse the object name in case it contains a combination of lexeme and setting keys
+        lexeme, setting_key = test_obj_settings_helper.parse_object_name(object_name)
+        assert lexeme == exp_lexeme
+        assert setting_key == exp_setting_key

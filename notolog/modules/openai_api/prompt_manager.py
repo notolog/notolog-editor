@@ -122,7 +122,7 @@ class PromptManager(QObject):
 
     def add_message(self, message_text, request_msg_id, response_msg_id, message_type: EnumMessageType):
         if self.debug:
-            self.logger.debug('Add message:', message_text, response_msg_id, message_type)
+            self.logger.debug(f'Add message: {message_text}, {response_msg_id}, {message_type}')
         if message_type == EnumMessageType.USER_INPUT:
             self.add_request(message_text, request_msg_id)
         elif message_type == EnumMessageType.RESPONSE:

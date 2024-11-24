@@ -103,6 +103,9 @@ lexemes = {
     "dialog_exit_unsaved_title": "Vahvista Poistuminen",
     "dialog_exit_unsaved_text": "Avattua tiedostoa '{file_name}' ei voi tallentaa. Jatketaanko poistumista?",
 
+    "message_app_config_file_access": "Käyttöoikeus evätty yrittäessä päästä sovelluksen konfiguraatiotiedostoon {file_path}. "
+                                      "Aseta oikeat käyttöoikeudet varmistaaksesi asianmukaisen toiminnan.",
+
     "field_dir_path_line_edit": "Valitse hakemisto",
 
     "load_file_encryption_password_mismatch": "Salaussalasana ei täsmää!",

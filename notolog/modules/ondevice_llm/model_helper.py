@@ -91,8 +91,10 @@ class ModelHelper:
                 supported_search_options = [
                     'do_sample', 'max_length', 'min_length', 'top_p', 'top_k', 'temperature', 'repetition_penalty']
                 # Check and filter supported
-                search_options = {
-                    name: getattr(search_options, name) for name in supported_search_options if name in search_options}
+                search_options = {key: value for key, value in search_options.items() if key in supported_search_options}
+                # Convert the integer value of temperature to a float
+                if 'temperature' in search_options and type(search_options['temperature']) is int:
+                    search_options['temperature'] = self.convert_temperature(search_options['temperature'])
                 # Add or rewrite params if passed
                 self.search_options.update(search_options)
 
@@ -156,3 +158,8 @@ class ModelHelper:
 
         # Create the truncated string with an ellipsis in the middle
         return f"{start_part}...{end_part}"
+
+    @staticmethod
+    def convert_temperature(temperature: int = 0):
+        """ Convert the integer value of temperature to a float. """
+        return temperature / 100

@@ -148,3 +148,16 @@ def remove_trailing_numbers(text) -> str:
         i -= 1
     # Return the string up to the first trailing digit
     return text[:i]
+
+
+def is_writable_path(file_path):
+    # Check if file exists and if it's writable
+    if os.path.exists(file_path):
+        if not os.access(file_path, os.W_OK):
+            return False
+    else:
+        # Check if the directory is writable if the file doesn't exist
+        parent_dir = os.path.dirname(file_path)
+        if not os.access(parent_dir, os.W_OK):
+            return False
+    return True

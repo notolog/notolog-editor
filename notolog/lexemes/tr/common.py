@@ -101,6 +101,9 @@ lexemes = {
     "dialog_exit_unsaved_title": "Çıkışı Onayla",
     "dialog_exit_unsaved_text": "Açık olan dosya '{file_name}' kaydedilemiyor. Çıkışa devam edilsin mi?",
 
+    "message_app_config_file_access": "{file_path} konumundaki uygulama yapılandırma dosyasına erişilirken izin reddedildi. "
+                                      "Uygun işleyişi sağlamak için doğru izinleri ayarlayın.",
+
     "field_dir_path_line_edit": "Dizin Seç",
 
     "load_file_encryption_password_mismatch": "Şifreleme şifresi uyuşmuyor!",

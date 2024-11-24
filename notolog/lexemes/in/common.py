@@ -103,6 +103,9 @@ lexemes = {
     "dialog_exit_unsaved_title": "बाहर जाने की पुष्टि करें",
     "dialog_exit_unsaved_text": "खुली हुई फ़ाइल '{file_name}' को सहेजा नहीं जा सकता। क्या बाहर जाना जारी रखें?",
 
+    "message_app_config_file_access": "{file_path} पर ऐप कॉन्फ़िगरेशन फ़ाइल तक पहुँचते समय अनुमति अस्वीकृत। सही "
+                                      "ऑपरेशन सुनिश्चित करने के लिए सही अनुमतियाँ सेट करें।",
+
     "field_dir_path_line_edit": "डायरेक्टरी चुनें",
 
     "load_file_encryption_password_mismatch": "एन्क्रिप्शन पासवर्ड मेल नहीं खाता!",

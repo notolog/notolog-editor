@@ -106,6 +106,10 @@ lexemes = {
     "dialog_exit_unsaved_title": "Confirmer la Sortie",
     "dialog_exit_unsaved_text": "Le fichier ouvert '{file_name}' ne peut pas être enregistré. Continuer à quitter?",
 
+    "message_app_config_file_access": "Accès refusé lors de l'accès au fichier de configuration de l'application à "
+                                      "{file_path}. Définissez les autorisations correctes pour assurer un fonctionnement "
+                                      "approprié.",
+
     "field_dir_path_line_edit": "Sélectionner un répertoire",
 
     "load_file_encryption_password_mismatch": "Non-concordance du mot de passe de chiffrement !",

@@ -16,7 +16,13 @@ lexemes = {
     "module_openai_api_base_system_prompt_edit_placeholder_text": "Bas systemprompt som föregår varje förfrågan",
     "module_openai_api_base_system_prompt_edit_accessible_description":
         "Bas systemprompt som föregår varje förfrågan. Detta är ren text.",
-    "module_openai_api_base_response_max_tokens_label": "Maximalt antal svarstoken",
+
+    "module_openai_api_base_response_temperature_label": "Temperatur: {temperature}",
+    "module_openai_api_base_response_temperature_input_accessible_description":
+        "Justera modellutdata slumpmässighet. Högre värden ökar kreativitet; lägre värden ökar determinism.",
+
+    "module_openai_api_base_response_max_tokens_label": "Maximalt antal respons-token",
     "module_openai_api_base_response_max_tokens_input_accessible_description":
-        "Maximalt antal token att ta emot som svar",
+        "Maximalt antal token att ta emot i respons, såsom ord och skiljetecken, "
+        "kontrollerar utdatans längd.",
 }

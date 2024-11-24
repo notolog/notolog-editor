@@ -105,6 +105,10 @@ lexemes = {
     "dialog_exit_unsaved_title": "Beenden Bestätigen",
     "dialog_exit_unsaved_text": "Die geöffnete Datei '{file_name}' kann nicht gespeichert werden. Trotzdem beenden?",
 
+    "message_app_config_file_access": "Zugriff verweigert beim Zugriff auf die Anwendungskonfigurationsdatei unter "
+                                      "{file_path}. Setzen Sie die richtigen Berechtigungen, um einen ordnungsgemäßen "
+                                      "Betrieb zu gewährleisten.",
+
     "field_dir_path_line_edit": "Verzeichnis auswählen",
 
     "load_file_encryption_password_mismatch": "Verschlüsselungspasswort stimmt nicht überein!",
