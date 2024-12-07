@@ -45,13 +45,18 @@ lexemes = {
         "오프라인 액세스를 위해 외부 이미지의 복사본을 디스크에 자동으로 저장합니다.",
 
     "ai_config_inference_module_label": "추론 모듈",
+    "ai_config_inference_module_names_combo_label": "활성 추론 모듈",
     "ai_config_inference_module_names_combo_placeholder_text": "모듈 선택",
-    "ai_config_inference_module_names_combo_accessible_description": "선택 가능한 모듈들",
-
-    "ai_config_multi_turn_dialogue_checkbox": "이전 프롬프트에 기반한 멀티턴 대화로 문맥 연속성을 구축",
-    "ai_config_multi_turn_dialogue_checkbox_accessible_description": "이전 프롬프트에 기반한 멀티턴 대화로 문맥 연속성을 구축",
-    "ai_config_convert_to_md_checkbox": "결과를 마크다운으로 변환",
-    "ai_config_convert_to_md_checkbox_accessible_description": "결과 메시지를 마크다운으로 변환",
+    "ai_config_inference_module_names_combo_accessible_description":
+        "AI 어시스턴트와 함께 작동할 수 있는 사용 가능한 AI 추론 모듈을 선택하세요.\n"
+        "옵션에는 실시간 처리가 가능한 대형 언어 모델(LLM) 또는 API 기반 기능이 포함됩니다.",
 
     "ai_config_base_label": "기본 매개변수",
+    "ai_config_multi_turn_dialogue_checkbox": "대화 메모리를 가진 다중 턴 대화",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
+        "대화 메모리를 유지하는 다중 턴 대화를 활성화합니다.\n"
+        "비활성화되면 새 메시지와 시스템 프롬프트만 응답에 영향을 미칩니다.",
+    "ai_config_convert_to_md_checkbox": "결과를 Markdown으로 변환",
+    "ai_config_convert_to_md_checkbox_accessible_description":
+        "출력 메시지를 Markdown 형식으로 변환합니다.",
 }

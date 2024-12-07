@@ -46,15 +46,19 @@ lexemes = {
         "Enregistre automatiquement des copies des images externes sur le disque pour un accès hors ligne.",
 
     "ai_config_inference_module_label": "Module d'inférence",
-    "ai_config_inference_module_names_combo_placeholder_text": "Choisir le module",
-    "ai_config_inference_module_names_combo_accessible_description": "Modules disponibles à choisir",
-
-    "ai_config_multi_turn_dialogue_checkbox":
-        "Dialogue multi-tours qui se construit sur les invites précédentes pour la continuité contextuelle",
-    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
-        "Dialogue multi-tours qui se construit sur les invites précédentes pour la continuité contextuelle",
-    "ai_config_convert_to_md_checkbox": "Convertir le résultat en Markdown",
-    "ai_config_convert_to_md_checkbox_accessible_description": "Convertir le message de résultat en Markdown",
+    "ai_config_inference_module_names_combo_label": "Module d'inférence actif",
+    "ai_config_inference_module_names_combo_placeholder_text": "Choisir un module",
+    "ai_config_inference_module_names_combo_accessible_description":
+        "Sélectionnez parmi les modules d'inférence IA disponibles pour fonctionner avec l'Assistant AI.\n"
+        "Les options incluent des modèles de langage de grande taille (LLM) avec traitement en temps réel,\n"
+        "ou des fonctionnalités basées sur l'API.",
 
     "ai_config_base_label": "Paramètres de base",
+    "ai_config_multi_turn_dialogue_checkbox": "Dialogue multi-tours avec mémoire conversationnelle",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
+        "Activez un dialogue multi-tours qui conserve la dernière invite pour une mémoire conversationnelle.\n"
+        "Lorsqu'il est désactivé, seuls le nouveau message et l'invite système influencent la réponse.",
+    "ai_config_convert_to_md_checkbox": "Convertir le résultat en Markdown",
+    "ai_config_convert_to_md_checkbox_accessible_description":
+        "Convertissez le message de sortie au format Markdown.",
 }

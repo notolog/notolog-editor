@@ -42,13 +42,13 @@ class Modules:
         return cls._instance
 
     def __init__(self):
-        # Check if instance is already initialized
+        # Prevent re-initialization if the instance is already set up.
         if hasattr(self, 'logger'):
             return
 
-        # Ensure that the initialization check and the setting of 'modules' param are atomic.
+        # Use a lock to ensure initialization is thread-safe and atomic.
         with self._lock:
-            # This prevents race conditions.
+            # Double-check to prevent race conditions during initialization.
             if hasattr(self, 'logger'):
                 return
 
@@ -81,6 +81,12 @@ class Modules:
         # Get all modules match the extension name
         return [module for module in self.modules.values()
                 if any(extension_name == _name for _name in module.ModuleCore.extensions)]
+
+    def get_by_name(self, module_name):
+        for module in self.modules.values():
+            if module_name in str(module) and module.is_available():
+                return module
+        return None
 
     def import_module(self, module_name):
         # Check imported module

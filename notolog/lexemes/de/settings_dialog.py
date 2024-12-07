@@ -45,15 +45,18 @@ lexemes = {
         "Speichert automatisch Kopien von externen Bildern auf der Festplatte für den Offline-Zugriff.",
 
     "ai_config_inference_module_label": "Inferenzmodul",
+    "ai_config_inference_module_names_combo_label": "Aktives Inferenzmodul",
     "ai_config_inference_module_names_combo_placeholder_text": "Modul wählen",
-    "ai_config_inference_module_names_combo_accessible_description": "Verfügbare Module zur Auswahl",
+    "ai_config_inference_module_names_combo_accessible_description":
+        "Wählen Sie aus den verfügbaren KI-Inferenzmodulen, um mit dem AI-Assistenten zu arbeiten.\n"
+        "Optionen umfassen lokale große Sprachmodelle (LLM) mit Echtzeitverarbeitung oder API-basierte Funktionalitäten.",
 
-    "ai_config_multi_turn_dialogue_checkbox":
-        "Mehrschritt-Dialog, der auf vorherigen Aufforderungen aufbaut, um kontextuelle Kontinuität zu gewährleisten",
+    "ai_config_base_label": "Grundlegende Parameter",
+    "ai_config_multi_turn_dialogue_checkbox": "Mehrstufiger Dialog mit Gesprächsspeicher",
     "ai_config_multi_turn_dialogue_checkbox_accessible_description":
-        "Mehrschritt-Dialog, der auf vorherigen Aufforderungen aufbaut, um kontextuelle Kontinuität zu gewährleisten",
-    "ai_config_convert_to_md_checkbox": "Das Ergebnis in Markdown konvertieren",
-    "ai_config_convert_to_md_checkbox_accessible_description": "Die Ergebnisnachricht in Markdown konvertieren",
-
-    "ai_config_base_label": "Grundparameter",
+        "Aktivieren Sie einen mehrstufigen Dialog, der die vorherige Eingabe für den Gesprächsspeicher beibehält.\n"
+        "Wenn deaktiviert, beeinflussen nur die neue Nachricht und die Systemaufforderung die Antwort.",
+    "ai_config_convert_to_md_checkbox": "Ergebnis in Markdown umwandeln",
+    "ai_config_convert_to_md_checkbox_accessible_description":
+        "Konvertieren Sie die Ausgabemeldung in das Markdown-Format.",
 }

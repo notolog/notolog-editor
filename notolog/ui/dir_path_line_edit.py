@@ -1,5 +1,24 @@
-from PySide6.QtWidgets import QStyle, QLineEdit, QPushButton, QFileDialog
+"""
+Notolog Editor
+An open-source markdown editor developed in Python.
+
+File Details:
+- Purpose: Enhances QLineEdit functionality by adding an icon that triggers a QFileDialog action for dir selection.
+
+Repository: https://github.com/notolog/notolog-editor
+Website: https://notolog.app
+PyPI: https://pypi.org/project/notolog
+
+Author: Vadim Bakhrenkov
+Copyright: 2024 Vadim Bakhrenkov
+License: MIT License
+
+For detailed instructions and project information, please see the repository's README.md.
+"""
+
 from PySide6.QtCore import Qt
+from PySide6.QtWidgets import QStyle, QLineEdit, QPushButton, QFileDialog
+from PySide6.QtGui import QColor
 
 from . import AppConfig
 from . import Lexemes
@@ -42,11 +61,10 @@ class DirPathLineEdit(QLineEdit):
 
         self.button = QPushButton(self)
 
-        # folder_icon = self.style().standardIcon(QStyle.StandardPixmap.SP_DirIcon)  # Set an icon using standard icons
-        folder_icon = self.theme_helper.get_icon(theme_icon='folder.svg')
-        self.button.setIcon(folder_icon)
+        # Load the dialog icon
+        self.load_icon()
 
-        self.button.clicked.connect(self.open_file_dialog)
+        self.button.clicked.connect(self.select_dir_dialog)
         self.button.setCursor(Qt.CursorShape.ArrowCursor)
         self.button.setStyleSheet("QPushButton { border: none; padding: 0; }")
         self.button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
@@ -58,6 +76,13 @@ class DirPathLineEdit(QLineEdit):
         # Ensure the text doesn't overlap the button
         self.setTextMargins(0, 0, 30, 0)
 
+    def load_icon(self):
+        # Use either a standard or a custom icon for file selection.
+        # folder_icon = self.style().standardIcon(QStyle.StandardPixmap.SP_DirIcon)  # Set an icon using standard icons
+        icon_color = self.theme_helper.get_color('settings_dialog_hint_icon_color')
+        folder_icon = self.theme_helper.get_icon(theme_icon='folder.svg', color=QColor(icon_color))
+        self.button.setIcon(folder_icon)
+
     def resizeEvent(self, event):
         button_size = self.button.sizeHint()
         frame_width = self.style().pixelMetric(QStyle.PixelMetric.PM_DefaultFrameWidth)
@@ -65,7 +90,8 @@ class DirPathLineEdit(QLineEdit):
                          (self.rect().bottom() - button_size.height() + 1) // 2)
         super(DirPathLineEdit, self).resizeEvent(event)
 
-    def open_file_dialog(self):
-        directory = QFileDialog.getExistingDirectory(self, self.lexemes.get('field_dir_path_line_edit'), self.text())
+    def select_dir_dialog(self):
+        directory = QFileDialog.getExistingDirectory(self, caption=self.lexemes.get('field_dir_path_dialog_caption'),
+                                                     dir=self.text())
         if directory:
             self.setText(directory)

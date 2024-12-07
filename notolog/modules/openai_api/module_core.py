@@ -19,6 +19,7 @@ For detailed instructions and project information, please see the repository's R
 
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QVBoxLayout, QWidget, QLabel, QLineEdit, QSizePolicy, QPlainTextEdit, QSpinBox, QSlider
+from PySide6.QtWidgets import QScrollArea
 from PySide6.QtNetwork import QNetworkRequest, QNetworkAccessManager, QNetworkReply
 
 import os
@@ -44,6 +45,7 @@ from ...enums.openai_model_names import OpenAiModelNames
 from ...ui.enum_combo_box import EnumComboBox
 from ...ui.ai_assistant import EnumMessageType, EnumMessageStyle
 from ...ui.horizontal_line_spacer import HorizontalLineSpacer
+from ...ui.label_with_hint import LabelWithHint
 
 if TYPE_CHECKING:
     from PySide6.QtCore import QByteArray  # noqa
@@ -76,7 +78,7 @@ class ModuleCore(BaseAiCore):
         self.settings.value_changed.connect(
             lambda v: self.settings_update_handler(v))
 
-        self.logger = logging.getLogger('openai_api_module')
+        self.logger = logging.getLogger('module_openai_api')
 
         self.logging = AppConfig().get_logging()
         self.debug = AppConfig().get_debug()
@@ -100,10 +102,6 @@ class ModuleCore(BaseAiCore):
         self.openai_api_key = self.settings.module_openai_api_key
         self.openai_api_model = OpenAiModelNames.__getitem__(self.settings.module_openai_api_model).value
 
-        # Default prompt templates
-        self.prompt_system = self.settings.module_openai_api_base_system_prompt
-        self.prompt_user = "%s"
-
         # Additional request params
         self.response_temperature = self.settings.module_openai_api_base_response_temperature
         self.response_max_tokens = self.settings.module_openai_api_base_response_max_tokens
@@ -124,7 +122,9 @@ class ModuleCore(BaseAiCore):
         Note: It may not be initiated if called out of the context, from settings for example.
         """
         self.prompt_manager = PromptManager(
-            system_prompt=self.settings.module_openai_api_base_system_prompt, parent=ai_dialog)
+            system_prompt=self.settings.module_openai_api_base_system_prompt,
+            max_history_size=self.settings.module_openai_api_prompt_history_size,
+            parent=ai_dialog)
 
     def get_prompt_manager(self):
         return self.prompt_manager
@@ -364,21 +364,36 @@ class ModuleCore(BaseAiCore):
     def extend_settings_dialog_fields_conf(self, tab_widget) -> list:
         # OpenAI API Config
         tab_openai_api_config = QWidget()
-        tab_openai_api_config.setObjectName('settings_dialog_tab_openai_api_config')
 
-        # Layout for the OpenAI API Config tab
+        # Create the scroll area
+        scroll_area = QScrollArea()
+        scroll_area.setObjectName('settings_dialog_tab_openai_api_config')
+        scroll_area.setWidgetResizable(True)
+
+        # Define the layout for the  OpenAI API configuration tab
         tab_openai_api_config_layout = QVBoxLayout(tab_openai_api_config)
 
-        tab_widget.addTab(tab_openai_api_config, self.lexemes.get('tab_openai_api_config'))
+        # Set the content widget inside the scroll area
+        scroll_area.setWidget(tab_openai_api_config)
+
+        tab_widget.addTab(scroll_area, self.lexemes.get('tab_openai_api_config'))
 
         return [
             # [OpenAI API config]
-            # OpenAI API block label
+            # Label for the OpenAI API configuration block
             {"type": QLabel, "name": "settings_dialog_module_openai_api_label",
              "props": {"setProperty": ("class", "group-header-label")},
              "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('module_openai_api_label'), "style": {"bold": True},
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj)},
+            # OpenAI API url label
+            {"type": LabelWithHint, "kwargs": {
+                "tooltip": ('module_openai_api_url_input_accessible_description',
+                            self.lexemes.get('module_openai_api_url_input_accessible_description'))},
+             "name": "settings_dialog_module_openai_api_url_label",
+             "alignment": Qt.AlignmentFlag.AlignLeft,
+             "text": self.lexemes.get('module_openai_api_url_label'),
+             "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # OpenAI API url line input
             {"type": QLineEdit, "name": "settings_dialog_module_openai_api_url:module_openai_api_url",
              "read_only": False, "max_length": 128,
@@ -386,6 +401,13 @@ class ModuleCore(BaseAiCore):
              "placeholder_text": self.lexemes.get('module_openai_api_url_input_placeholder_text'),
              "accessible_description":
                  self.lexemes.get('module_openai_api_url_input_accessible_description')},
+            # OpenAI API url label
+            {"type": LabelWithHint, "kwargs": {"tooltip": ('module_openai_api_key_input_accessible_description',
+                                               self.lexemes.get('module_openai_api_key_input_accessible_description'))},
+             "name": "settings_dialog_module_openai_api_key_label",
+             "alignment": Qt.AlignmentFlag.AlignLeft,
+             "text": self.lexemes.get('module_openai_api_key_label'),
+             "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # OpenAI API key line input
             {"type": QLineEdit, "name": "settings_dialog_module_openai_api_key:module_openai_api_key",
              "read_only": False, "max_length": 128, "props": {"setEchoMode": QLineEdit.EchoMode.Password},
@@ -393,15 +415,18 @@ class ModuleCore(BaseAiCore):
              "placeholder_text": self.lexemes.get('module_openai_api_key_input_placeholder_text'),
              "accessible_description":
                  self.lexemes.get('module_openai_api_key_input_accessible_description')},
-            # Spacer
+            # Vertical spacer
             {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum),
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj)},
-            # Supported models label
-            {"type": QLabel, "name": "settings_dialog_module_openai_api_supported_models_label",
+            # Label for supported chat formats
+            {"type": LabelWithHint, "kwargs": {
+                "tooltip": ('module_openai_api_model_names_combo_accessible_description',
+                            self.lexemes.get('module_openai_api_model_names_combo_accessible_description'))},
+             "name": "settings_dialog_module_openai_api_supported_models_label",
              "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('module_openai_api_supported_models_label'),
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj)},
-            # Supported models dropdown list
+            # Dropdown for selecting a supported chat format
             {"type": EnumComboBox, "args": [sorted(OpenAiModelNames, key=lambda member: member.legacy)],  # legacy below
              "name": "settings_dialog_module_openai_api_model_names_combo:module_openai_api_model",
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj),
@@ -410,12 +435,15 @@ class ModuleCore(BaseAiCore):
                  self.lexemes.get('module_openai_api_model_names_combo_accessible_description')},
             # Horizontal spacer
             {"type": HorizontalLineSpacer, "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj)},
-            # Base system prompt label
-            {"type": QLabel, "name": "settings_dialog_module_openai_api_base_system_prompt_label",
+            # Label for the system prompt text editor
+            {"type": LabelWithHint, "kwargs": {
+                "tooltip": ('module_openai_api_base_system_prompt_edit_accessible_description',
+                            self.lexemes.get('module_openai_api_base_system_prompt_edit_accessible_description'))},
+             "name": "settings_dialog_module_openai_api_base_system_prompt_label",
              "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('module_openai_api_base_system_prompt_label'),
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
-            # Base system prompt text edit
+            # Text editor field for the system prompt
             {"type": QPlainTextEdit,
              "name": "settings_dialog_module_openai_api_base_system_prompt:"
                      "module_openai_api_base_system_prompt",
@@ -423,16 +451,19 @@ class ModuleCore(BaseAiCore):
              "placeholder_text": self.lexemes.get('module_openai_api_base_system_prompt_edit_placeholder_text'),
              "accessible_description":
                  self.lexemes.get('module_openai_api_base_system_prompt_edit_accessible_description'), "text_lines": 7},
-            # Spacer
+            # Vertical spacer
             {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum),
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj)},
-            # Base response temperature label
-            {"type": QLabel, "name": "settings_dialog_module_openai_api_base_response_temperature_label",
+            # Label for the temperature slider
+            {"type": LabelWithHint, "kwargs": {
+                "tooltip": ('module_openai_api_base_response_temperature_input_accessible_description',
+                            self.lexemes.get('module_openai_api_base_response_temperature_input_accessible_description'))},
+             "name": "settings_dialog_module_openai_api_base_response_temperature_label",
              "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('module_openai_api_base_response_temperature_label',
                                       temperature=self.settings.module_openai_api_base_response_temperature),
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
-            # Base response temperature slider
+            # Slider to adjust the temperature setting
             {"type": QSlider, "args": [Qt.Orientation.Horizontal],
              "props": {'setFocusPolicy': Qt.FocusPolicy.StrongFocus, 'setTickPosition': QSlider.TickPosition.TicksAbove,
                        'setTickInterval': 5, 'setSingleStep': 5, 'setMinimum': 0, 'setMaximum': 100},
@@ -442,23 +473,44 @@ class ModuleCore(BaseAiCore):
              "on_value_change": self.temperature_change_handler,
              "accessible_description":
                  self.lexemes.get('module_openai_api_base_response_temperature_input_accessible_description')},
-            # Spacer
+            # Vertical spacer
             {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum),
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj)},
-            # Base response max tokens label
-            {"type": QLabel, "name": "settings_dialog_module_openai_api_base_response_max_tokens_label",
+            # Label for the maximum token count setting
+            {"type": LabelWithHint, "kwargs": {
+                "tooltip": ('module_openai_api_base_response_max_tokens_input_accessible_description',
+                            self.lexemes.get('module_openai_api_base_response_max_tokens_input_accessible_description'))},
+             "name": "settings_dialog_module_openai_api_base_response_max_tokens_label",
              "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('module_openai_api_base_response_max_tokens_label'),
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
-            # Base response max tokens input
-            {"type": QSpinBox, "props": {'setMinimum': 1, 'setMaximum': 65536},  # Update the highest range
+            # Input field for the maximum token count setting
+            {"type": QSpinBox, "props": {'setMinimum': 0, 'setMaximum': 65536},  # Update the highest range
              "size_policy": (QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred),
              "name": "settings_dialog_module_openai_api_base_response_max_tokens:"
                      "module_openai_api_base_response_max_tokens",
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
              "accessible_description":
                  self.lexemes.get('module_openai_api_base_response_max_tokens_input_accessible_description')},
-            # Spacer to keep elements above on top
+            # Horizontal line spacer
+            {"type": HorizontalLineSpacer, "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj)},
+            # Label for the prompt history maximum capacity settings
+            {"type": LabelWithHint, "kwargs": {
+                "tooltip": ('module_openai_api_config_prompt_history_size_input_accessible_description',
+                            self.lexemes.get('module_openai_api_config_prompt_history_size_input_accessible_description'))},
+             "name": "settings_dialog_module_openai_api_config_prompt_history_size_label",
+             "alignment": Qt.AlignmentFlag.AlignLeft,
+             "text": self.lexemes.get('module_openai_api_config_prompt_history_size_label'),
+             "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
+            # Input field for the prompt history maximum capacity setting
+            {"type": QSpinBox, "props": {'setMinimum': 0, 'setMaximum': 65536},  # Update the highest range
+             "size_policy": (QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred),
+             "name": "settings_dialog_module_openai_api_config_prompt_history_size:"
+                     "module_openai_api_prompt_history_size",
+             "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
+             "accessible_description":
+                 self.lexemes.get('module_openai_api_config_prompt_history_size_input_accessible_description')},
+            # Spacer to align elements at the top of the layout
             {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding),
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj)},
         ]
@@ -472,7 +524,8 @@ class ModuleCore(BaseAiCore):
 
             extend_func("module_openai_api_base_system_prompt", str, "")
             extend_func("module_openai_api_base_response_temperature", int, 20)
-            extend_func("module_openai_api_base_response_max_tokens", int, 512)
+            extend_func("module_openai_api_base_response_max_tokens", int, 2048)
+            extend_func("module_openai_api_prompt_history_size", int, 0)
 
     def settings_update_handler(self, data) -> None:
         """

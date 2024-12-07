@@ -108,7 +108,8 @@ lexemes = {
     "message_app_config_file_access": "Permesso negato durante l'accesso al file di configurazione dell'applicazione in "
                                       "{file_path}. Imposta i permessi corretti per garantire un funzionamento adeguato.",
 
-    "field_dir_path_line_edit": "Seleziona directory",
+    "field_dir_path_dialog_caption": "Seleziona Directory",
+    "field_file_path_dialog_caption": "Seleziona File",
 
     "load_file_encryption_password_mismatch": "La password di crittografia non corrisponde!",
     "load_file_encryption_password_incorrect": "Password di crittografia incorretta!",

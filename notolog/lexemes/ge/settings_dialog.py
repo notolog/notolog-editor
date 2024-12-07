@@ -44,16 +44,20 @@ lexemes = {
     "viewer_config_save_resources_checkbox_accessible_description":
         "გარე სურათების ასლების ავტომატურად შენახვა დისკზე ოფლაინ წვდომისთვის.",
 
-    "ai_config_inference_module_label": "ინფერენსის მოდული",
-    "ai_config_inference_module_names_combo_placeholder_text": "მოდულის არჩევა",
-    "ai_config_inference_module_names_combo_accessible_description": "არჩევადი მოდულები",
+    "ai_config_inference_module_label": "ინფერენციის მოდული",
+    "ai_config_inference_module_names_combo_label": "აქტიური ინფერენციის მოდული",
+    "ai_config_inference_module_names_combo_placeholder_text": "აირჩიეთ მოდული",
+    "ai_config_inference_module_names_combo_accessible_description":
+        "აირჩიეთ AI ასისტენტთან მუშაობადი არსებული AI ინფერენციის მოდულებიდან.\n"
+        "ოფციები მოიცავს ლოკალური დიდი ენის მოდელებს (LLM) რეალური დროის დამუშავებით,\n"
+        "ან API-ზე დაყრდნობითი ფუნქციონალობით.",
 
-    "ai_config_multi_turn_dialogue_checkbox":
-        "მრავალსვლიანი დიალოგი, რომელიც აშენებულია წინა პრომპტებზე და ზრუნავს კონტექსტური მკაცრობის გაგრძელებაზე",
+    "ai_config_base_label": "ძირითადი პარამეტრები",
+    "ai_config_multi_turn_dialogue_checkbox": "მრავალშრიანი დიალოგი საუბრის მეხსიერებით",
     "ai_config_multi_turn_dialogue_checkbox_accessible_description":
-        "მრავალსვლიანი დიალოგი, რომელიც აშენებულია წინა პრომპტებზე და ზრუნავს კონტექსტური მკაცრობის გაგრძელებაზე",
-    "ai_config_convert_to_md_checkbox": "შედეგის ქცევა Markdown-ში",
-    "ai_config_convert_to_md_checkbox_accessible_description": "შედეგის მესიჯის ქცევა Markdown-ში",
-
-    "ai_config_base_label": "საბაზო პარამეტრები",
+        "ჩართეთ მრავალშრიანი დიალოგი, რომელიც ინახავს წინა მოთხოვნას საუბრის მეხსიერებისთვის.\n"
+        "გამორთვის შემთხვევაში, მხოლოდ ახალი შეტყობინება და სისტემის პრომპტი ახდენენ გავლენას პასუხზე.",
+    "ai_config_convert_to_md_checkbox": "შედეგის Markdown-ში კონვერტაცია",
+    "ai_config_convert_to_md_checkbox_accessible_description":
+        "გადაიყვანეთ გამოსახული შეტყობინება Markdown ფორმატში.",
 }

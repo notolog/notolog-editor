@@ -17,7 +17,7 @@ class TestThemes:
         May contain minimal logic for testing purposes.
         """
 
-        # Get the parameter value(s) from the request
+        # Retrieve parameter values from the test request.
         theme = request.param if hasattr(request, 'param') else None
 
         """
@@ -36,7 +36,7 @@ class TestThemes:
         This method is used only for passing params via pytest fixture.
         """
 
-        # Get the parameter value(s) from the request
+        # Retrieve parameter values from the test request.
         param_values = request.param
 
         yield param_values

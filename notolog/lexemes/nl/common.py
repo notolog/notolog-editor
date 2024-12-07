@@ -105,7 +105,8 @@ lexemes = {
     "message_app_config_file_access": "Toegang geweigerd bij het openen van het applicatie configuratiebestand op "
                                       "{file_path}. Stel de juiste machtigingen in om een correcte werking te garanderen.",
 
-    "field_dir_path_line_edit": "Selecteer map",
+    "field_dir_path_dialog_caption": "Selecteer Map",
+    "field_file_path_dialog_caption": "Selecteer Bestand",
 
     "load_file_encryption_password_mismatch": "Versleutelingswachtwoord komt niet overeen!",
     "load_file_encryption_password_incorrect": "Onjuist versleutelingswachtwoord!",

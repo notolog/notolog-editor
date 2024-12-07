@@ -19,7 +19,7 @@ class TestThemeHelper:
     def test_settings_fixture(self, request, test_core_app):  # noqa: F811 redefinition of unused 'test_app'
         # The test_app fixture sets up the app environment explicitly.
         setting = Settings()
-        # Get the parameter value(s) from the request
+        # Retrieve parameter values from the test request.
         setting.app_theme = request.param
         yield setting
 
@@ -51,7 +51,7 @@ class TestThemeHelper:
         This method is used only for passing params via pytest fixture.
         """
 
-        # Get the parameter value(s) from the request
+        # Retrieve parameter values from the test request.
         param_values = request.param
 
         yield param_values

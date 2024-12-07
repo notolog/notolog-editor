@@ -46,16 +46,20 @@ lexemes = {
     "viewer_config_save_resources_checkbox_accessible_description":
         "Αυτόματη αποθήκευση αντιγράφων εξωτερικών εικόνων στον δίσκο για πρόσβαση χωρίς σύνδεση.",
 
-    "ai_config_inference_module_label": "Μονάδα συμπερασμάτων",
-    "ai_config_inference_module_names_combo_placeholder_text": "Επιλέξτε μονάδα",
-    "ai_config_inference_module_names_combo_accessible_description": "Διαθέσιμες μονάδες για επιλογή",
+    "ai_config_inference_module_label": "Μονάδα Συμπερασμού",
+    "ai_config_inference_module_names_combo_label": "Ενεργή Μονάδα Συμπερασμού",
+    "ai_config_inference_module_names_combo_placeholder_text": "Επιλέξτε Μονάδα",
+    "ai_config_inference_module_names_combo_accessible_description":
+        "Επιλέξτε από τις διαθέσιμες μονάδες συμπερασμού AI για να λειτουργήσετε με τον AI Assistant.\n"
+        "Οι επιλογές περιλαμβάνουν μεγάλα γλωσσικά μοντέλα (LLM) με επεξεργασία σε πραγματικό χρόνο,\n"
+        "ή λειτουργικότητα βασισμένη σε API.",
 
-    "ai_config_multi_turn_dialogue_checkbox":
-        "Πολυστροφικός διάλογος που βασίζεται σε προηγούμενες εντολές για συνεχή πλαίσιο",
+    "ai_config_base_label": "Βασικές Παράμετροι",
+    "ai_config_multi_turn_dialogue_checkbox": "Πολλαπλός διάλογος με μνήμη συνομιλιών",
     "ai_config_multi_turn_dialogue_checkbox_accessible_description":
-        "Πολυστροφικός διάλογος που βασίζεται σε προηγούμενες εντολές για συνεχή πλαίσιο",
+        "Ενεργοποιήστε έναν πολλαπλό διάλογο που διατηρεί την προηγούμενη προτροπή για μνήμη συνομιλιών.\n"
+        "Όταν είναι απενεργοποιημένο, μόνο το νέο μήνυμα και η προτροπή συστήματος επηρεάζουν την απάντηση.",
     "ai_config_convert_to_md_checkbox": "Μετατροπή του αποτελέσματος σε Markdown",
-    "ai_config_convert_to_md_checkbox_accessible_description": "Μετατροπή του μηνύματος αποτελέσματος σε Markdown",
-
-    "ai_config_base_label": "Βασικοί Παράμετροι",
+    "ai_config_convert_to_md_checkbox_accessible_description":
+        "Μετατρέψτε το μήνυμα εξόδου σε μορφή Markdown.",
 }

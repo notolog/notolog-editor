@@ -59,7 +59,7 @@ class TestLineNumbers:
         Fixture to pass params and get expected results.
         This method is used only for passing params via pytest fixture.
         """
-        # Get the parameter value(s) from the request
+        # Retrieve parameter values from the test request.
         param_values = request.param
 
         yield param_values

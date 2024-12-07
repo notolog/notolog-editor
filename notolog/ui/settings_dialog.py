@@ -17,12 +17,12 @@ License: MIT License
 For detailed instructions and project information, please see the repository's README.md.
 """
 
-from PySide6.QtCore import Qt, QObject, QRegularExpression
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QTabWidget, QWidget, QSizePolicy, QPlainTextEdit
+from PySide6.QtCore import Qt, QObject, QSize, QRegularExpression
+from PySide6.QtWidgets import QDialog, QVBoxLayout, QTabWidget, QWidget, QSizePolicy, QPlainTextEdit, QScrollArea
 from PySide6.QtWidgets import QLabel, QCheckBox, QLineEdit, QPushButton, QComboBox, QSpinBox, QDoubleSpinBox, QSlider
 
 import logging
-from typing import Union
+from typing import TYPE_CHECKING
 
 from . import AppConfig
 from . import Lexemes
@@ -31,14 +31,27 @@ from . import ThemeHelper
 from ..enums.enum_base import EnumBase
 from ..enums.languages import Languages
 from ..enums.themes import Themes
+
 from ..ui.enum_combo_box import EnumComboBox
 from ..ui.horizontal_line_spacer import HorizontalLineSpacer
+from ..ui.label_with_hint import LabelWithHint
+from ..ui.dir_path_line_edit import DirPathLineEdit
+from ..ui.file_path_line_edit import FilePathLineEdit
+
 from ..modules.modules import Modules
+
+if TYPE_CHECKING:
+    from typing import Union  # noqa: F401
 
 
 class SettingsDialog(QDialog):
     def __init__(self, parent):
-        super().__init__(parent, Qt.WindowType.Dialog)
+        super().__init__(parent, Qt.WindowType.Window)
+
+        self.setWindowState(Qt.WindowState.WindowActive)
+
+        # Make the dialog non-modal
+        self.setModal(False)
 
         self.parent = parent
 
@@ -61,18 +74,10 @@ class SettingsDialog(QDialog):
 
         self.setWindowTitle(self.lexemes.get('window_title'))
 
-        # Set dialog size derived from the main window size
-        main_window_size = self.parent.size()
-        dialog_width = int(main_window_size.width() * 0.5)
-        dialog_height = int(main_window_size.height() * 0.33)
-        self.setMinimumSize(dialog_width, dialog_height)
-
-        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-        if self.sizeHint().isValid():
-            self.setMinimumSize(self.sizeHint())
+        self.setSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Expanding)
 
         # Tabs widget as a main one
-        self.tab_widget = Union[QWidget, None]
+        self.tab_widget = None  # type: Union[QTabWidget, None]
 
         self.setStyleSheet(self.theme_helper.get_css('settings_dialog'))
 
@@ -83,8 +88,10 @@ class SettingsDialog(QDialog):
         layout = QVBoxLayout(self)
 
         # Main tabs widget
-        self.tab_widget = QTabWidget()
-        self.tab_widget.setSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Minimum)
+        self.tab_widget = QTabWidget(self)
+        self.tab_widget.setFont(self.font())
+        self.tab_widget.setSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Expanding)
+        # Add main tab widget to the layout
         layout.addWidget(self.tab_widget)
 
         # Get tabs fields config
@@ -98,17 +105,19 @@ class SettingsDialog(QDialog):
         close_button.setFont(self.font())
         close_button.setObjectName('settings_dialog_button_close')
         close_button.clicked.connect(self.close)
+        # Add close button to the layout
         layout.addWidget(close_button)
 
         self.connect_widgets()
 
+        # Automatically adjust size to fit content
+        # self.adjustSize()
+
         # Get the preferred size of the dialog's content
-        preferred_size = self.layout().sizeHint()
+        preferred_size = self.parent.size()
         # Adjust the dialog's size based on the preferred size then
         if preferred_size.isValid():
-            self.resize(preferred_size)
-
-        self.adjustSize()
+            self.resize(QSize(int(preferred_size.width() * 0.5), int(preferred_size.height() * 0.9)))
 
     def get_fields_conf(self) -> list:
         # Load modules first to enable the loading of extension settings.
@@ -134,15 +143,21 @@ class SettingsDialog(QDialog):
         return fields_config
 
     def get_general_fields(self) -> list:
-
         # General
         tab_general = QWidget(self)
-        tab_general.setObjectName('settings_dialog_tab_general')
+
+        # Create the scroll area
+        scroll_area = QScrollArea(self)
+        scroll_area.setObjectName('settings_dialog_tab_general')
+        scroll_area.setWidgetResizable(True)
 
         # Layout for the General tab
         tab_general_layout = QVBoxLayout(tab_general)
 
-        self.tab_widget.addTab(tab_general, self.lexemes.get('tab_general'))
+        # Set the content widget inside the scroll area
+        scroll_area.setWidget(tab_general)
+
+        self.tab_widget.addTab(scroll_area, self.lexemes.get('tab_general'))
 
         return [
             # [General]
@@ -159,7 +174,7 @@ class SettingsDialog(QDialog):
              "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # Available languages dropdown list
             {"type": EnumComboBox,
-             "args": [sorted(Languages, key=lambda member: (not member.is_default, member.value))],
+             "args": [sorted(Languages, key=lambda member: (not member.is_default, str(member.value)))],
              "name": "settings_dialog_general_app_language_combo:app_language",  # Lexeme key : Object name
              "callback": lambda obj: tab_general_layout.addWidget(obj),
              "placeholder_text": self.lexemes.get('general_app_language_combo_placeholder_text'),
@@ -170,7 +185,7 @@ class SettingsDialog(QDialog):
              "text": self.lexemes.get('general_app_theme_label'),
              "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # Available themes dropdown list
-            {"type": EnumComboBox, "args": [sorted(Themes, key=lambda member: (not member.is_default, member.value))],
+            {"type": EnumComboBox, "args": [sorted(Themes, key=lambda member: (not member.is_default, str(member.value)))],
              "name": "settings_dialog_general_app_theme_combo:app_theme",  # Lexeme key : Object name
              "callback": lambda obj: tab_general_layout.addWidget(obj),
              "placeholder_text": self.lexemes.get('general_app_theme_combo_placeholder_text'),
@@ -233,12 +248,19 @@ class SettingsDialog(QDialog):
     def get_editor_config_fields(self) -> list:
         # Editor
         tab_editor_config = QWidget(self)
-        tab_editor_config.setObjectName('settings_dialog_tab_editor_config')
+
+        # Create the scroll area
+        scroll_area = QScrollArea(self)
+        scroll_area.setObjectName('settings_dialog_tab_editor_config')
+        scroll_area.setWidgetResizable(True)
 
         # Layout for the Editor Config tab
         tab_editor_config_layout = QVBoxLayout(tab_editor_config)
 
-        self.tab_widget.addTab(tab_editor_config, self.lexemes.get('tab_editor_config'))
+        # Set the content widget inside the scroll area
+        scroll_area.setWidget(tab_editor_config)
+
+        self.tab_widget.addTab(scroll_area, self.lexemes.get('tab_editor_config'))
 
         return [
             # [Editor config]
@@ -246,7 +268,7 @@ class SettingsDialog(QDialog):
             {"type": QLabel, "name": "settings_dialog_editor_config_label", "alignment": Qt.AlignmentFlag.AlignLeft,
              "props": {"setProperty": ("class", "group-header-label")},
              "text": self.lexemes.get('editor_config_label'), "style": {"bold": True},
-             "callback": lambda obj: tab_editor_config_layout.addWidget(obj)},
+             "callback": lambda obj: tab_editor_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # Either to show or not editor's line numbers
             {"type": QCheckBox,
              # Lexeme key : Object name
@@ -263,12 +285,19 @@ class SettingsDialog(QDialog):
     def get_viewer_config_fields(self) -> list:
         # Viewer
         tab_viewer_config = QWidget(self)
-        tab_viewer_config.setObjectName('settings_dialog_tab_viewer_config')
+
+        # Create the scroll area
+        scroll_area = QScrollArea(self)
+        scroll_area.setObjectName('settings_dialog_tab_viewer_config')
+        scroll_area.setWidgetResizable(True)
 
         # Layout for the Viewer Config tab
         tab_viewer_config_layout = QVBoxLayout(tab_viewer_config)
 
-        self.tab_widget.addTab(tab_viewer_config, self.lexemes.get('tab_viewer_config'))
+        # Set the content widget inside the scroll area
+        scroll_area.setWidget(tab_viewer_config)
+
+        self.tab_widget.addTab(scroll_area, self.lexemes.get('tab_viewer_config'))
 
         return [
             # [Viewer config]
@@ -276,7 +305,7 @@ class SettingsDialog(QDialog):
             {"type": QLabel, "name": "settings_dialog_viewer_config_label", "alignment": Qt.AlignmentFlag.AlignLeft,
              "props": {"setProperty": ("class", "group-header-label")},
              "text": self.lexemes.get('viewer_config_label'), "style": {"bold": True},
-             "callback": lambda obj: tab_viewer_config_layout.addWidget(obj)},
+             "callback": lambda obj: tab_viewer_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # Either to show or not viewer's emojis
             {"type": QCheckBox,
              # Lexeme key : Object name
@@ -326,14 +355,19 @@ class SettingsDialog(QDialog):
     def get_ai_config_fields(self) -> list:
         # AI Config
         tab_ai_config = QWidget(self)
-        tab_ai_config.setObjectName('settings_dialog_tab_ai_config')
+
+        # Create the scroll area
+        scroll_area = QScrollArea(self)
+        scroll_area.setObjectName('settings_dialog_tab_ai_config')
+        scroll_area.setWidgetResizable(True)
 
         # Layout for the AI Config tab
         tab_ai_config_layout = QVBoxLayout(tab_ai_config)
-        # Set spacing between widgets if needed:
-        # tab_ai_config_layout.setSpacing(5)
 
-        self.tab_widget.addTab(tab_ai_config, self.lexemes.get('tab_ai_config'))
+        # Set the content widget inside the scroll area
+        scroll_area.setWidget(tab_ai_config)
+
+        self.tab_widget.addTab(scroll_area, self.lexemes.get('tab_ai_config'))
 
         return [
             # [AI config]
@@ -342,11 +376,19 @@ class SettingsDialog(QDialog):
              "props": {"setProperty": ("class", "group-header-label")},
              "alignment": Qt.AlignmentFlag.AlignLeft, "style": {"bold": True},
              "text": self.lexemes.get('ai_config_inference_module_label'),
-             "callback": lambda obj: tab_ai_config_layout.addWidget(obj)},
+             "callback": lambda obj: tab_ai_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
+            # Supported models label
+            {"type": LabelWithHint, "kwargs": {
+                "tooltip": ('ai_config_inference_module_names_combo_accessible_description',
+                            self.lexemes.get('ai_config_inference_module_names_combo_accessible_description'))},
+             "name": "settings_dialog_ai_config_inference_module_names_combo_label",
+             "alignment": Qt.AlignmentFlag.AlignLeft,
+             "text": self.lexemes.get('ai_config_inference_module_names_combo_label'),
+             "callback": lambda obj: tab_ai_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # Supported models dropdown list
             {"type": EnumComboBox,
              "args": [sorted(EnumBase('InferenceModuleNames', self.settings.ai_config_inference_modules),
-                      key=lambda member: (not member.is_default, member.value))],
+                      key=lambda member: (not member.is_default, str(member.value)))],
              "name": "settings_dialog_ai_config_inference_module_names_combo:ai_config_inference_module",
              "callback": lambda obj: tab_ai_config_layout.addWidget(obj),
              "placeholder_text": self.lexemes.get('ai_config_inference_module_names_combo_placeholder_text'),
@@ -392,71 +434,86 @@ class SettingsDialog(QDialog):
                 else:
                     setter(value)  # Call the setter with the provided value
 
-    def create_setting_field(self, conf) \
-            -> Union[QCheckBox, QLineEdit, QPlainTextEdit, QComboBox, QSpinBox, QDoubleSpinBox, QSlider]:  # noqa: C901
+    def create_setting_field(self, conf) -> QWidget:  # noqa: C901
         """
-        Method to create setting field with ease.
-        @param conf: Config of the field. As the param bounded to the particular method it will be called then.
-        @return: Any object instance
+        Create a UI setting field dynamically based on the provided configuration.
+
+        Args:
+            conf (dict): Configuration for the field. Includes type, properties, callbacks, and visual settings.
+
+        Returns:
+            QWidget: The dynamically created UI object.
         """
-        _args = conf['args'] if 'args' in conf else [self]  # Add to the dialog
-        _kwargs = conf['kwargs'] if 'kwargs' in conf else {}
+
+        # Extract arguments for the object initialization
+        _args = conf.get('args', [self])  # Default to adding to the dialog
+        _kwargs = conf.get('kwargs', {})
+
+        # Instantiate the UI object of the specified type
         obj = conf['type'](*_args, **_kwargs)
-        # Align with the dialog font size (mostly for QLabel)
+
+        # Apply dialog-wide font if supported (e.g., QLabel, QLineEdit, etc.)
         if hasattr(obj, 'setFont'):
             obj.setFont(self.font())
-        if hasattr(obj, 'sizeHint'):
-            obj.sizeHint()
-        # Apply methods from props
+
+        # Apply custom properties (if defined in the configuration)
         if 'props' in conf:
             self.apply_props(obj, conf['props'])
+
+        # Set object name for better debugging and callback management
         if 'name' in conf and conf['name']:
-            """
-            Let's set up object name to make it easier to understand any further callbacks later.
-            [ Keep object's name consistent with the corresponding variable in Settings class to link them. ]
-            and the var name for convenient reading and in case of refactoring.
-            """
             obj.setObjectName(conf['name'])
-        if 'text' in conf:
-            obj.setText(conf['text'])
-        if 'read_only' in conf:
-            obj.setReadOnly(conf['read_only'])
-        if 'max_length' in conf:
-            obj.setMaxLength(conf['max_length'])
-        if 'placeholder_text' in conf:
-            obj.setPlaceholderText(conf['placeholder_text'])
-        if 'accessible_description' in conf:
-            obj.setAccessibleDescription(conf['accessible_description'])
+
+        # Apply common text-related properties
+        for key, method in [
+            ('text', 'setText'),
+            ('read_only', 'setReadOnly'),
+            ('max_length', 'setMaxLength'),
+            ('placeholder_text', 'setPlaceholderText'),
+            ('accessible_description', 'setAccessibleDescription'),
+        ]:
+            if key in conf and hasattr(obj, method):
+                getattr(obj, method)(conf[key])
+
+        # Apply size policies if specified
         if 'size_policy' in conf:
             params = conf['size_policy']
             if isinstance(params, tuple):
-                obj.setSizePolicy(*params)  # Contains a few params
+                obj.setSizePolicy(*params)
             else:
                 obj.setSizePolicy(params)
-        if 'alignment' in conf:
+
+        # Set alignment if supported and specified
+        if 'alignment' in conf and hasattr(obj, 'setAlignment'):
             obj.setAlignment(conf['alignment'])
+
+        # Handle layout-related callbacks
         if 'callback' in conf and callable(conf['callback']):
-            # Add object to the layout via the callback
             conf['callback'](obj)
+
+        # Handle value change callbacks for interactive widgets
         if 'on_value_change' in conf and callable(conf['on_value_change']):
-            # Add a callback to handle value changes
             obj.valueChanged.connect(lambda: conf['on_value_change'](source_object=obj, source_widget=self))
+
+        # Apply styles (bold, italic, color) via stylesheet
         if 'style' in conf:
             styles = []
             if 'bold' in conf['style']:
-                styles.append('font-weight: bold;')  # Bold
+                styles.append('font-weight: bold;')
             if 'italic' in conf['style']:
-                styles.append('font-style: italic;')  # Italic
+                styles.append('font-style: italic;')
             if 'color' in conf['style']:
-                styles.append(f"color: {conf['style']['color']};")  # Color
+                styles.append(f"color: {conf['style']['color']};")
             if styles:
-                obj.setStyleSheet('QObject { %s }' % ' '.join(styles))
+                obj.setStyleSheet(' '.join(styles))
+
+        # Set the height for QPlainTextEdit based on the number of text lines (if specified)
         if 'text_lines' in conf and isinstance(obj, QPlainTextEdit) and int(conf['text_lines']) > 0:
             font_metrics = obj.fontMetrics()
-            # Calculate the height needed for N lines based on font metrics
             lines_height = font_metrics.height() * conf['text_lines']
             obj.setFixedHeight(lines_height)
-        # Return created object
+
+        # Return the dynamically created object
         return obj
 
     def parse_object_name(self, object_name: str):
@@ -635,31 +692,37 @@ class SettingsDialog(QDialog):
                     # Get lexeme in the new language set
                     lexeme = app_language_lexemes[scope][lexeme_key]
 
-                    # Search with regex as the object name should contain scope and may contain setting name as well,
-                    # but the lexeme contains a key only.
+                    """
+                    Search with regex as the object name should contain scope and may contain setting name as well,
+                    but the lexeme key is a crucial part of the name in this search.
+                    """
                     regex = QRegularExpression(f"(?={scope}_)?{lexeme_key}.*?")
-                    # self.findChildren() contains only the elements related to this dialog
+                    # The self.findChildren() method results contain only the elements related to this dialog
                     found_objects = self.findChildren(QObject, regex, Qt.FindChildOption.FindChildrenRecursively)
                     if not found_objects:
-                        # Try to find it in the parent dialog
+                        # Try to find it in the parent dialog to update the main window elements
                         found_objects = self.parent.findChildren(QObject, regex,
                                                                  Qt.FindChildOption.FindChildrenRecursively)
                         if self.debug and found_objects:
                             self.logger.debug(f"Found object to update ({scope}){lexeme_key}: {found_objects}")
 
-                    # Search by full object name
+                    # Search by the full object name
                     # object_name = self.lexemes.get_full_key(lexeme_key)
                     # found_objects = self.findChildren(QObject, object_name, Qt.FindChildrenRecursively)
 
                     for obj in found_objects:
-                        if (isinstance(obj, (QLabel, QCheckBox, QComboBox, QPushButton))
+                        if (isinstance(obj, (QLabel, LabelWithHint, QCheckBox, QComboBox, QPushButton))
                                 and hasattr(obj, 'setText')
                                 and callable(getattr(obj, 'setText'))):
                             if self.debug:
                                 self.logger.debug(
                                     f'Object lexeme update: {obj.objectName()} with id: {id(obj)}, lexeme "{lexeme}"')
                             obj.setText(lexeme)
-                        if isinstance(obj, QWidget):
+                        if isinstance(obj, LabelWithHint):
+                            if obj.property('tooltip_lexeme'):
+                                # Lexeme must be default_scope='settings_dialog'
+                                obj.set_tooltip(self.lexemes.get(obj.property('tooltip_lexeme')))
+                        if isinstance(obj, QScrollArea):
                             # Add iterable map of the tabs to change the search by QWidget to explicitly set tab text.
                             self.set_tab_text(obj.objectName(), lexeme)
                         # Exclusions
@@ -668,10 +731,20 @@ class SettingsDialog(QDialog):
                                 self.lexemes.get('general_app_font_size_label', size=self.settings.app_font_size))
 
         if setting_name == 'app_theme' or sender.objectName().endswith('app_theme'):
-            # Update self styles
+            # Update the widget's stylesheet with the selected theme
             self.setStyleSheet(self.theme_helper.get_css('settings_dialog'))
             # Update font size to correct the tab widget's font
             self.update_font_size(font_size=self.settings.app_font_size)
+
+            # Search objects to update by their type
+            found_objects = self.findChildren(LabelWithHint)
+            found_objects += self.findChildren(DirPathLineEdit)
+            found_objects += self.findChildren(FilePathLineEdit)
+            for obj in found_objects:
+                if (isinstance(obj, (LabelWithHint, DirPathLineEdit, FilePathLineEdit))
+                        and hasattr(obj, 'load_icon')
+                        and callable(getattr(obj, 'load_icon'))):
+                    obj.load_icon()
 
         if setting_name == 'app_font_size' or sender.objectName().endswith('app_font_size'):
             # Update the font size of elements
@@ -700,14 +773,14 @@ class SettingsDialog(QDialog):
                     """
                     obj.setText(self.lexemes.get('general_app_font_size_label', size=font_size))
 
-    def set_tab_text(self, object_name, text):
+    def set_tab_text(self, tab_object_name, text):
         # Iterate through all the tabs
         for index in range(self.tab_widget.count()):
             # Get the widget for the current index
-            widget = self.tab_widget.widget(index)
+            widget = self.tab_widget.widget(index)  # type: Union[QScrollArea, QWidget]
 
             # Check if this widget matches the object name
-            if widget.objectName() == object_name:
+            if widget.objectName() == tab_object_name:
                 # Set the text
                 self.tab_widget.setTabText(index, text)
                 break

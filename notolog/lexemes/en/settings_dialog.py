@@ -44,16 +44,18 @@ lexemes = {
     "viewer_config_save_resources_checkbox_accessible_description":
         "Automatically saves copies of external images to disk for offline access.",
 
-    "ai_config_inference_module_label": "Inference module",
-    "ai_config_inference_module_names_combo_placeholder_text": "Choose module",
-    "ai_config_inference_module_names_combo_accessible_description": "Available modules to choose",
-
-    "ai_config_multi_turn_dialogue_checkbox":
-        "Multi-turn dialog that builds on previous prompts for contextual continuity",
-    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
-        "Multi-turn dialog that builds on previous prompts for contextual continuity",
-    "ai_config_convert_to_md_checkbox": "Convert the result to Markdown",
-    "ai_config_convert_to_md_checkbox_accessible_description": "Convert the result message to Markdown",
+    "ai_config_inference_module_label": "Inference Module",
+    "ai_config_inference_module_names_combo_label": "Active Inference Module",
+    "ai_config_inference_module_names_combo_placeholder_text": "Choose Module",
+    "ai_config_inference_module_names_combo_accessible_description":
+        "Select from available AI inference modules to operate with the AI Assistant.\n"
+        "Options include local Large Language Models (LLM) with real-time processing, or API-based functionalities.",
 
     "ai_config_base_label": "Base Parameters",
+    "ai_config_multi_turn_dialogue_checkbox": "Multi-turn dialogue with conversational memory",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
+        "Enable multi-turn dialogue that retains the previous prompt for conversational memory.\n"
+        "When switched off, only the new message and the system prompt influence the response.",
+    "ai_config_convert_to_md_checkbox": "Convert the result to Markdown",
+    "ai_config_convert_to_md_checkbox_accessible_description": "Convert the output message into Markdown format.",
 }

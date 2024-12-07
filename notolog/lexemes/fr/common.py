@@ -110,7 +110,8 @@ lexemes = {
                                       "{file_path}. Définissez les autorisations correctes pour assurer un fonctionnement "
                                       "approprié.",
 
-    "field_dir_path_line_edit": "Sélectionner un répertoire",
+    "field_dir_path_dialog_caption": "Sélectionner un Répertoire",
+    "field_file_path_dialog_caption": "Sélectionner un Fichier",
 
     "load_file_encryption_password_mismatch": "Non-concordance du mot de passe de chiffrement !",
     "load_file_encryption_password_incorrect": "Mot de passe de chiffrement incorrect !",

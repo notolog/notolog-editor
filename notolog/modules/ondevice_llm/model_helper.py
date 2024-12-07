@@ -53,21 +53,20 @@ class ModelHelper:
     @classmethod
     def reload(cls, *args, **kwargs):
         """
-       Reinitialize the singleton instance. This method allows for the controlled
-       re-creation of the singleton instance.
-       """
+        Reinitialize the singleton instance to allow controlled re-creation.
+        """
         with cls._lock:
             # Create a new instance
             cls._instance = super().__new__(cls)
 
     def __init__(self, model_path: str, search_options: dict = None):
-        # Check if instance is already initialized
+        # Prevent re-initialization if the instance is already set up.
         if hasattr(self, 'logger'):
             return
 
-        # Ensure that the initialization check and the setting of 'modules' param are atomic.
+        # Use a lock to ensure initialization is thread-safe and atomic.
         with self._lock:
-            # This prevents race conditions.
+            # Double-check to prevent race conditions during initialization.
             if hasattr(self, 'logger'):
                 return
 
@@ -147,12 +146,12 @@ class ModelHelper:
         return ModelHelper.truncate_string(os.path.basename(self.model_path))
 
     @staticmethod
-    def truncate_string(text, max_length=32):
-        if len(text) <= max_length:
+    def truncate_string(text, max_text_length=32):
+        if len(text) <= max_text_length:
             return text
 
         # Calculating the space to be allocated to the start and end of the string around the ellipsis
-        part_length = (max_length - 3) // 2
+        part_length = (max_text_length - 3) // 2
         start_part = text[:part_length]
         end_part = text[-part_length:]
 

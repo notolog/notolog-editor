@@ -161,14 +161,14 @@ class TestFileHeader:
 
     @pytest.fixture(scope="function")
     def test_exp_param_fixture(self, request):
-        # Get the parameter value(s) from the request
+        # Retrieve parameter values from the test request.
         param_value = request.param
 
         yield param_value
 
     @pytest.fixture(scope="function")
     def test_exp_params_fixture(self, request):
-        # Get the parameter value(s) from the request
+        # Retrieve parameter values from the test request.
         param_value1, param_value2 = request.param
 
         yield param_value1, param_value2

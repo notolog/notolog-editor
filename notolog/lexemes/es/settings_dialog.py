@@ -46,15 +46,19 @@ lexemes = {
         "Guarda automáticamente copias de imágenes externas en el disco para acceso sin conexión.",
 
     "ai_config_inference_module_label": "Módulo de inferencia",
+    "ai_config_inference_module_names_combo_label": "Módulo de inferencia activo",
     "ai_config_inference_module_names_combo_placeholder_text": "Elegir módulo",
-    "ai_config_inference_module_names_combo_accessible_description": "Módulos disponibles para elegir",
-
-    "ai_config_multi_turn_dialogue_checkbox":
-        "Diálogo multi-turno que se basa en los prompts anteriores para la continuidad contextual",
-    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
-        "Diálogo multi-turno que se basa en los prompts anteriores para la continuidad contextual",
-    "ai_config_convert_to_md_checkbox": "Convertir el resultado a Markdown",
-    "ai_config_convert_to_md_checkbox_accessible_description": "Convertir el mensaje de resultado a Markdown",
+    "ai_config_inference_module_names_combo_accessible_description":
+        "Seleccione de los módulos de inferencia de IA disponibles para operar con el Asistente de IA.\n"
+        "Las opciones incluyen modelos de lenguaje de gran tamaño (LLM) con procesamiento en tiempo real,\n"
+        "o funcionalidades basadas en API.",
 
     "ai_config_base_label": "Parámetros básicos",
+    "ai_config_multi_turn_dialogue_checkbox": "Diálogo de múltiples turnos con memoria conversacional",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
+        "Habilite un diálogo de múltiples turnos que conserve la última indicación para memoria conversacional.\n"
+        "Cuando está desactivado, solo el nuevo mensaje y la indicación del sistema influyen en la respuesta.",
+    "ai_config_convert_to_md_checkbox": "Convertir el resultado a Markdown",
+    "ai_config_convert_to_md_checkbox_accessible_description":
+        "Convierta el mensaje de salida al formato Markdown.",
 }

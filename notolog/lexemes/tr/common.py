@@ -104,7 +104,8 @@ lexemes = {
     "message_app_config_file_access": "{file_path} konumundaki uygulama yapılandırma dosyasına erişilirken izin reddedildi. "
                                       "Uygun işleyişi sağlamak için doğru izinleri ayarlayın.",
 
-    "field_dir_path_line_edit": "Dizin Seç",
+    "field_dir_path_dialog_caption": "Dizin Seç",
+    "field_file_path_dialog_caption": "Dosya Seç",
 
     "load_file_encryption_password_mismatch": "Şifreleme şifresi uyuşmuyor!",
     "load_file_encryption_password_incorrect": "Şifreleme şifresi yanlış!",

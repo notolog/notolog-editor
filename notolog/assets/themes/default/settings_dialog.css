@@ -2,6 +2,14 @@
 QTabBar::tab {}
 /* Active tab */
 QTabBar::tab:selected {}
+/* Scroll area */
+QScrollArea {
+    border: none;
+    background: transparent;
+}
+QScrollArea > QWidget > QWidget {
+    background: transparent;
+}
 QComboBox {}
 QLabel {}
 QLineEdit {}
@@ -15,3 +23,9 @@ QSlider::groove:horizontal {}
 QSlider::handle:horizontal {}
 /* Request submit button */
 QPushButton#settings_dialog_button_close {}
+/* Styling for hint tooltips */
+QToolTip {
+    color: #fefefe;
+    background-color: dodgerBlue;
+    padding: 5px;
+}

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "notolog"
-version = "1.0.6"
+version = "1.0.7"
 description = "Notolog - Python Markdown Editor"
 authors = ["Vadim Bakhrenkov"]
 license = "MIT"
@@ -18,6 +18,7 @@ include = [
     "notolog/assets/**/*",
     "notolog/modules/**/*",
     "tests/**/*",
+    ".coveragerc",
 ]
 exclude = ["**/__pycache__", "**/*.pyc"]
 homepage = "https://notolog.app"
@@ -90,7 +91,7 @@ python = ">=3.9,<=3.13"
 # Main packages
 cffi= "^1.17.0"
 click = "^8.1.7"
-cryptography = "^43.0.1"
+cryptography = ">=43.0.1"
 emoji = "^2.14.0"
 iniconfig = "^2.0.0"
 Markdown = "^3.7"
@@ -106,12 +107,18 @@ tomli_w = "^1.0.0"
 typing_extensions = "^4.12.0"
 numpy = [
     { version = "^1.26.4", markers = "sys_platform != 'darwin'" },  # Applies to all platforms except macOS
-    { version = "^2.1.0", markers = "sys_platform == 'darwin' and python_version >= '3.10' and python_version < '3.13'" }    # macOS only
+    { version = "^2.1.0", markers = "sys_platform == 'darwin' and python_version >= '3.10' and python_version < '3.13'" }  # macOS only
 ]
 onnxruntime-genai = [
-    { version = "^0.2.0", markers = "sys_platform != 'darwin'" },   # Applies to all platforms except macOS
-    { version = "^0.5.1", markers = "sys_platform == 'darwin' and python_version >= '3.10' and python_version < '3.13'" }    # macOS only
+    { version = "^0.2.0", markers = "sys_platform != 'darwin'" },  # Applies to all platforms except macOS
+    { version = "^0.5.1", markers = "sys_platform == 'darwin' and python_version >= '3.10' and python_version < '3.13'" }  # macOS only
 ]
+llama-cpp-python = { version = "^0.3.2", source = "llama-cpp-python" }
+
+[tool.poetry.source]
+name = "llama-cpp-python"
+url = "https://abetlen.github.io/llama-cpp-python/whl/cpu"
+priority = "supplemental"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^7.0.0"
@@ -123,7 +130,7 @@ pyflakes = "^3.2.0"
 coverage = "^7.5.1"
 pytest = "^8.2.1"
 pytest-asyncio = "^0.23.7"
-pytest-cov = "^5.0.0"
+pytest-cov = ">=5.0.0"
 pytest-mock = "^3.14.0"
 
 [build-system]

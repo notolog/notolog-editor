@@ -10,7 +10,7 @@ os.environ["QT_QPA_PLATFORM"] = "offscreen"
 
 
 @pytest.fixture(autouse=True)
-def test_core_app(mocker):
+def test_core_app():
 
     # To correctly set up app settings
     QCoreApplication.setOrganizationName(AppConfig().get_settings_org_name())

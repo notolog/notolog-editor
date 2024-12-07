@@ -45,15 +45,18 @@ lexemes = {
         "Sparar automatiskt kopior av externa bilder på disken för offline-åtkomst",
 
     "ai_config_inference_module_label": "Inferensmodul",
+    "ai_config_inference_module_names_combo_label": "Aktiv inferensmodul",
     "ai_config_inference_module_names_combo_placeholder_text": "Välj modul",
-    "ai_config_inference_module_names_combo_accessible_description": "Tillgängliga moduler att välja mellan",
+    "ai_config_inference_module_names_combo_accessible_description":
+        "Välj bland tillgängliga AI-inferensmoduler för att arbeta med AI-assistenten.\n"
+        "Alternativen inkluderar stora språkmodeller (LLM) med realtidsbearbetning eller API-baserade funktioner.",
 
-    "ai_config_multi_turn_dialogue_checkbox":
-        "Flerstegsdialog som bygger på tidigare prompts för kontextuell kontinuitet",
+    "ai_config_base_label": "Grundparametrar",
+    "ai_config_multi_turn_dialogue_checkbox": "Fleromgångsdialog med samtalsminne",
     "ai_config_multi_turn_dialogue_checkbox_accessible_description":
-        "Flerstegsdialog som bygger på tidigare prompts för kontextuell kontinuitet",
+        "Aktivera en fleromgångsdialog som bevarar den senaste inmatningen för samtalsminne.\n"
+        "När den är avstängd påverkar endast det nya meddelandet och systemuppmaningen svaret.",
     "ai_config_convert_to_md_checkbox": "Konvertera resultatet till Markdown",
-    "ai_config_convert_to_md_checkbox_accessible_description": "Konvertera resultatmeddelandet till Markdown",
-
-    "ai_config_base_label": "Basparametrar",
+    "ai_config_convert_to_md_checkbox_accessible_description":
+        "Konvertera utgångsmeddelandet till Markdown-format.",
 }

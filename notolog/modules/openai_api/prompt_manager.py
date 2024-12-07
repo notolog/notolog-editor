@@ -51,28 +51,25 @@ class PromptManager(QObject):
     @classmethod
     def reload(cls, *args, **kwargs):
         """
-       Reinitialize the singleton instance. This method allows for the controlled
-       re-creation of the singleton instance.
-       """
+        Reinitialize the singleton instance to allow controlled re-creation.
+        """
         with cls._lock:
             # Create a new instance
-            cls._instance = super().__new__(cls)
+            cls._instance = super().__new__(cls, *args, **kwargs)
 
-    def __init__(self, system_prompt=None, max_history_size=99, parent=None):
+    def __init__(self, system_prompt=None, max_history_size=None, parent=None):
 
-        # Check if instance is already initialized
+        # Prevent re-initialization if the instance is already set up.
         if hasattr(self, 'logger'):
             return
 
-        # Ensure that the initialization check and the setting of 'modules' param are atomic.
+        # Use a lock to ensure initialization is thread-safe and atomic.
         with self._lock:
-            # This prevents race conditions.
+            # Double-check to prevent race conditions during initialization.
             if hasattr(self, 'logger'):
                 return
 
             super().__init__(parent)
-
-            self.parent = parent
 
             self.logger = logging.getLogger('openai_api_prompt_manager')
 
@@ -84,8 +81,9 @@ class PromptManager(QObject):
 
             self.init_history()
 
-            # Catch new message added signal
-            self.parent.message_added.connect(self.add_message)
+            if parent and hasattr(parent, 'message_added'):
+                # Catch new message added signal
+                parent.message_added.connect(self.add_message)
 
     def init_history(self):
         if self.logging:
@@ -94,7 +92,6 @@ class PromptManager(QObject):
         self.history = []
         # Init system prompt if set
         if self.system_input:
-            # Add system instructions is set
             self.add_system(self.system_input)
 
     def get_prompt_message(self, role: str, content: str) -> Union[dict, None]:
@@ -212,10 +209,21 @@ class PromptManager(QObject):
 
     def limit_history_size(self):
         """
-        Ensures the history does not exceed the maximum size.
+        Ensures the history does not exceed the maximum specified size.
+        If a system prompt is set, it retains the system prompt at the beginning of the history,
+        and removes the oldest records to maintain the history within the specified size limit.
         """
-        while len(self.history) > self.max_history_size:
-            self.history.pop(0)  # Remove the oldest record
+
+        if self.max_history_size:
+            # Calculate the additional index offset if a system prompt is included
+            system_prompt_shift = 1 if self.system_input else 0
+            # Calculate the total allowed history size including the system prompt
+            allowed_history_size = self.max_history_size + system_prompt_shift
+
+            # Remove entries until the history size is within the allowed limit
+            while len(self.history) > allowed_history_size:
+                # Remove the oldest record, keeping the system prompt intact if present
+                self.history.pop(system_prompt_shift)  # Pop from the first non-prompt position
 
     def find_last_message_by_role(self, role: str) -> Union[dict, None]:
         if role not in PromptManager.supported_roles:

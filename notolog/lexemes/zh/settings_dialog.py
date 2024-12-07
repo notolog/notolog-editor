@@ -44,13 +44,18 @@ lexemes = {
     "viewer_config_save_resources_checkbox_accessible_description": "自动将外部图片的副本保存到硬盘以供离线访问。",
 
     "ai_config_inference_module_label": "推理模块",
+    "ai_config_inference_module_names_combo_label": "活跃推理模块",
     "ai_config_inference_module_names_combo_placeholder_text": "选择模块",
-    "ai_config_inference_module_names_combo_accessible_description": "可选择的模块",
-
-    "ai_config_multi_turn_dialogue_checkbox": "多轮对话，基于先前的提示保持语境连续性",
-    "ai_config_multi_turn_dialogue_checkbox_accessible_description": "多轮对话，基于先前的提示保持语境连续性",
-    "ai_config_convert_to_md_checkbox": "将结果转换为Markdown",
-    "ai_config_convert_to_md_checkbox_accessible_description": "将结果消息转换为Markdown",
+    "ai_config_inference_module_names_combo_accessible_description":
+        "从可用的AI推理模块中选择，以配合AI助手使用。\n"
+        "选项包括具有实时处理功能的本地大型语言模型（LLM）或基于API的功能。",
 
     "ai_config_base_label": "基础参数",
+    "ai_config_multi_turn_dialogue_checkbox": "带有会话记忆的多轮对话",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
+        "启用多轮对话，可保留上一次提示以进行会话记忆。\n"
+        "关闭时，仅新消息和系统提示会影响回复。",
+    "ai_config_convert_to_md_checkbox": "将结果转换为Markdown",
+    "ai_config_convert_to_md_checkbox_accessible_description":
+        "将输出消息转换为Markdown格式。",
 }

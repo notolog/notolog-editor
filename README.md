@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-11-24 18:11:38.151764"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-12-05 23:55:09.820720"}} -->
 # Notolog
 
 [![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/) [![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor)](https://github.com/notolog/notolog-editor/blob/master/LICENSE) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)](https://pypi.org/project/notolog/) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/notolog/notolog-editor/tests.yaml)](https://github.com/notolog/notolog-editor/actions/workflows/tests.yaml) [![Conda Version](https://img.shields.io/conda/vn/conda-forge/notolog)](https://anaconda.org/conda-forge/notolog) [![PyPI - Downloads](https://img.shields.io/pypi/dm/notolog)](https://pypistats.org/packages/notolog)
@@ -81,9 +81,9 @@ Notolog offers several themes to customize the UI:
 * **Spooky**: Embrace the spooky season with vivid Halloween-themed colors.
 * **Strawberry**: The most playful theme, reminiscent of strawberry jam.
 
-Below is a glimpse of the UI, featuring the Strawberry theme:
+Below is a glimpse of the UI, featuring the settings window:
 
-![Notolog - Python Markdown Editor - UI Example](https://raw.githubusercontent.com/notolog/notolog-editor/main/docs/notolog-ui-settings-strawberry-ja.png)
+![Notolog - Python Markdown Editor - UI Example](https://raw.githubusercontent.com/notolog/notolog-editor/main/docs/notolog-ui-settings.png)
 
 ## Installation
 
@@ -272,6 +272,10 @@ This project uses third-party libraries and components, each subject to its own 
 
 **Disclaimer**: The 'On Device LLM' module uses ONNX Runtime to enable generative AI features and is not associated with Microsoft or ONNX Runtime.
 
+### Python Bindings for llama.cpp
+
+**Disclaimer**: The 'Module llama.cpp' module in this application utilizes the Python Bindings for llama.cpp to facilitate LLM inference with models in GGUF format. This module is independently developed and is not officially connected to either the llama-cpp-python or the llama.cpp projects.
+
 
 ## Security Disclaimer
 
@@ -301,7 +305,7 @@ All trademarks, registered trademarks, product names, and company names or logos
 
 ## Support Us
 
-If you find Notolog useful, please consider giving us a star 🌟 on our [GitHub page](https://github.com/notolog/notolog-editor). This helps more people discover our project and contributes to its growth. Thank you for your support!
+If you find Notolog useful, consider giving it a star 🌟 on the [GitHub page](https://github.com/notolog/notolog-editor). This helps others discover the project and contributes to its growth. Thank you for your support!
 
 ---
 _This README.md file has been carefully crafted and edited using the Notolog editor itself._

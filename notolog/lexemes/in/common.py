@@ -106,7 +106,8 @@ lexemes = {
     "message_app_config_file_access": "{file_path} पर ऐप कॉन्फ़िगरेशन फ़ाइल तक पहुँचते समय अनुमति अस्वीकृत। सही "
                                       "ऑपरेशन सुनिश्चित करने के लिए सही अनुमतियाँ सेट करें।",
 
-    "field_dir_path_line_edit": "डायरेक्टरी चुनें",
+    "field_dir_path_dialog_caption": "डायरेक्टरी चुनें",
+    "field_file_path_dialog_caption": "फ़ाइल चुनें",
 
     "load_file_encryption_password_mismatch": "एन्क्रिप्शन पासवर्ड मेल नहीं खाता!",
     "load_file_encryption_password_incorrect": "एन्क्रिप्शन पासवर्ड गलत है!",

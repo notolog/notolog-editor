@@ -24,7 +24,7 @@ class TestHtmlView:
             font = QFont("Sans Serif")
             self._doc.setDefaultFont(font)
 
-        # Get the parameter value(s) from the request
+        # Retrieve parameter values from the test request.
         param_value, param_func = request.param
 
         if callable(getattr(self._doc, param_func)):

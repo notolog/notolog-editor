@@ -32,7 +32,7 @@ class TestApp:
 
     @pytest.fixture(scope="function")
     def test_exp_params_fixture(self, request):
-        # Get the parameter value(s) from the request
+        # Retrieve parameter values from the test request.
         param_values = request.param
 
         yield param_values

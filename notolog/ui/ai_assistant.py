@@ -41,7 +41,7 @@ from . import ThemeHelper
 from .vertical_line_spacer import VerticalLineSpacer
 
 from ..ui.rotating_label import RotatingLabel
-from ..ui.ai_message_label import AiMessageLabel
+from ..ui.ai_message_label import AIMessageLabel
 from ..modules.modules import Modules
 from ..modules.base_ai_core import BaseAiCore
 from ..enums.enum_base import EnumBase
@@ -377,7 +377,7 @@ class AIAssistant(QDialog):
         # Remove leading spaces if exist
         message_text = message.lstrip()
 
-        message_label = AiMessageLabel(text=message_text, parent=self)
+        message_label = AIMessageLabel(text=message_text, parent=self)
         message_label.setFont(self.font())
         message_label.setWordWrap(True)
         message_label.setObjectName(f'msg_{message_type}_{message_id}')
@@ -718,3 +718,7 @@ class AIAssistant(QDialog):
             except RuntimeError:
                 # Object can be deleted already
                 pass
+
+        if 'app_theme' in data:
+            # Update the widget's stylesheet with the selected theme
+            self.setStyleSheet(self.theme_helper.get_css('ai_assistant'))

@@ -31,10 +31,9 @@ class TestImageDownloader:
 
     @pytest.fixture()
     def test_settings_fixture(self, monkeypatch, request, test_core_app):  # noqa: F811 redefinition of unused 'test_app'
-        # Get the parameter value(s) from the request
+        # Retrieve parameter values from the test request.
         # The only 'viewer_save_resources' is in use at the moment
-        monkeypatch.setattr(Settings, 'viewer_save_resources',
-                            request.param if hasattr(request, 'param') else None)
+        monkeypatch.setattr(Settings, 'viewer_save_resources', request.param)
 
         # The test_core_app fixture sets up the app environment explicitly.
         yield Settings()
@@ -72,7 +71,7 @@ class TestImageDownloader:
 
     @pytest.fixture(scope="function")
     def test_exp_params_fixture(self, request):
-        # Get the parameter value(s) from the request
+        # Retrieve parameter values from the test request.
         param_values = request.param
 
         yield param_values

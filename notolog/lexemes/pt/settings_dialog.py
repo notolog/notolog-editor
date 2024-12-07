@@ -45,16 +45,20 @@ lexemes = {
     "viewer_config_save_resources_checkbox_accessible_description":
         "Salva automaticamente cópias de imagens externas no disco para acesso offline.",
 
-    "ai_config_inference_module_label": "Módulo de inferência",
-    "ai_config_inference_module_names_combo_placeholder_text": "Escolha o módulo",
-    "ai_config_inference_module_names_combo_accessible_description": "Módulos disponíveis para escolha",
-
-    "ai_config_multi_turn_dialogue_checkbox":
-        "Diálogo de várias interações que constrói sobre prompts anteriores para continuidade contextual",
-    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
-        "Diálogo de várias interações que constrói sobre prompts anteriores para continuidade contextual",
-    "ai_config_convert_to_md_checkbox": "Converter o resultado para Markdown",
-    "ai_config_convert_to_md_checkbox_accessible_description": "Converter a mensagem do resultado para Markdown",
+    "ai_config_inference_module_label": "Módulo de Inferência",
+    "ai_config_inference_module_names_combo_label": "Módulo de Inferência Ativo",
+    "ai_config_inference_module_names_combo_placeholder_text": "Escolher Módulo",
+    "ai_config_inference_module_names_combo_accessible_description":
+        "Selecione dentre os módulos de inferência de IA disponíveis para operar com o Assistente de IA.\n"
+        "As opções incluem Modelos de Linguagem de Grande Porte (LLM) com processamento em tempo real,\n"
+        "ou funcionalidades baseadas em API.",
 
     "ai_config_base_label": "Parâmetros Base",
+    "ai_config_multi_turn_dialogue_checkbox": "Diálogo de múltiplas interações com memória conversacional",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
+        "Ative um diálogo de múltiplas interações que retém a última mensagem para memória conversacional.\n"
+        "Quando desativado, apenas a nova mensagem e o prompt do sistema influenciam a resposta.",
+    "ai_config_convert_to_md_checkbox": "Converter o resultado para Markdown",
+    "ai_config_convert_to_md_checkbox_accessible_description":
+        "Converta a mensagem de saída para o formato Markdown.",
 }

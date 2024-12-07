@@ -7,7 +7,7 @@ from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QMainWindow
 
 from notolog.ui.ai_assistant import AIAssistant
-from notolog.ui.ai_message_label import AiMessageLabel
+from notolog.ui.ai_message_label import AIMessageLabel
 from notolog.settings import Settings
 from notolog.enums.languages import Languages
 from notolog.modules.base_ai_core import BaseAiCore
@@ -56,12 +56,12 @@ class TestAiAssistant:
         Fixture to pass params and get expected results.
         This method is used only for passing params via pytest fixture.
         """
-        # Get the parameter value(s) from the request
+        # Retrieve parameter values from the test request.
         param_values = request.param
 
         yield param_values
 
-    def test_ui_object_state(self, mocker, ui_obj: AIAssistant, settings_obj):
+    def test_ui_object_state(self, ui_obj: AIAssistant, settings_obj):
         # Check app language set correctly
         assert settings_obj.app_language == 'la'
 
@@ -81,7 +81,7 @@ class TestAiAssistant:
         indirect=True
     )
     async def test_add_message(self, mocker, ui_obj: AIAssistant, settings_obj, test_exp_params_fixture):
-        # Get callback methods to check
+        # Retrieve callback methods for verification.
         mock_send_request = mocker.patch.object(ui_obj, 'send_request', wraps=ui_obj.send_request)
         mock_update_usage = mocker.patch.object(ui_obj, 'update_usage', wraps=ui_obj.update_usage)
 
@@ -111,16 +111,16 @@ class TestAiAssistant:
         assert not self.assert_check_message_added
 
         # Check the there are no messages in conversation
-        messages = ui_obj.messages_area.findChildren(AiMessageLabel)
+        messages = ui_obj.messages_area.findChildren(AIMessageLabel)
         assert len(messages) == 0
         # Test that clicking the edit button updates the editor state
         ui_obj.prompt_input.setText(test_exp_params_fixture)
         QTest.mouseClick(ui_obj.send_button, Qt.MouseButton.LeftButton, pos=ui_obj.send_button.rect().center())
         # Check the conversation message was added
-        messages = ui_obj.messages_area.findChildren(AiMessageLabel)
+        messages = ui_obj.messages_area.findChildren(AIMessageLabel)
         assert len(messages) == 1
         for _message in messages:
-            assert isinstance(_message, AiMessageLabel)
+            assert isinstance(_message, AIMessageLabel)
             assert _message.text() == test_exp_params_fixture
 
         # Check the method called

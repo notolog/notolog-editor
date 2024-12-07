@@ -14,7 +14,7 @@ from threading import Lock
 toml_base_app_config = """
 [app]
 name = "Notolog"
-version = "1.0.6"
+version = "1.0.7"
 license = "MIT License"
 date = "2024"
 website = "https://notolog.app"
@@ -97,13 +97,13 @@ class AppConfig(QObject):
         return cls._instance
 
     def __init__(self):
-        # Check if instance is already initialized
+        # Prevent re-initialization if the instance is already set up.
         if hasattr(self, 'base_app_config'):
             return
 
         # Ensure that the initialization check and the setting of base_app_config are atomic.
         with self._lock:
-            # This prevents race conditions.
+            # Double-check to prevent race conditions during initialization.
             if hasattr(self, 'base_app_config'):
                 return
 

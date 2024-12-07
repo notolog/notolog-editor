@@ -1,20 +1,27 @@
 # Dutch lexemes settings_dialog.py
 lexemes = {
-    # Settings dialog
-    "tab_ondevice_llm_config": "LLM op het Apparaat",
+    "tab_ondevice_llm_config": "On Device LLM",
 
-    "module_ondevice_llm_config_label": "LLM-model op het apparaat",
-    "module_ondevice_llm_config_path_label": "Modellocatie",
-    "module_ondevice_llm_config_path_input_placeholder_text": "Modelpad",
-    "module_ondevice_llm_config_path_input_accessible_description": "Modelpad",
+    "module_ondevice_llm_config_label": "On Device LLM Model",
+    "module_ondevice_llm_config_path_label": "ONNX Model Locatie",
+    "module_ondevice_llm_config_path_input_placeholder_text": "Pad naar de modeldirectory",
+    "module_ondevice_llm_config_path_input_accessible_description":
+        "Een invoerveld met een selector om het pad naar de modeldirectory te specificeren waar ONNX-bestanden zich\n"
+        "bevinden. Ondersteunde modellen zijn in het ONNX-formaat, wat staat voor Open Neural Network Exchange,\n"
+        "een open standaard formaat voor machineleermodellen.",
 
     "module_ondevice_llm_config_response_temperature_label": "Temperatuur: {temperature}",
     "module_ondevice_llm_config_response_temperature_input_accessible_description":
-        "Past de willekeur van de modeluitvoer aan. Hogere waarden vergroten de creativiteit; "
-        "lagere waarden verhogen de determinisme.",
+        "Past de willekeurigheid van de modelreacties aan. Hogere waarden produceren gevarieerdere outputs,\n"
+        "terwijl lagere waarden reacties voorspelbaarder maken.",
 
-    "module_ondevice_llm_config_response_max_tokens_label": "Maximaal aantal respons tokens",
+    "module_ondevice_llm_config_response_max_tokens_label": "Maximale Respons Tokens",
     "module_ondevice_llm_config_response_max_tokens_input_accessible_description":
-        "Maximumaantal tokens om te ontvangen in respons, zoals woorden en interpunctie, "
-        "beheert de lengte van de output.",
+        "Stelt het maximale aantal tokens in dat in een reactie ontvangen kan worden, zoals woorden en interpunctie,\n"
+        "en beheert de lengte van de output.",
+
+    "module_ondevice_llm_config_prompt_history_size_label": "Grootte van de Promptgeschiedenis",
+    "module_ondevice_llm_config_prompt_history_size_input_accessible_description":
+        "Regelt het aantal invoeren in de promptgeschiedenis dat het systeem bewaart voor referentie.\n"
+        "Een waarde van nul staat een onbeperkt aantal invoeren toe."
 }

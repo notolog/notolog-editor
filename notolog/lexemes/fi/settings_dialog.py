@@ -44,17 +44,20 @@ lexemes = {
     "viewer_config_save_resources_checkbox_accessible_description":
         "Tallenna automaattisesti ulkoisten kuvien kopiot levylle offline-käyttöä varten.",
 
-    "ai_config_inference_module_label": "Päätelmämoduuli",
+    "ai_config_inference_module_label": "Päätöksentekomoduuli",
+    "ai_config_inference_module_names_combo_label": "Aktiivinen päätöksentekomoduuli",
     "ai_config_inference_module_names_combo_placeholder_text": "Valitse moduuli",
-    "ai_config_inference_module_names_combo_accessible_description": "Valittavissa olevat moduulit",
-
-    "ai_config_multi_turn_dialogue_checkbox": "Monikierroksinen dialogi, joka rakentuu aikaisempien kehotteiden "
-                                              "pohjalle kontekstuaalisen jatkuvuuden säilyttämiseksi",
-    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
-        "Monikierroksinen dialogi, joka rakentuu aikaisempien kehotteiden pohjalle kontekstuaalisen jatkuvuuden "
-        "säilyttämiseksi",
-    "ai_config_convert_to_md_checkbox": "Muunna tulos Markdowniksi",
-    "ai_config_convert_to_md_checkbox_accessible_description": "Muunna tulosviesti Markdowniksi",
+    "ai_config_inference_module_names_combo_accessible_description":
+        "Valitse käytettävissä olevista tekoälyn päättelymoduuleista, jotka toimivat AI-assistentin kanssa.\n"
+        "Vaihtoehtoihin kuuluvat paikalliset suuret kieli mallit (LLM) reaaliaikaisella käsittelyllä,\n"
+        "tai API-pohjaiset toiminnot.",
 
     "ai_config_base_label": "Perusparametrit",
+    "ai_config_multi_turn_dialogue_checkbox": "Monivaiheinen vuoropuhelu keskustelumuistilla",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
+        "Ota käyttöön monivaiheinen vuoropuhelu, joka säilyttää edellisen viestin keskustelumuistissa.\n"
+        "Kun se on pois päältä, vain uusi viesti ja järjestelmäkehote vaikuttavat vastaukseen.",
+    "ai_config_convert_to_md_checkbox": "Muunna tulos Markdown-muotoon",
+    "ai_config_convert_to_md_checkbox_accessible_description":
+        "Muunna tulosviesti Markdown-muotoon.",
 }

@@ -107,7 +107,8 @@ lexemes = {
     "message_app_config_file_access": "დაშვების უფლებები უარყოფილია {file_path} აპლიკაციის კონფიგურაციული ფაილის წვდომისას. "
                                       "დააყენეთ სწორი უფლებები სწორი ოპერაციის გარანტირებლად.",
 
-    "field_dir_path_line_edit": "აირჩიეთ დირექტორია",
+    "field_dir_path_dialog_caption": "აირჩიეთ დირექტორია",
+    "field_file_path_dialog_caption": "აირჩიეთ ფაილი",
 
     "load_file_encryption_password_mismatch": "დაშიფრვის პაროლის უთანასწორობა!",
     "load_file_encryption_password_incorrect": "დაშიფრვის პაროლი არასწორია!",

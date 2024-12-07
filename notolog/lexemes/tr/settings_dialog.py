@@ -42,16 +42,19 @@ lexemes = {
     "viewer_config_save_resources_checkbox_accessible_description":
         "Dış resimlerin kopyalarını çevrimdışı erişim için diske otomatik olarak kaydet",
 
-    "ai_config_inference_module_label": "Çıkarım modülü",
-    "ai_config_inference_module_names_combo_placeholder_text": "Modül seç",
-    "ai_config_inference_module_names_combo_accessible_description": "Seçilebilecek modüller",
-
-    "ai_config_multi_turn_dialogue_checkbox":
-        "Önceki isteklere dayanan bağlamsal sürekliliği sağlayan çok turlu diyalog",
-    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
-        "Önceki isteklere dayanan bağlamsal sürekliliği sağlayan çok turlu diyalog",
-    "ai_config_convert_to_md_checkbox": "Sonucu Markdown'a çevir",
-    "ai_config_convert_to_md_checkbox_accessible_description": "Sonuç mesajını Markdown'a çevir",
+    "ai_config_inference_module_label": "Çıkarım Modülü",
+    "ai_config_inference_module_names_combo_label": "Aktif Çıkarım Modülü",
+    "ai_config_inference_module_names_combo_placeholder_text": "Modül Seçin",
+    "ai_config_inference_module_names_combo_accessible_description":
+        "AI Asistanı ile çalışacak mevcut AI çıkarım modüllerinden seçim yapın.\n"
+        "Seçenekler, gerçek zamanlı işleme sahip büyük dil modelleri (LLM) veya API tabanlı işlevselliği içerir.",
 
     "ai_config_base_label": "Temel Parametreler",
+    "ai_config_multi_turn_dialogue_checkbox": "Konuşma hafızasına sahip çok dönüşlü diyalog",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
+        "Konuşma hafızası için önceki istemi koruyan çok dönüşlü diyaloğu etkinleştirin.\n"
+        "Devre dışı bırakıldığında, yalnızca yeni mesaj ve sistem istemi yanıtı etkiler.",
+    "ai_config_convert_to_md_checkbox": "Sonucu Markdown'a Dönüştür",
+    "ai_config_convert_to_md_checkbox_accessible_description":
+        "Çıkış mesajını Markdown formatına dönüştürün.",
 }

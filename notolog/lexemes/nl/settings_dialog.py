@@ -44,16 +44,19 @@ lexemes = {
     "viewer_config_save_resources_checkbox_accessible_description":
         "Sla automatisch kopieën van externe afbeeldingen op schijf op voor offline toegang.",
 
-    "ai_config_inference_module_label": "Inferentie module",
-    "ai_config_inference_module_names_combo_placeholder_text": "Kies module",
-    "ai_config_inference_module_names_combo_accessible_description": "Beschikbare modules om te kiezen",
-
-    "ai_config_multi_turn_dialogue_checkbox":
-        "Meerstaps dialoog die voortbouwt op eerdere prompts voor contextuele continuïteit",
-    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
-        "Meerstaps dialoog die voortbouwt op eerdere prompts voor contextuele continuïteit",
-    "ai_config_convert_to_md_checkbox": "Zet het resultaat om naar Markdown",
-    "ai_config_convert_to_md_checkbox_accessible_description": "Zet het resultaatbericht om naar Markdown",
+    "ai_config_inference_module_label": "Inferentiemodule",
+    "ai_config_inference_module_names_combo_label": "Actieve Inferentiemodule",
+    "ai_config_inference_module_names_combo_placeholder_text": "Kies een module",
+    "ai_config_inference_module_names_combo_accessible_description":
+        "Selecteer uit beschikbare AI-inferentiemodules om te werken met de AI-assistent.\n"
+        "Opties omvatten grote taalmodellen (LLM) met realtime verwerking of API-gebaseerde functionaliteiten.",
 
     "ai_config_base_label": "Basisparameters",
+    "ai_config_multi_turn_dialogue_checkbox": "Meerdere gespreksbeurten met geheugen",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
+        "Schakel een dialoog in met meerdere gespreksbeurten die de vorige prompt bewaart voor gespreksgeheugen.\n"
+        "Als het is uitgeschakeld, beïnvloeden alleen het nieuwe bericht en de systeemprompt de reactie.",
+    "ai_config_convert_to_md_checkbox": "Converteer het resultaat naar Markdown",
+    "ai_config_convert_to_md_checkbox_accessible_description":
+        "Converteer het uitvoerbericht naar Markdown-indeling.",
 }

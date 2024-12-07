@@ -29,12 +29,12 @@ from . import TooltipHelper
 import logging
 
 
-class AiMessageLabel(QLabel):
+class AIMessageLabel(QLabel):
 
     button: QPushButton = None
 
     def __init__(self, parent=None, text=None, settings=None):
-        super(AiMessageLabel, self).__init__(parent)
+        super(AIMessageLabel, self).__init__(parent)
 
         self.parent = parent
 
@@ -87,19 +87,22 @@ class AiMessageLabel(QLabel):
         frame_width = self.style().pixelMetric(QStyle.PixelMetric.PM_DefaultFrameWidth)
         self.button.move(self.rect().right() - frame_width - button_size.width(),
                          (self.rect().top() + button_size.height() + 2) // 2)
-        super(AiMessageLabel, self).resizeEvent(event)
+        super(AIMessageLabel, self).resizeEvent(event)
 
     def copy_content(self):
         # Copy text to the clipboard
-        ClipboardHelper.set_text(self.get_plain_text())
+        ClipboardHelper.set_text(self.get_text_to_copy())
         # Show tooltip
         TooltipHelper.show_tooltip(widget=self.button, text=self.lexemes.get('dialog_message_copied_tooltip'))
 
-    def get_plain_text(self):
-        # Create a QTextDocument from the label's HTML content
-        doc = QTextDocument()
-        doc.setHtml(self.text())
+    def get_text_to_copy(self):
+        # Check if the result needs to be converted from HTML to raw text.
+        if getattr(self.settings, 'ai_config_convert_to_md', False):
+            # Create a QTextDocument from the label's HTML content.
+            doc = QTextDocument()
+            doc.setHtml(self.text())
 
-        # Extract plain text, stripping out any HTML tags
-        plain_text = doc.toPlainText()
-        return plain_text
+            # Convert the HTML content to raw text.
+            return doc.toRawText()
+
+        return self.text()

@@ -16,6 +16,7 @@ License: MIT License
 For detailed instructions and project information, please see the repository's README.md.
 """
 
+# This import is essential for proper module loading.
 from .module_core import ModuleCore
 
 from .. import AppConfig

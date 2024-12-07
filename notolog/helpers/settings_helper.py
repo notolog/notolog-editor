@@ -133,7 +133,7 @@ class SettingsHelper:
         # value = self.encrypt_data(value)
         # settings.setValue(param_name, value)
 
-    def parse_object_name(self, object_name: str):
+    def parse_object_name(self, object_name: str) -> list:
         if object_name.__contains__(":"):
             object_name_parts = object_name.split(":")
             if len(object_name_parts) == 2:
@@ -144,4 +144,4 @@ class SettingsHelper:
                     self.logger.warning(f"Object name in a wrong format '{object_name}'")
         else:
             # lexeme_key, setting_name
-            return object_name, object_name
+            return [object_name, object_name]

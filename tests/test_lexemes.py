@@ -19,8 +19,8 @@ class TestLexemes:
         May contain minimal logic for testing purposes.
         """
 
-        # Get the parameter value(s) from the request
-        language, lexemes, lexemes_dir = request.param if hasattr(request, 'param') else None
+        # Retrieve parameter values from the test request.
+        language, lexemes, lexemes_dir = request.param
 
         if lexemes:
             """
@@ -50,7 +50,7 @@ class TestLexemes:
         This method is used only for passing params via pytest fixture.
         """
 
-        # Get the parameter value(s) from the request
+        # Retrieve parameter values from the test request.
         param_values = request.param
 
         yield param_values

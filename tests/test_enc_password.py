@@ -10,8 +10,8 @@ class TestEncPassword:
     @pytest.fixture(scope="function", autouse=True)
     def test_obj_enc_password(self, request):
 
-        # Get the parameter value(s) from the request
-        password, hint = request.param if hasattr(request, 'param') else None
+        # Retrieve parameter values from the test request.
+        password, hint = request.param
 
         _enc_password = EncPassword()
         _enc_password.password = password
@@ -21,7 +21,7 @@ class TestEncPassword:
 
     @pytest.fixture(scope="function")
     def test_exp_params_fixture(self, request):
-        # Get the parameter value(s) from the request
+        # Retrieve parameter values from the test request.
         password, hint = request.param
 
         yield password, hint

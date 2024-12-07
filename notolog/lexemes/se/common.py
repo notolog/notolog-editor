@@ -105,7 +105,8 @@ lexemes = {
     "message_app_config_file_access": "Åtkomst nekad när man försöker komma åt appens konfigurationsfil på {file_path}. "
                                       "Ställ in rätt behörigheter för att säkerställa korrekt drift.",
 
-    "field_dir_path_line_edit": "Välj katalog",
+    "field_dir_path_dialog_caption": "Välj Katalog",
+    "field_file_path_dialog_caption": "Välj Fil",
 
     "load_file_encryption_password_mismatch": "Krypteringslösenordet stämmer inte!",
     "load_file_encryption_password_incorrect": "Fel krypteringslösenord!",

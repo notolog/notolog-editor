@@ -106,7 +106,8 @@ lexemes = {
     "message_app_config_file_access": "Доступ запрещен при обращении к файлу настроек приложения в {file_path}. "
                                       "Установите корректные разрешения для обеспечения правильной работы.",
 
-    "field_dir_path_line_edit": "Выбрать каталог",
+    "field_dir_path_dialog_caption": "Выбрать каталог",
+    "field_file_path_dialog_caption": "Выбрать файл",
 
     "load_file_encryption_password_mismatch": "Несоответствие пароля шифрования!",
     "load_file_encryption_password_incorrect": "Неверный пароль шифрования!",

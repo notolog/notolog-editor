@@ -106,7 +106,8 @@ lexemes = {
     "message_app_config_file_access": "Permissio negata cum accedere ad configurationem applicationis limam in {file_path}. "
                                       "Constitue rectas permissiones ut operationem debitam asseguras.",
 
-    "field_dir_path_line_edit": "Select Directory",
+    "field_dir_path_dialog_caption": "Directory Select",
+    "field_file_path_dialog_caption": "File Select",
 
     "load_file_encryption_password_mismatch": "Signi codicis discrepantia!",
     "load_file_encryption_password_incorrect": "Signum codicis incorrectum!",

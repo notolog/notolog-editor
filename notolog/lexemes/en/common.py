@@ -104,7 +104,8 @@ lexemes = {
     "message_app_config_file_access": "Permission denied when accessing the app configuration file at {file_path}. "
         "Set the correct permissions to ensure proper operation.",
 
-    "field_dir_path_line_edit": "Select Directory",
+    "field_dir_path_dialog_caption": "Select Directory",
+    "field_file_path_dialog_caption": "Select File",
 
     "load_file_encryption_password_mismatch": "Encryption password mismatch!",
     "load_file_encryption_password_incorrect": "Incorrect encryption password!",

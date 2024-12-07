@@ -15,8 +15,8 @@ class TestEncHelper:
     @pytest.fixture(scope="function", autouse=True)
     def test_obj_enc_password(self, request):
 
-        # Get the parameter value(s) from the request
-        password = request.param if hasattr(request, 'param') else None
+        # Retrieve parameter values from the test request.
+        password = request.param
 
         _enc_password = EncPassword()
         _enc_password.password = password
@@ -26,7 +26,7 @@ class TestEncHelper:
 
     @pytest.fixture(scope="function", autouse=True)
     def test_obj_enc_helper(self, mocker, test_obj_enc_password, request):
-        # Get the parameter value(s) from the request
+        # Retrieve parameter values from the test request.
         salt, iterations = request.param
 
         # Force fallback default to avoid settings default
@@ -39,7 +39,7 @@ class TestEncHelper:
 
     @pytest.fixture(scope="function")
     def test_exp_params_fixture(self, request):
-        # Get the parameter value(s) from the request
+        # Retrieve parameter values from the test request.
         password, salt, iterations = request.param
 
         yield password, salt, iterations

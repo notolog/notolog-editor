@@ -6,6 +6,14 @@ QTabBar::tab {
 QTabBar::tab:selected {
     color: whiteSmoke;
 }
+/* Scroll area */
+QScrollArea {
+    border: none;
+    background: transparent;
+}
+QScrollArea > QWidget > QWidget {
+    background: transparent;
+}
 QComboBox {}
 QComboBox::separator {
     height: 1px;
@@ -44,4 +52,10 @@ QSlider::handle:horizontal {
 QPushButton#settings_dialog_button_close {
     color: white;
     background-color: firebrick;
+}
+/* Styling for hint tooltips */
+QToolTip {
+    color: #fefefe;
+    background-color: goldenrod;
+    padding: 5px;
 }

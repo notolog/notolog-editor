@@ -110,7 +110,8 @@ lexemes = {
     "message_app_config_file_access": "Άρνηση πρόσβασης κατά την πρόσβαση στο αρχείο διαμόρφωσης εφαρμογής στο {file_path}. "
                                       "Ορίστε τα σωστά δικαιώματα για να διασφαλίσετε τη σωστή λειτουργία.",
 
-    "field_dir_path_line_edit": "Επιλέξτε Κατάλογο",
+    "field_dir_path_dialog_caption": "Επιλέξτε Κατάλογο",
+    "field_file_path_dialog_caption": "Επιλέξτε Αρχείο",
 
     "load_file_encryption_password_mismatch": "Αναντιστοιχία κωδικού κρυπτογράφησης!",
     "load_file_encryption_password_incorrect": "Λάθος κωδικός κρυπτογράφησης!",

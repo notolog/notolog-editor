@@ -1,6 +1,28 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.0.7] - 2024-12-07
+
+### Added
+- Added the 'Module llama.cpp' to the AI Assistant to support the GGUF model format and inference capabilities. This module utilizes the `llama-cpp-python` package, which provides Python bindings for `llama.cpp`.
+- Added text hints to the settings dialog labels to help distinguish the fields, providing quick notes on their purpose.
+- Added more tests, particularly for AI Assistant modules and their prompt managers.
+- Added new lexemes and updated existing ones to support release changes.
+
+### Changed
+- Renamed `AiMessageLabel` to `AIMessageLabel` to match the `AIAssistant` class name convention.
+- Changed the location of the `AppPackage` config file to the app's root directory.
+
+### Updated
+- Refactored the settings dialog to enable scrolling through tab content and to expand the set of adjustable fields for AI Assistant modules.
+- Updated the prompt managers in AI Assistant modules to enhance performance and improve user interactions.
+- Enhanced the message copying functionality in the AI Assistant window by ensuring that text is checked for Markdown conversion when needed and is appropriately handled.
+- Set the minimum token count to zero for the 'OpenAI API' and 'On Device LLM' modules.
+- Adjusted dependency specification constraints in `pyproject.toml` to enhance compatibility.
+
+### Fixed
+- Fixed missing link color properties that were defaulting to the default styles of the 'Nocturne', 'Dark Noir', and 'Spooky' themes.
+
 ## [1.0.6] - 2024-11-24
 
 ### Added

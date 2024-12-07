@@ -44,13 +44,18 @@ lexemes = {
         "オフラインアクセスのために外部画像のコピーをディスクに自動保存します。",
 
     "ai_config_inference_module_label": "推論モジュール",
+    "ai_config_inference_module_names_combo_label": "アクティブ推論モジュール",
     "ai_config_inference_module_names_combo_placeholder_text": "モジュールを選択",
-    "ai_config_inference_module_names_combo_accessible_description": "選択可能なモジュール",
+    "ai_config_inference_module_names_combo_accessible_description":
+        "AIアシスタントと連携して動作する利用可能なAI推論モジュールから選択してください。\n"
+        "オプションには、リアルタイム処理を備えたローカルの大規模言語モデル（LLM）またはAPIベースの機能が含まれます。",
 
-    "ai_config_multi_turn_dialogue_checkbox": "以前のプロンプトに基づいて構築されるマルチターン対話",
-    "ai_config_multi_turn_dialogue_checkbox_accessible_description": "以前のプロンプトに基づいて構築されるマルチターン対話",
+    "ai_config_base_label": "基本パラメーター",
+    "ai_config_multi_turn_dialogue_checkbox": "会話メモリを伴うマルチターンダイアログ",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
+        "以前のプロンプトを保持する会話メモリ付きのマルチターンダイアログを有効にします。\n"
+        "オフの場合、新しいメッセージとシステムプロンプトのみが応答に影響します。",
     "ai_config_convert_to_md_checkbox": "結果をMarkdownに変換",
-    "ai_config_convert_to_md_checkbox_accessible_description": "結果のメッセージをMarkdownに変換",
-
-    "ai_config_base_label": "基本パラメータ",
+    "ai_config_convert_to_md_checkbox_accessible_description":
+        "出力メッセージをMarkdown形式に変換します。",
 }

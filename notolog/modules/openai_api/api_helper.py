@@ -42,13 +42,13 @@ class ApiHelper:
         return cls._instance
 
     def __init__(self, parent=None):
-        # Check if instance is already initialized
+        # Prevent re-initialization if the instance is already set up.
         if hasattr(self, 'logger'):
             return
 
-        # Ensure that the initialization check and the setting of 'modules' param are atomic.
+        # Use a lock to ensure initialization is thread-safe and atomic.
         with self._lock:
-            # This prevents race conditions.
+            # Double-check to prevent race conditions during initialization.
             if hasattr(self, 'logger'):
                 return
 
@@ -63,7 +63,7 @@ class ApiHelper:
 
     def init_request(self, api_url, api_key) -> QNetworkRequest:
 
-        url = QUrl(api_url)  # API entrypoint
+        url = QUrl(api_url)  # API endpoint
         request = QNetworkRequest(url)
 
         # Set Authorization header

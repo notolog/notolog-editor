@@ -46,15 +46,19 @@ lexemes = {
         "Automatice servat exemplaria imaginum externarum in disco ad usum sine nexu.",
 
     "ai_config_inference_module_label": "Modulus Inferentiae",
+    "ai_config_inference_module_names_combo_label": "Modulus Inferentiae Activus",
     "ai_config_inference_module_names_combo_placeholder_text": "Modulum Elige",
-    "ai_config_inference_module_names_combo_accessible_description": "Moduli eligibiles",
+    "ai_config_inference_module_names_combo_accessible_description":
+        "Elige ex modulis inferentiae AI praesto ut opera cum Auxiliario AI gerantur.\n"
+        "Optiones includunt magnos linguarum modelos (LLM) cum processione temporis realis aut functiones\n"
+        "quae sunt basis API.",
 
-    "ai_config_multi_turn_dialogue_checkbox":
-        "Dialogus multis vicibus qui super praemissis innititur ad continuitatem contextualem",
+    "ai_config_base_label": "Parametri Fundamentales",
+    "ai_config_multi_turn_dialogue_checkbox": "Dialogus Multiplex cum Memoria Sermonis",
     "ai_config_multi_turn_dialogue_checkbox_accessible_description":
-        "Dialogus multis vicibus qui super praemissis innititur ad continuitatem contextualem",
-    "ai_config_convert_to_md_checkbox": "Convertit resultat ad Markdown",
-    "ai_config_convert_to_md_checkbox_accessible_description": "Convertit nuntium resultat ad Markdown",
-
-    "ai_config_base_label": "Parametri Principes",
+        "Permitte dialogum multiplex qui ultimam praeceptionem ad memoriam sermonis retinet.\n"
+        "Si deactivatum, tantum novum nuntium et praeceptum systematis responsionem afficiunt.",
+    "ai_config_convert_to_md_checkbox": "Resultatum in Markdown Convertere",
+    "ai_config_convert_to_md_checkbox_accessible_description":
+        "Convertere nuntium exitu in formam Markdown.",
 }

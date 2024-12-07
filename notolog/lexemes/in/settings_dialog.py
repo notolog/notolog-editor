@@ -44,15 +44,18 @@ lexemes = {
         "ऑफ़लाइन पहुंच के लिए बाहरी छवियों की स्वचालित प्रतिलिपियाँ डिस्क में सहेजें।",
 
     "ai_config_inference_module_label": "अनुमान मॉड्यूल",
+    "ai_config_inference_module_names_combo_label": "सक्रिय अनुमान मॉड्यूल",
     "ai_config_inference_module_names_combo_placeholder_text": "मॉड्यूल चुनें",
-    "ai_config_inference_module_names_combo_accessible_description": "चुनने के लिए उपलब्ध मॉड्यूल",
-
-    "ai_config_multi_turn_dialogue_checkbox":
-        "पिछले प्रॉम्प्ट्स पर आधारित मल्टी-टर्न डायलॉग जो सांदर्भिक निरंतरता प्रदान करता है",
-    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
-        "पिछले प्रॉम्प्ट्स पर आधारित मल्टी-टर्न डायलॉग जो सांदर्भिक निरंतरता प्रदान करता है",
-    "ai_config_convert_to_md_checkbox": "परिणाम को Markdown में परिवर्तित करें",
-    "ai_config_convert_to_md_checkbox_accessible_description": "परिणाम संदेश को Markdown में परिवर्तित करें",
+    "ai_config_inference_module_names_combo_accessible_description":
+        "AI सहायक के साथ संचालन के लिए उपलब्ध AI अनुमान मॉड्यूलों में से चुनें।\n"
+        "विकल्पों में वास्तविक समय प्रसंस्करण के साथ बड़े भाषा मॉडल (LLM) या API-आधारित कार्यक्षमताएं शामिल हैं।",
 
     "ai_config_base_label": "मूल पैरामीटर",
+    "ai_config_multi_turn_dialogue_checkbox": "संवादी स्मृति के साथ मल्टी-टर्न संवाद",
+    "ai_config_multi_turn_dialogue_checkbox_accessible_description":
+        "संवादी स्मृति के लिए अंतिम संकेत को बनाए रखने वाला मल्टी-टर्न संवाद सक्षम करें।\n"
+        "बंद होने पर, केवल नया संदेश और सिस्टम प्रॉम्प्ट प्रतिक्रिया को प्रभावित करते हैं।",
+    "ai_config_convert_to_md_checkbox": "परिणाम को Markdown में बदलें",
+    "ai_config_convert_to_md_checkbox_accessible_description":
+        "आउटपुट संदेश को Markdown प्रारूप में बदलें।",
 }

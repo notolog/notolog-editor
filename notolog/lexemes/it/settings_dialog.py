@@ -45,16 +45,20 @@ lexemes = {
     "viewer_config_save_resources_checkbox_accessible_description":
         "Salva automaticamente copie delle immagini esterne sul disco per l'accesso offline.",
 
-    "ai_config_inference_module_label": "Modulo di inferenza",
-    "ai_config_inference_module_names_combo_placeholder_text": "Scegli modulo",
-    "ai_config_inference_module_names_combo_accessible_description": "Moduli disponibili da scegliere",
+    "ai_config_inference_module_label": "Modulo di Inferenza",
+    "ai_config_inference_module_names_combo_label": "Modulo di Inferenza Attivo",
+    "ai_config_inference_module_names_combo_placeholder_text": "Scegli Modulo",
+    "ai_config_inference_module_names_combo_accessible_description":
+        "Seleziona tra i moduli di inferenza AI disponibili per operare con l'Assistente AI.\n"
+        "Le opzioni includono modelli di linguaggio di grandi dimensioni (LLM) con elaborazione in tempo reale,\n"
+        "o funzionalità basate su API.",
 
-    "ai_config_multi_turn_dialogue_checkbox":
-        "Dialogo multi-turn che si basa su prompt precedenti per la continuità contestuale",
+    "ai_config_base_label": "Parametri di base",
+    "ai_config_multi_turn_dialogue_checkbox": "Dialogo multi-turno con memoria conversazionale",
     "ai_config_multi_turn_dialogue_checkbox_accessible_description":
-        "Dialogo multi-turn che si basa su prompt precedenti per la continuità contestuale",
+        "Abilita un dialogo multi-turno che conserva il prompt precedente per la memoria conversazionale.\n"
+        "Quando disattivato, solo il nuovo messaggio e il prompt di sistema influenzano la risposta.",
     "ai_config_convert_to_md_checkbox": "Converti il risultato in Markdown",
-    "ai_config_convert_to_md_checkbox_accessible_description": "Converti il messaggio del risultato in Markdown",
-
-    "ai_config_base_label": "Parametri Base",
+    "ai_config_convert_to_md_checkbox_accessible_description":
+        "Converte il messaggio di output in formato Markdown.",
 }

@@ -71,13 +71,13 @@ class Settings(QSettings):
             parent (optional): Parent object
         """
 
-        # Check if instance is already initialized
+        # Prevent re-initialization if the instance is already set up.
         if hasattr(self, 'settings'):
             return
 
-        # Ensure that the initialization check and the setting of 'modules' param are atomic.
+        # Use a lock to ensure initialization is thread-safe and atomic.
         with self._lock:
-            # This prevents race conditions.
+            # Double-check to prevent race conditions during initialization.
             if hasattr(self, 'settings'):
                 return
 

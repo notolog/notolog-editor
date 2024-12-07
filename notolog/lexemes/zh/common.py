@@ -101,7 +101,8 @@ lexemes = {
 
     "message_app_config_file_access": "访问应用配置文件 {file_path} 时权限被拒绝。请设置正确的权限以确保正常操作。",
 
-    "field_dir_path_line_edit": "选择目录",
+    "field_dir_path_dialog_caption": "选择目录",
+    "field_file_path_dialog_caption": "选择文件",
 
     "load_file_encryption_password_mismatch": "加密密码不匹配!",
     "load_file_encryption_password_incorrect": "加密密码错误!",

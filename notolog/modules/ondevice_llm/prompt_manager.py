@@ -35,10 +35,11 @@ class PromptManager(QObject):
     in some applications/frameworks. This inclusion often yields more reliable results.
     """
     bos_token = '<|endoftext|>'
+    system_prompt_template = '<|system|>\n{system}<|end|>\n'
     prompt_template = '<|user|>\n{input}<|end|>\n<|assistant|>\n'
     prompt_multi_template = '<|user|>\n{input}<|end|>\n<|assistant|>\n{output}<|end|>\n'
 
-    supported_roles = ['user', 'assistant']
+    supported_roles = ['system', 'user', 'assistant']
 
     _instance = None  # Singleton instance
     _lock = Lock()
@@ -56,46 +57,61 @@ class PromptManager(QObject):
     @classmethod
     def reload(cls, *args, **kwargs):
         """
-       Reinitialize the singleton instance. This method allows for the controlled
-       re-creation of the singleton instance.
-       """
+        Reinitialize the singleton instance to allow controlled re-creation.
+        """
         with cls._lock:
             # Create a new instance
-            cls._instance = super().__new__(cls)
+            cls._instance = super().__new__(cls, *args, **kwargs)
 
-    def __init__(self, max_history_size=10, parent=None):
+    def __init__(self, system_prompt=None, max_history_size=None, parent=None):
 
-        # Check if instance is already initialized
+        # Prevent re-initialization if the instance is already set up.
         if hasattr(self, 'logger'):
             return
 
-        # Ensure that the initialization check and the setting of 'modules' param are atomic.
+        # Use a lock to ensure initialization is thread-safe and atomic.
         with self._lock:
-            # This prevents race conditions.
+            # Double-check to prevent race conditions during initialization.
             if hasattr(self, 'logger'):
                 return
 
             super().__init__(parent)
-
-            self.parent = parent
 
             self.logger = logging.getLogger('ondevice_llm_prompt_manager')
 
             self.logging = AppConfig().get_logging()
             self.debug = AppConfig().get_debug()
 
+            self.system_input = system_prompt  # Not yet supported
             self.max_history_size = max_history_size
 
             self.init_history()
 
-            # Catch new message added signal
-            self.parent.message_added.connect(self.add_message)
+            if parent and hasattr(parent, 'message_added'):
+                # Catch new message added signal
+                parent.message_added.connect(self.add_message)
 
     def init_history(self):
+        """
+        Initializes or resets the prompt history.
+        This method clears existing history and sets up a system prompt if one is provided.
+        """
+
         if self.logging:
             self.logger.info('Re-initializing prompt history')
+
         # Start from new
         self.history = []
+
+        # Init system prompt if set
+        if self.system_input is not None:
+            self.add_system(self.system_input)
+
+    def get_system_prompt_message(self) -> str:
+        if self.system_input is None:
+            return ''
+        # Template with the <|system|> token.
+        return f'{PromptManager.system_prompt_template.format(system=self.system_input)}'
 
     def get_prompt_message(self, request_text: str) -> str:
         # The conversation template: a simple prompt with an open <|assistant|> token.
@@ -106,22 +122,25 @@ class PromptManager(QObject):
 
     def get_multi_turn_prompt_message(self, request_text: str, response_text: str = '', is_last_input=False) -> str:
         # The conversation template: a multi-turn template.
-        # The history must already contain the last input.
+        prompt = self.get_system_prompt_message()
+
         if not is_last_input:
             # multi-turn template with response
-            prompt = f'{PromptManager.prompt_multi_template.format(input=request_text, output=response_text)}'
+            prompt += f'{PromptManager.prompt_multi_template.format(input=request_text, output=response_text)}'
         else:
             # last user message is a simple prompt with an open <|assistant|> token
-            prompt = f'{PromptManager.prompt_template.format(input=request_text)}'
+            prompt += f'{PromptManager.prompt_template.format(input=request_text)}'
+
         return prompt
 
     def get_prompt(self, multi_turn=True) -> Any:
         if multi_turn:
             prompt = self.format_history()
         else:
+            prompt = self.get_system_prompt_message()
             last_user_message = self.find_last_message_by_role('user')
             if last_user_message and 'text' in last_user_message:
-                prompt = self.get_prompt_message(request_text=last_user_message['text'])
+                prompt += self.get_prompt_message(request_text=last_user_message['text'])
             else:
                 if self.logging:
                     self.logger.warning('No user message has found for prompt')
@@ -138,6 +157,22 @@ class PromptManager(QObject):
         else:
             # Default or info message; not for prompt
             pass
+
+    def add_system(self, system_instruct, msg_id=None):
+        """
+        Add a new request to the history, initially without a response.
+
+        Args:
+            system_instruct (str): The text of the request.
+            msg_id (int, optional): The unique message ID of the request.
+        """
+
+        if self.find_last_message_by_role('system'):
+            return
+
+        self.history.append({
+            'system': {'text': system_instruct, 'msg_id': msg_id},
+        })
 
     def add_request(self, request_text, request_msg_id):
         """
@@ -163,7 +198,7 @@ class PromptManager(QObject):
             request_msg_id (int): The request message ID to which this response corresponds.
         """
         for i, record in enumerate(self.history):
-            if record['user']['msg_id'] == request_msg_id:
+            if 'user' in record and record['user']['msg_id'] == request_msg_id:
                 record['assistant'] = {'text': response_text, 'msg_id': response_msg_id}
                 # Update history
                 self.history[i] = record
@@ -174,7 +209,7 @@ class PromptManager(QObject):
 
         # Handle unmatched response by finding empty response
         for i, record in enumerate(self.history):
-            if record['assistant'] is None:  # Find the first request without a response
+            if 'assistant' in record and record['assistant'] is None:  # Find the first request without a response
                 record['assistant'] = {'text': response_text, 'msg_id': response_msg_id}
                 # Update history
                 self.history[i] = record
@@ -182,22 +217,27 @@ class PromptManager(QObject):
 
     def format_history(self):
         """
-        Format the stored history of requests and responses into a text format.
+        Formats the stored history of prompts into a structured text format suitable for use in generating responses.
+        This includes structuring each entry with proper roles and ensuring they are correctly sequenced for
+        dialogue continuation.
 
         Returns:
             str: A string representing the formatted history.
         """
+
+        formatted_history = self.bos_token + self.get_system_prompt_message()
 
         last_user_msg_id = None
         # Find the last message id for user input (assistant message is in the same object)
         last_user_message = self.find_last_message_by_role('user')
         if last_user_message and 'msg_id' in last_user_message:
             last_user_msg_id = last_user_message['msg_id']
+        else:
+            return formatted_history
 
-        formatted_history = self.bos_token
         for record in self.history:
             request_text = record['user']['text']
-            response_text = record['assistant']['text'] if record['assistant'] else ""
+            response_text = record['assistant']['text'] if record['assistant'] is not None else ""
             formatted_history += self.get_multi_turn_prompt_message(
                 request_text=request_text, response_text=response_text,
                 # History is always multi-turn, check either the input was a last message
@@ -210,27 +250,46 @@ class PromptManager(QObject):
         result = ''
         # Format each entry and combine them into a text
         for entry in self.history:
+            # Extracting system information
+            system_text = ""
+            if 'system' in entry and entry['system'] is not None:
+                system = entry['system']
+                system_text = f"**system**:\n{system['text']}\n\n"
+
             # Extracting user information
-            user = entry['user']
-            user_text = f"**User**:\n{user['text']}\n\n"
+            user_text = ""
+            if 'user' in entry and entry['user'] is not None:
+                user = entry['user']
+                user_text = f"**user**:\n{user['text']}\n\n"
 
             # Extracting assistant information if it exists
             assistant_text = ""
             if 'assistant' in entry and entry['assistant'] is not None:
                 assistant = entry['assistant']
-                assistant_text = f"**Assistant**:\n{assistant['text']}\n\n"
+                assistant_text = f"**assistant**:\n{assistant['text']}\n\n"
 
-            # Concatenating user and assistant text
-            result += user_text + assistant_text
+            # Concatenating system, user and assistant texts
+            result += system_text + user_text + assistant_text
 
         return result.strip()
 
     def limit_history_size(self):
         """
-        Ensures the history does not exceed the maximum size.
+        Ensures the history does not exceed the maximum specified size.
+        If a system prompt is set, it retains the system prompt at the beginning of the history,
+        and removes the oldest records to maintain the history within the specified size limit.
         """
-        while len(self.history) > self.max_history_size:
-            self.history.pop(0)  # Remove the oldest record
+
+        if self.max_history_size:
+            # Calculate the additional index offset if a system prompt is included
+            system_prompt_shift = 1 if self.system_input else 0
+            # Calculate the total allowed history size including the system prompt
+            allowed_history_size = self.max_history_size + system_prompt_shift
+
+            # Remove entries until the history size is within the allowed limit
+            while len(self.history) > allowed_history_size:
+                # Remove the oldest record, keeping the system prompt intact if present
+                self.history.pop(system_prompt_shift)  # Pop from the first non-prompt position
 
     def find_last_message_by_role(self, role: str) -> Union[dict, None]:
         if role not in PromptManager.supported_roles:

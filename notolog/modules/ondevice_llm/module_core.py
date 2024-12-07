@@ -18,7 +18,7 @@ For detailed instructions and project information, please see the repository's R
 """
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QVBoxLayout, QWidget, QLabel, QSpinBox, QSlider, QSizePolicy
+from PySide6.QtWidgets import QVBoxLayout, QWidget, QLabel, QSpinBox, QSlider, QSizePolicy, QScrollArea
 
 import os
 import logging
@@ -40,6 +40,8 @@ from .. import Lexemes
 
 from ...ui.ai_assistant import EnumMessageType, EnumMessageStyle
 from ...ui.dir_path_line_edit import DirPathLineEdit
+from ...ui.horizontal_line_spacer import HorizontalLineSpacer
+from ...ui.label_with_hint import LabelWithHint
 
 if TYPE_CHECKING:
     # ONNX Runtime GenAI
@@ -68,11 +70,10 @@ class ModuleCore(BaseAiCore):
         super(ModuleCore, self).__init__()
 
         self.settings = Settings(parent=self)
-        # TODO check connections
         self.settings.value_changed.connect(
             lambda v: self.settings_update_handler(v))
 
-        self.logger = logging.getLogger('ondevice_llm_module')
+        self.logger = logging.getLogger('module_ondevice_llm')
 
         self.logging = AppConfig().get_logging()
         self.debug = AppConfig().get_debug()
@@ -116,7 +117,8 @@ class ModuleCore(BaseAiCore):
         Prompt manager for prompt management and to add / append messages to prompt history.
         Note: It may not be initiated if called out of the context, from settings for example.
         """
-        self.prompt_manager = PromptManager(parent=ai_dialog)
+        self.prompt_manager = PromptManager(max_history_size=self.settings.module_ondevice_llm_prompt_history_size,
+                                            parent=ai_dialog)
 
     def get_prompt_manager(self):
         return self.prompt_manager
@@ -283,27 +285,37 @@ class ModuleCore(BaseAiCore):
     def extend_settings_dialog_fields_conf(self, tab_widget) -> list:
         # On Device LLM Config
         tab_ondevice_llm_config = QWidget()
-        tab_ondevice_llm_config.setObjectName('settings_dialog_tab_ondevice_llm_config')
 
-        # Layout for the On Device LLM Config tab
+        # Create the scroll area
+        scroll_area = QScrollArea()
+        scroll_area.setObjectName('settings_dialog_tab_ondevice_llm_config')
+        scroll_area.setWidgetResizable(True)
+
+        # Define the layout for the On Device LLM configuration tab
         tab_ondevice_llm_config_layout = QVBoxLayout(tab_ondevice_llm_config)
 
-        tab_widget.addTab(tab_ondevice_llm_config, self.lexemes.get('tab_ondevice_llm_config'))
+        # Set the content widget inside the scroll area
+        scroll_area.setWidget(tab_ondevice_llm_config)
+
+        tab_widget.addTab(scroll_area, self.lexemes.get('tab_ondevice_llm_config'))
 
         return [
             # [On Device LLM config]
-            # Block label
+            # Label for the configuration block
             {"type": QLabel, "name": "settings_dialog_module_ondevice_llm_config_label",
              "props": {"setProperty": ("class", "group-header-label")},
              "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('module_ondevice_llm_config_label'), "style": {"bold": True},
              "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj)},
-            # Model path line input label
-            {"type": QLabel, "name": "settings_dialog_ondevice_llm_config_path_label",
+            # Label for the model path input field
+            {"type": LabelWithHint, "kwargs": {
+                "tooltip": ('module_ondevice_llm_config_path_input_accessible_description',
+                            self.lexemes.get('module_ondevice_llm_config_path_input_accessible_description'))},
+             "name": "settings_dialog_module_ondevice_llm_config_path_label",
              "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('module_ondevice_llm_config_path_label'),
              "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
-            # Model path line input
+            # Input field for the model path
             {"type": DirPathLineEdit, "kwargs": {"settings": self.settings},
              "name": "settings_dialog_ondevice_llm_config_path:module_ondevice_llm_model_path",
              "read_only": False, "max_length": 256,
@@ -311,16 +323,19 @@ class ModuleCore(BaseAiCore):
              "placeholder_text": self.lexemes.get('module_ondevice_llm_config_path_input_placeholder_text'),
              "accessible_description":
                  self.lexemes.get('module_ondevice_llm_config_path_input_accessible_description')},
-            # Spacer
+            # Vertical spacer
             {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum),
              "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj)},
-            # Base response temperature label
-            {"type": QLabel, "name": "settings_dialog_module_ondevice_llm_config_response_temperature_label",
+            # Label for the temperature slider
+            {"type": LabelWithHint, "kwargs": {
+                "tooltip": ('module_ondevice_llm_config_response_temperature_input_accessible_description',
+                            self.lexemes.get('module_ondevice_llm_config_response_temperature_input_accessible_description'))},
+             "name": "settings_dialog_module_ondevice_llm_config_response_temperature_label",
              "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('module_ondevice_llm_config_response_temperature_label',
                                       temperature=self.settings.module_ondevice_llm_response_temperature),
              "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
-            # Base response temperature slider
+            # Slider to adjust the temperature setting
             {"type": QSlider, "args": [Qt.Orientation.Horizontal],
              "props": {'setFocusPolicy': Qt.FocusPolicy.StrongFocus, 'setTickPosition': QSlider.TickPosition.TicksAbove,
                        'setTickInterval': 5, 'setSingleStep': 5, 'setMinimum': 0, 'setMaximum': 100},
@@ -330,23 +345,44 @@ class ModuleCore(BaseAiCore):
              "on_value_change": self.temperature_change_handler,
              "accessible_description":
                  self.lexemes.get('module_ondevice_llm_config_response_temperature_input_accessible_description')},
-            # Spacer
+            # Vertical spacer
             {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum),
              "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj)},
-            # Base response max tokens label
-            {"type": QLabel, "name": "settings_dialog_module_ondevice_llm_config_response_max_tokens_label",
+            # Label for the maximum token count setting
+            {"type": LabelWithHint, "kwargs": {
+                "tooltip": ('module_ondevice_llm_config_response_max_tokens_input_accessible_description',
+                            self.lexemes.get('module_ondevice_llm_config_response_max_tokens_input_accessible_description'))},
+             "name": "settings_dialog_module_ondevice_llm_config_response_max_tokens_label",
              "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('module_ondevice_llm_config_response_max_tokens_label'),
              "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
-            # Base response max tokens input
-            {"type": QSpinBox, "props": {'setMinimum': 1, 'setMaximum': 65536},  # Update the highest range
+            # Input field for the maximum token count setting
+            {"type": QSpinBox, "props": {'setMinimum': 0, 'setMaximum': 65536},  # Update the highest range
              "size_policy": (QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred),
              "name": "settings_dialog_module_ondevice_llm_config_response_max_tokens:"
                      "module_ondevice_llm_response_max_tokens",
              "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
              "accessible_description":
                  self.lexemes.get('module_ondevice_llm_config_response_max_tokens_input_accessible_description')},
-            # Spacer to keep elements above on top
+            # Horizontal line spacer
+            {"type": HorizontalLineSpacer, "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj)},
+            # Label for the prompt history maximum capacity settings
+            {"type": LabelWithHint, "kwargs": {
+                "tooltip": ('module_ondevice_llm_config_prompt_history_size_input_accessible_description',
+                            self.lexemes.get('module_ondevice_llm_config_prompt_history_size_input_accessible_description'))},
+             "name": "settings_dialog_module_ondevice_llm_config_prompt_history_size_label",
+             "alignment": Qt.AlignmentFlag.AlignLeft,
+             "text": self.lexemes.get('module_ondevice_llm_config_prompt_history_size_label'),
+             "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
+            # Input field for the prompt history maximum capacity setting
+            {"type": QSpinBox, "props": {'setMinimum': 0, 'setMaximum': 65536},  # Update the highest range
+             "size_policy": (QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred),
+             "name": "settings_dialog_module_ondevice_llm_config_prompt_history_size:"
+                     "module_ondevice_llm_prompt_history_size",
+             "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
+             "accessible_description":
+                 self.lexemes.get('module_ondevice_llm_config_prompt_history_size_input_accessible_description')},
+            # Spacer to align elements at the top of the layout
             {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding),
              "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj)},
         ]
@@ -361,6 +397,7 @@ class ModuleCore(BaseAiCore):
             extend_func("module_ondevice_llm_model_path", str, "")
             extend_func("module_ondevice_llm_response_temperature", int, 20)
             extend_func("module_ondevice_llm_response_max_tokens", int, 2048)
+            extend_func("module_ondevice_llm_prompt_history_size", int, 0)
 
     def settings_update_handler(self, data) -> None:
         """

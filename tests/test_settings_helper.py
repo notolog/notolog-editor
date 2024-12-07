@@ -14,7 +14,7 @@ class TestSettingsHelper:
 
     @pytest.fixture(scope="function", autouse=True)
     def test_obj_settings_helper(self, mocker, request):
-        # Get the parameter value(s) from the request
+        # Retrieve parameter values from the test request.
         env_values, app_config_key, generated_key = request.param
 
         mocker.patch.object(AppConfig, 'get_logging', return_value=False)

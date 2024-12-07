@@ -27,7 +27,7 @@ QLabel#value_widget {
     text-align: left;
 }
 QPushButton#value_widget_link {
-    color: deeppink;
+    color: deepPink;
     text-decoration: underline;
     border: none;
     background-color: transparent;
@@ -39,6 +39,6 @@ QPushButton#value_widget_icon_link {
 }
 QPushButton#value_widget_link:hover {
     color: white;
-    background-color: hotpink;
+    background-color: hotPink;
     text-decoration: none;
 }

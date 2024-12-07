@@ -46,15 +46,18 @@ lexemes = {
         "Автоматически сохраняет копии внешних изображений на диск для доступа без подключения к интернету.",
 
     "ai_config_inference_module_label": "Модуль вывода",
-    "ai_config_inference_module_names_combo_placeholder_text": "Выберите модуль",
-    "ai_config_inference_module_names_combo_accessible_description": "Модули доступные для выбора",
+    "ai_config_inference_module_names_combo_label": "Активный модуль вывода",
+    "ai_config_inference_module_names_combo_placeholder_text": "Выбрать модуль",
+    "ai_config_inference_module_names_combo_accessible_description":
+        "Выберите из доступных модулей ИИ-инференции для работы с AI Assistant. Варианты включают локальные\n"
+        "большие языковые модели (LLM) с обработкой в реальном времени или функциональность на базе API.",
 
-    "ai_config_multi_turn_dialogue_checkbox":
-        "Многоходовый диалог, который строится на предыдущих запросах для контекстуальной связности",
+    "ai_config_base_label": "Базовые параметры",
+    "ai_config_multi_turn_dialogue_checkbox": "Многошаговый чат-диалог с памятью",
     "ai_config_multi_turn_dialogue_checkbox_accessible_description":
-        "Многоходовый диалог, который строится на предыдущих запросах для контекстуальной связности",
-    "ai_config_convert_to_md_checkbox": "Преобразовать результат в Markdown",
-    "ai_config_convert_to_md_checkbox_accessible_description": "Преобразовать сообщение с результатом в Markdown",
-
-    "ai_config_base_label": "Основные параметры",
+        "Включите многошаговый чат-диалог, который сохраняет последний запрос для памяти.\n"
+        "Когда выключено, только новое сообщение и системный промпт влияют на ответ.",
+    "ai_config_convert_to_md_checkbox": "Конвертировать результат в Markdown",
+    "ai_config_convert_to_md_checkbox_accessible_description":
+        "Преобразуйте выходное сообщение в формат Markdown.",
 }

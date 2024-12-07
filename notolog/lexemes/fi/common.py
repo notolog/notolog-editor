@@ -106,7 +106,8 @@ lexemes = {
     "message_app_config_file_access": "Käyttöoikeus evätty yrittäessä päästä sovelluksen konfiguraatiotiedostoon {file_path}. "
                                       "Aseta oikeat käyttöoikeudet varmistaaksesi asianmukaisen toiminnan.",
 
-    "field_dir_path_line_edit": "Valitse hakemisto",
+    "field_dir_path_dialog_caption": "Valitse Hakemisto",
+    "field_file_path_dialog_caption": "Valitse Tiedosto",
 
     "load_file_encryption_password_mismatch": "Salaussalasana ei täsmää!",
     "load_file_encryption_password_incorrect": "Väärä salaussalasana!",

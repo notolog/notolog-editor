@@ -104,7 +104,8 @@ lexemes = {
     "message_app_config_file_access": "{file_path}에서 앱 구성 파일에 접근할 때 권한이 거부되었습니다. "
                                       "제대로된 작동을 보장하기 위해 올바른 권한을 설정하세요.",
 
-    "field_dir_path_line_edit": "디렉토리 선택",
+    "field_dir_path_dialog_caption": "디렉토리 선택",
+    "field_file_path_dialog_caption": "파일 선택",
 
     "load_file_encryption_password_mismatch": "암호화 비밀번호가 일치하지 않습니다!",
     "load_file_encryption_password_incorrect": "암호화 비밀번호가 정확하지 않습니다!",
