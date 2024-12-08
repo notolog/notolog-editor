@@ -14,6 +14,7 @@ from pytest_mock import MockerFixture
 
 import pytest
 import asyncio
+import logging
 
 
 class TestImageDownloader:
@@ -62,8 +63,9 @@ class TestImageDownloader:
         Testing object fixture.
         May contain minimal logic for testing purposes.
         """
-        mocker.patch.object(AppConfig, 'get_logging', return_value=False)
-        mocker.patch.object(AppConfig, 'get_debug', return_value=False)
+
+        # Mock AppConfig's get_logger_level method to suppress logging during tests.
+        mocker.patch.object(AppConfig, 'get_logger_level', return_value=logging.NOTSET)
 
         yield ImageDownloader()
 

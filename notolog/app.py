@@ -89,17 +89,13 @@ def main():
     filename='notolog.log'
     format='%(asctime)s:%(levelname)s:%(name)s:%(message)s'
     """
-    logging.basicConfig(level=logging.DEBUG, format='[%(name)s] %(funcName)s: %(levelname)s: %(message)s')
-
-    # Enable logging, uncomment or change app config
-    # AppConfig().set_logging(True)
-    # Enable debug mode (a lot of logs), uncomment or change app config
-    # AppConfig().set_debug(False)
+    logger_level = AppConfig().get_logger_level()
+    logging.basicConfig(level=logger_level, format='[%(name)s] %(funcName)s: %(levelname)s: %(message)s')
 
     logger = logging.getLogger('notolog')
-    if AppConfig().get_logging():
-        logger.info("%s v%s" % (AppConfig().get_app_name(), AppConfig().get_app_version()))
-        logger.info("%s" % (AppConfig().get_app_license()))
+
+    logger.info("%s v%s" % (AppConfig().get_app_name(), AppConfig().get_app_version()))
+    logger.info("%s" % (AppConfig().get_app_license()))
 
     # Main application
     app = QApplication(sys.argv)
@@ -126,9 +122,8 @@ def main():
     # Maintain a unique style regardless of the user's system settings
     app.setDesktopSettingsAware(False)
 
-    if AppConfig().get_debug():
-        # E.g. /usr/bin and /usr/bin/python3.11
-        logger.debug(f'Application dir path "{app.applicationDirPath()}"; file path "{app.applicationFilePath()}"')
+    # E.g. /usr/bin and /usr/bin/python3.11
+    logger.debug(f'Application dir path "{app.applicationDirPath()}"; file path "{app.applicationFilePath()}"')
 
     # Get the screen to pass it to the main module
     screen = app.screens()[0]

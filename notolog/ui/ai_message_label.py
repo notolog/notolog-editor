@@ -20,7 +20,6 @@ from PySide6.QtWidgets import QStyle, QLabel, QPushButton
 from PySide6.QtGui import QTextDocument, QColor
 from PySide6.QtCore import Qt
 
-from . import AppConfig
 from . import Lexemes
 from . import ThemeHelper
 from . import ClipboardHelper
@@ -46,9 +45,6 @@ class AIMessageLabel(QLabel):
         self.settings = settings if settings else self.parent.settings  # type: ignore
 
         self.logger = logging.getLogger('ai_message_label')
-
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
 
         # Load lexemes for selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='ai_assistant')

@@ -37,8 +37,7 @@ def is_available() -> bool:
     for package_name in ["llama_cpp"]:
         module_spec = importlib.util.find_spec(package_name)
         if module_spec is None:
-            if AppConfig().get_logging():
-                AppConfig().logger.info(f"The package '{package_name}' is required for the module '{get_name()}'")
+            AppConfig().logger.info(f"The package '{package_name}' is required for the module '{get_name()}'")
             return False
 
     return True

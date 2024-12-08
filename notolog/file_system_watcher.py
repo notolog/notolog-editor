@@ -21,8 +21,6 @@ from PySide6.QtCore import QFileSystemWatcher, QDir
 import os
 import logging
 
-from .app_config import AppConfig
-
 
 class FileSystemWatcher:
     _instance = None
@@ -38,9 +36,6 @@ class FileSystemWatcher:
         self._initialized = True
 
         self.logger = logging.getLogger('file_system_watcher')
-
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
 
         self.dir = None
 
@@ -92,17 +87,13 @@ class FileSystemWatcher:
                 renamed_files.add((added_file, potential_renamed_file))
 
         if added_files:
-            if self.debug:
-                self.logger.debug(f"New file(s) added: {', '.join(added_files)}")
+            self.logger.debug(f"New file(s) added: {', '.join(added_files)}")
         if removed_files:
-            if self.debug:
-                self.logger.debug(f"File(s) removed: {', '.join(removed_files)}")
+            self.logger.debug(f"File(s) removed: {', '.join(removed_files)}")
         if renamed_files:
-            if self.debug:
-                self.logger.debug(f"File(s) renamed: {', '.join([f[0] for f in renamed_files])}")
+            self.logger.debug(f"File(s) renamed: {', '.join([f[0] for f in renamed_files])}")
 
         self.files = new_files
 
     def on_file_changed(self, path):
-        if self.debug:
-            self.logger.debug(f"File changed: {path}")
+        self.logger.debug(f"File changed: {path}")

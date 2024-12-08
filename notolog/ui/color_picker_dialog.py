@@ -21,7 +21,6 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QGridLayout, QDialog, QPushButton
 
 from . import Settings
-from . import AppConfig
 from . import Lexemes
 
 from ..enums.colors import Colors
@@ -43,9 +42,6 @@ class ColorPickerDialog(QDialog):
         self.settings = Settings(parent=self)
 
         self.logger = logging.getLogger('color_picker_dialog')
-
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
 
         # Load lexemes for selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='color_picker_dialog')

@@ -20,7 +20,6 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QStyle, QLineEdit, QPushButton, QFileDialog
 from PySide6.QtGui import QColor
 
-from . import AppConfig
 from . import Lexemes
 from . import ThemeHelper
 
@@ -44,9 +43,6 @@ class FilePathLineEdit(QLineEdit):
         self.settings = settings if settings else self.parent.settings  # type: ignore
 
         self.logger = logging.getLogger('file_path_line_edit')
-
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
 
         # Load lexemes for selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='common')

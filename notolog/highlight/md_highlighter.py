@@ -320,10 +320,9 @@ class MdHighlighter(MainHighlighter):
         self.line_number_log = self.line_number + 1
 
         if self.user_data is None or not isinstance(self.user_data, TextBlockData):
-            if self.debug:
-                self.logger.debug('{%r} !!! Block data is not set at [%d*], is in code %d, prev state %d'
-                                  % (self.rehighlight_block, self.line_number_log,
-                                     self.is_in_code(skip_data=True), self.previousBlockState()))
+            self.logger.debug('{%r} !!! Block data is not set at [%d*], is in code %d, prev state %d'
+                              % (self.rehighlight_block, self.line_number_log,
+                                 self.is_in_code(skip_data=True), self.previousBlockState()))
             self.user_data = TextBlockData(self.line_number)
             """
             Restore within a code block state, for example when a new line appears.
@@ -358,8 +357,7 @@ class MdHighlighter(MainHighlighter):
                 break
 
         if re is None:
-            if self.debug:
-                self.logger.error('Regex pattern not found for the tag "%s"' % tag)
+            self.logger.debug('Notice: Regex pattern not found for the tag "%s"' % tag)
             return
 
         if self.rehighlight_block:
@@ -399,64 +397,59 @@ class MdHighlighter(MainHighlighter):
                 # Because of the code token could be the same whether opened or closed.
                 self.tokens[tag]['o'] = True if self.tokens[tag]['cnt'] % 2 > 0 else False
 
-            if self.debug:
-                self.logger.debug(
-                    'Current code block data [%d] rehi:%r, curr_blk_st:%d, prev_blk_st:%d, '
-                    'in_code:%r, in_code:%r(STRICT), inc:%r, o:[%r]~[%r], c:%r'
-                    % (self.line_number,
-                       self.rehighlight_block,
-                       self.currentBlockState(),
-                       self.previousBlockState(),
-                       self.is_in_code(),
-                       self.is_in_code(skip_data=True),
-                       self.user_data.get_param(tag, 'within'),
-                       self.user_data.get_param(tag, 'opened'),
-                       self.tokens[tag]['o'],
-                       self.user_data.get_param(tag, 'closed')))
+            self.logger.debug(
+                'Current code block data [%d] rehi:%r, curr_blk_st:%d, prev_blk_st:%d, '
+                'in_code:%r, in_code:%r(STRICT), inc:%r, o:[%r]~[%r], c:%r'
+                % (self.line_number,
+                   self.rehighlight_block,
+                   self.currentBlockState(),
+                   self.previousBlockState(),
+                   self.is_in_code(),
+                   self.is_in_code(skip_data=True),
+                   self.user_data.get_param(tag, 'within'),
+                   self.user_data.get_param(tag, 'opened'),
+                   self.tokens[tag]['o'],
+                   self.user_data.get_param(tag, 'closed')))
 
             # Set the correct state of the code block to update currentBlockState()
             self.check_and_set_in_code_state()
 
             # Check either tag opened or closed and set a relevant data
             if self.tokens[tag]['o']:
-                if self.debug:
-                    self.logger.debug(
-                        '{%r} >>> Open "%s" at [%d*], is in code %d, prev state %d'
-                        % (self.rehighlight_block, tag, self.line_number_log, self.is_in_code(),
-                           self.previousBlockState())
-                    )
+                self.logger.debug(
+                    '{%r} >>> Open "%s" at [%d*], is in code %d, prev state %d'
+                    % (self.rehighlight_block, tag, self.line_number_log, self.is_in_code(),
+                       self.previousBlockState())
+                )
                 if not self.user_data.get_param(tag, 'opened'):
                     self.user_data.put(tag=tag, opened=True, within=True, closed=False)
             # If tag wasn't open it doesn't mean it was closed, check prev state
             elif self.prev_user_data and self.prev_user_data.get_param(tag, 'within'):
-                if self.debug:
-                    self.logger.debug(
-                        '{%r} <<< Close "%s" at [%d*], is in code %d, prev state %d'
-                        % (self.rehighlight_block, tag, self.line_number_log, self.is_in_code(),
-                           self.previousBlockState())
-                    )
+                self.logger.debug(
+                    '{%r} <<< Close "%s" at [%d*], is in code %d, prev state %d'
+                    % (self.rehighlight_block, tag, self.line_number_log, self.is_in_code(),
+                       self.previousBlockState())
+                )
                 # Close the code block
                 if not self.user_data.get_param(tag, 'closed'):
                     self.user_data.put(tag=tag, opened=False, within=True, closed=True)
             else:
-                if self.debug:
-                    # Warning as such case is not expected here
-                    self.logger.warning(
-                        '{%r} >~> Open token inside "%s" at [%d*]'
-                        % (self.rehighlight_block, tag, self.line_number_log)
-                    )
+                # Warning as such case is not expected here
+                self.logger.debug(
+                    'Notice: {%r} >~> Open token inside "%s" at [%d*]'
+                    % (self.rehighlight_block, tag, self.line_number_log)
+                )
         elif self.is_in_code(skip_data=True, force_tag='code'):
             self.user_data.put(tag=tag, opened=False, within=True, closed=False)
             self.setCurrentBlockState(1)
             if not self.is_any_formatted():
                 self.setFormat(0, len(text_str), self.cf(**self.theme['code_content']))
                 self.set_formatted('code')
-            if self.debug:
-                self.logger.debug(
-                    '{%r} >=< Inside "%s" at [%d*], is in code %d (STRICT), prev state %d'
-                    % (self.rehighlight_block, tag, self.line_number_log,
-                       self.is_in_code(skip_data=True, force_tag='code'), self.previousBlockState())
-                )
+            self.logger.debug(
+                '{%r} >=< Inside "%s" at [%d*], is in code %d (STRICT), prev state %d'
+                % (self.rehighlight_block, tag, self.line_number_log,
+                   self.is_in_code(skip_data=True, force_tag='code'), self.previousBlockState())
+            )
         else:
             # When new line within a code block appears have to check prev block state (within and not closed)
             if (self.is_in_code(force_tag='code')
@@ -465,17 +458,15 @@ class MdHighlighter(MainHighlighter):
                     and not self.prev_user_data.get_param(tag, 'closed')):
                 self.user_data.put(tag=tag, opened=False, within=True, closed=False)
                 self.setCurrentBlockState(1)
-                if self.debug:
-                    self.logger.debug(
-                        '{%r} >=< Inside "%s" [%d*], is in code %d (lenient), prev state %d'
-                        % (self.rehighlight_block, tag, self.line_number_log, self.is_in_code(force_tag='code'),
-                           self.previousBlockState())
-                    )
+                self.logger.debug(
+                    '{%r} >=< Inside "%s" [%d*], is in code %d (lenient), prev state %d'
+                    % (self.rehighlight_block, tag, self.line_number_log, self.is_in_code(force_tag='code'),
+                       self.previousBlockState())
+                )
             else:
                 self.user_data.put(tag=tag, opened=False, within=False, closed=False)
                 self.setCurrentBlockState(0)
-                if self.debug:
-                    self.logger.debug('{%r} ... No "%s" [%d*]' % (self.rehighlight_block, tag, self.line_number_log))
+                self.logger.debug('{%r} ... No "%s" [%d*]' % (self.rehighlight_block, tag, self.line_number_log))
 
         for pattern, nth, tag, group, duple, cf_data, reckon in self.rules:
             """
@@ -522,11 +513,10 @@ class MdHighlighter(MainHighlighter):
                     self.line_tokens[self.line_number][tag].append(line_token_data)
 
                 if tag == 'rn':
-                    if self.debug:
-                        self.logger.debug(
-                            '{%r}  %s  New line found "%s" at [%d*]'
-                            % (self.rehighlight_block, b'\xe2\x86\xb5'.decode('utf-8'), tag, self.line_number_log)
-                        )
+                    self.logger.debug(
+                        '{%r}  %s  New line found "%s" at [%d*]'
+                        % (self.rehighlight_block, b'\xe2\x86\xb5'.decode('utf-8'), tag, self.line_number_log)
+                    )
                     continue
 
                 if ((tag in {'codec', 'list'}
@@ -541,21 +531,19 @@ class MdHighlighter(MainHighlighter):
                     # Mind the indents
                     self.tokens[tag]['cnt'] += 1
                     self.tokens[tag]['o'] = True
-                    if self.debug:
-                        self.logger.debug(
-                            '{%r} >>> Open "%s" at [%d*]'
-                            % (self.rehighlight_block, tag, self.line_number_log)
-                        )
+                    self.logger.debug(
+                        '{%r} >>> Open "%s" at [%d*]'
+                        % (self.rehighlight_block, tag, self.line_number_log)
+                    )
                     """
                     Block tokens cannot be located on the same line, suppose to find them one per line
                     """
                     self.user_data.put(tag=tag, opened=True, within=True, closed=False)
                 else:
-                    if self.debug:
-                        self.logger.debug(
-                            '{%r} >~> Open token inside "%s" at [%d*]'
-                            % (self.rehighlight_block, tag, self.line_number_log)
-                        )
+                    self.logger.debug(
+                        '{%r} >~> Open token inside "%s" at [%d*]'
+                        % (self.rehighlight_block, tag, self.line_number_log)
+                    )
                     """
                     Block tokens cannot be located on the same line, suppose to find them one per line
                     """
@@ -564,11 +552,10 @@ class MdHighlighter(MainHighlighter):
                 if 'rn' in self.line_tokens[self.line_number]:
                     # Close opened token then
                     self.tokens[tag]['o'] = False
-                    if self.debug:
-                        self.logger.debug(
-                            '{%r} <<< Close "%s" at [%d*] %s'
-                            % (self.rehighlight_block, tag, self.line_number_log, self.line_tokens[self.line_number])
-                        )
+                    self.logger.debug(
+                        '{%r} <<< Close "%s" at [%d*] %s'
+                        % (self.rehighlight_block, tag, self.line_number_log, self.line_tokens[self.line_number])
+                    )
                     """
                     Block tokens cannot be located on the same line, suppose to find them one per line
                     """
@@ -576,12 +563,11 @@ class MdHighlighter(MainHighlighter):
                 # Some tokens like a 'list' may be located within no empty lines either above or below,
                 # thus always an open tag.
                 elif tag not in {'list'}:
-                    if self.debug:
-                        self.logger.debug(
-                            '{%r} >=< Inside "%s" at [%d*], is in code %d (lenient), prev state %d'
-                            % (self.rehighlight_block, tag, self.line_number_log, self.is_in_code(force_tag='codec'),
-                               self.previousBlockState())
-                        )
+                    self.logger.debug(
+                        '{%r} >=< Inside "%s" at [%d*], is in code %d (lenient), prev state %d'
+                        % (self.rehighlight_block, tag, self.line_number_log, self.is_in_code(force_tag='codec'),
+                           self.previousBlockState())
+                    )
                     """
                     Block tokens cannot be located on the same line, suppose to find them one per line
                     """
@@ -596,8 +582,7 @@ class MdHighlighter(MainHighlighter):
                             self.set_formatted('code')
             else:
                 self.user_data.put(tag=tag, opened=False, within=False, closed=False)
-                if self.debug:
-                    self.logger.debug('{%r} ... No "%s" [%d*]' % (self.rehighlight_block, tag, self.line_number_log))
+                self.logger.debug('{%r} ... No "%s" [%d*]' % (self.rehighlight_block, tag, self.line_number_log))
 
         try:
             """
@@ -721,8 +706,7 @@ class MdHighlighter(MainHighlighter):
                         # Skip if not in table context yet
                         and not (self.user_data.get_param('table_d', 'within')
                                  or ('table_d' in self.tokens and self.tokens['table_d']['o']))):
-                    if self.debug:
-                        self.logger.debug('Skipping table block')
+                    self.logger.debug('Skipping table block')
                     continue
                 # Not saving the block's data here;
                 # it will be automatically stored during the next block re-highlighting iteration.
@@ -750,9 +734,8 @@ class MdHighlighter(MainHighlighter):
                     elif group == 'comment' or self.is_in_code_comment():
                         cfc = self.theme['comment']
                     # elif group == 'coop':
-                    #    if self.debug:
-                    #        self.logger.debug('Code operator match', self.line_number_log, match.group(1),
-                    #                          start, end, length)
+                    #    self.logger.debug('Code operator match', self.line_number_log, match.group(1),
+                    #                      start, end, length)
                 else:
                     # To avoid highlighting code lang or code text content when not in code
                     # Note: Closing code tag may appear here
@@ -763,9 +746,8 @@ class MdHighlighter(MainHighlighter):
                                      and self.prev_user_data.get_param('code', 'within'))
                             # Code line is a valid case of a "not in a code block" tag here
                             and tag not in {'codel'}):
-                        # if self.debug:
-                        #    self.logger.debug('Code tag "%s" (group "%s") at [%d] within a non-code context'
-                        #                      % (tag, group, self.line_number_log))
+                        # self.logger.debug('Code tag "%s" (group "%s") at [%d] within a non-code context'
+                        #                   % (tag, group, self.line_number_log))
                         continue
                     """
                     May causing "jumping" when formatted lines become unformatted,
@@ -817,11 +799,10 @@ class MdHighlighter(MainHighlighter):
                 E.g. match.captured(nth).encode('utf-8', 'replace').decode('utf-8').
                 Also, check match.capturedTexts()
                 """
-                if self.debug:
-                    self.logger.debug(
-                        'Tokens: "%s" > %s > %s (s:%d, l:%d, e:%d, n:%d)[%d] prev block state %d'
-                        % (tag, self.tokens[tag], match.group(nth).encode('utf-8', 'replace'),
-                           start, length, end, nth, self.line_number_log, self.previousBlockState()))
+                self.logger.debug(
+                    'Tokens: "%s" > %s > %s (s:%d, l:%d, e:%d, n:%d)[%d] prev block state %d'
+                    % (tag, self.tokens[tag], match.group(nth).encode('utf-8', 'replace'),
+                       start, length, end, nth, self.line_number_log, self.previousBlockState()))
 
                 """
                 Inheriting a bg color of the blockquote.
@@ -870,8 +851,7 @@ class MdHighlighter(MainHighlighter):
 
     def check_and_set_in_code_state(self):
         if self.is_in_code(True):
-            if self.debug:
-                self.logger.info('In code context')
+            self.logger.debug('In code context')
             if self.currentBlockState() != 1:
                 self.setCurrentBlockState(1)
                 return True
@@ -907,8 +887,7 @@ class MdHighlighter(MainHighlighter):
                     [d for d in self.line_tokens[self.line_number][_tag] if d != _data]
                 if not self.line_tokens[self.line_number][_tag]:
                     del self.line_tokens[self.line_number][_tag]
-        # if self.debug:
-        #    self.logger.debug('Adjusted line tokens:', self.line_tokens[self.line_number])
+        # self.logger.debug('Adjusted line tokens:', self.line_tokens[self.line_number])
         return processed_res
 
     # Check if within a code block

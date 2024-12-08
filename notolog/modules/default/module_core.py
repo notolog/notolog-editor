@@ -22,7 +22,6 @@ import logging
 from ..base_core import BaseCore
 
 from .. import Settings
-from .. import AppConfig
 
 
 class ModuleCore(BaseCore):
@@ -41,11 +40,7 @@ class ModuleCore(BaseCore):
 
         self.logger = logging.getLogger('default_module')
 
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
-
-        if self.logging:
-            self.logger.info(f'Module {__name__} loaded')
+        self.logger.debug(f'Module {__name__} loaded')
 
     @staticmethod
     def get_lexemes_path():

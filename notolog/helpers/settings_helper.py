@@ -40,11 +40,7 @@ class SettingsHelper:
 
         self.logger = logging.getLogger('settings_helper')
 
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
-
-        if self.debug:
-            self.logger.info('Settings helper is engaged')
+        self.logger.info('Settings helper is activated')
 
         self.key = self.get_app_key()
 
@@ -58,11 +54,9 @@ class SettingsHelper:
             encrypted_data = cipher_suite.encrypt(data_encoded)
             return encrypted_data.decode('utf-8')
         except (InvalidToken, InvalidSignature, TypeError) as e:
-            if self.logging:
-                self.logger.warning(f'Settings helper encryption token error: {e}')
+            self.logger.warning(f'Settings helper encryption token error: {e}')
         except Exception as e:
-            if self.logging:
-                self.logger.warning(f'An unexpected error occurred while encrypting data: {e}')
+            self.logger.warning(f'An unexpected error occurred while encrypting data: {e}')
         return None
 
     def decrypt_data(self, encrypted_data: Any) -> Union[str, None]:
@@ -77,11 +71,9 @@ class SettingsHelper:
             decrypted_data = cipher_suite.decrypt(encrypted_data)
             return decrypted_data.decode('utf-8')
         except (InvalidToken, InvalidSignature, TypeError) as e:
-            if self.logging:
-                self.logger.warning(f'Settings helper encryption token error: {e}')
+            self.logger.warning(f'Settings helper encryption token error: {e}')
         except Exception as e:
-            if self.logging:
-                self.logger.warning(f'An unexpected error occurred while decrypting data: {e}')
+            self.logger.warning(f'An unexpected error occurred while decrypting data: {e}')
         return None
 
     def get_app_key(self) -> bytes:
@@ -97,8 +89,7 @@ class SettingsHelper:
 
         # If no key found create a new one
         if not app_key_str:
-            if self.logging:
-                self.logger.info("Creating app new secret key")
+            self.logger.info("Creating app new secret key")
             # Generate app new key. This is a base64-encoded bytes string
             app_key = self.generate_app_key()
             # Set up app new key
@@ -140,8 +131,7 @@ class SettingsHelper:
                 # lexeme_key, setting_name
                 return object_name_parts
             else:
-                if self.logging:
-                    self.logger.warning(f"Object name in a wrong format '{object_name}'")
+                self.logger.warning(f"Object name in a wrong format '{object_name}'")
         else:
             # lexeme_key, setting_name
             return [object_name, object_name]

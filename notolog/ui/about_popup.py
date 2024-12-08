@@ -47,9 +47,6 @@ class AboutPopup(QDialog):
 
         self.logger = logging.getLogger('about_popup')
 
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
-
         # Load lexemes for selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='common')
 

@@ -21,7 +21,6 @@ from PySide6.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QHBoxLayo
 from PySide6.QtGui import QFontMetrics
 
 from . import Settings
-from . import AppConfig
 from . import Lexemes
 from . import ThemeHelper
 
@@ -50,9 +49,6 @@ class CreateNewDirDialog(QDialog):
         self.settings = Settings(parent=self)
 
         self.logger = logging.getLogger('create_new_dir_dialog')
-
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
 
         # Load lexemes for selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='common')
@@ -145,24 +141,20 @@ class CreateNewDirDialog(QDialog):
         # New dir path
         new_dir_path = os.path.join(self.base_dir, new_dir_name)
 
-        if self.debug:
-            self.logger.debug('Creating a new dir "%s" within the "%s" dialog callback'
-                              % (new_dir_path, self.base_dir))
+        self.logger.debug('Creating a new dir "%s" within the "%s" dialog callback'
+                          % (new_dir_path, self.base_dir))
 
         try:
             os.mkdir(new_dir_path)
-            if self.debug:
-                self.logger.debug(f"New directory '{new_dir_path}' created successfully.")
+            self.logger.debug(f"New directory '{new_dir_path}' created successfully.")
             return True
         except FileExistsError:  # if not os.path.exists(new_dir_path):
-            if self.debug:
-                self.logger.debug(f"Directory '{new_dir_path}' already exists.")
+            self.logger.debug(f"Directory '{new_dir_path}' already exists.")
             # Show error message
             self.parent.message_box(self.lexemes.get('dialog_create_new_dir_error_existed'), icon_type=2)  # noqa
             return False
         except OSError as e:
-            if self.debug:
-                self.logger.debug(f"Failed to create directory '{new_dir_path}': {e}")
+            self.logger.debug(f"Failed to create directory '{new_dir_path}': {e}")
             # Show error message
             self.parent.message_box(  # noqa
                 self.lexemes.get('dialog_create_new_dir_error', base_dir=self.base_dir), icon_type=2)

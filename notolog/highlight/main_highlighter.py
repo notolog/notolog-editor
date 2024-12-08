@@ -59,9 +59,6 @@ class MainHighlighter(QSyntaxHighlighter):
 
         self.logger = logging.getLogger('highlighter')
 
-        self.logging = AppConfig().get_logging()
-        self.debug = False  # AppConfig().get_debug()
-
         # Get app's global font size
         self.font_size = AppConfig().get_font_size()
 
@@ -111,9 +108,8 @@ class MainHighlighter(QSyntaxHighlighter):
             _background_color = self.theme_helper.get_color(f'{self.theme_ini_prefix}_background_color_{item}')
             _background_color_inner = self.theme_helper.get_color(
                 f'{self.theme_ini_prefix}_background_color_{item}_inner')
-            if self.debug:
-                self.logger.debug(
-                    f"Prefix[{self.theme_ini_prefix}] '{item}', color: '{_color}', bg color: '{_background_color}'")
+            self.logger.debug(
+                f"Prefix[{self.theme_ini_prefix}] '{item}', color: '{_color}', bg color: '{_background_color}'")
             # At the moment all the colors set in string format, like 'red', 'darkCyan', etc.
             if _color and isinstance(_color, str):
                 # Set up color no matter if it was set up or not
@@ -218,8 +214,7 @@ class MainHighlighter(QSyntaxHighlighter):
         return cformat
 
     def rehighlightBlock(self, block):
-        if self.debug:
-            self.logger.debug('Re-highlighting block data')
+        self.logger.debug('Re-highlighting block data')
 
         # Leave as default
         self.rehighlight_block = True
@@ -232,8 +227,7 @@ class MainHighlighter(QSyntaxHighlighter):
         super().rehighlightBlock(block)
 
     def rehighlight(self):
-        if self.debug:
-            self.logger.debug('Re-highlighting the whole document')
+        self.logger.debug('Re-highlighting the whole document')
 
         self.rehighlight_block = False
 

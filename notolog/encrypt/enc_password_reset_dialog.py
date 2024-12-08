@@ -23,7 +23,6 @@ from PySide6.QtGui import QFontMetrics
 from typing import Optional, Callable, Any
 
 from . import Settings
-from . import AppConfig
 from . import Lexemes
 
 import logging
@@ -43,9 +42,6 @@ class EncPasswordResetDialog(QDialog):
         self.settings = Settings(parent=self)
 
         self.logger = logging.getLogger('enc_password_reset_dialog')
-
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
 
         # Load lexemes for selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='common')

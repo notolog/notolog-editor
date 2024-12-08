@@ -1,6 +1,16 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.0.8] - 2024-12-08
+
+### Updated
+- Refactored the logging strategy by moving the logger level to the app config and removing redundant checks to simplify the code. Default logging level is now set to `logging.INFO`.
+- Updated the model initialization process for 'Module llama.cpp', now allowing the model name to be retrieved from the model's metadata if available.
+- The 'OpenAI API' and 'On Device LLM' modules now only consider the 'Maximum Response Tokens' setting if its value is greater than zero; otherwise, the model utilizes its full context window.
+
+### Fixed
+- Fixed an issue where entering text directly into one QSpinBox field on a settings tab would inadvertently change the values in all QSpinBox fields on the same tab. This issue was caused by specific event handling in the QSpinBox and its internal QLineEdit components.
+
 ## [1.0.7] - 2024-12-07
 
 ### Added

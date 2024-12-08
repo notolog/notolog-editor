@@ -21,9 +21,8 @@ class TestApp:
 
     @pytest.fixture(scope="function")
     def test_obj_app_config(self, mocker):
-        # Mock logger params
-        mocker.patch.object(AppConfig, 'get_logging', return_value=False)
-        mocker.patch.object(AppConfig, 'get_debug', return_value=False)
+        # Mock AppConfig's get_logger_level method to suppress logging during tests.
+        mocker.patch.object(AppConfig, 'get_logger_level', return_value=logging.NOTSET)
 
         _app_config = AppConfig()
         _app_config.set_test_mode(True)

@@ -12,6 +12,8 @@ from notolog.file_header import FileHeader
 from notolog.encrypt.enc_helper import EncHelper
 from notolog.editor_state import Encryption
 
+from logging import Logger
+
 from unittest.mock import Mock, MagicMock
 
 from types import SimpleNamespace
@@ -46,6 +48,10 @@ class TestNotologEditor:
         _obj = NotologEditor()
         # Set lexemes object
         setattr(_obj, 'lexemes', test_obj_lexemes)
+
+        _logger = MagicMock(spec=Logger)
+        # Set logger
+        setattr(_obj, 'logger', _logger)
 
         # Create nested mocks for toolbar.search_form
         search_form_mock = Mock()

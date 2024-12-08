@@ -85,15 +85,11 @@ class Settings(QSettings):
 
             self.logger = logging.getLogger('settings')
 
-            self.logging = AppConfig().get_logging()
-            self.debug = AppConfig().get_debug()
-
             self.settings = self.get_instance()
             self.settings_helper = SettingsHelper()
 
-            if self.debug:
-                # Attributes may not be set at the very beginning
-                self.logger.debug('Window size %d x %d' % (getattr(self, 'ui_width', 0), getattr(self, 'ui_height', 0)))
+            # Attributes may not be set at the very beginning
+            self.logger.debug('Window size %d x %d' % (getattr(self, 'ui_width', 0), getattr(self, 'ui_height', 0)))
 
             self.value_changed.connect(lambda v: self.settings.sync())
 
@@ -104,8 +100,7 @@ class Settings(QSettings):
         settings_file_path = self.get_filename()
         # Check file permissions
         if not is_writable_path(settings_file_path):
-            if self.logging:
-                self.logger.warning(f"Permission denied: Cannot write to the file {settings_file_path}")
+            self.logger.warning(f"Permission denied: Cannot write to the file {settings_file_path}")
             settings_file_path = None
         # Initialize settings with either a custom or the default path
         if settings_file_path:
@@ -175,8 +170,7 @@ class Settings(QSettings):
                 try:
                     value = self.settings_helper.decrypt_data(value)
                 except (ValueError, EnvironmentError) as e:
-                    if self.logging:
-                        self.logger.warning(f'Settings protected parameter "{param_name}" getting error: {e}')
+                    self.logger.warning(f'Settings protected parameter "{param_name}" getting error: {e}')
             return param_type(value)
 
         def setter(_self, value):
@@ -189,8 +183,7 @@ class Settings(QSettings):
                     try:
                         value = self.settings_helper.encrypt_data(value)
                     except (ValueError, EnvironmentError) as e:
-                        if self.logging:
-                            self.logger.warning(f'Settings protected parameter "{param_name}" setting error: {e}')
+                        self.logger.warning(f'Settings protected parameter "{param_name}" setting error: {e}')
                 _self.settings.setValue(param_name, value)
                 _self.value_changed.emit({param_name: value})
 
@@ -252,10 +245,8 @@ class Settings(QSettings):
                 os.remove(settings_file_path)
                 return True
             except OSError as e:
-                if self.logging:
-                    self.logger.warning(f"Error deleting settings file {settings_file_path}: {e}")
+                self.logger.warning(f"Error deleting settings file {settings_file_path}: {e}")
                 return False
         else:
-            if self.logging:
-                self.logger.warning(f"Settings file does not exist or is not writable: {settings_file_path}")
+            self.logger.warning(f"Settings file does not exist or is not writable: {settings_file_path}")
             return False

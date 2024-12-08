@@ -35,16 +35,14 @@ def get_name():
 def is_available() -> bool:
     # The required packages are not supported
     if sys.platform == "darwin" and sys.version_info < (3, 10):
-        if AppConfig().get_logging():
-            AppConfig().logger.info(f"The system is not supported by the module '{get_name()}'")
+        AppConfig().logger.info(f"The system is not supported by the module '{get_name()}'")
         return False
 
     # Required packages for a local LLM inference
     for package_name in ["onnxruntime_genai", "numpy"]:
         module_spec = importlib.util.find_spec(package_name)
         if module_spec is None:
-            if AppConfig().get_logging():
-                AppConfig().logger.info(f"The package '{package_name}' is required for the module '{get_name()}'")
+            AppConfig().logger.info(f"The package '{package_name}' is required for the module '{get_name()}'")
             return False
 
     return True

@@ -165,9 +165,6 @@ class NotologEditor(QMainWindow):
 
         self.logger = logging.getLogger('notolog')
 
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
-
         # The 'parent' param is crucial here as it allows to set up correct file path.
         self.settings = Settings(parent=self)
         self.settings.value_changed.connect(
@@ -200,14 +197,13 @@ class NotologEditor(QMainWindow):
         """
         self.scale = ('%.1f' % (self.dpi / 200))
 
-        if self.logging:
-            self.logger.info(
+        self.logger.info(
                 'Screen resolution: %d x %d' %
                 (QGuiApplication.primaryScreen().availableGeometry().width(),
                  QGuiApplication.primaryScreen().availableGeometry().height())
             )
-            self.logger.info('Screen DPI %d and scale %s' % (self.dpi, self.scale))
-            self.logger.info('Device pixel ratio %d' % self.dpr)
+        self.logger.info('Screen DPI %d and scale %s' % (self.dpi, self.scale))
+        self.logger.info('Device pixel ratio %d' % self.dpr)
 
         # self.showMaximized()
 
@@ -305,8 +301,7 @@ class NotologEditor(QMainWindow):
         QDir.currentPath() or QDir.homePath() by default.
         """
         if not QDir.setCurrent(QDir.currentPath()):
-            if self.logging:
-                self.logger.info('Cannot change current path')
+            self.logger.info('Cannot change current path')
 
         # Init palette styles
         self.init_palette()
@@ -357,9 +352,8 @@ class NotologEditor(QMainWindow):
         font = QFont()  # Accept args like "Sans Serif"
         font.setPointSize(font_size)
 
-        if self.debug:
-            self.logger.debug('Font point size set to %d, font size ratio %.2f'
-                              % (font.pointSize(), font_size_ratio))
+        self.logger.debug('Font point size set to %d, font size ratio %.2f'
+                          % (font.pointSize(), font_size_ratio))
         self.setFont(font)
 
     def settings_update_handler(self, data: dict) -> None:
@@ -372,8 +366,7 @@ class NotologEditor(QMainWindow):
         @return: None
         """
 
-        if self.debug:
-            self.logger.debug('Settings update handler is in use "%s"' % data)
+        self.logger.debug('Settings update handler is in use "%s"' % data)
 
         if 'show_line_numbers' in data and hasattr(self, 'line_numbers'):
             # Show / hide line numbers area
@@ -488,8 +481,7 @@ class NotologEditor(QMainWindow):
         When switching between VIEW and EDIT mode some icons and texts may look differ, have different actions, etc.
         """
 
-        if self.debug:
-            self.logger.debug('Editor state update handler is in use "%s"' % data)
+        self.logger.debug('Editor state update handler is in use "%s"' % data)
 
         # Initially the elements may not exist, but apper later on
         if hasattr(self, 'statusbar'):
@@ -641,8 +633,7 @@ class NotologEditor(QMainWindow):
         """
         text_content = emoji.emojize(text_content, language=language)
 
-        if self.debug:
-            self.logger.debug('Emoji conversion called for language "%s"' % language)
+        self.logger.debug('Emoji conversion called for language "%s"' % language)
 
         return text_content
 
@@ -763,8 +754,7 @@ class NotologEditor(QMainWindow):
         if hasattr(self, 'line_numbers'):
             self.line_numbers.update_numbers()
 
-        if self.debug:
-            self.logger.debug(f"Current splitter widgets proportions: {splitter.sizes()}")
+        self.logger.debug(f"Current splitter widgets proportions: {splitter.sizes()}")
 
         # Previous approach
         """
@@ -793,8 +783,7 @@ class NotologEditor(QMainWindow):
             total_size = sum(splitter.sizes())
             splitter.setSizes([position, total_size - position])
 
-        if self.debug:
-            self.logger.debug(f"Updated splitter widgets proportions: {splitter.sizes()}")
+        self.logger.debug(f"Updated splitter widgets proportions: {splitter.sizes()}")
 
     def init_palette(self):
         # Optionally, customize the palette (Fusion, etc.) for a dark mode look
@@ -844,8 +833,7 @@ class NotologEditor(QMainWindow):
         QGuiApplication.setPalette(app_palette)
 
     def splitter_moved_handler(self, width):
-        if self.debug:
-            self.logger.debug(f"Splitter moved: {width}")
+        self.logger.debug(f"Splitter moved: {width}")
         # Set splitter position equal to the width of the first widget
         self.settings.ui_splitter_pos = width
 
@@ -876,8 +864,7 @@ class NotologEditor(QMainWindow):
         if hasattr(self, 'tree_container') and isinstance(self.tree_container, QWidget):
             return self.tree_container
 
-        if self.logging:
-            self.logger.warning('Trying to access tree container widget that was not created')
+        self.logger.warning('Trying to access tree container widget that was not created')
 
         return None
 
@@ -982,8 +969,7 @@ class NotologEditor(QMainWindow):
         @param path: QString path from the signal, more info https://doc.qt.io/qt-6/qfilesystemwatcher.html#signals
         @return: None
         """
-        if self.debug:
-            self.logger.debug('Dir changed "%s"' % path)
+        self.logger.debug('Dir changed "%s"' % path)
 
     def on_tree_filter_text_changed(self, text: str) -> None:
         """
@@ -992,10 +978,9 @@ class NotologEditor(QMainWindow):
         @return: None
         """
 
-        if self.debug:
-            self.logger.debug(
-                f'Tree filter is changed: {self.get_current_file_path()}, {self.get_tree_active_dir()}, '
-                f'row count: {self.file_model.rowCount()}/{self.tree_proxy_model.rowCount()}')
+        self.logger.debug(
+            f'Tree filter is changed: {self.get_current_file_path()}, {self.get_tree_active_dir()}, '
+            f'row count: {self.file_model.rowCount()}/{self.tree_proxy_model.rowCount()}')
 
         if text:
             self.tree_proxy_model.setFilterRegularExpression(r'.*?{}'.format(text))
@@ -1101,8 +1086,7 @@ class NotologEditor(QMainWindow):
         Context menu at file tree view.
         """
 
-        if self.debug:
-            self.logger.debug('Context menu for %s' % tree_view)
+        self.logger.debug('Context menu for %s' % tree_view)
 
         # Save any unsaved changes
         self.save_active_file(clear_after=False)
@@ -1148,8 +1132,7 @@ class NotologEditor(QMainWindow):
             new_file_path = os.path.join(dir_name, new_file_name)
             self.rename_file_dialog_callback(from_file_path=file_path, to_file_path=new_file_path)
         else:
-            if self.debug:
-                self.logger.debug('Rename file cancellation')
+            self.logger.debug('Rename file cancellation')
 
         dialog.deleteLater()
 
@@ -1159,21 +1142,18 @@ class NotologEditor(QMainWindow):
         Actions to perform after file rename dialogue.
         """
 
-        if self.debug:
-            self.logger.debug('Rename file dialog callback with sub-callback %s' % callback)
+        self.logger.debug('Rename file dialog callback with sub-callback %s' % callback)
 
         from_file_path = os.path.abspath(str(from_file_path))
         to_file_path = os.path.abspath(str(to_file_path))
 
-        if self.debug:
-            self.logger.debug('Rename file "%s" to "%s"' % (from_file_path, to_file_path))
+        self.logger.debug('Rename file "%s" to "%s"' % (from_file_path, to_file_path))
 
         if not os.path.isfile(to_file_path):
             os.rename(from_file_path, to_file_path)
             self.load_file(to_file_path)
         else:
-            if self.debug:
-                self.logger.debug('File with the same name is already exists "%s"' % to_file_path)
+            self.logger.debug('File with the same name is already exists "%s"' % to_file_path)
             self.message_box(self.lexemes.get('dialog_file_rename_warning_exists'), icon_type=2)
 
         if callable(callback):
@@ -1184,8 +1164,7 @@ class NotologEditor(QMainWindow):
         Delete file dialog.
         """
 
-        if self.debug:
-            self.logger.debug('Delete file "%s" dialog' % file_path)
+        self.logger.debug('Delete file "%s" dialog' % file_path)
 
         file_path = os.path.abspath(str(file_path))
         file_name = os.path.basename(file_path)
@@ -1200,8 +1179,7 @@ class NotologEditor(QMainWindow):
         Actions to perform after file delete dialogue.
         """
 
-        if self.debug:
-            self.logger.debug('Delete file "%s" dialog callback with sub-callback %s' % (file_path, callback))
+        self.logger.debug('Delete file "%s" dialog callback with sub-callback %s' % (file_path, callback))
 
         if os.path.isfile(file_path):
             del_filename_tpl = '%s.del%s'
@@ -1211,11 +1189,9 @@ class NotologEditor(QMainWindow):
                 i += 1
             if not os.path.isfile(del_file_path):
                 os.rename(file_path, del_file_path)
-                if self.debug:
-                    self.logger.debug('File (reversibly) deleted to "%s"', del_file_path)
+                self.logger.debug('File (reversibly) deleted to "%s"', del_file_path)
             else:
-                if self.debug:
-                    self.logger.debug('Cannot delete file, error occurred "%s"' % del_file_path)
+                self.logger.debug('Cannot delete file, error occurred "%s"' % del_file_path)
                 self.message_box(self.lexemes.get('dialog_file_delete_error'), icon_type=2)
             # Check deleted file was actually shown
             if self.get_current_file_path() == file_path:
@@ -1223,8 +1199,7 @@ class NotologEditor(QMainWindow):
                 if any_file_path is not None:
                     self.load_file(any_file_path)
         else:
-            if self.debug:
-                self.logger.debug('File not found "%s"' % file_path)
+            self.logger.debug('File not found "%s"' % file_path)
             self.message_box(self.lexemes.get('dialog_file_delete_error_not_found'), 2)
         if callable(callback):
             callback()
@@ -1234,8 +1209,7 @@ class NotologEditor(QMainWindow):
         Delete file dialog.
         """
 
-        if self.debug:
-            self.logger.debug('Delete file completely "%s" dialog' % file_path)
+        self.logger.debug('Delete file completely "%s" dialog' % file_path)
 
         file_path = os.path.abspath(str(file_path))
         file_name = os.path.basename(file_path)
@@ -1250,17 +1224,14 @@ class NotologEditor(QMainWindow):
         Actions to perform after file completely delete dialogue.
         """
 
-        if self.debug:
-            self.logger.debug('Delete file completely "%s" dialog callback with sub-callback %s' % (file_path, callback))
+        self.logger.debug('Delete file completely "%s" dialog callback with sub-callback %s' % (file_path, callback))
 
         if os.path.isfile(file_path):
             try:
                 os.remove(file_path)
-                if self.debug:
-                    self.logger.debug(f"File {file_path} has been completely deleted.")
+                self.logger.debug(f"File {file_path} has been completely deleted.")
             except OSError as e:
-                if self.logging:
-                    self.logger.warning(f"Error: {e.strerror}. Could not delete {file_path}.")
+                self.logger.warning(f"Error: {e.strerror}. Could not delete {file_path}.")
                 self.message_box(self.lexemes.get('dialog_file_delete_error'), icon_type=2)
 
             # Check deleted file was actually shown
@@ -1269,8 +1240,7 @@ class NotologEditor(QMainWindow):
                 if any_file_path is not None:
                     self.load_file(any_file_path)
         else:
-            if self.debug:
-                self.logger.debug('File not found "%s"' % file_path)
+            self.logger.debug('File not found "%s"' % file_path)
             self.message_box(self.lexemes.get('dialog_file_delete_error_not_found'), 2)
         if callable(callback):
             callback()
@@ -1295,8 +1265,8 @@ class NotologEditor(QMainWindow):
         Restore deleted file dialog.
         As the deletion means an additional extension of '.del' applied to file, hence it can be reverted back.
         """
-        if self.debug:
-            self.logger.debug('Restore file "%s" dialog' % file_path)
+
+        self.logger.debug('Restore file "%s" dialog' % file_path)
 
         file_path = os.path.abspath(str(file_path))
         file_name = os.path.basename(file_path)
@@ -1306,8 +1276,7 @@ class NotologEditor(QMainWindow):
         if file_extension:
             new_file_path = file_path[:-len(file_extension)]
         else:
-            if self.logging:
-                self.logger.warning(f'Trying to restore file that has no proper extension set {file_path}')
+            self.logger.warning(f'Trying to restore file that has no proper extension set {file_path}')
             return
 
         self.common_dialog(
@@ -1322,21 +1291,19 @@ class NotologEditor(QMainWindow):
         """
         Actions to perform after file restore dialogue.
         """
-        if self.debug:
-            self.logger.debug('Restore file dialog callback with sub-callback %s' % callback)
+
+        self.logger.debug('Restore file dialog callback with sub-callback %s' % callback)
 
         from_file_path = os.path.abspath(str(from_file_path))
         to_file_path = os.path.abspath(str(to_file_path))
 
-        if self.debug:
-            self.logger.debug('Restore file "%s" to "%s"' % (from_file_path, to_file_path))
+        self.logger.debug('Restore file "%s" to "%s"' % (from_file_path, to_file_path))
 
         if not os.path.isfile(to_file_path):
             os.rename(from_file_path, to_file_path)
             self.load_file(to_file_path)
         else:
-            if self.debug:
-                self.logger.debug(f'File with the name "{to_file_path}" is already exists')
+            self.logger.debug(f'File with the name "{to_file_path}" is already exists')
             self.message_box(self.lexemes.get('dialog_file_restore_warning_exists', file_name=to_file_path), icon_type=2)
 
         if callable(callback):
@@ -1349,8 +1316,7 @@ class NotologEditor(QMainWindow):
 
         # Get any file from root dir to show instead
         root_index = self.tree_view.rootIndex()
-        if self.debug:
-            self.logger.debug('Root files index "%s"', self.tree_proxy_model.data(root_index))
+        self.logger.debug('Root files index "%s"', self.tree_proxy_model.data(root_index))
         # Search any file in dir
         entries_cnt = self.tree_proxy_model.rowCount(root_index)
         # QListView file/dir position 0...entries_cnt
@@ -1431,8 +1397,7 @@ class NotologEditor(QMainWindow):
         box.exec()
 
         if box.clickedButton() == button_ok:
-            if self.debug:
-                self.logger.debug('Message box button clicked')
+            self.logger.debug('Message box button clicked')
             # Execute the callback if it is defined
             if callable(callback):
                 callback()
@@ -1452,8 +1417,7 @@ class NotologEditor(QMainWindow):
         * QDialog.DialogCode.Rejected
         """
         if dialog.exec() == QDialog.DialogCode.Accepted:
-            if self.debug:
-                self.logger.debug('Entering new password completed')
+            self.logger.debug('Entering new password completed')
             password = dialog.password_edit.text()
             hint = dialog.hint_edit.text()
             # Create password object
@@ -1462,8 +1426,7 @@ class NotologEditor(QMainWindow):
             password_obj.hint = hint
             return password_obj
         else:
-            if self.debug:
-                self.logger.debug('Entering password cancellation')
+            self.logger.debug('Entering password cancellation')
             return None
 
     def enc_password_dialog(self, hint: str = None) -> Union[EncPassword, None]:
@@ -1485,8 +1448,7 @@ class NotologEditor(QMainWindow):
         * QDialog.DialogCode.Rejected
         """
         if dialog.exec() == QDialog.DialogCode.Accepted:
-            if self.debug:
-                self.logger.debug('Entering password completed')
+            self.logger.debug('Entering password completed')
             password = dialog.password_edit.text()
             # Create password object
             password_obj = EncPassword()
@@ -1495,8 +1457,7 @@ class NotologEditor(QMainWindow):
             password_obj.hint = hint
             return password_obj
         else:
-            if self.debug:
-                self.logger.debug('Entering password cancellation')
+            self.logger.debug('Entering password cancellation')
             return None
 
     def get_enc_password_dialog_cnt(self) -> Union[int, None]:
@@ -1507,8 +1468,7 @@ class NotologEditor(QMainWindow):
         Confirmation dialog when trying to open a file encrypted with different password/key.
         """
 
-        if self.logging:
-            self.logger.info('Reset encryption password dialog')
+        self.logger.info('Reset encryption password dialog')
 
         dialog = EncPasswordResetDialog(callback=self.reset_encrypt_helper, parent=self)
         dialog.exec()
@@ -1527,8 +1487,7 @@ class NotologEditor(QMainWindow):
         if self.is_quiet_mode():
             return
 
-        if self.debug:
-            self.logger.debug('Common dialog "%s": "%s"' % (title, text))
+        self.logger.debug('Common dialog "%s": "%s"' % (title, text))
 
         dialog = CommonDialog(title=title, text=text, callback=callback, reject_callback=reject_callback, parent=self)
         dialog.exec()
@@ -1542,8 +1501,7 @@ class NotologEditor(QMainWindow):
         if hasattr(self, 'text_edit') and isinstance(self.text_edit, EditWidget):
             return self.text_edit
 
-        if self.logging:
-            self.logger.warning('Trying to access edit widget that was not created')
+        self.logger.warning('Trying to access edit widget that was not created')
 
         return None
 
@@ -1558,8 +1516,7 @@ class NotologEditor(QMainWindow):
         edit_widget = EditWidget()
         # Block widget's signals
         was_blocked = edit_widget.blockSignals(True)
-        if self.debug:
-            self.logger.debug(f'Creating view widget, signals was blocked "{was_blocked}"')
+        self.logger.debug(f'Creating view widget, signals was blocked "{was_blocked}"')
         # Apply font from the main window to the widget
         edit_widget.document().setDefaultFont(self.font())
         edit_widget.setContentsMargins(0, 0, 0, 0)
@@ -1586,17 +1543,15 @@ class NotologEditor(QMainWindow):
                                         # Restore cursor and asure text widget has a focus
                                         (self.restore_doc_cursor_pos(self.get_mode(), edit_widget),
                                          edit_widget.setFocus()))
-        if self.debug:
-            self.logger.debug('Edit widget geometry %d x %d' %
-                              (edit_widget.frameGeometry().width(), edit_widget.frameGeometry().height()))
+        self.logger.debug('Edit widget geometry %d x %d' %
+                          (edit_widget.frameGeometry().width(), edit_widget.frameGeometry().height()))
 
         # Set up markdown highlighter
         self.md_highlighter = MdHighlighter(document=edit_widget.document())
 
         # Restore widget's signals
         edit_widget.blockSignals(was_blocked)
-        if self.debug:
-            self.logger.debug(f'View widget created, signals was un-blocked "{was_blocked}"')
+        self.logger.debug(f'View widget created, signals was un-blocked "{was_blocked}"')
 
         # Save created object to the internal variable
         self.text_edit = edit_widget
@@ -1649,12 +1604,10 @@ class NotologEditor(QMainWindow):
         try:
             is_file = os.path.isfile(url.toString())
         except PermissionError:
-            if self.logging:
-                self.logger.warning(f"Permission denied when accessing the file: {url.toString()}")
+            self.logger.warning(f"Permission denied when accessing the file: {url.toString()}")
             is_file = False
         except OSError as e:
-            if self.logging:
-                self.logger.warning(f"Error when checking the file: {e}")
+            self.logger.warning(f"Error when checking the file: {e}")
             is_file = False
         if is_file:
             # Load local file
@@ -1677,8 +1630,7 @@ class NotologEditor(QMainWindow):
         if hasattr(self, 'text_view') and isinstance(self.text_view, ViewWidget):
             return self.text_view
 
-        if self.logging:
-            self.logger.warning('Trying to access view widget that was not created')
+        self.logger.warning('Trying to access view widget that was not created')
 
         return None
 
@@ -1696,8 +1648,7 @@ class NotologEditor(QMainWindow):
         view_widget = ViewWidget(self)
         # Block widget's signals
         was_blocked = view_widget.blockSignals(True)
-        if self.debug:
-            self.logger.debug(f'Creating view widget, signals was blocked "{was_blocked}"')
+        self.logger.debug(f'Creating view widget, signals was blocked "{was_blocked}"')
         # Adjust font to match the size of the default or changed one
         view_widget.document().setDefaultFont(self.font())
         view_widget.setReadOnly(True)
@@ -1729,17 +1680,16 @@ class NotologEditor(QMainWindow):
                                         # Restore cursor and asure text widget has a focus
                                         (self.restore_doc_cursor_pos(self.get_mode(), view_widget),
                                          view_widget.setFocus()))
-        if self.debug:
-            self.logger.debug('Web view geometry %d x %d' %
-                              (view_widget.frameGeometry().width(), view_widget.frameGeometry().height()))
+
+        self.logger.debug('Web view geometry %d x %d' %
+                          (view_widget.frameGeometry().width(), view_widget.frameGeometry().height()))
 
         # Set view document to the view widget
         view_widget.setDocument(view_doc)
 
         # Restore widget's signals
         view_widget.blockSignals(was_blocked)
-        if self.debug:
-            self.logger.debug(f'View widget created, signals was un-blocked "{was_blocked}"')
+        self.logger.debug(f'View widget created, signals was un-blocked "{was_blocked}"')
 
         # Save created object to the internal variable
         self.text_view = view_widget
@@ -1748,8 +1698,7 @@ class NotologEditor(QMainWindow):
 
     @asyncClose
     async def closeEvent(self, event):
-        if self.logging:
-            self.logger.info('Stopping events loop, closing the app... Sayonara!')
+        self.logger.info('Stopping events loop, closing the app... Sayonara!')
 
         async def cleanup_tasks():
             if not asyncio.get_event_loop().is_running():
@@ -1766,10 +1715,10 @@ class NotologEditor(QMainWindow):
                     try:
                         await task
                     except asyncio.CancelledError:
-                        if self.logging:
-                            self.logger.info(f'[{i + 1}/{tasks_total}] Pending task {task.get_name()} '
-                                             f'was cancelled with result "{task_res}"')
+                        self.logger.info(f'[{i + 1}/{tasks_total}] Pending task {task.get_name()} '
+                                         f'was cancelled with result "{task_res}"')
                         pass
+
         # Await tasks to complete
         await cleanup_tasks()
 
@@ -1805,8 +1754,7 @@ class NotologEditor(QMainWindow):
 
         # Prevent QTextEdit's on_text_changed() method invocation by blocking signals
         was_blocked = edit_widget.blockSignals(True)
-        if self.debug:
-            self.logger.debug(f'Re-highlighting the text > signals was blocked "{was_blocked}"')
+        self.logger.debug(f'Re-highlighting the text > signals was blocked "{was_blocked}"')
         # Re-highlight the whole document or a particular block
         if full_rehighlight:
             self.md_highlighter.rehighlight()
@@ -1815,8 +1763,7 @@ class NotologEditor(QMainWindow):
             self.md_highlighter.rehighlightBlock(block)
         # Restore QTextEdit's signals
         edit_widget.blockSignals(was_blocked)
-        if self.debug:
-            self.logger.debug('Re-highlighting the text > signals unblocked')
+        self.logger.debug('Re-highlighting the text > signals unblocked')
 
     def get_block_data_param(self, tag: str, param: Any) -> Any:
         # Edit widget
@@ -1833,10 +1780,9 @@ class NotologEditor(QMainWindow):
         if data_storage is not None and hasattr(data_storage, 'block_number'):
             block_data = data_storage.get_one(tag)
             if block_data:
-                if self.debug:
-                    self.logger.debug('Current code block data [%d]~[%d] "%s", in:%r, o:%r, c:%r'
-                                      % (current_block.blockNumber(), data_storage.block_number, tag,
-                                         block_data['within'], block_data['opened'], block_data['closed']))
+                self.logger.debug('Current code block data [%d]~[%d] "%s", in:%r, o:%r, c:%r'
+                                  % (current_block.blockNumber(), data_storage.block_number, tag,
+                                     block_data['within'], block_data['opened'], block_data['closed']))
                 return getattr(block_data, param) if hasattr(block_data, param) else None
         return None
 
@@ -1846,8 +1792,7 @@ class NotologEditor(QMainWindow):
         More info about the signal: https://doc.qt.io/qt-6/qplaintextedit.html#textChanged
         """
 
-        if self.debug:
-            self.logger.debug('Text changed signal from %s' % (self.sender()))
+        self.logger.debug('Text changed signal from %s' % (self.sender()))
 
         # Make save button active at the toolbar, even if no changes to save resources with no check
         if hasattr(self.toolbar, 'toolbar_save_button'):
@@ -1872,8 +1817,8 @@ class NotologEditor(QMainWindow):
         The content changes in a way that affects the modification state.
         More info about the signal: https://doc.qt.io/qt-6/qplaintextedit.html#modificationChanged
         """
-        if self.debug:
-            self.logger.debug('Modification changed (%s) signal from %s' % (changed, self.sender()))
+
+        self.logger.debug('Modification changed (%s) signal from %s' % (changed, self.sender()))
 
         # Synchronous highlighting
         self.rehighlight_editor(True)
@@ -1883,16 +1828,15 @@ class NotologEditor(QMainWindow):
         Whenever the block count changes, comes with a particular number of blocks.
         More info about the signal: https://doc.qt.io/qt-6/qplaintextedit.html#blockCountChanged
         """
-        if self.debug:
-            self.logger.debug('Block count (%d) changed signal from %s' % (new_block_count, self.sender()))
+
+        self.logger.debug('Block count (%d) changed signal from %s' % (new_block_count, self.sender()))
 
         if hasattr(self, 'line_numbers'):
             self.line_numbers.update_numbers()
 
     # TODO control B-I-U-S buttons
     def on_selection_changed(self) -> None:
-        if self.debug:
-            self.logger.debug('Text selection changed')
+        self.logger.debug('Text selection changed')
 
     def on_cursor_position_changed(self) -> None:
         """
@@ -1920,8 +1864,7 @@ class NotologEditor(QMainWindow):
         self.line_num = blk_num
         self.line_num_hr = blk_num + 1
 
-        if self.debug:
-            self.logger.debug('cursor %d x %d' % (self.line_num_hr, self.col_num))
+        self.logger.debug('cursor %d x %d' % (self.line_num_hr, self.col_num))
 
         if hasattr(self, 'statusbar') and hasattr(self.statusbar, 'cursor_label'):
             # Update cursor position and selected text attributes on the status bar label.
@@ -1943,11 +1886,9 @@ class NotologEditor(QMainWindow):
         """
         super(NotologEditor, self).changeEvent(event)
 
-        if self.debug:
-            self.logger.debug('Change event %s' % event.type())
+        self.logger.debug('Change event %s' % event.type())
         # if event.type() == event.WindowStateChange:
-        #    if self.debug:
-        #        self.logger.debug('%s > event.WindowStateChange' % self . __class__ . __qualname__)
+        #    self.logger.debug('%s > event.WindowStateChange' % self . __class__ . __qualname__)
 
     def resizeEvent(self, event) -> None:
         """
@@ -1966,18 +1907,16 @@ class NotologEditor(QMainWindow):
         web_view_width = view_widget.frameGeometry().width()
         web_view_height = view_widget.frameGeometry().height()
 
-        if self.debug:
-            self.logger.debug('%s > App window geometry %d x %d'
-                              % (self . __class__ . __qualname__, ui_width, ui_height))
-            self.logger.debug('%s > Web view geometry  %d x %d'
-                              % (self . __class__ . __qualname__, web_view_width, web_view_height))
+        self.logger.debug('%s > App window geometry %d x %d'
+                          % (self . __class__ . __qualname__, ui_width, ui_height))
+        self.logger.debug('%s > Web view geometry  %d x %d'
+                          % (self . __class__ . __qualname__, web_view_width, web_view_height))
 
         self.settings.ui_width = ui_width
         self.settings.ui_height = ui_height
 
         self.weight_to_px_uno = int(self.frameGeometry().width() / self.AREA_WEIGHT)
-        if self.debug:
-            self.logger.debug('Weight to px "%s"' % self.weight_to_px_uno)
+        self.logger.debug('Weight to px "%s"' % self.weight_to_px_uno)
 
         # Update line numbers area
         if hasattr(self, 'line_numbers'):
@@ -1996,8 +1935,7 @@ class NotologEditor(QMainWindow):
         ui_pos_x = self.pos().x()
         ui_pos_y = self.pos().y()
 
-        if self.debug:
-            self.logger.debug('%s > App window position %s' % (self . __class__ . __qualname__, self.pos()))
+        self.logger.debug('%s > App window position %s' % (self . __class__ . __qualname__, self.pos()))
 
         self.settings.ui_pos_x = ui_pos_x
         self.settings.ui_pos_y = ui_pos_y
@@ -2413,8 +2351,7 @@ class NotologEditor(QMainWindow):
             new_file_content_tpl = '# ' + self.lexemes.get('action_new_file_first_line_template_text') + ' %d\r\n'
             content = new_file_content_tpl % i
 
-        if self.debug:
-            self.logger.debug('New document "%s"' % file_path)
+        self.logger.debug('New document "%s"' % file_path)
 
         header = FileHeader().get_new()
         content = header.pack(content)
@@ -2423,9 +2360,8 @@ class NotologEditor(QMainWindow):
             # Load new file content
             return self.load_file(file_path)
         else:
-            if self.logging:
-                self.logger.warning('Cannot save file "%s"' % file_path)
-                self.message_box(self.lexemes.get('action_new_file_error_occurred'), icon_type=2)
+            self.logger.warning('Cannot save file "%s"' % file_path)
+            self.message_box(self.lexemes.get('action_new_file_error_occurred'), icon_type=2)
             return False
 
     def action_open_file(self) -> None:
@@ -2464,8 +2400,7 @@ class NotologEditor(QMainWindow):
             file_path = self.get_current_file_path()
 
         if file_path is None:
-            if self.logging:
-                self.logger.warning('Cannot save file because of the file path is not set!')
+            self.logger.warning('Cannot save file because of the file path is not set!')
             return
 
         # Save any unsaved changes, keep text edit field's content
@@ -2494,8 +2429,8 @@ class NotologEditor(QMainWindow):
         """
         Action: Edit/View mode toggle.
         """
-        if self.debug:
-            self.logger.debug('Edit file "%s"' % self.get_current_file_path())
+
+        self.logger.debug('Edit file "%s"' % self.get_current_file_path())
 
         # Save any unsaved changes
         self.save_active_file(clear_after=True)
@@ -2511,11 +2446,10 @@ class NotologEditor(QMainWindow):
         Action: Show source code when mode set to SOURCE.
         """
 
-        if self.debug:
-            self.logger.debug("Source view requested from mode '%s', from source '%s';"
-                              "previous states were '%s' and '%s' correspondingly"
-                              % (Mode(self.get_mode()).name, Source(self.get_source()).name,
-                                 Mode(self.get_prev_mode()).name, Source(self.get_prev_source()).name))
+        self.logger.debug("Source view requested from mode '%s', from source '%s';"
+                          "previous states were '%s' and '%s' correspondingly"
+                          % (Mode(self.get_mode()).name, Source(self.get_source()).name,
+                             Mode(self.get_prev_mode()).name, Source(self.get_prev_source()).name))
 
         if self.get_mode() == Mode.SOURCE:
             # Toggle mode to either VIEW or EDIT modes
@@ -2561,8 +2495,7 @@ class NotologEditor(QMainWindow):
         """
 
         current_file_path = self.get_current_file_path()
-        if self.debug:
-            self.logger.debug('Encrypting file "%s"' % current_file_path)
+        self.logger.debug('Encrypting file "%s"' % current_file_path)
         # Save active file data if needed
         self.save_active_file(clear_after=False)
 
@@ -2586,8 +2519,7 @@ class NotologEditor(QMainWindow):
         The callback method passed to the encrypt file dialog and executed upon completion.
         """
 
-        if self.debug:
-            self.logger.debug('Encrypt file dialog callback with sub-callback %s' % callback)
+        self.logger.debug('Encrypt file dialog callback with sub-callback %s' % callback)
 
         if os.path.isfile(to_file_path) and not ignore_existing_to_file:
             self.common_dialog(
@@ -2617,8 +2549,7 @@ class NotologEditor(QMainWindow):
         try:
             file_header.validate_enc()
         except Exception as e:
-            if self.logging:
-                self.logger.error('File header cannot be validated "%s"' % e)
+            self.logger.error('File header cannot be validated "%s"' % e)
 
         # Update the header with new date
         file_header.refresh()
@@ -2639,8 +2570,7 @@ class NotologEditor(QMainWindow):
                 try:
                     file_header.set_enc_param('hint', self.enc_password.hint)
                 except Exception as e:
-                    if self.logging:
-                        self.logger.error('File header cannot be updated "%s"' % e)
+                    self.logger.error('File header cannot be updated "%s"' % e)
             # Pack file header and file body
             content = file_header.pack(encrypted_file_body)
             result = self.save_file_content(to_file_path, content)
@@ -2662,8 +2592,7 @@ class NotologEditor(QMainWindow):
         """
 
         current_file_path = self.get_current_file_path()
-        if self.debug:
-            self.logger.debug('Decrypting file "%s"' % current_file_path)
+        self.logger.debug('Decrypting file "%s"' % current_file_path)
         # Save active file data if needed
         self.save_active_file(clear_after=False)
 
@@ -2686,8 +2615,8 @@ class NotologEditor(QMainWindow):
         """
         The callback method passed to the decrypt file dialog and executed upon completion.
         """
-        if self.debug:
-            self.logger.debug('Decrypt encrypted file dialog callback with sub-callback %s' % callback)
+
+        self.logger.debug('Decrypt encrypted file dialog callback with sub-callback %s' % callback)
 
         if os.path.isfile(to_file_path) and not ignore_existing_to_file:
             self.common_dialog(
@@ -2709,8 +2638,7 @@ class NotologEditor(QMainWindow):
         try:
             file_header.validate_enc()
         except Exception as e:
-            if self.logging:
-                self.logger.error('File header cannot be validated "%s"' % e)
+            self.logger.error('File header cannot be validated "%s"' % e)
         # File specific salt should be set within encrypted file
         file_salt = file_header.get_enc_param('slt')
         file_iterations = int(file_header.get_enc_param('itr'))
@@ -2725,15 +2653,13 @@ class NotologEditor(QMainWindow):
                 content = new_header.pack(file_body)
                 result = self.save_file_content(to_file_path, content)
             else:
-                if self.debug:
-                    self.logger.debug('Cannot decrypt file "%s"' % from_file_path)
+                self.logger.debug('Cannot decrypt file "%s"' % from_file_path)
                 """
                 * https://docs.python.org/3/reference/compound_stmts.html#the-try-statement
                 """
                 raise InvalidToken
         except (InvalidToken, InvalidSignature, TypeError):
-            if self.logging:
-                self.logger.warning('Cannot apply decryption password!')
+            self.logger.warning('Cannot apply decryption password!')
             result = False
 
         # Switch to the new file
@@ -2839,8 +2765,8 @@ class NotologEditor(QMainWindow):
         """
         Action: Text format COLOR with a picker.
         """
-        if self.debug:
-            self.logger.debug('Color Picker dialog')
+
+        self.logger.debug('Color Picker dialog')
 
         # Save any unsaved changes before calling a dialog
         self.save_active_file(clear_after=False)
@@ -2896,8 +2822,7 @@ class NotologEditor(QMainWindow):
         Action: AI assistant.
         """
 
-        if self.debug:
-            self.logger.debug('AI assistant')
+        self.logger.info('The AI assistant has been launched.')
 
         # Save any unsaved changes before calling a dialog
         self.save_active_file(clear_after=False)
@@ -2932,8 +2857,7 @@ class NotologEditor(QMainWindow):
         Settings.
         """
 
-        if self.debug:
-            self.logger.debug('Settings dialog')
+        self.logger.debug('Settings dialog')
 
         # Save any unsaved changes before calling a dialog
         self.save_active_file(clear_after=False)
@@ -2946,8 +2870,7 @@ class NotologEditor(QMainWindow):
         Reset settings.
         """
 
-        if self.debug:
-            self.logger.debug('Reset settings dialog')
+        self.logger.debug('Reset settings dialog')
 
         # Save any unsaved changes before calling a dialog
         self.save_active_file(clear_after=False)
@@ -2964,8 +2887,7 @@ class NotologEditor(QMainWindow):
         Actions to perform after reset settings dialogue.
         """
 
-        if self.debug:
-            self.logger.debug('Reset settings dialog callback with sub-callback %s' % callback)
+        self.logger.debug('Reset settings dialog callback with sub-callback %s' % callback)
 
         # Clear all settings
         self.settings.clear()
@@ -2985,8 +2907,7 @@ class NotologEditor(QMainWindow):
         Check the App updates here.
         """
 
-        if self.debug:
-            self.logger.debug('Checking for updates...')
+        self.logger.debug('Checking for updates...')
 
         update_helper = UpdateHelper()
         update_helper.new_version_check_response.connect(self.check_for_updates_handler)
@@ -2997,8 +2918,7 @@ class NotologEditor(QMainWindow):
         if 'status' in res_json and 'msg' in res_json:
             self.message_box(res_json['msg'], icon_type=(1 if res_json['status'] == UpdateHelper.STATUS_OK else 2))
         else:
-            if self.logging:
-                self.logger.warning('Check for update response data in a wrong format')
+            self.logger.warning('Check for update response data in a wrong format')
 
     def action_bug_report(self) -> None:
         """
@@ -3006,8 +2926,7 @@ class NotologEditor(QMainWindow):
         Or, redirect to the repository's page to create a task.
         """
 
-        if self.debug:
-            self.logger.debug('Sending bug report...')
+        self.logger.debug('Sending bug report...')
 
         url = AppConfig().get_repository_github_bug_report_url()
 
@@ -3024,8 +2943,7 @@ class NotologEditor(QMainWindow):
         Show about the App info.
         """
 
-        if self.debug:
-            self.logger.debug('About the App dialog')
+        self.logger.debug('About the App dialog')
 
         # Save any unsaved changes before calling a dialog
         self.save_active_file(clear_after=False)
@@ -3038,8 +2956,7 @@ class NotologEditor(QMainWindow):
         Action: Exit from the app.
         """
 
-        if self.debug:
-            self.logger.debug('Exiting...')
+        self.logger.debug('Exiting...')
 
         # Correct way, to allow closeEvent() work, do not use sys.exit(0)
         self.close()
@@ -3061,12 +2978,10 @@ class NotologEditor(QMainWindow):
         """
         source_index = self.tree_proxy_model.mapToSource(index)
         file_path = self.file_model.filePath(source_index)
-        if self.debug:
-            self.logger.debug('Opening file path "%s"' % file_path)
+        self.logger.debug('Opening file path "%s"' % file_path)
 
         if not os.path.exists(file_path):
-            if self.logging:
-                self.logger.warning('Path selected within the tree is not found!')
+            self.logger.warning('Path selected within the tree is not found!')
             return
 
         if os.path.isfile(file_path):
@@ -3075,8 +2990,7 @@ class NotologEditor(QMainWindow):
             # Load file content
             self.load_file(file_path)
         if os.path.isdir(file_path):
-            if self.debug:
-                self.logger.debug("Dir selected within the tree '%s'" % file_path)
+            self.logger.debug("Dir selected within the tree '%s'" % file_path)
             self.set_current_path(file_path)
 
     def load_content(self, header: FileHeader, content: str) -> None:
@@ -3103,8 +3017,7 @@ class NotologEditor(QMainWindow):
         elif self.get_mode() == Mode.SOURCE:
             self.load_source()
         else:
-            if self.logging:
-                self.logger.warning('Unrecognized mode %s' % self.get_mode())
+            self.logger.warning('Unrecognized mode %s' % self.get_mode())
 
         # Set cursor back
         self.setCursor(Qt.CursorShape.ArrowCursor)
@@ -3136,8 +3049,7 @@ class NotologEditor(QMainWindow):
             try:
                 file_header.validate_enc()
             except Exception as e:
-                if self.logging:
-                    self.logger.error('File header cannot be validated "%s"' % e)
+                self.logger.error('File header cannot be validated "%s"' % e)
             # File specific salt should be set within encrypted file
             file_salt = file_header.get_enc_param('slt')
             file_iterations = int(file_header.get_enc_param('itr'))
@@ -3152,8 +3064,7 @@ class NotologEditor(QMainWindow):
                     file_body = decrypted_data.decode("utf-8")
                     self.set_encryption(Encryption.ENCRYPTED)
                 else:
-                    if self.logging:
-                        self.logger.info('Cannot decrypt file "%s"' % file_path)
+                    self.logger.info('Cannot decrypt file "%s"' % file_path)
                     """
                     * https://docs.python.org/3/reference/compound_stmts.html#the-try-statement
                     """
@@ -3161,8 +3072,7 @@ class NotologEditor(QMainWindow):
                 # Reset encryption password dialogue count
                 self.enc_password_dialog_cnt = 0
             except (InvalidToken, InvalidSignature, TypeError):
-                if self.debug:
-                    self.logger.debug('Cannot apply encryption password!')
+                self.logger.debug('Cannot apply encryption password!')
                 # Setup file's cursor position to a very beginning
                 self.settings.line_num = 0
                 self.settings.col_num = 0
@@ -3171,8 +3081,7 @@ class NotologEditor(QMainWindow):
                     self.enc_password_dialog_cnt = 0
                 # If currently opened file is encrypted then offer to change the password
                 if self.get_encryption() == Encryption.ENCRYPTED:
-                    if self.debug:
-                        self.logger.debug('Wrong encryption password but another encrypted file is opened')
+                    self.logger.debug('Wrong encryption password but another encrypted file is opened')
                     if self.enc_password is not None:
                         # Show other file password mismatch message
                         self.message_box(self.lexemes.get('load_file_encryption_password_mismatch'), icon_type=2)
@@ -3238,8 +3147,7 @@ class NotologEditor(QMainWindow):
                         return self.load_default_page(ignore_settings=True)
                 else:
                     self.reset_encrypt_helper()  # Reset encryption helper and password
-                    if self.debug:
-                        self.logger.debug('Do nothing with the wrong password but check the loaded page')
+                    self.logger.debug('Do nothing with the wrong password but check the loaded page')
                     """
                     Just to be sure the editor is not started on encrypted file
                     with cancelled password dialog on very beginning, or without any default file.
@@ -3310,8 +3218,7 @@ class NotologEditor(QMainWindow):
             view_widget = self.get_view_widget()  # type: Union[ViewWidget, QTextBrowser]
             selected_text = view_widget.textCursor().selectedText()
 
-        if self.debug:
-            self.logger.debug('Searching text "%s"' % selected_text)
+        self.logger.debug('Searching text "%s"' % selected_text)
 
         if hasattr(self, 'toolbar') and hasattr(self.toolbar, 'search_form'):
             self.toolbar.search_form.set_text(selected_text)
@@ -3326,8 +3233,7 @@ class NotologEditor(QMainWindow):
         """
         current_file_path = self.get_current_file_path()
 
-        if self.debug:
-            self.logger.debug('Re-loading current file content "%s"' % current_file_path)
+        self.logger.debug('Re-loading current file content "%s"' % current_file_path)
 
         self.load_file(current_file_path)
 
@@ -3335,8 +3241,7 @@ class NotologEditor(QMainWindow):
         """
         Helper: Entry point to check and auto save file.
         """
-        if self.debug:
-            self.logger.debug('Check auto save possibility for the file "%s"' % file_path)
+        self.logger.debug('Check auto save possibility for the file "%s"' % file_path)
 
         self.action_save_file(file_path)
 
@@ -3355,8 +3260,7 @@ class NotologEditor(QMainWindow):
             bool: True if the file was successfully saved, False otherwise.
         """
 
-        if self.debug:
-            self.logger.debug('Saving file "%s"' % file_path)
+        self.logger.debug('Saving file "%s"' % file_path)
 
         # Save the file
         write_res = save_file(file_path, content)
@@ -3382,8 +3286,7 @@ class NotologEditor(QMainWindow):
 
         if self.get_mode() != Mode.EDIT:
             # Nothing to save
-            if self.debug:
-                self.logger.debug('Nothing to save in a non-edit mode')
+            self.logger.debug('Nothing to save in a non-edit mode')
             return None
 
         # Get current file path
@@ -3393,13 +3296,11 @@ class NotologEditor(QMainWindow):
         if allow_save_empty_content is not None:
             self.estate.allow_save_empty = allow_save_empty_content
 
-        if self.debug:
-            self.logger.debug(f"Save active file '{current_file_path}' (clear field after: '{clear_after}')")
+        self.logger.debug(f"Save active file '{current_file_path}' (clear field after: '{clear_after}')")
 
         # Handle the case where the file no longer exists and cannot be saved
         if not os.path.exists(current_file_path) and not os.access(os.path.dirname(current_file_path), os.W_OK):
-            if self.logging:
-                self.logger.warning(f"Cannot save active file '{current_file_path}', check if it was moved or deleted")
+            self.logger.warning(f"Cannot save active file '{current_file_path}', check if it was moved or deleted")
             self.toggle_save_timer(state=False)
             self.message_box(self.lexemes.get('save_active_file_error_occurred'), icon_type=2,
                              callback=self.toggle_save_timer)
@@ -3415,8 +3316,7 @@ class NotologEditor(QMainWindow):
 
         # Handle the case where the file no longer exists and cannot be saved
         if os.path.exists(current_file_path) and not os.access(current_file_path, os.W_OK):
-            if self.logging:
-                self.logger.warning(f"Cannot save active file '{current_file_path}'")
+            self.logger.warning(f"Cannot save active file '{current_file_path}'")
             self.toggle_save_timer(state=False)
             self.message_box(self.lexemes.get('save_active_file_error_occurred'), icon_type=2,
                              callback=self.toggle_save_timer)
@@ -3459,8 +3359,7 @@ class NotologEditor(QMainWindow):
             if self.header is None or not self.header.is_valid():
                 # Get empty file header here, it's needed for compatibility and will not be applied to the file
                 header = FileHeader()
-                if self.debug:
-                    self.logger.debug('File "%s" has no header info' % current_file_path)
+                self.logger.debug('File "%s" has no header info' % current_file_path)
             else:
                 header = self.header
 
@@ -3475,8 +3374,7 @@ class NotologEditor(QMainWindow):
                 try:
                     header.validate_enc()
                 except Exception as e:
-                    if self.logging:
-                        self.logger.error('File header cannot be validated "%s"' % e)
+                    self.logger.error('File header cannot be validated "%s"' % e)
                 # Get file specific salt
                 file_salt = header.get_enc_param('slt')
                 file_iterations = int(header.get_enc_param('itr'))
@@ -3629,12 +3527,10 @@ class NotologEditor(QMainWindow):
                         # Without this the extension tends to keep footnotes across the various notes
                         _ext.reset()  # type: ignore
                         # To remove use: self.md.registeredExtensions.remove(_ext)
-                        if self.debug:
-                            self.logger.debug('Resetting extension "%s"' % _ext)
+                        self.logger.debug('Resetting extension "%s"' % _ext)
                         break
             except ValueError as e:
-                if self.logging:
-                    self.logger.warning('Extension error', e)
+                self.logger.warning('Extension error', e)
 
         view_processor = ViewProcessor(highlighter=self.view_highlighter)
         # Connecting view's mouse press event to the view processor's method
@@ -3692,12 +3588,10 @@ class NotologEditor(QMainWindow):
         # Try to find resource attached to the document
         resource = view_doc.resource(QTextDocument.ResourceType.ImageResource, QUrl(resource_url))
         if resource:
-            if self.debug:
-                self.logger.debug(f"Resource for {resource_url} is already added.")
+            self.logger.debug(f"Resource for {resource_url} is already added.")
             return True
         else:
-            if self.debug:
-                self.logger.debug(f"No resource found for {resource_url}.")
+            self.logger.debug(f"No resource found for {resource_url}.")
             return False
 
     def attach_resource(self, resource_name: str, pixmap: QPixmap) -> bool:
@@ -3708,8 +3602,7 @@ class NotologEditor(QMainWindow):
         view_doc = self.get_view_doc()  # type: QTextDocument
         # url and pixmap data
         view_doc.addResource(QTextDocument.ResourceType.ImageResource, resource_name, pixmap)
-        if self.debug:
-            self.logger.debug(f"Resource '{resource_name}' added to the document")
+        self.logger.debug(f"Resource '{resource_name}' added to the document")
         return True
 
     def get_cached_resource_pixmap(self, image_url) -> QPixmap:
@@ -3717,30 +3610,25 @@ class NotologEditor(QMainWindow):
         file_name = self.resource_downloader.url_to_filename(image_url)
         res_folder = self.resource_downloader.get_resource_folder(self.get_tree_active_dir())
         file_path = os.path.join(res_folder.path(), file_name)
-        if self.debug:
-            self.logger.debug(f"Resource url '{image_url}', local file '{file_path}'")
+        self.logger.debug(f"Resource url '{image_url}', local file '{file_path}'")
         # Check if the image is already downloaded and cached
         pixmap = QPixmap()
         if QPixmapCache.find(image_url, pixmap):
-            if self.debug:
-                self.logger.debug(f"Pixmap resource found in cache: {image_url}")
+            self.logger.debug(f"Pixmap resource found in cache: {image_url}")
         elif os.path.exists(file_path):
             # Load from disk and cache
             pixmap.load(file_path)
             QPixmapCache.insert(image_url, pixmap)
-            if self.debug:
-                self.logger.debug(f"Loaded from disk and cached: {image_url}")
+            self.logger.debug(f"Loaded from disk and cached: {image_url}")
         else:
-            if (self.resource_downloader.is_external_url(image_url)
-                    and self.debug):
+            if self.resource_downloader.is_external_url(image_url):
                 self.logger.debug(f"Resource's '{image_url}' file doesn't exist '{file_path}' yet")
         return pixmap
 
     @Slot()
     def resource_downloaded_handler(self, data) -> None:
         if 'resource_name' not in data:
-            if self.logging:
-                self.logger.warning(f'Wrong data for added resource: {data}')
+            self.logger.warning(f'Wrong data for added resource: {data}')
             return
         image_url = data['resource_name']
         # Get cached resource data as handler should process an update
@@ -3749,13 +3637,11 @@ class NotologEditor(QMainWindow):
             # Attach resource
             self.attach_resource(image_url, pixmap)
         else:
-            if self.logging:
-                self.logger.warning(f"Resource '{image_url}' data not found")
+            self.logger.warning(f"Resource '{image_url}' data not found")
 
     @Slot()
     def resource_downloader_finished_handler(self, downloaded_cnt):
-        if self.debug:
-            self.logger.debug(f"All resource downloader tasks ({downloaded_cnt}) have been completed")
+        self.logger.debug(f"All resource downloader tasks ({downloaded_cnt}) have been completed")
         # Run update only if anything was downloaded
         if downloaded_cnt > 0:
             # View widget
@@ -3789,8 +3675,7 @@ class NotologEditor(QMainWindow):
                     # Valid image
                     if image_format.isValid():
                         image_url = image_format.name()
-                        if self.debug:
-                            self.logger.debug(f"Found image resource url: {image_url}")
+                        self.logger.debug(f"Found image resource url: {image_url}")
                         # Check if the resource has been already added
                         if not self.is_resource_attached(image_url):
                             # Try to get cached resource data
@@ -3804,8 +3689,7 @@ class NotologEditor(QMainWindow):
                                 # Attach resource
                                 self.attach_resource(image_url, pixmap)
                         else:
-                            if self.debug:
-                                self.logger.debug(f"Resource is already attached: {image_url}")
+                            self.logger.debug(f"Resource is already attached: {image_url}")
                 it += 1
             block = block.next()
 
@@ -3852,8 +3736,7 @@ class NotologEditor(QMainWindow):
             # Save cursor position (line count starts from 0)
             self.settings.line_num = self.line_num
             self.settings.col_num = self.col_num
-            if self.debug:
-                self.logger.debug('Storing document cursor position %d x %d ' % (self.line_num, self.col_num))
+            self.logger.debug('Storing document cursor position %d x %d ' % (self.line_num, self.col_num))
         else:
             # View widget
             view_widget = self.get_view_widget()  # type: Union[ViewWidget, QTextBrowser]
@@ -3869,9 +3752,8 @@ class NotologEditor(QMainWindow):
         if mode == Mode.EDIT:
             text_cursor = source_widget.textCursor()
             text_cursor.setPosition(0)
-            if self.debug:
-                self.logger.debug('Restoring document cursor position %d x %d'
-                                  % (self.settings.line_num, self.settings.col_num))
+            self.logger.debug('Restoring document cursor position %d x %d'
+                              % (self.settings.line_num, self.settings.col_num))
             # Move down to the desired line number (assuming line numbers start from 0)
             for _ in range(self.settings.line_num):
                 if not text_cursor.movePosition(QTextCursor.MoveOperation.Down, QTextCursor.MoveMode.MoveAnchor):
@@ -3889,8 +3771,7 @@ class NotologEditor(QMainWindow):
                     text_cursor.setPosition(self.settings.cursor_pos)
                 else:
                     # This may happen if the position has been stored after collapsible blocks were expanded
-                    if self.debug:
-                        self.logger.debug("Cursor's setPosition(%d) is out of range" % self.settings.cursor_pos)
+                    self.logger.debug("Cursor's setPosition(%d) is out of range" % self.settings.cursor_pos)
                 source_widget.setTextCursor(text_cursor)
                 if isinstance(self.settings.viewport_pos, list) and len(self.settings.viewport_pos) == 2:
                     _h, _v = self.settings.viewport_pos
@@ -4014,8 +3895,7 @@ class NotologEditor(QMainWindow):
 
         # Apply search to the source
         res = search_source.find(text, find_flags)
-        if self.debug:
-            self.logger.debug('Search PREVIOUS match result: "%s"', res)
+        self.logger.debug('Search PREVIOUS match result: "%s"', res)
         if not res:
             # Start over again if not matches in this direction
             search_source.moveCursor(QTextCursor.MoveOperation.End)
@@ -4040,8 +3920,7 @@ class NotologEditor(QMainWindow):
 
         # Apply search to the source
         res = search_source.find(text, find_flags)
-        if self.debug:
-            self.logger.debug('Search NEXT match result: "%s"', res)
+        self.logger.debug('Search NEXT match result: "%s"', res)
         if not res:
             # Start over again if not matches in this direction
             search_source.moveCursor(QTextCursor.MoveOperation.Start)

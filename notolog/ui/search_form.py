@@ -22,7 +22,6 @@ from PySide6.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QHBoxLayo
 from PySide6.QtGui import QColor
 
 from . import Settings
-from . import AppConfig
 from . import Lexemes
 from . import ThemeHelper
 
@@ -59,9 +58,6 @@ class SearchForm(QWidget):
             self.setFont(self.parent.font())
 
         self.logger = logging.getLogger('search_form')
-
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
 
         self.settings = Settings()
 
@@ -283,7 +279,7 @@ class SearchForm(QWidget):
         layout.addWidget(icon_button)
 
         if 'var_name' in button_conf:
-            if self.debug and hasattr(self, button_conf['var_name']):
+            if hasattr(self, button_conf['var_name']):
                 self.logger.debug('Variable "%s" is already set! Re-writing it...' % button_conf['var_name'])
             setattr(self, button_conf['var_name'], icon_button)  # type: QPushButton
 

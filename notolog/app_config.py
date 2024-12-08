@@ -14,7 +14,7 @@ from threading import Lock
 toml_base_app_config = """
 [app]
 name = "Notolog"
-version = "1.0.7"
+version = "1.0.8"
 license = "MIT License"
 date = "2024"
 website = "https://notolog.app"
@@ -62,8 +62,7 @@ min_size = 5
 max_size = 42
 
 [logger]
-logging = true
-debug = false
+level = "info"
 
 [security]
 app_secret = ""
@@ -87,6 +86,8 @@ class AppConfig(QObject):
     value_changed = Signal(dict)  # type: Signal[dict]
 
     default_package = AppPackage().default_package
+
+    default_logger_level = logging.INFO
 
     def __new__(cls, *args, **kwargs):
         # Overriding __new__ to control the instantiation process
@@ -127,11 +128,7 @@ class AppConfig(QObject):
             # Initialize
             self.load_initial_conf()
 
-            self.logging = self.get_logging()
-            self.debug = self.get_debug()
-
-            if self.debug:
-                self.logger.info('App config is engaged')
+            self.logger.info('App config is activated')
 
             self.value_changed.connect(self.app_config_update_handler)
 
@@ -278,12 +275,10 @@ class AppConfig(QObject):
                 self.toml_file_path = None
                 return True
             except OSError as e:
-                if self.logging:
-                    self.logger.warning(f"Error deleting configuration file {self.toml_file_path}: {e}")
+                self.logger.warning(f"Error deleting configuration file {self.toml_file_path}: {e}")
                 return False
         else:
-            if self.logging:
-                self.logger.warning(f"Configuration file does not exist or is not writable: {self.toml_file_path}")
+            self.logger.warning(f"Configuration file does not exist or is not writable: {self.toml_file_path}")
             return False
 
     def save_app_config(self):
@@ -301,8 +296,7 @@ class AppConfig(QObject):
 
     def app_config_update_handler(self, data: dict) -> None:
         # Data contains information about the changes made
-        if self.debug:
-            self.logger.debug('App config handler is in use "%s"' % data)
+        self.logger.debug('App config handler is in use "%s"' % data)
 
         # Save the current config
         self.save_app_config()
@@ -398,19 +392,23 @@ class AppConfig(QObject):
     Methods with setter to override default value.
     """
 
-    def set_logging(self, value) -> None:
-        self.app_config['logger']['logging'] = value
-        self.value_changed.emit({'logger_logging': value})
+    def set_logger_level(self, value) -> None:
+        self.app_config['logger']['level'] = value
+        self.value_changed.emit({'logger_level': value})
 
-    def get_logging(self) -> bool:
-        return self.app_config['logger']['logging']
+    def get_logger_level(self) -> str:
+        level = None
+        if self.app_config and 'logger' in self.app_config and 'level' in self.app_config['logger']:
+            level = (self.app_config['logger']['level']).upper()
 
-    def set_debug(self, value) -> None:
-        self.app_config['logger']['debug'] = value
-        self.value_changed.emit({'logger_debug': value})
+        available_levels = logging.getLevelNamesMapping()
+        if level not in available_levels:
+            self.logger.warning(f"Logger level is not recognized: '{level}'.\n\t"
+                                f"Available options are: {str(available_levels.keys())}")
+            level = self.default_logger_level
 
-    def get_debug(self) -> bool:
-        return self.app_config['logger']['debug']
+        # Return the level
+        return level
 
     def set_font_min_size(self, value) -> None:
         self.app_config['font']['min_size'] = value

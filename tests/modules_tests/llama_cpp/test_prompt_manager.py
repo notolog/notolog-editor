@@ -12,15 +12,15 @@ else:
     from PySide6.QtCore import QObject as PromptManager
 
 import pytest
+import logging
 
 
 class TestPromptManager:
 
     @pytest.fixture(scope="function", autouse=True)
     def test_obj_app_config(self, mocker):
-        # Mock AppConfig methods to disable logging and debugging during tests.
-        mocker.patch.object(AppConfig, 'get_logging', return_value=False)
-        mocker.patch.object(AppConfig, 'get_debug', return_value=False)
+        # Mock AppConfig's get_logger_level method to suppress logging during tests.
+        mocker.patch.object(AppConfig, 'get_logger_level', return_value=logging.NOTSET)
 
         # Create an AppConfig instance and set it to test mode.
         _app_config = AppConfig()

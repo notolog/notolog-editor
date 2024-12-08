@@ -28,7 +28,6 @@ import base64
 from typing import TYPE_CHECKING, Union
 
 from .settings import Settings
-from .app_config import AppConfig
 from .highlight.view_highlighter import ViewHighlighter
 from .lexemes.lexemes import Lexemes
 
@@ -52,9 +51,6 @@ class ViewProcessor:
         self.highlighter = highlighter
         self.doc = self.highlighter.document()
 
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
-
         self.settings = Settings()
 
         self.logger = logging.getLogger('view_processor')
@@ -62,8 +58,7 @@ class ViewProcessor:
         # Load lexemes for selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='common')
 
-        if self.debug:
-            self.logger.info('Characters count %d' % self.doc.characterCount())
+        self.logger.debug('Characters count %d' % self.doc.characterCount())
 
         self.blocks = []
         self.blocks_start = []
@@ -228,8 +223,7 @@ class ViewProcessor:
                     del self.blocks_start[_index]
                     break
 
-        if self.debug:
-            self.logger.debug('Unsorted open-close mapping %s' % res)
+        self.logger.debug('Unsorted open-close mapping %s' % res)
 
         self.blocks = res
 
@@ -241,13 +235,11 @@ class ViewProcessor:
         self.restore_cursor_pos()
 
     def sort_blocks(self):
-        if self.debug:
-            self.logger.debug('Sorting elements by group and nesting level...')
+        self.logger.debug('Sorting elements by group and nesting level...')
 
         self.blocks.sort(key=lambda x: x['o'] if 'o' in x and x['o'] is not None else 0)
 
-        if self.debug:
-            self.logger.info('Sorted result of the open-close mapping %s' % self.blocks)
+        self.logger.debug('Sorted result of the open-close mapping %s' % self.blocks)
 
         group = 0
         for i, _data in enumerate(self.blocks):
@@ -277,8 +269,7 @@ class ViewProcessor:
                                         -x['l'] if x['l'] is not None else 0,
                                         -x['o'] if x['o'] is not None else 0))  # reverse=True
 
-        if self.debug:
-            self.logger.info('Final result of the open-close mapping with nesting value %s' % self.blocks)
+        self.logger.debug('Final result of the open-close mapping with nesting value %s' % self.blocks)
 
     def collapse_blocks(self):
         cursor = QTextCursor(self.doc)
@@ -311,8 +302,7 @@ class ViewProcessor:
             replacement_text_lengths[prev_level] = replacement_text_len
 
             if pair['o'] is None or pair['c'] is None:
-                if self.debug:
-                    self.logger.warning('Error occurred! Incomplete open/close tag data %s' % pair)
+                self.logger.debug('Notice: Incomplete open/close tag data %s' % pair)
                 return
 
             """
@@ -327,15 +317,13 @@ class ViewProcessor:
                             # Replacements on the same level shouldn't interfere each other
                             else (replacement_text_len if pos_level != prev_level else 0)))
 
-            if self.debug:
-                self.logger.debug('Cursor position open: %d, close: %d, level: %d ' % (pos_open, pos_close, pos_level))
+            self.logger.debug('Cursor position open: %d, close: %d, level: %d ' % (pos_open, pos_close, pos_level))
 
             cursor.setPosition(pos_open)
             cursor.setPosition(pos_close, QTextCursor.MoveMode.KeepAnchor)
             selected_text = cursor.selectedText()
             if selected_text:
-                if self.debug:
-                    self.logger.debug('Block text[%d][%d]: %s' % (pos_group, pos_level, selected_text))
+                self.logger.debug('Block text[%d][%d]: %s' % (pos_group, pos_level, selected_text))
 
                 cursor.removeSelectedText()
 
@@ -382,8 +370,7 @@ class ViewProcessor:
                                             encoded_summary.decode('utf-8'), pos_group, pos_level, summary))
                 replacement_text_len += len(replacement_text) - (pos_close - pos_open)
                 cursor.insertText(replacement_text)
-                if self.debug:
-                    self.logger.debug('Replacement text: %s' % replacement_text)
+                self.logger.debug('Replacement text: %s' % replacement_text)
 
                 # Save current group and level to check them over again within the next iteration.
                 prev_group = pos_group
@@ -405,10 +392,9 @@ class ViewProcessor:
             elif anchor.startswith('collapsible'):
                 return self.collapsible_click_event(QUrl(anchor), cursor)
             else:
-                if self.debug:
-                    cursor.select(QTextCursor.SelectionType.WordUnderCursor)
-                    text = cursor.selectedText()
-                    self.logger.debug(f'Click context: {text}')
+                # cursor.select(QTextCursor.SelectionType.WordUnderCursor)
+                # text = cursor.selectedText()
+                # self.logger.debug(f'Click context: {text}')
 
                 cursor.clearSelection()
                 parent_widget.setTextCursor(cursor)
@@ -417,9 +403,8 @@ class ViewProcessor:
         # Start from the clicked position
         cursor.select(QTextCursor.SelectionType.WordUnderCursor)
 
-        if self.debug:
-            self.logger.debug('Cursor data, pos: %d, anchor: %s, text: %s'
-                              % (cursor.position(), cursor.anchor(), cursor.selectedText()))
+        self.logger.debug('Cursor data, pos: %d, anchor: %s, text: %s'
+                          % (cursor.position(), cursor.anchor(), cursor.selectedText()))
 
         i = 0
         # Move to the anchor caption's start position
@@ -456,18 +441,16 @@ class ViewProcessor:
                 cursor.movePosition(QTextCursor.MoveOperation.PreviousCharacter, QTextCursor.MoveMode.KeepAnchor)
                 j += 1
 
-        if self.debug:
-            self.logger.debug(f'Anchor summary text: "{cursor.selectedText()}"')
+        self.logger.debug(f'Anchor summary text: "{cursor.selectedText()}"')
 
         cursor.removeSelectedText()
 
         return cursor
 
     def expandable_click_event(self, url: QUrl, cursor: QTextCursor):
-        if self.debug:
-            # cursor.charFormat().anchorHref()
-            self.logger.debug('Expandable anchor clicked, scheme: %s, path: %s, fragment: %s'
-                              % (url.scheme(), url.path(), url.fragment()))
+        # cursor.charFormat().anchorHref()
+        self.logger.debug('Expandable anchor clicked, scheme: %s, path: %s, fragment: %s'
+                          % (url.scheme(), url.path(), url.fragment()))
 
         # This may cause left-right click issue when either the start or end position of token is clicked
         # cursor.movePosition(QTextCursor.MoveOperation.PreviousCharacter, QTextCursor.MoveMode.KeepAnchor)
@@ -476,22 +459,19 @@ class ViewProcessor:
         # start_pos = cursor.position()
 
         encoded_text = url.path()
-        if self.debug:
-            self.logger.debug('Text to decode: {%s}', encoded_text)
+        self.logger.debug('Text to decode: {%s}', encoded_text)
 
         decoded_text = (base64.b64decode(encoded_text.encode('utf-8'))
                         .decode('utf-8')
                         .strip())
 
         encoded_summary = url.fragment()
-        if self.debug:
-            self.logger.debug('Summary to decode: {%s}', encoded_summary)
+        self.logger.debug('Summary to decode: {%s}', encoded_summary)
         decoded_summary = (base64.b64decode(encoded_summary.encode('utf-8'))
                            .decode('utf-8')
                            .strip())
 
-        if self.debug:
-            self.logger.debug('Decoded text: {%s}' % decoded_text)
+        self.logger.debug('Decoded text: {%s}' % decoded_text)
 
         # Set default format for inserted text
         default_format = QTextCharFormat()
@@ -518,15 +498,13 @@ class ViewProcessor:
         # cursor.movePosition(QTextCursor.MoveOperation.NextCharacter, QTextCursor.MoveMode.KeepAnchor)
 
     def collapsible_click_event(self, url: QUrl, cursor: QTextCursor):
-        if self.debug:
-            # cursor.charFormat().anchorHref()
-            self.logger.debug('Collapsible anchor clicked, scheme: %s, path: %s' % (url.scheme(), url.path()))
+        # cursor.charFormat().anchorHref()
+        self.logger.debug('Collapsible anchor clicked, scheme: %s, path: %s' % (url.scheme(), url.path()))
 
         cursor = self.process_anchor_label(cursor)
 
         encoded_text = url.path()
-        if self.debug:
-            self.logger.debug('Text to decode: {%s}', encoded_text)
+        self.logger.debug('Text to decode: {%s}', encoded_text)
 
         encoded_summary = url.fragment()
         decoded_summary = (base64.b64decode(encoded_summary.encode('utf-8'))

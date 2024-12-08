@@ -47,9 +47,6 @@ class ViewWidget(QTextBrowser):
 
         self.logger = logging.getLogger('view_widget')
 
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
-
         # Initialize storage for positions and indexes of searched text occurrences.
         self._searched_text_positions = []
 
@@ -73,8 +70,7 @@ class ViewWidget(QTextBrowser):
         anchor = self.anchorAt(cursor_pos)
         # Ensure hyperlink clicks are not processed when clicking on expandable/collapsible blocks.
         if anchor and (anchor.startswith('expandable') or anchor.startswith('collapsible')):
-            if self.debug:
-                self.logger.debug("Anchor URL at cursor:", anchor)
+            self.logger.debug("Anchor URL at cursor:", anchor)
             return
 
     def contextMenuEvent(self, event):
@@ -93,10 +89,9 @@ class ViewWidget(QTextBrowser):
         # Display the menu
         menu.exec_(event.globalPos())
 
-    def loadResource(self, type, url):
+    def loadResource(self, resource_type, url):
         # Log the resource request
-        if self.debug:
-            self.logger.debug(f"Requesting resource of type {type} at URL: {url.toString()}")
+        self.logger.debug(f"Requesting resource of type {resource_type} at URL: {url.toString()}")
 
     def searched_text_count(self, searched_text, find_flags) -> int:
         """

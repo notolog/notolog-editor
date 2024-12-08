@@ -21,8 +21,6 @@ from PySide6.QtCore import QModelIndex, QSortFilterProxyModel, QRegularExpressio
 import os
 import logging
 
-from . import AppConfig
-
 from ..helpers.file_helper import remove_trailing_numbers
 
 
@@ -32,9 +30,6 @@ class SortFilterProxyModel(QSortFilterProxyModel):
         super().__init__(*args, **kwargs)
 
         self.logger = logging.getLogger('sort_filter_proxy_model')
-
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
 
         self._extensions = extensions  # Allow specific file extensions
 
@@ -70,14 +65,13 @@ class SortFilterProxyModel(QSortFilterProxyModel):
             re = QRegularExpression(regex)
             match = re.match(index.data())
             if not (match.capturedTexts() and match.captured()):
-                if self.debug:
-                    self.logger.debug('Filter row: %s' % index.data())
+                self.logger.debug('Filter row: %s' % index.data())
                 return False
 
-        if source_model.isDir(index):
+        if source_model.isDir(index):  # noqa
             return True  # Always show directories
         else:
-            file_path = source_model.filePath(index)
+            file_path = source_model.filePath(index)  # noqa
             extension = file_path.split(".")[-1]
             return not self._extensions or remove_trailing_numbers(extension).lower() in self._extensions
 
@@ -86,8 +80,8 @@ class SortFilterProxyModel(QSortFilterProxyModel):
         source_model = self.sourceModel()
 
         # Get the file names for the left and the right indexes
-        left_name = source_model.fileName(left)
-        right_name = source_model.fileName(right)
+        left_name = source_model.fileName(left)  # noqa
+        right_name = source_model.fileName(right)  # noqa
 
         # Sort "dotdot" always at the top (check the "dot" is not visible)
         if left_name == ".." and right_name != "..":
@@ -95,8 +89,8 @@ class SortFilterProxyModel(QSortFilterProxyModel):
         elif right_name != ".." and left_name == "..":
             return False
 
-        left_path = source_model.filePath(left)
-        right_path = source_model.filePath(right)
+        left_path = source_model.filePath(left)  # noqa
+        right_path = source_model.filePath(right)  # noqa
 
         if os.path.isdir(left_path) and not os.path.isdir(right_path):
             return True

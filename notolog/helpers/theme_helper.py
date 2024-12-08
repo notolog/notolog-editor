@@ -25,8 +25,6 @@ import logging
 
 from typing import Union
 
-from . import AppConfig
-
 from ..settings import Settings
 from ..theme import Theme
 from ..enums.themes import Themes
@@ -42,11 +40,7 @@ class ThemeHelper:
 
         self.logger = logging.getLogger('theme_helper')
 
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
-
-        if self.debug:
-            self.logger.info('Theme helper is engaged')
+        self.logger.debug('Theme helper is activated')
 
         self.settings = Settings()
 
@@ -81,8 +75,7 @@ class ThemeHelper:
             if color_name in theme_colors else None  # theme_colors.get('color_default')
 
         if color is None:
-            if self.debug:
-                self.logger.debug(f"Skip not set color '{color_name}', theme '{self.theme.theme}'")
+            self.logger.debug(f"Skip not set color '{color_name}', theme '{self.theme.theme}'")
             return None
 
         if isinstance(color, int):
@@ -133,8 +126,7 @@ class ThemeHelper:
             if not color:
                 default_icon_color = self.get_color('toolbar_icon_color_default')
                 color = QColor(default_icon_color)
-                if self.debug:
-                    self.logger.info('Applying default color fallback "#%x"' % default_icon_color)
+                self.logger.debug('Applying default color fallback "#%x"' % default_icon_color)
             return QIcon(self.svg_to_pixmap(svg_filepath=theme_icon_path, color=color, width=width, height=height))
         else:
             # With a fallback: QIcon.fromTheme(system_icon, QIcon(theme_icon))

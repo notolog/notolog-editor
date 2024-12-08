@@ -25,8 +25,6 @@ import logging
 
 from typing import Any, Callable
 
-from .app_config import AppConfig
-
 
 class AsyncHighlighter:
 
@@ -35,9 +33,6 @@ class AsyncHighlighter:
         self.callback = callback
 
         self.logger = logging.getLogger('async_highlighter')
-
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
 
         self.rehighlight_tasks = []
 
@@ -52,16 +47,13 @@ class AsyncHighlighter:
 
         # Check async loop is running
         if not asyncio.get_event_loop().is_running():
-            if self.logging:
-                self.logger.debug('Skipping the task because the async loop is not running.')
+            self.logger.debug('Skipping the task because the async loop is not running.')
             return
 
-        if self.debug:
-            self.logger.debug('Re-highlight %d tasks in queue' % len(self.rehighlight_tasks))
+        self.logger.debug('Re-highlight %d tasks in queue' % len(self.rehighlight_tasks))
 
         postpone = False if len(self.rehighlight_tasks) == 0 else True
-        if self.debug:
-            self.logger.debug('Re-highlight is to postpone "%r"' % postpone)
+        self.logger.debug('Re-highlight is to postpone "%r"' % postpone)
 
         task = None
         # To keep only a few tasks in queue
@@ -78,8 +70,7 @@ class AsyncHighlighter:
                 self.rehighlight_tasks,
                 return_when=asyncio.ALL_COMPLETED,  # There is no pending tasks check
             )
-            if self.debug:
-                self.logger.debug(f'Re-highlight tasks progress. Done {len(done)}, pending {len(pending)}')
+            self.logger.debug(f'Re-highlight tasks progress. Done {len(done)}, pending {len(pending)}')
         except asyncio.CancelledError:
             # All tasks will be cancelled later upon close event
             pass
@@ -87,9 +78,8 @@ class AsyncHighlighter:
         return task
 
     def rehighlight_task_callback(self, task) -> None:
-        if self.debug:
-            self.logger.debug('%s from total %d completed with callback'
-                              % (task.get_name(), len(self.rehighlight_tasks)))
+        self.logger.debug('%s from total %d completed with callback'
+                          % (task.get_name(), len(self.rehighlight_tasks)))
 
         self.rehighlight_tasks.remove(task)
 
@@ -103,17 +93,14 @@ class AsyncHighlighter:
         try:
             # Postpone before re-highlighting set
             if postpone:
-                if self.debug:
-                    self.logger.debug('Re-highlighting the text > postpone')
+                self.logger.debug('Re-highlighting the text > postpone')
                 # Keep this method particular amount of time to avoid overwhelming
                 await asyncio.sleep(0.15, self.loop)
             # Re-highlight
             self.callback(full_rehighlight)
-            if self.debug:
-                self.logger.debug('Async re-highlighting queue task processed')
+            self.logger.debug('Async re-highlighting queue task processed')
             # Postpone after re-highlighting to keep the queue busy
-            if self.debug:
-                self.logger.debug('Re-highlighting the text > wait to return')
+            self.logger.debug('Re-highlighting the text > wait to return')
             # Keep this method particular amount of time to avoid overwhelming
             await asyncio.sleep(0.3, self.loop)
         except asyncio.CancelledError:

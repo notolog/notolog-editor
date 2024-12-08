@@ -75,9 +75,6 @@ class ModuleCore(BaseAiCore):
 
         self.logger = logging.getLogger('module_llama_cpp')
 
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
-
         # Load lexemes for the selected language and scope
         self.lexemes = Lexemes(self.settings.app_language,
                                default_scope='settings_dialog',
@@ -101,11 +98,9 @@ class ModuleCore(BaseAiCore):
                                         search_options=search_options)
 
         # Use for debugging asynchronous events if necessary:
-        # if self.debug:
-        #    asyncio.get_event_loop().set_debug(True)
+        # asyncio.get_event_loop().set_debug(True)
 
-        if self.logging:
-            self.logger.info(f'Module {__name__} loaded')
+        self.logger.debug(f'Module {__name__} loaded')
 
     def get_search_options(self):
         search_options = {}
@@ -158,8 +153,7 @@ class ModuleCore(BaseAiCore):
                     # Ensure handling when the parent window might be closed
                     ai_dialog.dialog_closed.disconnect(self.parent_closed)
         except RuntimeError as e:  # Object might be already deleted
-            if self.logging:
-                self.logger.warning(f'Error occurred during the closing process {e}')
+            self.logger.warning(f'Error occurred during the closing process {e}')
         # Clear the prompt history when no longer needed
         PromptManager.reload()
         # Stop the generator thread before closing the dialog to avoid crashes
@@ -202,9 +196,8 @@ class ModuleCore(BaseAiCore):
         # Initialize the model
         try:
             self.model_helper.init_model()
-        except (AttributeError, Exception) as e:
-            if self.logging:
-                self.logger.error(f'{e}')
+        except (RuntimeError, ValueError, Exception) as e:
+            self.logger.error(f'{e}')
             # Complete the initialization process
             if self.init_callback and callable(self.init_callback):
                 self.init_callback()
@@ -241,8 +234,7 @@ class ModuleCore(BaseAiCore):
                 if not task.cancelled():
                     exception = task.exception()
                     if exception:
-                        if self.logging:
-                            self.logger.warning(f"Task raised an exception: {exception}")
+                        self.logger.warning(f"Task raised an exception: {exception}")
                         # Prepare error messages for UI display if exceptions occur
                         outputs = self.lexemes.get('module_llama_cpp_task_exception', scope='common',
                                                    error_msg=str(exception))
@@ -250,16 +242,14 @@ class ModuleCore(BaseAiCore):
                         self.update_signal.emit(outputs, None, None, EnumMessageType.DEFAULT, EnumMessageStyle.ERROR)
                     else:
                         result = task.result()
-                        if self.debug:
-                            self.logger.debug(f"Task completed with result: {result}")
+                        self.logger.debug(f"Task completed with result: {result}")
 
     async def run_generator(self, user_prompt, request_msg_id, response_msg_id):
 
         try:
             generator = self.model_helper.init_generator(user_prompt, ModelHelper.search_options)
         except ModuleNotFoundError as e:
-            if self.logging:
-                self.logger.error(f'Cannot init model generator: {e}', exc_info=False)
+            self.logger.error(f'Cannot init model generator: {e}', exc_info=False)
             # Re-raise exceptions to indicate unresolved issues to the caller
             raise
         finally:
@@ -272,17 +262,13 @@ class ModuleCore(BaseAiCore):
                 await self.async_generator(generator, request_msg_id, response_msg_id)
                 await asyncio.sleep(0.01)  # Sleep briefly to allow the UI to update
         except StopAsyncIteration:
-            if self.debug:
-                self.logger.debug("Async generation completed")
+            self.logger.debug("Async generation completed")
         except asyncio.CancelledError:
-            if self.logging:
-                self.logger.info("Generation cancelled")
+            self.logger.info("Generation cancelled")
         except (WindowsError, RecursionError) as e:
-            if self.logging:
-                self.logger.error(f"Error occurred: {e}")
+            self.logger.error(f"Error occurred: {e}")
         except (SystemExit, Exception) as e:
-            if self.logging:
-                self.logger.error(f"Exception raised: {e}")
+            self.logger.error(f"Exception raised: {e}")
         finally:  # Mark the end of the generation process
             await self.stop_generator()
 
@@ -495,8 +481,7 @@ class ModuleCore(BaseAiCore):
             None
         """
 
-        if AppConfig().get_debug():
-            AppConfig().logger.debug('Settings update handler is in use "%s"' % data)
+        AppConfig().logger.debug('Settings update handler is in use "%s"' % data)
 
         options = [
             'module_llama_cpp_model_path',

@@ -23,7 +23,6 @@ import logging
 from typing import TYPE_CHECKING, Union
 
 from .settings import Settings
-from .app_config import AppConfig
 from .highlight.view_highlighter import ViewHighlighter
 
 if TYPE_CHECKING:
@@ -68,15 +67,11 @@ class ViewDecorator:
         self.highlighter = highlighter
         self.doc = self.highlighter.document()
 
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
-
         self.settings = Settings()
 
         self.logger = logging.getLogger('view_decorator')
 
-        if self.debug:
-            self.logger.info('Characters count %d' % self.doc.characterCount())
+        self.logger.debug('Characters count %d' % self.doc.characterCount())
 
         cursor = QTextCursor(self.doc)
         self.cursor_pos_orig = cursor.position()
@@ -115,11 +110,10 @@ class ViewDecorator:
                     len_reduced = 0
 
                     for block_data in data_storage.get_all(tag):
-                        if self.debug:
-                            self.logger.debug(
-                                'Current block data [%d]~[%d] "%s", in:%r, opened:%r, closed:%r, start: %d, end: %d'
-                                % (current_block.blockNumber(), data_storage.block_number, tag, block_data['within'],
-                                   block_data['opened'], block_data['closed'], block_data['start'], block_data['end']))
+                        self.logger.debug(
+                            'Current block data [%d]~[%d] "%s", in:%r, opened:%r, closed:%r, start: %d, end: %d'
+                            % (current_block.blockNumber(), data_storage.block_number, tag, block_data['within'],
+                               block_data['opened'], block_data['closed'], block_data['start'], block_data['end']))
 
                         _r = {'o': block_pos + block_data['start'],
                               'c': block_pos + block_data['end'],
@@ -134,10 +128,9 @@ class ViewDecorator:
                            continue
                         _r = {'o': find_cursor.selectionStart(), 'c': find_cursor.selectionEnd(),
                               'oi': oi, 'ci': ci, 'fmt': fmt, 'repl': repl}
-                        if self.debug:
-                            self.logger.debug('Cursor position match block: %d, abs: %d, open: %d, close: %d, text: %s'
-                                % (find_cursor.positionInBlock(), find_cursor.position(), find_cursor.selectionStart(),
-                                   find_cursor.selectionEnd(), find_cursor.selectedText()))
+                        self.logger.debug('Cursor position match block: %d, abs: %d, open: %d, close: %d, text: %s'
+                            % (find_cursor.positionInBlock(), find_cursor.position(), find_cursor.selectionStart(),
+                               find_cursor.selectionEnd(), find_cursor.selectedText()))
                         """
 
                         # Edit the block

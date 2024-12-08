@@ -27,8 +27,6 @@ from typing import Union, Iterator
 
 from llama_cpp import Llama, CreateChatCompletionResponse, CreateChatCompletionStreamResponse
 
-from .. import AppConfig
-
 
 class ModelHelper:
 
@@ -59,7 +57,7 @@ class ModelHelper:
         """
         with cls._lock:
             # Create a new instance
-            cls._instance = super().__new__(cls)
+            cls._instance = super().__new__(cls, *args, **kwargs)
 
     def __init__(self, model_path: str, n_ctx: int = None, chat_format: str = None, search_options: dict = None):
         # Prevent reinitialization if the instance is already configured
@@ -76,14 +74,10 @@ class ModelHelper:
 
             self.logger = logging.getLogger('llama_cpp_model_helper')
 
-            self.logging = AppConfig().get_logging()
-            self.debug = AppConfig().get_debug()
-
             # Check model path is correct
             self.model_path = model_path
             if not os.path.isfile(self.model_path):
-                if self.logging:
-                    self.logger.warning(f"Model not found in '{self.model_path}'")
+                self.logger.warning(f"Model not found in '{self.model_path}'")
                 self.model_path = None
 
             # Context window. Refer to the logger for messages related to this value.
@@ -110,26 +104,49 @@ class ModelHelper:
                 self.search_options.update(search_options)
 
     def init_model(self):
-        if hasattr(self, 'model') and self.model:
+        """
+        Lazily initializes the model with the given configuration. If the model is already initialized,
+        the method exits early.
+
+        Raises:
+            ValueError: If `model_path` is not set or does not exist.
+            RuntimeError: If an error occurs during the model instantiation due to configuration issues.
+            Exception: For any unexpected errors.
+        """
+
+        # Check if the model is already initialized
+        if getattr(self, 'model', None):
             return
 
+        # Validate the model path
         if not self.model_path:
-            raise AttributeError(f"'{type(self).__name__}' model path is not set")
+            raise ValueError(f"Model path is not set in '{type(self).__name__}'")
 
-        if self.logging:
-            self.logger.info(f'Initializing model: {self.model_path}')
+        self.logger.info(f"Initializing model: {self.model_path}")
 
-        # Init selected model
-        self.model = Llama(
-            model_path=self.model_path,
-            chat_format=self.chat_format,  # e.g. 'chatml', 'llama-2', 'gemma', etc.
-            n_ctx=self.n_ctx,  # context window
-            verbose=False  # no verbose output
-        )
+        try:
+            # Initialize the model
+            self.model = Llama(
+                model_path=self.model_path,
+                chat_format=self.chat_format,  # e.g., 'chatml', 'llama-2', 'gemma', etc.
+                n_ctx=self.n_ctx,  # Context window
+                verbose=False  # Disable verbose output
+            )
+        except (RuntimeError, ValueError) as e:
+            self.logger.error(f"Model initialization failed for path '{self.model_path}' with error: {e}")
+            raise
+        except Exception as e:
+            self.logger.critical(f"Unexpected error during model initialization: {e}")
+            raise
 
     def get_input_tokens(self, text):
+        # Check if the model is initialized
+        if not getattr(self, 'model', None):
+            return None
+
         # Tokenize the input text using the model's tokenizer
         input_tokens = self.model.tokenize(text.encode("utf-8"))
+
         return input_tokens
 
     def init_generator(self, prompt_messages, search_options):
@@ -145,6 +162,11 @@ class ModelHelper:
             }
         ]
         """
+
+        # Check if the model is initialized
+        if not getattr(self, 'model', None):
+            return None
+
         generator = self.model.create_chat_completion(
             messages=prompt_messages,
             stream=True,
@@ -159,22 +181,19 @@ class ModelHelper:
             delta = chunk['choices'][0]['delta']
             if 'role' in delta:
                 output = f"{delta['role']}: "  # 'assistant: '
-                if self.debug:
-                    self.logger.debug(f"Role output: {output}")
+                self.logger.debug(f"Role output: {output}")
                 await asyncio.sleep(0)  # Yield control to the event loop
                 yield ''  # output
             elif 'content' in delta:
                 tokens = delta['content']  # content might contain a space symbol, so do not do the split() on it
                 output = f"{tokens}"
-                if self.debug:
-                    self.logger.debug(f"Output token(s): {tokens}")
+                self.logger.debug(f"Output token(s): {tokens}")
                 await asyncio.sleep(0)  # Yield control to the event loop
                 yield output
             elif 'finish_reason' in delta:
                 # For instance, if max_tokens limit reached: 'finish_reason': 'length'
                 if delta['finish_reason'] is not None:
-                    if self.debug:
-                        self.logger.debug(f"Output finished with the reason: '{delta['finish_reason']}'")
+                    self.logger.debug(f"Output finished with the reason: '{delta['finish_reason']}'")
                     yield ''
 
     async def generate_output(self, generator):
@@ -186,6 +205,13 @@ class ModelHelper:
         raise StopAsyncIteration
 
     def get_model_name(self):
+        # Check if the model is initialized, verify it has a 'metadata' attribute,
+        # and confirm that the 'general.name' key exists in metadata.
+        if (getattr(self, 'model', None)
+                and hasattr(self.model, 'metadata')
+                and 'general.name' in self.model.metadata):
+            return self.model.metadata['general.name']
+
         # Safely return the model name, truncating if too long.
         return ModelHelper.truncate_string(os.path.basename(self.model_path))
 

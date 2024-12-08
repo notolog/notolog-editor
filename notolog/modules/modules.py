@@ -23,8 +23,6 @@ import importlib
 
 from threading import Lock
 
-from ..app_config import AppConfig
-
 
 class Modules:
 
@@ -56,9 +54,6 @@ class Modules:
             super(Modules, self).__init__()
 
             self.logger = logging.getLogger('modules')
-
-            self.logging = AppConfig().get_logging()
-            self.debug = AppConfig().get_debug()
 
             self.modules = self.load_modules()
 
@@ -96,27 +91,22 @@ class Modules:
         # Try to import module
         try:
             module = importlib.import_module(f'notolog.modules.{module_name}')
-            if self.logging:
-                self.logger.info(f"Module '{module_name}' has been imported.")
-                self.modules.update({module_name: module})
+            self.logger.info(f"Module '{module_name}' has been imported.")
+            self.modules.update({module_name: module})
             return module
         except ImportError as e:
-            if self.logging:
-                self.logger.error(f"Failed to import module: {e}")
+            self.logger.error(f"Failed to import module: {e}")
             return None
 
     def create(self, module, class_name: str = 'ModuleCore', *args, **kwargs):
         try:
             class_ = getattr(module, class_name)
             instance = class_(*args, **kwargs)
-            if self.logging:
-                self.logger.info(f"Instance of '{module.__name__}.{class_name}' created.")
+            self.logger.debug(f"Instance of '{module.__name__}.{class_name}' created.")
             return instance
         except AttributeError:
-            if self.logging:
-                self.logger.warning(f"Class '{module.__name__}.{class_name}' not found in the module.")
+            self.logger.warning(f"Class '{module.__name__}.{class_name}' not found in the module.")
             return None
         except Exception as e:
-            if self.logging:
-                self.logger.error(f"Failed to create instance of '{module.__name__}.{class_name}': {e}")
+            self.logger.error(f"Failed to create instance of '{module.__name__}.{class_name}': {e}")
             return None

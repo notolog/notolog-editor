@@ -66,9 +66,6 @@ class SettingsDialog(QDialog):
 
         self.logger = logging.getLogger('settings_dialog')
 
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
-
         # Load lexemes for selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='settings_dialog')
 
@@ -137,8 +134,7 @@ class SettingsDialog(QDialog):
             if hasattr(module_instance, 'extend_settings_dialog_fields_conf'):
                 fields_config.extend(module_instance.extend_settings_dialog_fields_conf(self.tab_widget))
             else:
-                if self.logging:
-                    self.logger.warning(f'Cannot extend settings_dialog for module {module_instance}')
+                self.logger.warning(f'Cannot extend settings_dialog for module {module_instance}')
 
         return fields_config
 
@@ -542,8 +538,7 @@ class SettingsDialog(QDialog):
                     # Get the index of the Enum member by the name stored in the settings (e.g. Language's 'EN')
                     index = next((i for i, val in enumerate(combo_box.enum_class) if val.name.lower() == setting_value),
                                  None)
-                    if self.debug:
-                        self.logger.debug(f'Enum {combo_box.enum_class} index for value: {index} [{setting_value}]')
+                    self.logger.debug(f'Enum {combo_box.enum_class} index for value: {index} [{setting_value}]')
                     if index is not None:
                         combo_box.setCurrentIndex(index)
                 # Connect signal after set up defaults or restore saved value to avoid signal emitting right after.
@@ -602,12 +597,19 @@ class SettingsDialog(QDialog):
                 slider.valueChanged.connect(self.save_settings)
 
     def save_settings(self):  # noqa: C901 - consider simplifying this method
-        # Signal sender
-        sender = self.sender()
-
         # Determine which widget emitted the signal by the object name set
         sender_widget = self.sender()
         sender_name = sender_widget.objectName()
+
+        if sender_name.startswith('qt_'):
+            # For QSpinBox or QDoubleSpinBox, 'qt_spinbox_lineedit' refers to the internal QLineEdit widget
+            # used for handling text input (e.g., via typing).
+            if sender_widget and sender_name == "qt_spinbox_lineedit":
+                sender_widget = sender_widget.parent()  # Resolve to the parent widget (QSpinBox).
+                sender_name = sender_widget.objectName()
+            else:
+                self.logger.warning(f"Unhandled internal widget type: {sender_name}")
+                return
 
         # Parse the object name in case it contains a combination of lexeme and setting keys
         lexeme_key, setting_name = self.parse_object_name(sender_name)
@@ -644,23 +646,20 @@ class SettingsDialog(QDialog):
             setting_value = sender_widget.value()
             setting_text = sender_widget.accessibleDescription()
 
-        if self.debug:
-            self.logger.debug(f"Saving setting '{setting_name}': {setting_value} ({setting_text})")
+        self.logger.debug(f"Saving setting '{setting_name}': {setting_value} ({setting_text})")
 
         try:
             setattr(self.settings, setting_name, setting_value)
         except AttributeError as e:
-            if self.logging:
-                self.logger.warning(f'ERROR: {e}')
+            self.logger.warning(f'ERROR: {e}')
 
-        if self.debug:
-            self.logger.debug(f"Setting new value: {getattr(self.settings, setting_name)}")
+        self.logger.debug(f"Setting new value: {getattr(self.settings, setting_name)}")
 
         """
         In case of language change try to update as much text labels as possible.
         It may not cover all the labels, but may help with update anyway.
         """
-        if setting_name == 'app_language' or sender.objectName().endswith('app_language'):
+        if setting_name == 'app_language' or sender_widget.objectName().endswith('app_language'):
             # Update lexemes object as app language has just been changed
             self.lexemes = Lexemes(self.settings.app_language, default_scope='settings_dialog')
             # Get all the new lexemes
@@ -678,8 +677,7 @@ class SettingsDialog(QDialog):
             self.setWindowTitle(self.lexemes.get('window_title'))
             # Iterate each lexeme's scope to match it with object name to update the text if applicable
             for scope in app_language_lexemes:
-                if self.debug:
-                    self.logger.debug(f'Lexeme scope to check updates {scope}')
+                self.logger.debug(f'Lexeme scope to check updates {scope}')
                 # Iterate each lexeme from the scope
                 for lexeme_key in app_language_lexemes[scope].keys():
                     """
@@ -703,7 +701,7 @@ class SettingsDialog(QDialog):
                         # Try to find it in the parent dialog to update the main window elements
                         found_objects = self.parent.findChildren(QObject, regex,
                                                                  Qt.FindChildOption.FindChildrenRecursively)
-                        if self.debug and found_objects:
+                        if found_objects:
                             self.logger.debug(f"Found object to update ({scope}){lexeme_key}: {found_objects}")
 
                     # Search by the full object name
@@ -714,9 +712,8 @@ class SettingsDialog(QDialog):
                         if (isinstance(obj, (QLabel, LabelWithHint, QCheckBox, QComboBox, QPushButton))
                                 and hasattr(obj, 'setText')
                                 and callable(getattr(obj, 'setText'))):
-                            if self.debug:
-                                self.logger.debug(
-                                    f'Object lexeme update: {obj.objectName()} with id: {id(obj)}, lexeme "{lexeme}"')
+                            self.logger.debug(
+                                f'Object lexeme update: {obj.objectName()} with id: {id(obj)}, lexeme "{lexeme}"')
                             obj.setText(lexeme)
                         if isinstance(obj, LabelWithHint):
                             if obj.property('tooltip_lexeme'):
@@ -730,7 +727,7 @@ class SettingsDialog(QDialog):
                             obj.setText(
                                 self.lexemes.get('general_app_font_size_label', size=self.settings.app_font_size))
 
-        if setting_name == 'app_theme' or sender.objectName().endswith('app_theme'):
+        if setting_name == 'app_theme' or sender_widget.objectName().endswith('app_theme'):
             # Update the widget's stylesheet with the selected theme
             self.setStyleSheet(self.theme_helper.get_css('settings_dialog'))
             # Update font size to correct the tab widget's font
@@ -746,7 +743,7 @@ class SettingsDialog(QDialog):
                         and callable(getattr(obj, 'load_icon'))):
                     obj.load_icon()
 
-        if setting_name == 'app_font_size' or sender.objectName().endswith('app_font_size'):
+        if setting_name == 'app_font_size' or sender_widget.objectName().endswith('app_font_size'):
             # Update the font size of elements
             self.update_font_size(font_size=setting_value)
 

@@ -13,15 +13,15 @@ from notolog.helpers.tooltip_helper import TooltipHelper
 from . import test_app  # noqa: F401
 
 import pytest
+import logging
 
 
 class TestAIMessageLabel:
 
     @pytest.fixture(scope="function", autouse=True)
     def test_obj_app_config(self, mocker):
-        # Mock AppConfig methods to disable logging and debugging during tests.
-        mocker.patch.object(AppConfig, 'get_logging', return_value=False)
-        mocker.patch.object(AppConfig, 'get_debug', return_value=False)
+        # Mock AppConfig's get_logger_level method to suppress logging during tests.
+        mocker.patch.object(AppConfig, 'get_logger_level', return_value=logging.NOTSET)
 
         # Create an AppConfig instance and set it to test mode.
         _app_config = AppConfig()

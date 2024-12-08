@@ -24,7 +24,6 @@ import logging
 from typing import TYPE_CHECKING
 
 from . import Settings
-from . import AppConfig
 from . import Lexemes
 from . import ThemeHelper
 from . import TooltipHelper
@@ -47,9 +46,6 @@ class StatusBar(QStatusBar):
             self.setFont(self.parent.font())
 
         self.logger = logging.getLogger('statusbar')
-
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
 
         self.settings = Settings(parent=self)
 
@@ -209,5 +205,5 @@ class StatusBar(QStatusBar):
                     or isinstance(value, QPushButton)
                     or value is None):
                 self._elements[name] = value
-            elif self.logging:
+            else:
                 self.logger.warning(f'Trying to set object that is not a QLabel type {type(value)}')

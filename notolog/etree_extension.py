@@ -22,8 +22,6 @@ from markdown import Markdown
 from markdown.extensions import Extension
 from markdown.treeprocessors import Treeprocessor
 
-from .app_config import AppConfig
-
 import re
 import logging
 
@@ -35,12 +33,8 @@ class ElementTreeExtension(Extension):
 
     logger = logging.getLogger('tree_extension')
 
-    logging = AppConfig().get_logging()
-    debug = AppConfig().get_debug()
-
     def extendMarkdown(self, md: Markdown) -> None:
-        if self.debug:
-            self.logger.info('%s extension engaged' % self.__class__.__qualname__)
+        self.logger.debug('%s extension engaged' % self.__class__.__qualname__)
         # Registering extension
         md.registerExtension(self)
         # noinspection SpellCheckingInspection
@@ -54,14 +48,10 @@ class ElementTreeProcessor(Treeprocessor):
 
     logger = logging.getLogger('tree_processor')
 
-    logging = AppConfig().get_logging()
-    debug = AppConfig().get_debug()
-
     def run(self, root):
         # Customize elements tree here
         for idx, elem in enumerate(root.iter()):
-            if self.debug:
-                self.logger.debug('Process elements > %d: %s' % (idx, elem.tag))
+            self.logger.debug('Process elements > %d: %s' % (idx, elem.tag))
             # Process <table> elements
             if elem.tag == 'table':
                 self.process_table(elem)
@@ -91,8 +81,7 @@ class ElementTreeProcessor(Treeprocessor):
 
     def process_table(self, elem):
         if not elem.get('class'):
-            if self.debug:
-                self.logger.debug(f'Table without class found {elem}')
+            self.logger.debug(f'Table without class found {elem}')
             elem.set('class', '_nl_tbl')
             elem.set('cellpadding', '0')
             elem.set('cellspacing', '0')
@@ -111,8 +100,7 @@ class ElementTreeProcessor(Treeprocessor):
                 elem.set('class', match.group(1))
 
     def process_image(self, elem):
-        if self.debug:
-            self.logger.debug(f'Image element {elem}')
+        self.logger.debug(f'Image element {elem}')
         # elem.set('title', '...')
         # elem.set('onerror', "this.onerror=null;this.src='...';")
 
@@ -122,8 +110,7 @@ class ElementTreeProcessor(Treeprocessor):
             return
         # Process inner elements
         for id_xy, c_elem in enumerate(elem):
-            if self.debug:
-                self.logger.debug('Inner element > %d: %s' % (id_xy, c_elem.tag))
+            self.logger.debug('Inner element > %d: %s' % (id_xy, c_elem.tag))
             # Example of how to update elements tree
             if c_elem.tag == 'a' and False:
                 # Skip element that was already re-inserted

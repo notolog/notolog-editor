@@ -3,7 +3,7 @@
 from notolog.app_config import AppConfig
 from notolog.helpers.settings_helper import SettingsHelper
 
-from logging import Logger
+from logging import Logger, NOTSET
 
 import os
 import pytest
@@ -17,8 +17,8 @@ class TestSettingsHelper:
         # Retrieve parameter values from the test request.
         env_values, app_config_key, generated_key = request.param
 
-        mocker.patch.object(AppConfig, 'get_logging', return_value=False)
-        mocker.patch.object(AppConfig, 'get_debug', return_value=False)
+        # Mock AppConfig's get_logger_level method to suppress logging during tests.
+        mocker.patch.object(AppConfig, 'get_logger_level', return_value=NOTSET)
 
         # Mock methods result
         mocker.patch.object(os, 'getenv', side_effect=lambda k: env_values.get(k, None))

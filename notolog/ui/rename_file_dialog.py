@@ -20,7 +20,6 @@ from PySide6.QtCore import QSize
 from PySide6.QtWidgets import QInputDialog, QLineEdit, QDialogButtonBox, QSizePolicy
 
 from . import Settings
-from . import AppConfig
 from . import Lexemes
 
 import logging
@@ -41,9 +40,6 @@ class RenameFileDialog(QInputDialog):
         self.settings = Settings(parent=self)
 
         self.logger = logging.getLogger('rename_file_dialog')
-
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
 
         # Load lexemes for selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='common')

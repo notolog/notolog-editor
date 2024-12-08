@@ -75,9 +75,6 @@ class ModuleCore(BaseAiCore):
 
         self.logger = logging.getLogger('module_ondevice_llm')
 
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
-
         # Load lexemes for selected language and scope
         self.lexemes = Lexemes(self.settings.app_language,
                                default_scope='settings_dialog',
@@ -98,17 +95,16 @@ class ModuleCore(BaseAiCore):
         self.model_helper = ModelHelper(model_path=model_path, search_options=search_options)
 
         # Just in case of debug of async events
-        # if self.debug:
-        #    asyncio.get_event_loop().set_debug(True)
+        # asyncio.get_event_loop().set_debug(True)
 
-        if self.logging:
-            self.logger.info(f'Module {__name__} loaded')
+        self.logger.debug(f'Module {__name__} loaded')
 
     def get_search_options(self):
         search_options = {}
         if hasattr(self.settings, 'module_ondevice_llm_response_temperature'):
             search_options.update({'temperature': self.settings.module_ondevice_llm_response_temperature})
-        if hasattr(self.settings, 'module_ondevice_llm_response_max_tokens'):
+        if (hasattr(self.settings, 'module_ondevice_llm_response_max_tokens')
+                and self.settings.module_ondevice_llm_response_max_tokens > 0):
             search_options.update({'max_length': self.settings.module_ondevice_llm_response_max_tokens})
         return search_options
 
@@ -154,8 +150,7 @@ class ModuleCore(BaseAiCore):
                     # Parent window might be closed
                     ai_dialog.dialog_closed.disconnect(self.parent_closed)
         except RuntimeError as e:  # Object might be already deleted
-            if self.logging:
-                self.logger.warning(f'Error occurred during the closing process {e}')
+            self.logger.warning(f'Error occurred during the closing process {e}')
         # Clear prompt history
         PromptManager.reload()
         # Stop the generator thread before the dialog closes
@@ -185,8 +180,7 @@ class ModuleCore(BaseAiCore):
         try:
             self.model_helper.init_model()
         except (AttributeError, Exception) as e:
-            if self.logging:
-                self.logger.error(f'{e}')
+            self.logger.error(f'{e}')
             # Complete init
             if self.init_callback and callable(self.init_callback):
                 self.init_callback()
@@ -221,8 +215,7 @@ class ModuleCore(BaseAiCore):
                 if not task.cancelled():
                     exception = task.exception()
                     if exception:
-                        if self.logging:
-                            self.logger.warning(f"Task raised an exception: {exception}")
+                        self.logger.warning(f"Task raised an exception: {exception}")
                         # Error message to show in UI
                         outputs = self.lexemes.get('module_ondevice_llm_task_exception', scope='common',
                                                    error_msg=str(exception))
@@ -230,16 +223,14 @@ class ModuleCore(BaseAiCore):
                         self.update_signal.emit(outputs, None, None, EnumMessageType.DEFAULT, EnumMessageStyle.ERROR)
                     else:
                         result = task.result()
-                        if self.debug:
-                            self.logger.debug(f"Task completed with result: {result}")
+                        self.logger.debug(f"Task completed with result: {result}")
 
     async def run_generator(self, input_tokens, request_msg_id, response_msg_id):
 
         try:
             generator = self.model_helper.init_generator(input_tokens, ModelHelper.search_options)  # type: Generator
         except ModuleNotFoundError as e:
-            if self.logging:
-                self.logger.error(f'Cannot init model generator: {e}', exc_info=False)
+            self.logger.error(f'Cannot init model generator: {e}', exc_info=False)
             # Re-raise to indicate unresolved issues to the caller
             raise
         finally:
@@ -252,15 +243,12 @@ class ModuleCore(BaseAiCore):
                 await self.async_generator(request_msg_id, response_msg_id)
                 await asyncio.sleep(0.05)  # Sleep to allow UI to update
         except asyncio.CancelledError:
-            if self.logging:
-                self.logger.info("Generation cancelled")
+            self.logger.info("Generation cancelled")
         except (WindowsError, RecursionError) as e:
-            if self.logging:
-                self.logger.error(f"Error occurred: {e}")
+            self.logger.error(f"Error occurred: {e}")
             # raise
         except (SystemExit, Exception) as e:
-            if self.logging:
-                self.logger.error(f"Exception raised: {e}")
+            self.logger.error(f"Exception raised: {e}")
             # raise
         finally:  # Generation ended
             await self.stop_generator()
@@ -396,7 +384,7 @@ class ModuleCore(BaseAiCore):
         if callable(extend_func):
             extend_func("module_ondevice_llm_model_path", str, "")
             extend_func("module_ondevice_llm_response_temperature", int, 20)
-            extend_func("module_ondevice_llm_response_max_tokens", int, 2048)
+            extend_func("module_ondevice_llm_response_max_tokens", int, 0)
             extend_func("module_ondevice_llm_prompt_history_size", int, 0)
 
     def settings_update_handler(self, data) -> None:
@@ -412,8 +400,7 @@ class ModuleCore(BaseAiCore):
             None
         """
 
-        if AppConfig().get_debug():
-            AppConfig().logger.debug('Settings update handler is in use "%s"' % data)
+        AppConfig().logger.debug('Settings update handler is in use "%s"' % data)
 
         options = [
             'module_ondevice_llm_model_path',

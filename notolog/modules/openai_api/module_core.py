@@ -80,9 +80,6 @@ class ModuleCore(BaseAiCore):
 
         self.logger = logging.getLogger('module_openai_api')
 
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
-
         # Load lexemes for selected language and scope
         self.lexemes = Lexemes(self.settings.app_language,
                                default_scope='settings_dialog',
@@ -110,11 +107,9 @@ class ModuleCore(BaseAiCore):
         self.api_helper = ApiHelper()
 
         # Just in case of debug of async events
-        # if self.debug:
-        #    asyncio.get_event_loop().set_debug(True)
+        # asyncio.get_event_loop().set_debug(True)
 
-        if self.logging:
-            self.logger.info(f'Module {__name__} loaded')
+        self.logger.debug(f'Module {__name__} loaded')
 
     def init_prompt_manager(self, ai_dialog):
         """
@@ -160,8 +155,7 @@ class ModuleCore(BaseAiCore):
                     # Parent window might be closed
                     ai_dialog.dialog_closed.disconnect(self.parent_closed)
         except RuntimeError as e:  # Object might be already deleted
-            if self.logging:
-                self.logger.warning(f'Error occurred during the closing process {e}')
+            self.logger.warning(f'Error occurred during the closing process {e}')
         # Clear prompt history
         PromptManager.reload()
         # Stop the generator thread before the dialog closes
@@ -206,8 +200,7 @@ class ModuleCore(BaseAiCore):
                 if not task.cancelled():
                     exception = task.exception()
                     if exception:
-                        if self.logging:
-                            self.logger.warning(f"Task raised an exception: {exception}")
+                        self.logger.warning(f"Task raised an exception: {exception}")
                         # Error message to show in UI
                         outputs = self.lexemes.get('module_openai_api_task_exception', scope='common')
                         # Emit update message signal
@@ -215,8 +208,7 @@ class ModuleCore(BaseAiCore):
                                                 EnumMessageStyle.ERROR)
                     else:
                         result = task.result()
-                        if self.debug:
-                            self.logger.debug(f"Task completed with result: {result}")
+                        self.logger.debug(f"Task completed with result: {result}")
 
     async def run_generator(self, user_prompt, request_msg_id, response_msg_id):
         """
@@ -224,7 +216,9 @@ class ModuleCore(BaseAiCore):
             "temperature": 0.2, "top_p": 1, "n": 1, "stream": False, ...
         """
         temperature_float = self.api_helper.convert_temperature(self.response_temperature)
-        options = {'max_tokens': self.response_max_tokens, 'temperature': temperature_float}
+        options = {'temperature': temperature_float}
+        if self.response_max_tokens > 0:
+            options.update({'max_tokens': self.response_max_tokens})
         # Request
         request = self.api_helper.init_request(api_url=self.openai_api_url, api_key=self.openai_api_key)
         # Request data
@@ -246,8 +240,7 @@ class ModuleCore(BaseAiCore):
         # Get received status code, say 200
         status_code = reply.attribute(QNetworkRequest.Attribute.HttpStatusCodeAttribute)
 
-        if self.debug:
-            self.logger.debug(f'API response: {reply}, {error_code}, {status_code}')
+        self.logger.debug(f'API response: {reply}, {error_code}, {status_code}')
 
         # Make sure there is no error
         if reply.error() == QNetworkReply.NetworkError.NoError:
@@ -272,9 +265,8 @@ class ModuleCore(BaseAiCore):
                                               status_code=status_code)
 
         if error_code is not None:
-            if self.logging:
-                self.logger.warning(result_message)
-                self.logger.warning(f"Failed to fetch information [{status_code}]: {reply.errorString()}")
+            self.logger.warning(result_message)
+            self.logger.warning(f"Failed to fetch information [{status_code}]: {reply.errorString()}")
             # Emit update message signal
             self.update_signal.emit(result_message if result_message else '[%s] %s' % (status_code, reply.errorString()),
                                     None, None, EnumMessageType.DEFAULT, EnumMessageStyle.ERROR)
@@ -296,29 +288,25 @@ class ModuleCore(BaseAiCore):
         # The request was successful
         data = reply.readAll()  # type: QByteArray
 
-        if self.debug:
-            self.logger.debug(f'Raw RESPONSE [{status_code}]: {data}')
+        self.logger.debug(f'Raw RESPONSE [{status_code}]: {data}')
 
         # json_document = QJsonDocument.fromJson(data)
         # json_data = json_document.object()
 
         # Convert QByteArray to string
         res_string = data.toStdString()  # Or: str(data.data(), encoding='utf-8')
-        if self.debug:
-            self.logger.debug(f'Result multi-line STRING: {res_string}')
+        self.logger.debug(f'Result multi-line STRING: {res_string}')
 
         # Clean up the string and make one line
         json_str = ''.join(line.strip() for line in res_string.splitlines())
 
-        if self.debug:
-            self.logger.debug(f'Result STRING: {json_str}')
+        self.logger.debug(f'Result STRING: {json_str}')
 
         result_message = self.lexemes.get('network_connection_error_empty', scope='common')
         # Parse JSON response
         try:
             json_data = json.loads(json_str)
-            if self.debug:
-                self.logger.debug(f"Result JSON: {json_data}")
+            self.logger.debug(f"Result JSON: {json_data}")
             if ('choices' in json_data
                     and len(json_data['choices']) > 0
                     # Legacy completions
@@ -338,19 +326,16 @@ class ModuleCore(BaseAiCore):
                     keys = ('prompt_tokens', 'completion_tokens', 'total_tokens')
                     prompt_tokens, response_tokens, total_tokens = (json_data['usage'][key] for key in keys)
                 except KeyError as e:
-                    if self.logging:
-                        self.logger.warning(f"Missing key: {e}")
+                    self.logger.warning(f"Missing key: {e}")
                 except ValueError as e:
-                    if self.logging:
-                        self.logger.warning(f"Value error: {e}")
+                    self.logger.warning(f"Value error: {e}")
                 finally:
                     # Inference model
                     model = json_data['model'] if 'model' in json_data else None
                     # Emit update usage signal
                     self.update_usage_signal.emit(model, prompt_tokens, response_tokens, total_tokens, False)
         except json.JSONDecodeError as e:
-            if self.logging:
-                self.logger.warning("Error decoding JSON: %s" % e)
+            self.logger.warning("Error decoding JSON: %s" % e)
 
         return result_message
 
@@ -524,7 +509,7 @@ class ModuleCore(BaseAiCore):
 
             extend_func("module_openai_api_base_system_prompt", str, "")
             extend_func("module_openai_api_base_response_temperature", int, 20)
-            extend_func("module_openai_api_base_response_max_tokens", int, 2048)
+            extend_func("module_openai_api_base_response_max_tokens", int, 0)
             extend_func("module_openai_api_prompt_history_size", int, 0)
 
     def settings_update_handler(self, data) -> None:
@@ -540,8 +525,7 @@ class ModuleCore(BaseAiCore):
             None
         """
 
-        if AppConfig().get_debug():
-            AppConfig().logger.debug('Settings update handler is in use "%s"' % data)
+        AppConfig().logger.debug('Settings update handler is in use "%s"' % data)
 
         options = [
             'module_openai_api_url',

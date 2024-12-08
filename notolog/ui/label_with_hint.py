@@ -22,8 +22,6 @@ from PySide6.QtGui import QIcon, QColor, QPixmap
 
 import logging
 
-from . import AppConfig
-
 from ..settings import Settings
 from ..helpers.theme_helper import ThemeHelper
 
@@ -44,9 +42,6 @@ class LabelWithHint(QLabel):
             self.setFont(self.parent.font())
 
         self.logger = logging.getLogger('label_with_hint')
-
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
 
         self.text = text
         self.action = action

@@ -24,7 +24,6 @@ import logging
 from threading import Lock
 from typing import Any, Union
 
-from .. import AppConfig
 from ...ui.ai_assistant import EnumMessageType
 
 
@@ -79,9 +78,6 @@ class PromptManager(QObject):
 
             self.logger = logging.getLogger('ondevice_llm_prompt_manager')
 
-            self.logging = AppConfig().get_logging()
-            self.debug = AppConfig().get_debug()
-
             self.system_input = system_prompt  # Not yet supported
             self.max_history_size = max_history_size
 
@@ -97,8 +93,7 @@ class PromptManager(QObject):
         This method clears existing history and sets up a system prompt if one is provided.
         """
 
-        if self.logging:
-            self.logger.info('Re-initializing prompt history')
+        self.logger.info('Initializing prompt history')
 
         # Start from new
         self.history = []
@@ -142,14 +137,12 @@ class PromptManager(QObject):
             if last_user_message and 'text' in last_user_message:
                 prompt += self.get_prompt_message(request_text=last_user_message['text'])
             else:
-                if self.logging:
-                    self.logger.warning('No user message has found for prompt')
+                self.logger.warning('No user message has found for prompt')
                 return None
         return prompt
 
     def add_message(self, message_text, request_msg_id, response_msg_id, message_type: EnumMessageType):
-        if self.debug:
-            self.logger.debug(f'Add message: {message_text}, {response_msg_id}, {message_type}')
+        self.logger.debug(f'Add message: {message_text}, {response_msg_id}, {message_type}')
         if message_type == EnumMessageType.USER_INPUT:
             self.add_request(message_text, request_msg_id)
         elif message_type == EnumMessageType.RESPONSE:
@@ -204,8 +197,7 @@ class PromptManager(QObject):
                 self.history[i] = record
                 return
 
-        if self.logging:
-            self.logger.warning(f"No matching request {request_msg_id} found for response {response_msg_id}.")
+        self.logger.warning(f"No matching request {request_msg_id} found for response {response_msg_id}.")
 
         # Handle unmatched response by finding empty response
         for i, record in enumerate(self.history):
@@ -293,8 +285,7 @@ class PromptManager(QObject):
 
     def find_last_message_by_role(self, role: str) -> Union[dict, None]:
         if role not in PromptManager.supported_roles:
-            if self.logging:
-                self.logger.warning(f'Role "{role}" is not supported yet')
+            self.logger.warning(f'Role "{role}" is not supported yet')
             return None
         for message in reversed(self.history):
             _data = message

@@ -22,7 +22,6 @@ from PySide6.QtGui import QAction, QColor
 from PySide6.QtWidgets import QToolBar, QWidget, QMenu, QToolButton, QSizePolicy
 
 from . import Settings
-from . import AppConfig
 from . import Lexemes
 from . import ThemeHelper
 
@@ -57,9 +56,6 @@ class ToolBar(QToolBar):
 
         self.logger = logging.getLogger('toolbar')
 
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
-
         self.actions = actions if actions else {}
         self.refresh = refresh
 
@@ -75,8 +71,7 @@ class ToolBar(QToolBar):
             Default bit-mask is 131070 when all icons are checked.
             """
             self.settings.toolbar_icons = 131070
-            if self.debug:
-                self.logger.info('Starting with default icons mask "%d"' % self.settings.toolbar_icons)
+            self.logger.debug('Starting with default icons mask "%d"' % self.settings.toolbar_icons)
 
         self.search_form = None  # type: Union[SearchForm, QWidget, None]
 
@@ -163,7 +158,7 @@ class ToolBar(QToolBar):
 
         # Add internal variable to access the icon later, say for state toggle
         if 'var_name' in conf:
-            if self.debug and hasattr(self, conf['var_name']):
+            if hasattr(self, conf['var_name']):
                 self.logger.debug('Variable "%s" is already set! Re-writing it...' % conf['var_name'])
             setattr(self, conf['var_name'], icon_button)  # type: QToolButton
         # If the icon has a switched off check, check it here
@@ -235,8 +230,7 @@ class ToolBar(QToolBar):
             index (int): Index in a toolbar menu mapping
         """
         pi = pow(2, index)
-        if self.debug:
-            self.logger.info('checked:{} index:{} pi:{}' . format(checked, index, pi))
+        self.logger.debug('checked:{} index:{} pi:{}' . format(checked, index, pi))
         if checked:
             self.settings.toolbar_icons |= pi
         else:
@@ -255,5 +249,4 @@ class ToolBar(QToolBar):
     #    """
     #    super(ToolBar, self).removeAction(action)
     #
-    #    if self.debug:
-    #        self.logger.info('Remove element action "%s"' % action)
+    #    self.logger.debug('Remove element action "%s"' % action)

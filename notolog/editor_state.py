@@ -23,8 +23,6 @@ from enum import Enum
 # from PyQt6.QtCore import pyqtSignal as Signal, QObject
 from PySide6.QtCore import Signal, QObject
 
-from .app_config import AppConfig
-
 
 class Mode(Enum):
     VIEW = 1  # Default
@@ -47,9 +45,6 @@ class EditorState(QObject):
 
     def __init__(self, parent=None):
         super(EditorState, self).__init__(parent)
-
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
 
         self.logger = logging.getLogger('editor_state')
 
@@ -129,8 +124,7 @@ class EditorState(QObject):
         Switch between VIEW and EDIT modes to maintain actual state.
         """
 
-        if self.debug:
-            self.logger.debug('Toggle mode %s' % self.mode)
+        self.logger.debug('Toggle mode %s' % self.mode)
 
         """
         Switch by this scheme:
@@ -158,6 +152,5 @@ class EditorState(QObject):
             # To do not count previous answer if edit mode was switched once
             self.allow_save_empty_reset()
 
-        if self.debug:
-            self.logger.debug("Toggled mode to '%s', source to '%s'; previous states are '%s' and '%s' correspondingly"
-                              % (self.mode, self.source, self.prev_mode, self.prev_source))
+        self.logger.debug("Toggled mode to '%s', source to '%s'; previous states are '%s' and '%s' correspondingly"
+                          % (self.mode, self.source, self.prev_mode, self.prev_source))

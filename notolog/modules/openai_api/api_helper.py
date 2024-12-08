@@ -25,8 +25,6 @@ import logging
 
 from threading import Lock
 
-from .. import AppConfig
-
 
 class ApiHelper:
 
@@ -57,9 +55,6 @@ class ApiHelper:
             self.parent = parent
 
             self.logger = logging.getLogger('openai_api_helper')
-
-            self.logging = AppConfig().get_logging()
-            self.debug = AppConfig().get_debug()
 
     def init_request(self, api_url, api_key) -> QNetworkRequest:
 

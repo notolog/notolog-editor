@@ -50,9 +50,6 @@ class EditWidget(QPlainTextEdit):
 
         self.logger = logging.getLogger('edit_widget')
 
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
-
         # Initialize storage for positions and indexes of searched text occurrences.
         self._searched_text_positions = []
 

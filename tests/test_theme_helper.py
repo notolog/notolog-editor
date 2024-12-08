@@ -11,6 +11,7 @@ from . import test_core_app  # noqa: F401
 
 import os
 import pytest
+import logging
 
 
 class TestThemeHelper:
@@ -30,7 +31,8 @@ class TestThemeHelper:
         May contain minimal logic for testing purposes.
         """
 
-        mocker.patch.object(AppConfig, 'get_debug', return_value=False)
+        # Mock AppConfig's get_logger_level method to suppress logging during tests.
+        mocker.patch.object(AppConfig, 'get_logger_level', return_value=logging.NOTSET)
 
         """
         If themes dir is set read themes from there.

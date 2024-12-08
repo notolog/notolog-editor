@@ -166,12 +166,11 @@ class ViewHighlighter(MainHighlighter):
                 Also, check `surrogateescape` option.
                 match.captured(nth).encode('utf-8', 'replace').decode('utf-8')
                 """
-                if self.debug:
-                    self.logger.debug(
-                        'Tokens: "%s" > %s > %s (s:%d, l:%d, e:%d, n:%d)[%d] prev block state %d'
-                        % (tag, self.tokens[tag], match.group(nth).encode('utf-8', 'replace'),
-                           start, length, end, nth, line_number, self.previousBlockState())
-                    )
+                self.logger.debug(
+                    'Tokens: "%s" > %s > %s (s:%d, l:%d, e:%d, n:%d)[%d] prev block state %d'
+                    % (tag, self.tokens[tag], match.group(nth).encode('utf-8', 'replace'),
+                       start, length, end, nth, line_number, self.previousBlockState())
+                )
 
                 # Set as formatted to skip excess processing with a similar regex
                 self.set_formatted(group)
@@ -192,11 +191,10 @@ class ViewHighlighter(MainHighlighter):
                     and token_data['open'] in self.tokens
                     and self.tokens[token_data['open']]['o'] is True):
                 self.set_formatted(token_data['group'])
-                if self.debug:
-                    self.logger.debug(
-                        '[%d] "%s", tag: "%s" opened: %r'
-                        % (line_number_log, text_str, token_data['open'], self.tokens[token_data['open']]['o'])
-                    )
+                self.logger.debug(
+                    '[%d] "%s", tag: "%s" opened: %r'
+                    % (line_number_log, text_str, token_data['open'], self.tokens[token_data['open']]['o'])
+                )
                 tag = ('%s_within' % token_data['group'])
                 user_data.put(tag=tag, opened=False, within=True, closed=False, start=0, end=len(text_str))
                 # Save block's data

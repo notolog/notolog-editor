@@ -25,8 +25,6 @@ from threading import Lock
 # ONNX Runtime GenAI
 from onnxruntime_genai import Generator, GeneratorParams, Model, Tokenizer, TokenizerStream
 
-from .. import AppConfig
-
 
 class ModelHelper:
 
@@ -74,15 +72,11 @@ class ModelHelper:
 
             self.logger = logging.getLogger('ondevice_llm_model_helper')
 
-            self.logging = AppConfig().get_logging()
-            self.debug = AppConfig().get_debug()
-
             # Check model path is correct
             self.model_path = model_path
             if (not os.path.isdir(self.model_path)
                     or not os.path.isfile(os.path.join(self.model_path, 'tokenizer.model'))):
-                if self.logging:
-                    self.logger.warning(f'Model not found in {self.model_path}')
+                self.logger.warning(f'Model not found in {self.model_path}')
                 self.model_path = None
 
             if search_options:
@@ -103,8 +97,7 @@ class ModelHelper:
         if self.model_path is None:
             raise AttributeError(f"'{type(self).__name__}' model path is not set")
         # Log event
-        if self.logging:
-            self.logger.info(f'Initializing model: {self.model_path}')
+        self.logger.info(f'Initializing model: {self.model_path}')
         # Init model
         self.model = Model(self.model_path)
         self.tokenizer = Tokenizer(self.model)
@@ -117,9 +110,8 @@ class ModelHelper:
     def init_generator(self, input_tokens, search_options):
         # Configure your generator with necessary parameters
         params = GeneratorParams(self.model)
-        if self.debug:
-            vocab_size = getattr(params, 'vocab_size', 0)
-            self.logger.debug(f'Model vocabulary size: {vocab_size}')
+        vocab_size = getattr(params, 'vocab_size', 0)
+        self.logger.debug(f'Model vocabulary size: {vocab_size}')
         params.set_search_options(**search_options)
         params.input_ids = input_tokens
         # params.use_cuda = False
@@ -137,8 +129,7 @@ class ModelHelper:
             outputs = self.tokenizer_stream.decode(new_token)
             # Or via decoding a batch
             # outputs = ''.join(self.tokenizer.decode_batch(new_tokens))
-            if self.debug:
-                self.logger.debug(f'Output: {outputs}: {new_token}')
+            self.logger.debug(f'Output: {outputs}: {new_token}')
             return outputs
 
     def get_model_name(self):

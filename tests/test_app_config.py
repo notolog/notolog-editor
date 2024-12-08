@@ -8,6 +8,7 @@ import pytest
 import os
 import tomli
 import shutil
+import logging
 
 
 class TestAppConfig:
@@ -33,9 +34,9 @@ class TestAppConfig:
     def test_obj_app_config(self, mocker, request):
         app_config = request.param
 
-        # Mock logger params
-        mocker.patch.object(AppConfig, 'get_logging', return_value=False)
-        mocker.patch.object(AppConfig, 'get_debug', return_value=False)
+        # Mock AppConfig's get_logger_level method to suppress logging during tests.
+        mocker.patch.object(AppConfig, 'get_logger_level', return_value=logging.NOTSET)
+
         mocker.patch.object(AppConfig, 'load_config', return_value=app_config)
 
         # Mock libs results

@@ -23,7 +23,6 @@ from cryptography.fernet import Fernet
 
 from .enc_password import EncPassword
 
-from . import AppConfig
 from . import Settings
 
 import logging
@@ -43,9 +42,6 @@ class EncHelper:
     def __init__(self, enc_password: EncPassword = None, salt: str = None, iterations: int = None):
         super().__init__()
 
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
-
         self.logger = logging.getLogger('enc_helper')
 
         self.enc_password = enc_password
@@ -55,8 +51,7 @@ class EncHelper:
         if self.enc_password is not None:
             self.password = self.enc_password.password if self.enc_password.password is not None else ''
         else:
-            if self.logging:
-                self.logger.warning('No password provided! Unsecure result')
+            self.logger.warning('No password provided! Unsecure result')
             self.enc_password = EncPassword()
             self.enc_password.password = self.password = ''
 
@@ -64,16 +59,14 @@ class EncHelper:
             self.password = self.password.encode()
 
         if self.salt is None:
-            if self.logging:
-                self.logger.warning('No salt provided! Random value generated')
+            self.logger.warning('No salt provided! Random value generated')
             self.salt = self.generate_salt()
 
         if type(self.salt) is not bytes:
             self.salt = self.salt.encode()
 
         if self.iterations is None:
-            if self.logging:
-                self.logger.warning('No iterations provided! Default value fallback')
+            self.logger.warning('No iterations provided! Default value fallback')
             self.iterations = self.__class__.get_default_iterations()
 
         # Derive key from password

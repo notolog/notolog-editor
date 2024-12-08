@@ -47,9 +47,6 @@ class Theme:
 
         self.logger = logging.getLogger('themes')
 
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
-
         # Custom Enum logic return name.lower() when cast to string
         # Same as: Themes.default().name.lower()
         self.default_theme = str(Themes.default())
@@ -59,9 +56,8 @@ class Theme:
 
         self.theme = theme
 
-        if self.debug:
-            # Can be seen in logs a few times as the already initialised object could be requested from anywhere.
-            self.logger.debug(f'Themes helper is engaged with a theme "{self.theme}"')
+        # Can be seen in logs a few times as the already initialised object could be requested from anywhere.
+        self.logger.info(f"Themes helper is activated and set to the theme: '{self.theme}'")
 
         self.colors = None
         self.css = None
@@ -140,8 +136,8 @@ class Theme:
                             color_name = parts[0].strip()
                             color_value = parts[1].strip()
                             self.colors[self.theme][color_name] = color_value
-                        elif self.debug:
-                            self.logger.info(f"Ignoring not valid color line: {line}")
+                        else:
+                            self.logger.debug(f"Ignoring not valid color line: {line}")
 
     def set_theme(self, theme: str) -> None:
         """

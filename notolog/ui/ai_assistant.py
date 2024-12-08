@@ -34,7 +34,6 @@ import logging
 from typing import Union
 
 from . import Settings
-from . import AppConfig
 from . import Lexemes
 from . import ThemeHelper
 
@@ -95,9 +94,6 @@ class AIAssistant(QDialog):
 
         self.logger = logging.getLogger('ai_assistant')
 
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
-
         self.settings = Settings(parent=self)
         self.settings.value_changed.connect(
             lambda v: self.settings_update_handler(v))
@@ -114,8 +110,7 @@ class AIAssistant(QDialog):
             # Get the name of the inference module
             self.inference_module_name = Modules().modules.get(self.inference_module).get_name()
         except Exception as e:
-            if self.logging:
-                self.logger.warning(f"Inference module '{self.inference_module}' name is not set {e}")
+            self.logger.warning(f"Inference module '{self.inference_module}' name is not set {e}")
             # Try to find any suitable module
             for module_name in self.settings.ai_config_inference_modules.keys():
                 # Set up first available module as a default one
@@ -124,8 +119,7 @@ class AIAssistant(QDialog):
                 break
             # Update with the default module name
             self.inference_module_name = self.inference_module
-            if self.logging:
-                self.logger.warning(f"Fallback to the inference module named '{self.inference_module}'")
+            self.logger.warning(f"Fallback to the inference module named '{self.inference_module}'")
 
         self.theme_helper = ThemeHelper()
 
@@ -507,15 +501,13 @@ class AIAssistant(QDialog):
             # Return module core instance
             return self.module_core
         except (RuntimeError, Exception) as e:
-            if self.logging:
-                self.logger.warning(f'Error occurred during module {self.inference_module} init {e}')
+            self.logger.warning(f'Error occurred during module {self.inference_module} init {e}')
         return None
 
     def send_request(self) -> None:
         # Check previous request id
         if self.request_message_id and self.request_message_id == self.message_id:
-            if self.logging:
-                self.logger.warning(
+            self.logger.warning(
                     f"Duplicate request message id {self.request_message_id}")
             return
 
@@ -538,16 +530,14 @@ class AIAssistant(QDialog):
                                                        EnumMessageType.USER_INPUT)
             # Either a multi-turn or stateless prompt
             user_prompt = prompt_manager.get_prompt(multi_turn=self.settings.ai_config_multi_turn_dialogue)
-            if self.debug:
-                self.logger.debug(f'The prompt:\n{user_prompt}\n')
+            self.logger.debug(f'The prompt:\n{user_prompt}\n')
             self.set_status_waiting()  # Pending status
             # Obtain new message id
             response_msg_id = self.gen_next_message_id()
             # Assume the previous message was a request
             check_request_msg_id = self.get_prev_message_id()
             if self.request_message_id != check_request_msg_id:
-                if self.logging:
-                    self.logger.warning(
+                self.logger.warning(
                         f"Request message id doesn't match: {self.request_message_id} vs {check_request_msg_id}")
             module_core.request(
                 user_prompt=user_prompt,
@@ -556,16 +546,14 @@ class AIAssistant(QDialog):
                 init_callback=self.set_status_processing,  # Processing status
                 finished_callback=self.send_request_finished_callback)  # Finished status
         except (AttributeError, ValueError) as e:
-            if self.logging:
-                self.logger.warning(f'Error occurred during the request: {e}')
+            self.logger.warning(f'Error occurred during the request: {e}')
             # Set up response status visible within response field
             self.add_message(self.lexemes.get('dialog_error_loading_model'), None, None,
                              EnumMessageType.DEFAULT, EnumMessageStyle.ERROR)
             self.cancel_request()
             self.set_status_ready()
         except (RuntimeError, Exception) as e:
-            if self.logging:
-                self.logger.error(f'Error occurred during the request: {e}')
+            self.logger.error(f'Error occurred during the request: {e}')
             self.cancel_request()
             self.set_status_ready()
 
@@ -591,8 +579,7 @@ class AIAssistant(QDialog):
                 # Emit message added signal to update final variant of the message (might not be completed yet)
                 self.message_added.emit(plain_text, request_msg_id, response_msg_id, EnumMessageType.RESPONSE)
         except RuntimeError as e:  # Object is already deleted
-            if self.logging:
-                self.logger.warning(f'Finished event callback interrupted; probably an object was already deleted: {e}')
+            self.logger.warning(f'Finished event callback interrupted; probably an object was already deleted: {e}')
 
     def set_status_waiting(self):
         # Set loader cursor whilst loading content
@@ -660,8 +647,7 @@ class AIAssistant(QDialog):
 
     def save_history_action(self):
         if not hasattr(self.parent, 'action_new_file'):
-            if self.logging:
-                self.logger.error("Cannot save history to the file, no method available")
+            self.logger.error("Cannot save history to the file, no method available")
             return
 
         # Get an instance of the inference module
@@ -687,8 +673,7 @@ class AIAssistant(QDialog):
 
     @asyncClose
     async def closeEvent(self, event):
-        if self.logging:
-            self.logger.info('Closing AI Assistant')
+        self.logger.info('Closing AI Assistant')
         self.dialog_closed.emit()
         self.deleteLater()
         # event.accept()  # Event handled
@@ -707,8 +692,7 @@ class AIAssistant(QDialog):
             None
         """
 
-        if self.debug:
-            self.logger.debug('Settings update handler is in use "%s"' % data)
+        self.logger.debug('Settings update handler is in use "%s"' % data)
 
         if 'module_ondevice_llm_model_path' in data or 'ai_config_inference_module' in data:
             try:

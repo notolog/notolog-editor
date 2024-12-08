@@ -20,7 +20,6 @@ from PySide6.QtGui import QAction, QColor
 from PySide6.QtWidgets import QMenu
 
 from . import Settings
-from . import AppConfig
 from . import Lexemes
 from . import ThemeHelper
 from . import ClipboardHelper
@@ -45,9 +44,6 @@ class FileTreeContextMenu(QMenu):
         self.settings = Settings(parent=self)
 
         self.logger = logging.getLogger('file_tree_context_menu')
-
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
 
         # Load lexemes for selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='common')

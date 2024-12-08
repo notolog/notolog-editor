@@ -26,7 +26,6 @@ import os
 from typing import Any, Union, Iterable
 from json import JSONDecodeError
 
-from .app_config import AppConfig
 from .helpers.file_helper import read_file
 from .encrypt.enc_helper import EncHelper
 
@@ -49,11 +48,7 @@ class FileHeader:
 
         self.logger = logging.getLogger('header')
 
-        self.logging = AppConfig().get_logging()
-        self.debug = AppConfig().get_debug()
-
-        if self.debug:
-            self.logger.debug('Header helper is engaged')
+        self.logger.debug('Header helper is activated')
 
         self.header = None
 
@@ -61,8 +56,7 @@ class FileHeader:
         if not self.header:
             self.header = self.generate(is_enc=is_enc)
         else:
-            if self.logging:
-                self.logger.warning('Attempt to create new file header on top of existing one!')
+            self.logger.warning('Attempt to create new file header on top of existing one!')
         return self
 
     def generate(self, is_enc: bool = False) -> json:
@@ -103,8 +97,7 @@ class FileHeader:
             if 'created' not in self.header['notolog.app'] or self.header['notolog.app']['created'] is None:
                 self.header['notolog.app']['created'] = date_now
         else:
-            if self.debug:
-                self.logger.debug('File header is empty')
+            self.logger.debug('File header is empty')
 
     def get_param(self, param: Any, default: Any = None) -> Union[str, dict, None]:
         """
@@ -169,13 +162,11 @@ class FileHeader:
             # Return header and content, even if the content is empty
             return header_line + delimiter + content
         elif content is not None:
-            if self.debug:
-                self.logger.debug(f'File contains content but lacks a header {self}')
+            self.logger.debug(f'File contains content but lacks a header {self}')
             # Return content without header
             return content
         else:
-            if self.logging:
-                self.logger.warning(f'File contains header but lacks a content {self}')
+            self.logger.warning(f'File contains header but lacks a content {self}')
             # Return header without content
             return header_line
 
@@ -187,8 +178,7 @@ class FileHeader:
         try:
             file_header_line = file_data.splitlines()[0]
         except (IndexError, AttributeError):
-            if self.debug:
-                self.logger.debug('File header is not found')
+            self.logger.debug('File header is not found')
             return self, file_data
 
         self.header = None
@@ -199,8 +189,7 @@ class FileHeader:
             # Run migrations here if needed
             self.validate_enc()
         except (TypeError, JSONDecodeError):
-            if self.debug:
-                self.logger.debug('File header is empty')
+            self.logger.debug('File header is empty')
             return self, file_data
 
         if self.is_valid():
@@ -212,8 +201,7 @@ class FileHeader:
                 file_body = None
             return self, file_body
 
-        if self.debug:
-            self.logger.debug('File header is empty')  # Suppose to be a valid situation if not set yet or not created
+        self.logger.debug('File header is empty')  # Suppose to be a valid situation if not set yet or not created
 
         return self, file_data
 
@@ -223,8 +211,7 @@ class FileHeader:
                 header_line = f.readline().strip('\n')
                 return header_line
         else:
-            if self.logging:
-                self.logger.warning('File not found "%s"' % file_path)
+            self.logger.warning('File not found "%s"' % file_path)
         return None
 
     def __repr__(self) -> str:
