@@ -14,7 +14,7 @@ from threading import Lock
 toml_base_app_config = """
 [app]
 name = "Notolog"
-version = "1.0.8"
+version = "1.0.9"
 license = "MIT License"
 date = "2024"
 website = "https://notolog.app"
@@ -396,19 +396,28 @@ class AppConfig(QObject):
         self.app_config['logger']['level'] = value
         self.value_changed.emit({'logger_level': value})
 
-    def get_logger_level(self) -> str:
-        level = None
+    def get_logger_level(self) -> int:
+        level_name = None
         if self.app_config and 'logger' in self.app_config and 'level' in self.app_config['logger']:
-            level = (self.app_config['logger']['level']).upper()
+            level_name = (self.app_config['logger']['level']).upper()
 
-        available_levels = logging.getLevelNamesMapping()
-        if level not in available_levels:
-            self.logger.warning(f"Logger level is not recognized: '{level}'.\n\t"
+        try:
+            # Use the modern method available in Python 3.11+
+            available_levels = logging.getLevelNamesMapping()
+        except AttributeError:
+            # Fallback for earlier Python versions
+            if hasattr(logging, '_nameToLevel'):
+                available_levels = logging._nameToLevel
+            else:
+                available_levels = {}
+
+        if level_name not in available_levels:
+            self.logger.warning(f"Logger level is not recognized: '{level_name}'.\n\t"
                                 f"Available options are: {str(available_levels.keys())}")
-            level = self.default_logger_level
+            return self.default_logger_level
 
         # Return the level
-        return level
+        return available_levels[level_name]
 
     def set_font_min_size(self, value) -> None:
         self.app_config['font']['min_size'] = value

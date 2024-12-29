@@ -32,11 +32,11 @@ class TestAppConfig:
 
     @pytest.fixture(scope="function")
     def test_obj_app_config(self, mocker, request):
-        app_config = request.param
+        app_config, skip_validation = request.param if isinstance(request.param, tuple) else (request.param, False)
 
-        # Mock AppConfig's get_logger_level method to suppress logging during tests.
-        mocker.patch.object(AppConfig, 'get_logger_level', return_value=logging.NOTSET)
-
+        if skip_validation:
+            # Allow updates without validating complete configuration.
+            mocker.patch.object(AppConfig, 'validate_config', return_value=True)
         mocker.patch.object(AppConfig, 'load_config', return_value=app_config)
 
         # Mock libs results
@@ -219,3 +219,22 @@ class TestAppConfig:
         # Deleting the config file and ensures it was existed
         assert test_obj_app_config.delete_app_config()
         assert not os.path.exists(app_config_path)
+
+    @pytest.mark.parametrize(
+        "test_obj_app_package, test_obj_app_config, test_exp_params_fixture",
+        [
+            (({}), ({'logger': {'level': ''}}, True), logging.INFO),
+            (({}), ({'logger': {'level': 'notset'}}, True), logging.NOTSET),
+            (({}), ({'logger': {'level': 'info'}}, True), logging.INFO),
+            (({}), ({'logger': {'level': 'DEBUG'}}, True), logging.DEBUG),
+            (({}), ({'logger': {'level': 'cRitICaL'}}, True), logging.CRITICAL),
+        ],
+        indirect=True
+    )
+    def test_get_logger_level(self, test_obj_app_package: AppPackage, test_obj_app_config: AppConfig,
+                              test_exp_params_fixture):
+        exp_logger_level_result = test_exp_params_fixture
+
+        logger_level_result = test_obj_app_config.get_logger_level()
+
+        assert logger_level_result == exp_logger_level_result

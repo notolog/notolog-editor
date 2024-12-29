@@ -1,6 +1,20 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.0.9] - 2024-12-29
+
+### Added
+- Added tests for the 'Module llama.cpp' model helper class.
+
+### Changed
+- Made the `llama-cpp-python` package optional, allowing it to be installed separately on top of the base installation. When installed, it will automatically enable the 'Module llama.cpp' in the application settings.
+
+### Updated
+- Modified the `pyproject.toml` file to support optional package installation and set the maximum supported Python version to `<3.14`.
+
+### Fixed
+- Resolved a potential error when `logging.getLevelNamesMapping` was unavailable in Python versions below 3.11.
+
 ## [1.0.8] - 2024-12-08
 
 ### Updated

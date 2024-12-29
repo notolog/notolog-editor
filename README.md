@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-12-05 23:55:09.820720"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-12-29 05:00:27.873174"}} -->
 # Notolog
 
 [![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/) [![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor)](https://github.com/notolog/notolog-editor/blob/master/LICENSE) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)](https://pypi.org/project/notolog/) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/notolog/notolog-editor/tests.yaml)](https://github.com/notolog/notolog-editor/actions/workflows/tests.yaml) [![Conda Version](https://img.shields.io/conda/vn/conda-forge/notolog)](https://anaconda.org/conda-forge/notolog) [![PyPI - Downloads](https://img.shields.io/pypi/dm/notolog)](https://pypistats.org/packages/notolog)
@@ -184,6 +184,32 @@ pip install .
 ```sh
 python -m notolog.app
 ```
+
+
+## Extensions
+
+### Module llama.cpp
+
+By default, the module is included in the base installation but not activated. However, it can be enabled by installing the `llama-cpp-python` package (Python Bindings for llama.cpp). Below is a quick installation summary:
+
+```sh
+pip install llama-cpp-python
+```
+
+The package requires a C compiler to be installed. If a compiler is not available, you may encounter an error such as:
+*CMake Error: CMAKE_CXX_COMPILER not set, after EnableLanguage*
+
+This error indicates that the system cannot find a suitable C++ compiler to build the necessary components. Installing a compatible compiler, such as GCC or Clang, should resolve the issue.
+
+For Linux systems, installing the `build-essential` package is often sufficient to resolve this. For example, on Ubuntu, run:
+
+```sh
+sudo apt-get install build-essential
+```
+
+For platform-specific or more detailed instructions, refer to the [official documentation](https://github.com/abetlen/llama-cpp-python#installation) provided with the `llama-cpp-python` package.
+
+After successful installation, the **Module llama.cpp** will be available in the application settings and ready to use.
 
 
 ## Tests and Test Coverage

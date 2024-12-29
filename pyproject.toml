@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "notolog"
-version = "1.0.8"
+version = "1.0.9"
 description = "Notolog - Python Markdown Editor"
 authors = ["Vadim Bakhrenkov"]
 license = "MIT"
@@ -87,7 +87,7 @@ Changelog = "https://github.com/notolog/notolog-editor/blob/main/CHANGELOG.md"
 IssueTracker = "https://github.com/notolog/notolog-editor/issues"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<=3.13"
+python = ">=3.9,<3.14"
 # Main packages
 cffi= "^1.17.0"
 click = "^8.1.7"
@@ -113,12 +113,6 @@ onnxruntime-genai = [
     { version = "^0.2.0", markers = "sys_platform != 'darwin'" },  # Applies to all platforms except macOS
     { version = "^0.5.1", markers = "sys_platform == 'darwin' and python_version >= '3.10' and python_version < '3.13'" }  # macOS only
 ]
-llama-cpp-python = { version = "^0.3.2", source = "llama-cpp-python" }
-
-[tool.poetry.source]
-name = "llama-cpp-python"
-url = "https://abetlen.github.io/llama-cpp-python/whl/cpu"
-priority = "supplemental"
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^7.0.0"
@@ -139,3 +133,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.pytest.ini_options]
 asyncio_default_fixture_loop_scope = "function"
+filterwarnings = [
+    "ignore::pytest.PytestConfigWarning",
+    "ignore::pytest.PytestUnraisableExceptionWarning",
+]
