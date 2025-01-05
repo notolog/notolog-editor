@@ -1,3 +1,9 @@
+# Notolog Editor
+# An open-source Markdown editor built with Python.
+#
+# Repository: https://github.com/notolog/notolog-editor
+# License: MIT License
+
 # Python bytecode
 __pycache__/
 *.py[cod]

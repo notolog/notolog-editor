@@ -19,6 +19,7 @@ lexemes = {
     "dialog_button_stop_request": "Stop",
     "dialog_button_save_history": "Save dialog history",
 
+    "dialog_message_copy_tooltip": "Copy text",
     "dialog_message_copied_tooltip": "Copied",
 
     "dialog_prompt_history_file_header": "# Ai Assistant [{datetime}]",

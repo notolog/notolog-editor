@@ -19,6 +19,7 @@ lexemes = {
     "dialog_button_stop_request": "Intermitte",
     "dialog_button_save_history": "Conferensiae historia serva",
 
+    "dialog_message_copy_tooltip": "Exemplum textus",
     "dialog_message_copied_tooltip": "Exemplar",
 
     "dialog_error_loading_model": "Error loading mos proprius",

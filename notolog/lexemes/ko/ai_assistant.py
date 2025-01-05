@@ -19,6 +19,7 @@ lexemes = {
     "dialog_button_stop_request": "중지",
     "dialog_button_save_history": "대화 기록 저장",
 
+    "dialog_message_copy_tooltip": "텍스트 복사",
     "dialog_message_copied_tooltip": "복사됨",
 
     "dialog_error_loading_model": "사용자 정의 모델 로딩 오류",

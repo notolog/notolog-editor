@@ -1,5 +1,11 @@
-# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+# Notolog Editor
+# An open-source Markdown editor built with Python.
+#
+# Repository: https://github.com/notolog/notolog-editor
+# License: MIT License
+#
+# This workflow installs Python dependencies, runs tests, and performs linting across multiple Python versions.
+# For more information, see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 
 name: Tests
 

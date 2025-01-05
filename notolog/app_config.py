@@ -14,9 +14,9 @@ from threading import Lock
 toml_base_app_config = """
 [app]
 name = "Notolog"
-version = "1.0.9"
+version = "1.1.0"
 license = "MIT License"
-date = "2024"
+date = "2024-2025"
 website = "https://notolog.app"
 repository = "https://github.com/notolog/notolog-editor"
 pypi = "https://pypi.org/project/notolog"
@@ -37,8 +37,8 @@ org_domain = "notolog.app"
 app_name = "notolog_editor"
 """
 
-toml_app_config_header = """# Notolog
-# An open-source markdown editor developed in Python.
+toml_app_config_header = """# Notolog Editor
+# An open-source Markdown editor built with Python.
 
 # Application-Level Configuration
 # --------------------------------

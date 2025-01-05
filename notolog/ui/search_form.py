@@ -1,6 +1,6 @@
 """
 Notolog Editor
-Open-source markdown editor developed in Python.
+An open-source Markdown editor built with Python.
 
 File Details:
 - Purpose: Provides app search UI form.
@@ -11,7 +11,7 @@ Website: https://notolog.app
 PyPI: https://pypi.org/project/notolog
 
 Author: Vadim Bakhrenkov
-Copyright: 2024 Vadim Bakhrenkov
+Copyright: 2024-2025 Vadim Bakhrenkov
 License: MIT License
 
 For detailed instructions and project information, please see the repository's README.md.
@@ -182,7 +182,10 @@ class SearchForm(QWidget):
         Updates the enable/disable state of the search buttons based on the presence of search text and occurrences.
         """
 
-        search_occurrences = self.counter_text()
+        try:
+            search_occurrences = int(self.counter_text())
+        except ValueError:
+            search_occurrences = 0
 
         # Retrieve the current search text.
         text = self.text()
@@ -383,7 +386,12 @@ class SearchForm(QWidget):
                          If this is '0', the label will be hidden.
         """
 
-        self._search_pos_label.setText(index if len(index) > 0 and int(index) > 0 else '')
+        try:
+            pos_text = index if len(index) > 0 and int(index) > 0 else ''
+        except ValueError:
+            pos_text = ''
+
+        self._search_pos_label.setText(pos_text)
         self.adjust_occurrence_label_size(label=self._search_pos_label, shift=self._search_count_label.width())
 
     def adjust_occurrence_label_size(self, label: QLabel, shift: int = 0):
@@ -399,8 +407,12 @@ class SearchForm(QWidget):
             shift (int, optional): The horizontal offset to apply when positioning the label. Defaults to 0.
         """
 
-        # Show position label if not an empty text
-        visible = True if len(label.text()) > 0 and int(label.text()) > 0 else False
+        # Show occurrence label if not an empty text
+        try:
+            visible = True if len(label.text()) > 0 and int(label.text()) >= 0 else False
+        except ValueError:
+            visible = False
+
         label.setVisible(visible)
 
         if not visible:

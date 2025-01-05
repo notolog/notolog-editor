@@ -19,6 +19,7 @@ lexemes = {
     "dialog_button_stop_request": "Pysäytä",
     "dialog_button_save_history": "Tallenna keskusteluhistoria",
 
+    "dialog_message_copy_tooltip": "Kopioi teksti",
     "dialog_message_copied_tooltip": "Kopioitu",
 
     "dialog_error_loading_model": "Virhe ladattaessa mukautettua mallia",

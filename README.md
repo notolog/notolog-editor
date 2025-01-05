@@ -1,9 +1,9 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2024-12-29 05:00:27.873174"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2025-01-04 14:33:41.680966"}} -->
 # Notolog
 
 [![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/) [![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor)](https://github.com/notolog/notolog-editor/blob/master/LICENSE) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)](https://pypi.org/project/notolog/) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/notolog/notolog-editor/tests.yaml)](https://github.com/notolog/notolog-editor/actions/workflows/tests.yaml) [![Conda Version](https://img.shields.io/conda/vn/conda-forge/notolog)](https://anaconda.org/conda-forge/notolog) [![PyPI - Downloads](https://img.shields.io/pypi/dm/notolog)](https://pypistats.org/packages/notolog)
 
-Notolog is an open-source Markdown Editor licensed under the MIT License, combining simplicity with a wide range of tools and an integrated AI assistant. Developed entirely in Python using PySide6, it helps you tackle everyday programming challenges while offering an opportunity to deepen your Markdown skills.
+Notolog is an open-source Markdown editor licensed under the MIT License. Combining simplicity with powerful tools and an AI Assistant, it's built with Python and PySide6 to help you tackle programming challenges and sharpen your Markdown skills in a cozy, efficient way.
 
 
 ## Instant Setup

@@ -1,4 +1,20 @@
-# tests/ui_tests/test_ai_assistant.py
+"""
+Notolog Editor
+An open-source Markdown editor built with Python.
+
+File Details:
+- Purpose: Contains unit and integration tests for the related functionality.
+
+Repository: https://github.com/notolog/notolog-editor
+Website: https://notolog.app
+PyPI: https://pypi.org/project/notolog
+
+Author: Vadim Bakhrenkov
+Copyright: 2024-2025 Vadim Bakhrenkov
+License: MIT License
+
+For detailed instructions and project information, please see the repository's README.md.
+"""
 
 import asyncio
 
@@ -6,8 +22,8 @@ from PySide6.QtCore import Qt
 from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QMainWindow
 
-from notolog.ui.ai_assistant import AIAssistant
-from notolog.ui.ai_message_label import AIMessageLabel
+from notolog.ui.ai_assistant.ai_assistant import AIAssistant
+from notolog.ui.ai_assistant.ai_message_label import AIMessageLabel
 from notolog.settings import Settings
 from notolog.enums.languages import Languages
 from notolog.modules.base_ai_core import BaseAiCore

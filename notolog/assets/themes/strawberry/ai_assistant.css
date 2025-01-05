@@ -1,9 +1,5 @@
 /* Request field */
-QLineEdit {}
-/* Response field */
-QTextEdit {
-    background-color: #fff7f7;
-}
+QTextEdit {}
 /* Buttons within messages */
 QLabel > QPushButton {
     background-color: none;

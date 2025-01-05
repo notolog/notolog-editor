@@ -19,6 +19,7 @@ lexemes = {
     "dialog_button_stop_request": "Stoppa",
     "dialog_button_save_history": "Spara dialoghistorik",
 
+    "dialog_message_copy_tooltip": "Kopiera text",
     "dialog_message_copied_tooltip": "Kopierad",
 
     "dialog_error_loading_model": "Fel vid laddning av anpassad modell",

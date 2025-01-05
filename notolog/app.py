@@ -1,6 +1,6 @@
 """
 Notolog Editor
-Open-source markdown editor developed in Python.
+An open-source Markdown editor built with Python.
 
 File Details:
 - Purpose: Main file to start up the app and set up an async loop.
@@ -21,7 +21,7 @@ Website: https://notolog.app
 PyPI: https://pypi.org/project/notolog
 
 Author: Vadim Bakhrenkov
-Copyright: 2024 Vadim Bakhrenkov
+Copyright: 2024-2025 Vadim Bakhrenkov
 License: MIT License
 
 For detailed instructions and project information, please see the repository's README.md.
@@ -34,9 +34,11 @@ import asyncio
 import sys
 import os
 
+from PySide6.QtCore import QLoggingCategory
 from PySide6.QtWidgets import QStyleFactory
 
 from notolog.app_config import AppConfig
+from notolog.font_loader import FontLoader
 
 # Force Qt API (for qasync).
 # It's necessary to set the QT_API environment variable before importing qasync
@@ -67,7 +69,7 @@ def main():
                 super().print_help()
 
         # Create the parser
-        parser = NotologArgumentParser(description="Notolog Editor: Open-source markdown editor developed in Python.")
+        parser = NotologArgumentParser(description="Notolog Editor: An open-source Markdown editor built with Python.")
 
         # Add a version argument
         parser.add_argument('-v', '--version', action='version',
@@ -97,6 +99,10 @@ def main():
     logger.info("%s v%s" % (AppConfig().get_app_name(), AppConfig().get_app_version()))
     logger.info("%s" % (AppConfig().get_app_license()))
 
+    if logger_level > logging.DEBUG:
+        # Suppress font-related messages in the logs
+        QLoggingCategory.setFilterRules("qt.qpa.fonts=false")
+
     # Main application
     app = QApplication(sys.argv)
     # To correctly set up app settings
@@ -124,6 +130,9 @@ def main():
 
     # E.g. /usr/bin and /usr/bin/python3.11
     logger.debug(f'Application dir path "{app.applicationDirPath()}"; file path "{app.applicationFilePath()}"')
+
+    # Init the application fonts
+    FontLoader.init_fonts(app)
 
     # Get the screen to pass it to the main module
     screen = app.screens()[0]

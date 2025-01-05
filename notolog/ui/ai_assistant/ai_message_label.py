@@ -1,6 +1,6 @@
 """
 Notolog Editor
-Open-source markdown editor developed in Python.
+An open-source Markdown editor built with Python.
 
 File Details:
 - Purpose: Extends AI Assistant Dialog Class by formatting and displaying messages from and to the user.
@@ -10,13 +10,13 @@ Website: https://notolog.app
 PyPI: https://pypi.org/project/notolog
 
 Author: Vadim Bakhrenkov
-Copyright: 2024 Vadim Bakhrenkov
+Copyright: 2024-2025 Vadim Bakhrenkov
 License: MIT License
 
 For detailed instructions and project information, please see the repository's README.md.
 """
 
-from PySide6.QtWidgets import QStyle, QLabel, QPushButton
+from PySide6.QtWidgets import QStyle, QSizePolicy, QLabel, QPushButton
 from PySide6.QtGui import QTextDocument, QColor
 from PySide6.QtCore import Qt
 
@@ -32,7 +32,7 @@ class AIMessageLabel(QLabel):
 
     button: QPushButton = None
 
-    def __init__(self, parent=None, text=None, settings=None):
+    def __init__(self, parent=None, text=None, color=None, bg_color=None, settings=None):
         super(AIMessageLabel, self).__init__(parent)
 
         self.parent = parent
@@ -51,13 +51,34 @@ class AIMessageLabel(QLabel):
 
         self.theme_helper = ThemeHelper()
 
-        # Set text
+        # Set the text
         if text:
             self.setText(text)
+
+        # Assign colors to QLabel for styling
+        self.color = color if color else 'palette(text)'
+        self.bg_color = bg_color if bg_color else 'palette(base)'
 
         self.init_ui()
 
     def init_ui(self):
+        # Set QLabel attributes (e.g., text, font, and interaction flags)
+        self.setWordWrap(True)
+        self.setStyleSheet(""" QLabel {
+            border-radius: 5px;
+            margin: 5px 0;
+            padding: 5px;
+            color: %s;
+            background-color: %s;
+        } """ % (self.color, self.bg_color))
+
+        palette = self.palette()
+        palette.setColor(self.foregroundRole(), QColor(self.color))
+        palette.setColor(self.backgroundRole(), QColor(self.bg_color))
+
+        self.setPalette(palette)
+        self.setAutoFillBackground(True)
+        self.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
 
         self.button = QPushButton(self)
 
@@ -69,14 +90,18 @@ class AIMessageLabel(QLabel):
         self.button.setIcon(copy_icon)
 
         self.button.clicked.connect(self.copy_content)
-        self.button.setCursor(Qt.CursorShape.ArrowCursor)
+        self.button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.button.setFixedSize(20, 20)
         self.button.setStyleSheet("QPushButton { border: none; padding: 0; }")
         self.button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.button.setToolTip(self.lexemes.get('dialog_message_copy_tooltip'))
 
         # Ensure the text doesn't overlap the button
         button_size = self.button.sizeHint()
         self.setContentsMargins(0, 0, button_size.width(), 0)
+
+        # Enable text selection in QLabel using the mouse
+        self.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
 
     def resizeEvent(self, event):
         button_size = self.button.sizeHint()

@@ -19,6 +19,7 @@ lexemes = {
     "dialog_button_stop_request": "停止",
     "dialog_button_save_history": "保存对话历史",
 
+    "dialog_message_copy_tooltip": "复制文本",
     "dialog_message_copied_tooltip": "已复制",
 
     "dialog_error_loading_model": "加载自定义模型错误",

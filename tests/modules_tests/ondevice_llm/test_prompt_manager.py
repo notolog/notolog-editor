@@ -1,7 +1,23 @@
-# tests/modules_tests/ondevice_llm/test_prompt_manager.py
+"""
+Notolog Editor
+An open-source Markdown editor built with Python.
+
+File Details:
+- Purpose: Contains unit and integration tests for the related functionality.
+
+Repository: https://github.com/notolog/notolog-editor
+Website: https://notolog.app
+PyPI: https://pypi.org/project/notolog
+
+Author: Vadim Bakhrenkov
+Copyright: 2024-2025 Vadim Bakhrenkov
+License: MIT License
+
+For detailed instructions and project information, please see the repository's README.md.
+"""
 
 from notolog.app_config import AppConfig
-from notolog.ui.ai_assistant import EnumMessageType
+from notolog.ui.ai_assistant.ai_assistant import EnumMessageType
 
 from .. import is_module_available
 

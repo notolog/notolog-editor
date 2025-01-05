@@ -1,3 +1,9 @@
+# Notolog Editor
+# An open-source Markdown editor built with Python.
+#
+# Repository: https://github.com/notolog/notolog-editor
+# License: MIT License
+
 # Command line usage for pytest with coverage:
 #   pytest tests/ --ignore=tests/ui_tests/ --cov=notolog --cov-report=term
 # Alternatively, run coverage directly:

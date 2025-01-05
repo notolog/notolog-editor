@@ -1,6 +1,6 @@
 """
 Notolog Editor
-Open-source markdown editor developed in Python.
+An open-source Markdown editor built with Python.
 
 File Details:
 - Purpose: Central place of the app.
@@ -25,7 +25,7 @@ Website: https://notolog.app
 PyPI: https://pypi.org/project/notolog
 
 Author: Vadim Bakhrenkov
-Copyright: 2024 Vadim Bakhrenkov
+Copyright: 2024-2025 Vadim Bakhrenkov
 License: MIT License
 
 For detailed instructions and project information, please see the repository's README.md.
@@ -52,7 +52,7 @@ from .ui.common_dialog import CommonDialog
 from .ui.rename_file_dialog import RenameFileDialog
 from .ui.color_picker_dialog import ColorPickerDialog
 from .ui.settings_dialog import SettingsDialog
-from .ui.ai_assistant import AIAssistant
+from .ui.ai_assistant.ai_assistant import AIAssistant
 from .ui.about_popup import AboutPopup
 from .ui.file_tree_context_menu import FileTreeContextMenu
 
@@ -3818,7 +3818,8 @@ class NotologEditor(QMainWindow):
         # Count searched occurrences
         search_occurrences = search_source.searched_text_count(searched_text, find_flags)
         # Display the count of searched occurrences
-        self.toolbar.search_form.set_counter_text(str(search_occurrences if search_occurrences > 0 else ''))
+        self.toolbar.search_form.set_counter_text(str(search_occurrences if search_occurrences > 0 else
+                                                      ('0' if searched_text else '')))
 
         if len(searched_text) == 0:
             # Set the searched text to empty, clearing the search form content.
@@ -3856,7 +3857,8 @@ class NotologEditor(QMainWindow):
         # Count searched occurrences
         search_occurrences = search_source.searched_text_count(text, find_flags)
         # Display the count of searched occurrences
-        self.toolbar.search_form.set_counter_text(str(search_occurrences if search_occurrences > 0 else ''))
+        self.toolbar.search_form.set_counter_text(str(search_occurrences if search_occurrences > 0 else
+                                                      ('0' if text else '')))
         # Remove the position of searched text occurrence within the document.
         self.toolbar.search_form.set_position_text('')
 

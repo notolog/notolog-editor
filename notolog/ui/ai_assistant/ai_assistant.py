@@ -1,6 +1,6 @@
 """
 Notolog Editor
-Open-source markdown editor developed in Python.
+An open-source Markdown editor built with Python.
 
 File Details:
 - Purpose: AI Assistant Dialog Class.
@@ -18,14 +18,14 @@ Website: https://notolog.app
 PyPI: https://pypi.org/project/notolog
 
 Author: Vadim Bakhrenkov
-Copyright: 2024 Vadim Bakhrenkov
+Copyright: 2024-2025 Vadim Bakhrenkov
 License: MIT License
 
 For detailed instructions and project information, please see the repository's README.md.
 """
 
 from PySide6.QtCore import Qt, QSize, Signal
-from PySide6.QtWidgets import QDialog, QVBoxLayout, QWidget, QLineEdit, QPushButton
+from PySide6.QtWidgets import QDialog, QVBoxLayout, QWidget, QPushButton
 from PySide6.QtWidgets import QLabel, QSizePolicy, QHBoxLayout, QScrollArea
 from PySide6.QtGui import QPixmap, QColor
 
@@ -37,13 +37,15 @@ from . import Settings
 from . import Lexemes
 from . import ThemeHelper
 
-from .vertical_line_spacer import VerticalLineSpacer
+from .ai_message_label import AIMessageLabel
+from .ai_prompt_input import AIPromptInput
 
-from ..ui.rotating_label import RotatingLabel
-from ..ui.ai_message_label import AIMessageLabel
-from ..modules.modules import Modules
-from ..modules.base_ai_core import BaseAiCore
-from ..enums.enum_base import EnumBase
+from ..vertical_line_spacer import VerticalLineSpacer
+from ..rotating_label import RotatingLabel
+
+from ...modules.modules import Modules
+from ...modules.base_ai_core import BaseAiCore
+from ...enums.enum_base import EnumBase
 
 from qasync import asyncClose
 from datetime import datetime
@@ -76,6 +78,9 @@ class AIAssistant(QDialog):
     module: None
     # Inference module core
     module_core: BaseAiCore = None
+
+    # Set the inference status
+    is_in_progress = False
 
     def __init__(self, parent):
         super().__init__(parent, Qt.WindowType.Window)
@@ -132,17 +137,17 @@ class AIAssistant(QDialog):
         self.setWindowTitle(self.lexemes.get('dialog_title'))
 
         # UI element variables
-        self.prompt_input = Union[QLineEdit, None]
-        self.messages_area = Union[QScrollArea, None]
-        self.messages_layout = Union[QWidget, None]
-        self.background_label = Union[QLabel, None]
-        self.module_name_label = Union[QLabel, None]
-        self.model_name_label = Union[QLabel, None]
-        self.tokens_prompt_label = Union[QLabel, None]
-        self.tokens_answer_label = Union[QLabel, None]
-        self.tokens_total_label = Union[QLabel, None]
-        self.send_button = Union[QPushButton, None]
-        self.save_history_button = Union[QPushButton, None]
+        self.prompt_input = None  # type: Union[AIPromptInput, None]
+        self.messages_area = None  # type: Union[QScrollArea, None]
+        self.messages_layout = None  # type: Union[QVBoxLayout, None]
+        self.background_label = None  # type: Union[QLabel, None]
+        self.module_name_label = None  # type: Union[QLabel, None]
+        self.model_name_label = None  # type: Union[QLabel, None]
+        self.tokens_prompt_label = None  # type: Union[QLabel, None]
+        self.tokens_answer_label = None  # type: Union[QLabel, None]
+        self.tokens_total_label = None  # type: Union[QLabel, None]
+        self.send_button = None  # type: Union[QPushButton, None]
+        self.save_history_button = None  # type: Union[QPushButton, None]
 
         # Last added message id
         self.message_id = 0
@@ -193,18 +198,7 @@ class AIAssistant(QDialog):
         self.messages_layout.addWidget(spacer_widget)
 
         # Prompt input field
-        self.prompt_input = QLineEdit(self)
-        self.prompt_input.setFont(self.font())
-        self.prompt_input.setFocus()
-        # Calculate height: font metrics height * 2 + some padding
-        text_height = self.prompt_input.fontMetrics().height()
-        self.prompt_input.setFixedHeight(text_height * 2 + 10)  # Adjust 10 for padding
-        self.prompt_input.sizeHint()
-        self.prompt_input.setPlaceholderText(
-            self.lexemes.get('dialog_prompt_input_placeholder_text'))
-        self.prompt_input.setAccessibleDescription(
-            self.lexemes.get('dialog_prompt_input_accessible_description'))
-        self.prompt_input.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
+        self.prompt_input = AIPromptInput(send_callback=self.send_request, parent=self)
         self.layout.addWidget(self.prompt_input)
 
         label_size = QSize(48, 48)
@@ -371,25 +365,10 @@ class AIAssistant(QDialog):
         # Remove leading spaces if exist
         message_text = message.lstrip()
 
-        message_label = AIMessageLabel(text=message_text, parent=self)
-        message_label.setFont(self.font())
-        message_label.setWordWrap(True)
+        # Create a stylized message label
+        message_label = AIMessageLabel(text=message_text, color=color, bg_color=bg_color, parent=self)
         message_label.setObjectName(f'msg_{message_type}_{message_id}')
-        message_label.setStyleSheet(""" QLabel {
-            border-radius: 5px;
-            margin: 5px 0;
-            padding: 5px;
-            color: %s;
-            background-color: %s;
-        } """ % (color, bg_color))
 
-        palette = message_label.palette()
-        palette.setColor(message_label.foregroundRole(), QColor(color))
-        palette.setColor(message_label.backgroundRole(), QColor(bg_color))
-
-        message_label.setPalette(palette)
-        message_label.setAutoFillBackground(True)
-        message_label.setSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
         self.messages_layout.setAlignment(message_label, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom)
         message_label.sizeHint()
         self.messages_layout.addWidget(message_label, alignment=Qt.AlignmentFlag.AlignBottom)
@@ -505,6 +484,11 @@ class AIAssistant(QDialog):
         return None
 
     def send_request(self) -> None:
+        # If inference is in progress, skip the request
+        if self.is_in_progress:
+            self.logger.info("Inference in progress. Request skipped.")
+            return
+
         # Check previous request id
         if self.request_message_id and self.request_message_id == self.message_id:
             self.logger.warning(
@@ -512,7 +496,7 @@ class AIAssistant(QDialog):
             return
 
         # Get context for the prompt
-        prompt_context = self.prompt_input.text()
+        prompt_context = self.prompt_input.toPlainText()
         if len(prompt_context) == 0:
             self.add_message(self.lexemes.get('dialog_response_output_notice_empty_text'), None, None,
                              EnumMessageType.DEFAULT, EnumMessageStyle.INFO)
@@ -582,6 +566,8 @@ class AIAssistant(QDialog):
             self.logger.warning(f'Finished event callback interrupted; probably an object was already deleted: {e}')
 
     def set_status_waiting(self):
+        # Set the inference status
+        self.is_in_progress = True
         # Set loader cursor whilst loading content
         self.setCursor(Qt.CursorShape.WaitCursor)
         # Disable prompt input field
@@ -597,10 +583,15 @@ class AIAssistant(QDialog):
 
     def set_status_processing(self):
         try:
+            # Set the inference status
+            self.is_in_progress = True
             # Set cursor back
             self.setCursor(Qt.CursorShape.ArrowCursor)
             # Hide progress label
             self.background_label.hide()
+            # Enable prompt input field
+            self.prompt_input.setEnabled(True)
+            self.prompt_input.setFocus()
             # Replace with stop button
             self.request_button_stop()
             # Enable send request button
@@ -610,6 +601,8 @@ class AIAssistant(QDialog):
 
     def set_status_ready(self):
         try:
+            # Set the inference status
+            self.is_in_progress = False
             # Set cursor back
             self.setCursor(Qt.CursorShape.ArrowCursor)
             # Enable prompt input field

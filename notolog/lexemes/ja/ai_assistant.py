@@ -19,6 +19,7 @@ lexemes = {
     "dialog_button_stop_request": "停止",
     "dialog_button_save_history": "対話履歴を保存する",
 
+    "dialog_message_copy_tooltip": "テキストをコピー",
     "dialog_message_copied_tooltip": "コピーしました",
 
     "dialog_error_loading_model": "カスタムモデルのロードエラー",

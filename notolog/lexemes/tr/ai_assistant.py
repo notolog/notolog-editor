@@ -18,6 +18,7 @@ lexemes = {
     "dialog_button_stop_request": "Durdur",
     "dialog_button_save_history": "Sohbet geçmişini kaydet",
 
+    "dialog_message_copy_tooltip": "Metni kopyala",
     "dialog_message_copied_tooltip": "Kopyalandı",
 
     "dialog_error_loading_model": "Özel model yüklenirken hata",

@@ -1,6 +1,6 @@
 """
 Notolog Editor
-Open-source markdown editor developed in Python.
+An open-source Markdown editor built with Python.
 
 File Details:
 - Purpose: Part of the 'On-Device LLM' module.
@@ -11,7 +11,7 @@ Website: https://notolog.app
 PyPI: https://pypi.org/project/notolog
 
 Author: Vadim Bakhrenkov
-Copyright: 2024 Vadim Bakhrenkov
+Copyright: 2024-2025 Vadim Bakhrenkov
 License: MIT License
 
 For detailed instructions and project information, please see the repository's README.md.
@@ -38,7 +38,7 @@ from .. import Settings
 from .. import AppConfig
 from .. import Lexemes
 
-from ...ui.ai_assistant import EnumMessageType, EnumMessageStyle
+from ...ui.ai_assistant.ai_assistant import EnumMessageType, EnumMessageStyle
 from ...ui.dir_path_line_edit import DirPathLineEdit
 from ...ui.horizontal_line_spacer import HorizontalLineSpacer
 from ...ui.label_with_hint import LabelWithHint

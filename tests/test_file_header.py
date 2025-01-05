@@ -1,4 +1,20 @@
-# tests/test_file_header.py
+"""
+Notolog Editor
+An open-source Markdown editor built with Python.
+
+File Details:
+- Purpose: Contains unit and integration tests for the related functionality.
+
+Repository: https://github.com/notolog/notolog-editor
+Website: https://notolog.app
+PyPI: https://pypi.org/project/notolog
+
+Author: Vadim Bakhrenkov
+Copyright: 2024-2025 Vadim Bakhrenkov
+License: MIT License
+
+For detailed instructions and project information, please see the repository's README.md.
+"""
 
 from notolog.file_header import FileHeader
 
@@ -40,7 +56,7 @@ class TestFileHeader:
         assert test_obj_file_header_empty.get_param('updated') is None
 
         # Just to check the method reads first line of the file, check the current one
-        assert test_obj_file_header_empty.read(__file__) == '# tests/test_file_header.py'
+        assert test_obj_file_header_empty.read(__file__) == '"""'
 
         # Is valid check works well
         assert not test_obj_file_header_empty.is_valid()
@@ -87,7 +103,7 @@ class TestFileHeader:
         assert test_obj_file_header_new.get_param('updated') != updated
 
         # Just to check the method reads first line of the file, check the current one
-        assert test_obj_file_header_new.read(__file__) == '# tests/test_file_header.py'
+        assert test_obj_file_header_new.read(__file__) == '"""'
 
     @pytest.fixture(scope="function")
     def test_obj_file_header_load(self, request):

@@ -1,6 +1,6 @@
 body {
     max-width: 100%; /* Page not stretching upon resize without it */
-    font-family: 'Arial', 'Liberation Sans', sans-serif;
+    font-family: 'Noto Sans', 'Liberation Sans', '.AppleSystemUIFont', 'DejaVu Sans', sans-serif;
 }
 a {
     display: inline-block;
@@ -54,7 +54,6 @@ table._nl_tbl th {
 /* anchor details-summary expandable */
 ._ds_expand {
     background: transparent;
-    font-family: 'Arial', 'Liberation Sans', sans-serif;
 }
 /* anchor details-summary expandable */
 ._ds_expand > a {
@@ -73,7 +72,6 @@ a._ds_collapse_summary {
     color: white;
     text-decoration: none;
     font-weight: bold;
-    font-family: 'Arial', 'Liberation Sans', sans-serif;
 }
 /* root element of the block, usually table */
 ._n_details {
@@ -117,10 +115,11 @@ abbr { text-decoration: underline; text-decoration-color: hotpink; }
 }
 .codehilitetable { width: 100%; border: none; border-spacing: unset; border-collapse: collapse;
     margin-top: 3px; }
-td.linenos { padding: 10px 7px 0; border-left: 3px solid salmon; background: #373737; color: #eeeeee;
-    font-family: 'Arial', sans-serif; } /*  line-height: should be equal to td.code, code's line height to match */
+td.linenos {
+    padding: 10px 7px 0; border-left: 3px solid salmon; background: #373737; color: #eeeeee;
+} /* The line-height should be equal to that of td.code, ensuring the code's line height matches. */
 td.code, code { padding: 10px 10px 0; background: #a1426d; color: #f8f8f2;
-    font-family: 'Menlo', 'Monaco', 'Consolas', 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', 'Courier New', monospace; }
+    font-family: 'IBM Plex Mono', 'Liberation Mono', 'DejaVu Sans Mono', monospace; }
 td.linenos .normal { color: grey; background-color: transparent; padding-left: 5px; padding-right: 5px; }
 div.linenodiv { padding: 0; margin: 0; }
 span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -128,7 +127,7 @@ td.linenos .special { color: inherit; background-color: #ffffc0; padding-left: 5
 span.linenos.special { color: inherit; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
 
 .codehilite { overflow-x: auto; line-height: 21px; /* 21px is a min value atm */
-    font-family: 'Menlo', 'Monaco', 'Consolas', 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', 'Courier New', monospace; }
+    font-family: 'IBM Plex Mono', 'Liberation Mono', 'DejaVu Sans Mono', monospace; }
 .codehilite .hll { background-color: #49483e; }
 .codehilite .c { color: lightpink } /* Comment */
 .codehilite .err { color: darkred; background-color: palevioletred; } /* Error */

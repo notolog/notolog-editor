@@ -19,6 +19,7 @@ lexemes = {
     "dialog_button_stop_request": "Parar",
     "dialog_button_save_history": "Salvar histórico do diálogo",
 
+    "dialog_message_copy_tooltip": "Copiar texto",
     "dialog_message_copied_tooltip": "Copiado",
 
     "dialog_error_loading_model": "Erro ao carregar modelo personalizado",

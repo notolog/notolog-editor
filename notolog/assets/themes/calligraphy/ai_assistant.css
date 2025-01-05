@@ -1,8 +1,4 @@
 /* Request field */
-QLineEdit {
-    background-color: #ffffff;
-}
-/* Response field */
 QTextEdit {
     background-color: #ffffff;
 }

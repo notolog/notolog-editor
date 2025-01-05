@@ -1,6 +1,4 @@
 /* Request field */
-QLineEdit {}
-/* Response field */
 QTextEdit {}
 /* Buttons within messages */
 QLabel > QPushButton {

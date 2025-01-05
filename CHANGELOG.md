@@ -1,6 +1,22 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.1.0] - 2025-01-05
+
+### Added
+- Added application default fonts and corresponding functionality to support app UI, text, and code block rendering. The 'Noto Sans' font is used for general text, and 'IBM Plex Mono' for code blocks and monospace texts. Both fonts are licensed under the SIL Open Font License and are now included in the source code.
+- Added a prompt input class to enhance the AI Assistant functionality, allowing multi-line prompts with Ctrl+Enter and enabling line wrapping in the input field.
+- Added the ability to select text in the AI Assistant chat using the mouse, allowing users to copy selected text.
+
+### Changed
+- Changed the search occurrences counter behavior, which now shows `0` if no results are found in the text.
+- AI Assistant-related files moved to a dedicated directory to improve code readability.
+- Changed the `Theme.get_assets_dir()` method, which is now static.
+
+### Updated
+- Updated the LICENSE year range to 2024-2025, along with other application files for consistency.
+- Updated monospace block support with related CSS updates (e.g., font-family declarations) and minor adjustments.
+
 ## [1.0.9] - 2024-12-29
 
 ### Added

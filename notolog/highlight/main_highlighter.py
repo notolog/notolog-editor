@@ -1,6 +1,6 @@
 """
 Notolog Editor
-Open-source markdown editor developed in Python.
+An open-source Markdown editor built with Python.
 
 File Details:
 - Purpose: Base Syntax Highlighter class tailored for Notolog.
@@ -11,7 +11,7 @@ Website: https://notolog.app
 PyPI: https://pypi.org/project/notolog
 
 Author: Vadim Bakhrenkov
-Copyright: 2024 Vadim Bakhrenkov
+Copyright: 2024-2025 Vadim Bakhrenkov
 License: MIT License
 
 For detailed instructions and project information, please see the repository's README.md.
@@ -25,6 +25,8 @@ from typing import TYPE_CHECKING
 
 from . import AppConfig
 from . import ThemeHelper
+
+from ..font_loader import FontLoader
 
 import logging
 
@@ -142,7 +144,7 @@ class MainHighlighter(QSyntaxHighlighter):
     # Text block style format
     #
     # @staticmethod
-    def cf(self, **kwargs):
+    def cf(self, **kwargs):  # noqa: C901
         """
         Return a QTextCharFormat with style attributes
 
@@ -153,7 +155,7 @@ class MainHighlighter(QSyntaxHighlighter):
         color = kwargs['color'] if 'color' in kwargs else ''
         style = kwargs['style'] if 'style' in kwargs else ''
         bg = kwargs['bg'] if 'bg' in kwargs else {}
-        font_size_ratio = kwargs['font_size_ratio'] if 'font_size_ratio' in kwargs else ''
+        font_size_ratio = kwargs['font_size_ratio'] if 'font_size_ratio' in kwargs else 1.0
 
         if not (color or style or bg or font_size_ratio):
             return
@@ -187,13 +189,6 @@ class MainHighlighter(QSyntaxHighlighter):
                 """
                 cformat.setBackground(QBrush(bg_color_obj, bg_pattern))
 
-        # Font size
-        if font_size_ratio and self.font_size:
-            """
-            The ratio depends on the font size set in the constructor
-            """
-            cformat.setFontPointSize(int(self.font_size * font_size_ratio))
-
         if 'bold' in style:
             cformat.setFontWeight(QFont.Weight.Bold)
         if 'italic' in style:
@@ -203,13 +198,17 @@ class MainHighlighter(QSyntaxHighlighter):
         if 'strikethrough' in style:
             cformat.setFontStrikeOut(True)
         if 'monospace' in style:
-            monospace_font = QFont(
-                "font-family: 'Menlo', 'Monaco', 'Consolas', 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', "
-                "'Courier New', monospace;")
-            monospace_font.setStyleHint(QFont.StyleHint.Monospace)
-            # 100% means normal spacing, no extra spacing
-            monospace_font.setLetterSpacing(QFont.SpacingType.PercentageSpacing, 100)
-            cformat.setFont(monospace_font)
+            if loaded_monospace_font := FontLoader.get_monospace_font():
+                monospace_font = QFont(loaded_monospace_font)
+                monospace_font.setStyleHint(QFont.StyleHint.Monospace)
+                # 100% means normal spacing, no extra spacing
+                monospace_font.setLetterSpacing(QFont.SpacingType.PercentageSpacing, 100)
+                cformat.setFont(monospace_font)
+
+        # Explicitly set the font size after any potential font style changes
+        if font_size_ratio and self.font_size:
+            # The actual size is determined based on the base size set in the constructor
+            cformat.setFontPointSize(int(self.font_size * font_size_ratio))
 
         return cformat
 

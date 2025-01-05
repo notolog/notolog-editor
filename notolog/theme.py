@@ -1,6 +1,6 @@
 """
 Notolog Editor
-Open-source markdown editor developed in Python.
+An open-source Markdown editor built with Python.
 
 File Details:
 - Purpose: App themes manager.
@@ -10,7 +10,7 @@ Website: https://notolog.app
 PyPI: https://pypi.org/project/notolog
 
 Author: Vadim Bakhrenkov
-Copyright: 2024 Vadim Bakhrenkov
+Copyright: 2024-2025 Vadim Bakhrenkov
 License: MIT License
 
 For detailed instructions and project information, please see the repository's README.md.
@@ -25,7 +25,6 @@ from PySide6.QtCore import QFile, QIODevice
 
 from .app_config import AppConfig
 from .helpers.file_helper import res_path
-
 from .enums.themes import Themes
 
 
@@ -45,7 +44,7 @@ class Theme:
         if getattr(self, 'theme', None) and self.theme == theme:
             return
 
-        self.logger = logging.getLogger('themes')
+        self.logger = logging.getLogger('theme')
 
         # Custom Enum logic return name.lower() when cast to string
         # Same as: Themes.default().name.lower()
@@ -64,13 +63,14 @@ class Theme:
 
         self.load_from_files()
 
-    def get_assets_dir(self, join_parts: Union[str, list] = None) -> str:
+    @staticmethod
+    def get_assets_dir(join_parts: Union[str, list] = None) -> str:
         """
         Get the directory path with all assets files.
         @return: string with the themes directory path
         """
         join_parts = join_parts if isinstance(join_parts, list) else [join_parts] if isinstance(join_parts, str) else []
-        return str(os.path.join(os.path.dirname(__file__), self.ASSETS_DIR_NAME, *join_parts))
+        return str(os.path.join(os.path.dirname(__file__), Theme.ASSETS_DIR_NAME, *join_parts))
 
     def get_themes_dir(self):
         """

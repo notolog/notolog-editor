@@ -1,6 +1,6 @@
 """
 Notolog Editor
-Open-source markdown editor developed in Python.
+An open-source Markdown editor built with Python.
 
 File Details:
 - Purpose: Markdown Syntax Highlighter class tailored for Notolog.
@@ -17,7 +17,7 @@ Website: https://notolog.app
 PyPI: https://pypi.org/project/notolog
 
 Author: Vadim Bakhrenkov
-Copyright: 2024 Vadim Bakhrenkov
+Copyright: 2024-2025 Vadim Bakhrenkov
 License: MIT License
 
 For detailed instructions and project information, please see the repository's README.md.
@@ -79,7 +79,7 @@ class MdHighlighter(MainHighlighter):
         'codelf': {'color': 'white', 'style': 'monospace',
                    'bg': {'color': 'magenta', 'pattern': Qt.BrushStyle.Dense2Pattern}},
         'code_lang': {'color': 'magenta', 'style': 'bold'},
-        'code_indent': {'bg': {'color': 'pink', 'pattern': Qt.BrushStyle.Dense6Pattern}},
+        'code_indent': {'bg': {'color': 'pink', 'style': 'monospace', 'pattern': Qt.BrushStyle.Dense6Pattern}},
         'code_content': {'color': 'brown', 'style': 'monospace'},
         # Debug: 'bg': {'color': 'darkGrey', 'pattern': Qt.BrushStyle.Dense2Pattern}
         'wrong_indent': {'bg': {'color': 'red', 'pattern': Qt.BrushStyle.DiagCrossPattern}},
@@ -106,11 +106,12 @@ class MdHighlighter(MainHighlighter):
         'html_comment': {'color': 'grey'},
         'emoji': {'color': 'white', 'bg': {'color': 'olive', 'pattern': Qt.BrushStyle.Dense3Pattern}},
         'todo': {'color': 'darkCyan', 'bg': {'color': 'yellow', 'pattern': Qt.BrushStyle.Dense5Pattern}},
-        'coop1': {'color': 'red', 'bg': {'color': None}},
-        'coop2': {'color': 'darkGreen', 'bg': {'color': None}},
-        'coop3': {'color': 'darkOrange', 'bg': {'color': None}},
-        'coop4': {'color': 'blue', 'bg': {'color': None}},
-        'coop5': {'color': 'brown', 'bg': {'color': 'brown', 'pattern': Qt.BrushStyle.Dense7Pattern}},
+        'coop1': {'color': 'red', 'style': 'monospace', 'bg': {'color': None}},
+        'coop2': {'color': 'darkGreen', 'style': 'monospace', 'bg': {'color': None}},
+        'coop3': {'color': 'darkOrange', 'style': 'monospace', 'bg': {'color': None}},
+        'coop4': {'color': 'blue', 'style': 'monospace', 'bg': {'color': None}},
+        'coop5': {'color': 'brown', 'style': 'monospace',
+                  'bg': {'color': 'brown', 'pattern': Qt.BrushStyle.Dense7Pattern}},
     }
     # Keep it consistent with ini-file name, say 'md.ini', item prefix 'md_color_h1_text'
     theme_ini_prefix = 'md'
