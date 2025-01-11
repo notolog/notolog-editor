@@ -759,8 +759,9 @@ class SettingsDialog(QDialog):
             for obj in found_objects:
                 # Align with the dialog font size (mostly for QLabel)
                 if hasattr(obj, 'setFont'):
-                    # obj.sizeHint()
                     obj.setFont(self.font())
+                if hasattr(obj, 'toolTip'):
+                    obj.setStyleSheet("QToolTip { font-size: %dpt; }" % font_size)
                 if obj.objectName() == "settings_dialog_general_app_font_size_label":
                     """
                     # Update the font size on the label

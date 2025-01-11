@@ -1,5 +1,6 @@
 body {
     max-width: 100%; /* Page not stretching upon resize without it */
+    font-family: 'Noto Sans', 'Liberation Sans', '.AppleSystemUIFont', 'DejaVu Sans', sans-serif;
 }
 a {
     display: inline-block;

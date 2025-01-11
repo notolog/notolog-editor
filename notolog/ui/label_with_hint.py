@@ -22,6 +22,7 @@ from PySide6.QtGui import QIcon, QColor, QPixmap
 
 import logging
 
+from ..app_config import AppConfig
 from ..settings import Settings
 from ..helpers.theme_helper import ThemeHelper
 
@@ -144,12 +145,9 @@ class LabelWithHint(QLabel):
             tooltip_text (str): The text to display in the tooltip.
         """
 
-        # Determine the text height using font metrics
-        font_metrics = self.fontMetrics()
-        text_height = font_metrics.height()
-
         # Set the tooltip text
         self.icon_button.setToolTip(tooltip_text)
 
         # Customize the tooltip font size
-        self.setStyleSheet("QToolTip { font-size: %dpx; }" % (text_height * 0.8))
+        font_size = AppConfig().get_font_size()
+        self.setStyleSheet("QToolTip { font-size: %dpt; }" % font_size)

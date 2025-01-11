@@ -112,13 +112,13 @@ class SearchForm(QWidget):
     def init_ui(self):
         # Set up the main layout and internal components
         search_layout = QHBoxLayout(self)
-        search_layout.setContentsMargins(0, 0, 5, 0)  # To allow spacing from the right
+        # Adjust layout margins for proper spacing inside the toolbar
+        search_layout.setContentsMargins(0, 0, 0, 0)
         search_layout.setSpacing(0)
 
         # Searched text
         self._search_input = QLineEdit(self)
         self._search_input.setObjectName('search_input')
-        self._search_input.sizeHint()
         self._search_input.setReadOnly(False)
         self._search_input.setMaxLength(512)
         self._search_input.setPlaceholderText(self.lexemes.get('search_input_placeholder_text'))

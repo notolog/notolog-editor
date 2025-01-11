@@ -21,6 +21,7 @@ import asyncio
 from notolog.async_highlighter import AsyncHighlighter
 
 import pytest
+import pytest_asyncio
 
 
 class TestQtAsync:
@@ -34,7 +35,7 @@ class TestQtAsync:
         async_highlighter = AsyncHighlighter(callback=lambda check: check)
         yield async_highlighter
 
-    @pytest.fixture
+    @pytest_asyncio.fixture
     async def cleanup_tasks(self):
         yield
         # Cancel and clean up all pending asyncio tasks

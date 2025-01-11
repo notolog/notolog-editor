@@ -116,9 +116,9 @@ abbr { text-decoration: underline; text-decoration-color: dodgerblue; }
 }
 .codehilitetable { width: 100%; table-layout: fixed; border: none; border-spacing: unset; border-collapse: collapse;
     margin-top: 3px; }
-td.linenos {
-    padding: 10px 7px 0; border-left: 3px solid #eec357; background: #373737; color: #eeeeee;
-} /* The line-height should be equal to that of td.code, ensuring the code's line height matches. */
+td.linenos { padding: 10px 7px 0; border-left: 3px solid #eec357; background: #373737; color: #eeeeee;
+    /* The line-height should be equal to that of td.code, ensuring the code's line height matches. */
+    font-family: 'IBM Plex Mono', 'Liberation Mono', 'DejaVu Sans Mono', monospace; }
 td.code, code { padding: 10px 10px 0; background: #55595f; color: #f8f8f2;
     font-family: 'IBM Plex Mono', 'Liberation Mono', 'DejaVu Sans Mono', monospace; }
 td.linenos .normal { color: grey; background-color: transparent; padding-left: 5px; padding-right: 5px; }

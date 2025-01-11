@@ -1765,27 +1765,6 @@ class NotologEditor(QMainWindow):
         edit_widget.blockSignals(was_blocked)
         self.logger.debug('Re-highlighting the text > signals unblocked')
 
-    def get_block_data_param(self, tag: str, param: Any) -> Any:
-        # Edit widget
-        edit_widget = self.get_edit_widget()  # type: Union[EditWidget, QPlainTextEdit]
-
-        """
-        Returns the data param stored within the block's QTextBlockUserData
-        More info about:
-        * https://doc.qt.io/qt-6/qtextblock.html#userData
-        * https://doc.qt.io/qt-6/qtextblockuserdata.html
-        """
-        current_block = edit_widget.get_current_block()
-        data_storage = current_block.userData()  # type: Union[QTextBlockUserData, TextBlockData]
-        if data_storage is not None and hasattr(data_storage, 'block_number'):
-            block_data = data_storage.get_one(tag)
-            if block_data:
-                self.logger.debug('Current code block data [%d]~[%d] "%s", in:%r, o:%r, c:%r'
-                                  % (current_block.blockNumber(), data_storage.block_number, tag,
-                                     block_data['within'], block_data['opened'], block_data['closed']))
-                return getattr(block_data, param) if hasattr(block_data, param) else None
-        return None
-
     def on_text_changed(self) -> None:
         """
         When text is changed, or when formatting is applied.
@@ -1798,16 +1777,10 @@ class NotologEditor(QMainWindow):
         if hasattr(self.toolbar, 'toolbar_save_button'):
             self.toolbar.toolbar_save_button.setDisabled(False)
 
-        full_rehighlight = (self.get_block_data_param('code', 'opened')
-                            or self.get_block_data_param('code', 'closed'))
-
-        # Schedule async whole doc re-highlighting task in queue
+        # Asynchronous highlighting: Schedules an async task to re-highlight a portion of the document.
+        # Avoid checking 'full_rehighlight' here, as the event might occur after block data parameters have changed.
         if hasattr(self, 'async_highlighter') and self.async_highlighter:
-            self.async_highlighter.rehighlight_in_queue(full_rehighlight)
-        """
-        Opposed way, synchronous highlighting direct call:
-        self.rehighlight_editor(full_rehighlight)
-        """
+            self.async_highlighter.rehighlight_in_queue(full_rehighlight=False)
 
         # The searched text and its position can both be changed.
         self.action_search_clear()
@@ -1820,8 +1793,17 @@ class NotologEditor(QMainWindow):
 
         self.logger.debug('Modification changed (%s) signal from %s' % (changed, self.sender()))
 
-        # Synchronous highlighting
-        self.rehighlight_editor(True)
+        # Exit early if there's nothing to process
+        if not changed:
+            return
+
+        # Asynchronous highlighting: Schedules a task to re-highlight the entire document.
+        # Faster rendering, but code block processing is queued, and results may appear later.
+        if hasattr(self, 'async_highlighter') and self.async_highlighter:
+            self.async_highlighter.rehighlight_in_queue(full_rehighlight=True)
+
+        # Synchronous highlighting: Direct call for instant results with processed code blocks, but slower overall.
+        # self.rehighlight_editor(full_rehighlight=True)
 
     def on_block_count_changed(self, new_block_count: int) -> None:
         """

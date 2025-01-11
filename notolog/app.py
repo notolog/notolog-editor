@@ -59,8 +59,11 @@ def main():
         class NotologArgumentParser(argparse.ArgumentParser):
             def print_help(self, file=None):
                 # Default command line intro
+                print("\033[90m", end='')
+                print("░░░░░░░░░░░░░░░░░░░▒▒▒▒▒▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓███"
+                      "\033[97m NOTOLOG \033[90m"
+                      "███▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░")
                 print("\033[92m", end='')
-                print("░░░░░░░░░░░░░░░░░░░░░░░▒▒▒▒▒▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓███■███▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░░")
                 print("╔═══════════════════════════════════════════════════════════════════════════════════════════╗")
                 print("║ Notolog Editor is a GUI application. Simply run the command without any options to start. ║")
                 print("╚═══════════════════════════════════════════════════════════════════════════════════════════╝")

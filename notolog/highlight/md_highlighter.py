@@ -83,7 +83,8 @@ class MdHighlighter(MainHighlighter):
         'code_content': {'color': 'brown', 'style': 'monospace'},
         # Debug: 'bg': {'color': 'darkGrey', 'pattern': Qt.BrushStyle.Dense2Pattern}
         'wrong_indent': {'bg': {'color': 'red', 'pattern': Qt.BrushStyle.DiagCrossPattern}},
-        'comment': {'color': 'grey', 'bg': {'color': 'lightGrey', 'pattern': Qt.BrushStyle.Dense6Pattern}},
+        'comment': {'color': 'grey', 'style': 'monospace',
+                    'bg': {'color': 'lightGrey', 'pattern': Qt.BrushStyle.Dense6Pattern}},
         'table_h': {'style': ['bold', 'monospace'], 'bg': {'color': 'lightGrey'}},
         'table_d': {'style': 'monospace', 'bg': {'color': 'whiteSmoke'}},
         'img': {'color': 'green'},
@@ -100,10 +101,10 @@ class MdHighlighter(MainHighlighter):
         'blockquote': {'color': 'white', 'bg': {'color': 'grey', 'pattern': Qt.BrushStyle.Dense2Pattern},
                        # Blockquote friendly elements inherited this background
                        'bg_inner': {'color': 'lightGrey', 'pattern': Qt.BrushStyle.Dense3Pattern}},
-        'html': {'color': 'darkCyan'},
-        'html_open': {'color': 'green'},
-        'html_close': {'color': 'darkRed'},
-        'html_comment': {'color': 'grey'},
+        'html': {'color': 'darkCyan', 'style': 'monospace'},
+        'html_open': {'color': 'green', 'style': 'monospace'},
+        'html_close': {'color': 'darkRed', 'style': 'monospace'},
+        'html_comment': {'color': 'grey', 'style': 'monospace'},
         'emoji': {'color': 'white', 'bg': {'color': 'olive', 'pattern': Qt.BrushStyle.Dense3Pattern}},
         'todo': {'color': 'darkCyan', 'bg': {'color': 'yellow', 'pattern': Qt.BrushStyle.Dense5Pattern}},
         'coop1': {'color': 'red', 'style': 'monospace', 'bg': {'color': None}},
@@ -226,7 +227,7 @@ class MdHighlighter(MainHighlighter):
         # horizontal line
         (r'^(?:[\s>]*?)([\-\*_]{3,}(?:[\s]*?))$', 1, 'hr', 'hr', False, theme['hr'], None),
         # Comments
-        # TODO: highlight by code lang
+        # TODO: Add syntax highlighting based on the code language.
         (r'^([\s\t]*?[#]{1,}\s*?.*)$', 1, 'comment', 'comment', False, theme['comment'],
          lambda s: s.is_in_code()),
         (r'^((?:\s*?)"""(?!").*?(?<!")""")(?:\s*?)$', 1, 'comment', 'comment', False, theme['comment'],
@@ -237,8 +238,8 @@ class MdHighlighter(MainHighlighter):
          lambda s: s.is_in_code()),
         # html tags
         (r'(<\s*?([a-zA-Z][^>]*?)\s*?>)', 1, 'html', 'html', True, theme['html_open'], None),
-        (r'(<\s*?/\s*?([a-zA-Z][^\s>]*?)\s*?>)', 1, 'html', 'html', True, theme['html_close'], None),
-        (r'(<\s*?([a-zA-Z][^\/]*?)\s*?(\/)\s*?>)', 1, 'html', 'html', False, theme['html'], None),
+        (r'(<\s*?\/\s*?([a-zA-Z][^\s>]*?)\s*?>)', 1, 'html', 'html', True, theme['html_close'], None),
+        (r'(<\s*?([a-zA-Z!][^\/]*?)\s*?(\/)?\s*?>)', 1, 'html', 'html', False, theme['html'], None),
         (r'(<!--(.*?)-->)', 1, 'html', 'html', False, theme['html_comment'], None),
         # emojis
         (r'(\:[a-zA-Z_]+\:)', 1, 'emoji', 'emoji', False, theme['emoji'], None),

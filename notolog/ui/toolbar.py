@@ -88,6 +88,9 @@ class ToolBar(QToolBar):
         based on defined actions and settings.
         """
 
+        # Adjust layout margins for proper spacing
+        self.setContentsMargins(0, 0, 5, 2)
+
         # Initialize previous icon type to manage delimiters.
         prev_type = None
 

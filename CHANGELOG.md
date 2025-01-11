@@ -1,6 +1,22 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.1.1] - 2025-01-11
+
+### Changed
+- Optimized asynchronous highlighter processing in edit mode to improve highlighting speed. Text is now processed asynchronously after the document has loaded, enabling faster rendering, though code block processing is queued and may appear slightly later.
+
+### Updated
+- Updated font for code comments and HTML tags to monospace for better readability.
+- Made the tooltip font responsive to font size changes within the app settings, ensuring consistency with the main settings font.
+- Updated styles to improve UI consistency.
+
+### Fixed
+- Fixed installation issues on Python 3.13 or higher, along with other dependencies linked to Python version compatibility.
+- Fixed the behavior of the AI Assistant's last prompt so that the messages area now correctly scrolls to the bottom when new messages are added.
+- Fixed `PytestDeprecationWarning` for asyncio tests.
+- Removed unnecessary `sizeHint()` methods.
+
 ## [1.1.0] - 2025-01-05
 
 ### Added

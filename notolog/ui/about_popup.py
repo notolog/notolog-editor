@@ -103,7 +103,6 @@ class AboutPopup(QDialog):
         app_name.setObjectName('app_name')
         app_name_layout.addWidget(app_name)
         app_name_caption = QLabel(self.lexemes.get('popup_about_app_name_description'), app_name_widget)
-        app_name_caption.sizeHint()
         app_name_caption.setObjectName('app_name_caption')
         app_name_layout.addWidget(app_name_caption)
 
@@ -126,7 +125,6 @@ class AboutPopup(QDialog):
             label, value, value_icons = row
             # Label widget
             label_widget = QLabel(f"{label}:", self)
-            label_widget.sizeHint()
             label_widget.setObjectName('label_widget')
             # Add label widget to the layout
             frame_layout.addWidget(label_widget, i+1, 1, Qt.AlignmentFlag.AlignLeft, 1)
@@ -143,7 +141,6 @@ class AboutPopup(QDialog):
 
             if value.startswith('http'):
                 value_widget_link = QPushButton(value, self)
-                value_widget_link.sizeHint()
                 value_widget_link.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
                 value_widget_link.setObjectName('value_widget_link')
                 value_widget_link.clicked.connect(partial(lambda v: QDesktopServices.openUrl(v), value))
@@ -156,7 +153,6 @@ class AboutPopup(QDialog):
                 value_layout.addWidget(value_widget_link, alignment=Qt.AlignmentFlag.AlignLeft)
             else:
                 value_widget_text = QLabel(value, self)
-                value_widget_text.sizeHint()
                 value_widget_text.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
                 value_layout.addWidget(value_widget_text, alignment=Qt.AlignmentFlag.AlignLeft)
 

@@ -146,7 +146,7 @@ class TestModelHelper:
         # Run the method under test
         result = test_model_helper.get_input_tokens(text)
 
-        test_model_tokenize.asset.called_once_with(text.encode('utf-8'))
+        test_model_tokenize.asset_called_once_with(text.encode('utf-8'))
 
         assert result == exp_result
 

@@ -24,14 +24,14 @@ License: MIT License
 For detailed instructions and project information, please see the repository's README.md.
 """
 
-from PySide6.QtCore import Qt, QSize, Signal
+from PySide6.QtCore import Qt, QSize, Signal, Slot
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QWidget, QPushButton
 from PySide6.QtWidgets import QLabel, QSizePolicy, QHBoxLayout, QScrollArea
 from PySide6.QtGui import QPixmap, QColor
 
 import logging
 
-from typing import Union
+from typing import TYPE_CHECKING, Union
 
 from . import Settings
 from . import Lexemes
@@ -51,6 +51,9 @@ from qasync import asyncClose
 from datetime import datetime
 
 import markdown
+
+if TYPE_CHECKING:
+    from PySide6.QtWidgets import QScrollBar  # noqa: F401
 
 
 class EnumMessageType(EnumBase):
@@ -139,6 +142,7 @@ class AIAssistant(QDialog):
         # UI element variables
         self.prompt_input = None  # type: Union[AIPromptInput, None]
         self.messages_area = None  # type: Union[QScrollArea, None]
+        self.messages_scroll = None  # type: Union[QScrollBar, None]
         self.messages_layout = None  # type: Union[QVBoxLayout, None]
         self.background_label = None  # type: Union[QLabel, None]
         self.module_name_label = None  # type: Union[QLabel, None]
@@ -182,6 +186,11 @@ class AIAssistant(QDialog):
         self.messages_area.setStyleSheet("QScrollArea { border: none; }")
         self.messages_area.setAccessibleDescription(
             self.lexemes.get('dialog_response_output_accessible_description'))
+
+        # Initialize the vertical scrollbar for the messages area
+        self.messages_scroll = self.messages_area.verticalScrollBar()
+        # Connect the rangeChanged signal to ensure the messages area scrolls to the bottom
+        self.messages_scroll.rangeChanged.connect(self.scroll_to_bottom)
 
         scroll_widget = QWidget()
         self.messages_layout = QVBoxLayout(scroll_widget)
@@ -228,7 +237,6 @@ class AIAssistant(QDialog):
         model_label.setObjectName("ai_assistant_dialog_usage_module_name_label")
         model_label.setFont(self.font())
         model_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        model_label.sizeHint()
         model_label.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Preferred)
         # model_label.setStyleSheet("QLabel {color: grey;}")
         status_bar_layout.addWidget(model_label)
@@ -238,7 +246,6 @@ class AIAssistant(QDialog):
         self.module_name_label = QLabel(self.inference_module_name)
         self.module_name_label.setFont(self.font())
         self.module_name_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        self.module_name_label.sizeHint()
         self.module_name_label.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Preferred)
         self.module_name_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
         status_bar_layout.addWidget(self.module_name_label)
@@ -247,7 +254,6 @@ class AIAssistant(QDialog):
         self.model_name_label.setObjectName("ai_assistant_dialog_usage_model_name_label")
         self.model_name_label.setFont(self.font())
         self.model_name_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        self.model_name_label.sizeHint()
         self.model_name_label.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Preferred)
         self.model_name_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
         status_bar_layout.addWidget(self.model_name_label)
@@ -259,7 +265,6 @@ class AIAssistant(QDialog):
         tokens_label = QLabel(text=self.lexemes.get('dialog_usage_tokens_label'))
         tokens_label.setFont(self.font())
         tokens_label.setAlignment(Qt.AlignmentFlag.AlignRight)
-        tokens_label.sizeHint()
         tokens_label.setObjectName("ai_assistant_dialog_usage_tokens_label")
         # tokens_label.setStyleSheet("QLabel {color: grey;}")
         status_bar_layout.addWidget(tokens_label)
@@ -267,19 +272,16 @@ class AIAssistant(QDialog):
         self.tokens_prompt_label = QLabel()
         self.tokens_prompt_label.setFont(self.font())
         self.tokens_prompt_label.setAlignment(Qt.AlignmentFlag.AlignRight)
-        self.tokens_prompt_label.sizeHint()
         status_bar_layout.addWidget(self.tokens_prompt_label)
         status_bar_layout.addWidget(VerticalLineSpacer(), alignment=Qt.AlignmentFlag.AlignRight)
         self.tokens_answer_label = QLabel()
         self.tokens_answer_label.setFont(self.font())
         self.tokens_answer_label.setAlignment(Qt.AlignmentFlag.AlignRight)
-        self.tokens_answer_label.sizeHint()
         status_bar_layout.addWidget(self.tokens_answer_label)
         status_bar_layout.addWidget(VerticalLineSpacer(), alignment=Qt.AlignmentFlag.AlignRight)
         self.tokens_total_label = QLabel()
         self.tokens_total_label.setFont(self.font())
         self.tokens_total_label.setAlignment(Qt.AlignmentFlag.AlignRight)
-        self.tokens_total_label.sizeHint()
         status_bar_layout.addWidget(self.tokens_total_label)
 
         self.layout.addWidget(status_bar_widget)
@@ -370,11 +372,7 @@ class AIAssistant(QDialog):
         message_label.setObjectName(f'msg_{message_type}_{message_id}')
 
         self.messages_layout.setAlignment(message_label, Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignBottom)
-        message_label.sizeHint()
         self.messages_layout.addWidget(message_label, alignment=Qt.AlignmentFlag.AlignBottom)
-        # self.messages_layout.addSpacerItem(QSpacerItem(0, 5, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Fixed))
-
-        self.messages_area.verticalScrollBar().setValue(self.messages_area.verticalScrollBar().maximum())
 
         # Emit message added signal
         self.message_added.emit(message_text, request_msg_id, response_msg_id, message_type)
@@ -663,6 +661,11 @@ class AIAssistant(QDialog):
 
         # Disable save button until next update
         self.save_history_button.setDisabled(True)
+
+    @Slot(int, int)
+    def scroll_to_bottom(self, minimum, maximum):
+        # Scroll to the bottom of the messages area to show the latest content
+        self.messages_scroll.setValue(maximum)
 
     @asyncClose
     async def closeEvent(self, event):
