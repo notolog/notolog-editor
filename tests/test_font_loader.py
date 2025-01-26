@@ -94,4 +94,6 @@ class TestFontLoader:
                 mock_load_font.assert_any_call(font)
 
                 if font.is_default:
-                    mock_app.setFont.assert_called_with(QFont(font.name))
+                    test_font = QFont(font.name)
+                    test_font.setHintingPreference(QFont.HintingPreference.PreferNoHinting)
+                    mock_app.setFont.assert_called_with(test_font)

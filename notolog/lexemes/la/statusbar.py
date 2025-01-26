@@ -1,5 +1,7 @@
 # Latin lexemes statusbar.py
 lexemes = {
+    "statusbar_path_home_label": "Domus fasciculus notarum",
+    "statusbar_path_home_accessible_name": "Naviga ad domum fasciculi notarum",
     "statusbar_litter_bin_label": "Fiscina",
     "statusbar_litter_bin_accessible_name": "Ostendere contentum fiscinae",
 

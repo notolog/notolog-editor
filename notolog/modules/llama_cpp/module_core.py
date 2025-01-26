@@ -265,7 +265,7 @@ class ModuleCore(BaseAiCore):
             self.logger.debug("Async generation completed")
         except asyncio.CancelledError:
             self.logger.info("Generation cancelled")
-        except (WindowsError, RecursionError) as e:
+        except RecursionError as e:
             self.logger.error(f"Error occurred: {e}")
         except (SystemExit, Exception) as e:
             self.logger.error(f"Exception raised: {e}")

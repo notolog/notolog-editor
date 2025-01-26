@@ -121,7 +121,10 @@ class FontLoader:
                 # Load the font if not yet loaded
                 font_family = FontLoader.load_font(font)
                 if font.is_default and hasattr(app, 'setFont'):
-                    app.setFont(QFont(font_family))
+                    font = QFont(font_family)
+                    # Prefer no hinting to preserve the font's original design, if supported
+                    font.setHintingPreference(QFont.HintingPreference.PreferNoHinting)
+                    app.setFont(font)
                     FontLoader.logger.info(f"Set default application font: '{font_family}'")
             except ValueError as e:
                 FontLoader.logger.warning(f"Font not found: {font} ({str(e)})")

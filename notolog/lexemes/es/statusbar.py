@@ -1,5 +1,7 @@
 # Spanish lexemes statusbar.py
 lexemes = {
+    "statusbar_path_home_label": "Carpeta de inicio de notas",
+    "statusbar_path_home_accessible_name": "Navegar a la carpeta de inicio de notas",
     "statusbar_litter_bin_label": "Papelera",
     "statusbar_litter_bin_accessible_name": "Mostrar contenido de la papelera",
 

@@ -111,9 +111,19 @@ lexemes = {
     "field_dir_path_dialog_caption": "Seleziona Directory",
     "field_file_path_dialog_caption": "Seleziona File",
 
+    "dialog_select_default_dir_title": "Seleziona cartella predefinita",
+    "dialog_select_default_dir_label": "Seleziona la cartella predefinita per le note",
+    "dialog_select_default_dir_input_placeholder_text": "Cartella predefinita delle note",
+    "dialog_select_default_dir_button_ok": "Seleziona",
+    "dialog_select_default_dir_button_cancel": "Annulla",
+
     "load_file_encryption_password_mismatch": "La password di crittografia non corrisponde!",
-    "load_file_encryption_password_incorrect": "Password di crittografia incorretta!",
+    "load_file_encryption_password_incorrect": "Password di crittografia errata!",
     "load_file_none_content_error": "Impossibile caricare il file.",
+
+    "open_dir_permission_error": "Permesso negato per accedere alla directory.",
+    "open_file_permission_error": "Permesso negato durante l'accesso al file.",
+    "rename_file_permission_error": "Permesso negato durante la rinomina del file.",
 
     "action_new_file_error_occurred": "Impossibile creare il file; si è verificato un errore."
                                       "\nControllare le autorizzazioni del file system.",

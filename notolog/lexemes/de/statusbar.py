@@ -1,5 +1,7 @@
 # German lexemes statusbar.py
 lexemes = {
+    "statusbar_path_home_label": "Notizen-Startordner",
+    "statusbar_path_home_accessible_name": "Zum Startordner der Notizen navigieren",
     "statusbar_litter_bin_label": "Papierkorb",
     "statusbar_litter_bin_accessible_name": "Inhalt des Papierkorbs anzeigen",
 

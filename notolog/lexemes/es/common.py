@@ -112,9 +112,19 @@ lexemes = {
     "field_dir_path_dialog_caption": "Seleccionar Directorio",
     "field_file_path_dialog_caption": "Seleccionar Archivo",
 
-    "load_file_encryption_password_mismatch": "¡La contraseña de encriptación no coincide!",
-    "load_file_encryption_password_incorrect": "¡Contraseña de encriptación incorrecta!",
+    "dialog_select_default_dir_title": "Seleccionar carpeta predeterminada",
+    "dialog_select_default_dir_label": "Selecciona la carpeta predeterminada para las notas",
+    "dialog_select_default_dir_input_placeholder_text": "Carpeta predeterminada de notas",
+    "dialog_select_default_dir_button_ok": "Seleccionar",
+    "dialog_select_default_dir_button_cancel": "Cancelar",
+
+    "load_file_encryption_password_mismatch": "¡Contraseña de cifrado no coincide!",
+    "load_file_encryption_password_incorrect": "¡Contraseña de cifrado incorrecta!",
     "load_file_none_content_error": "No se puede cargar el archivo.",
+
+    "open_dir_permission_error": "Permiso denegado al acceder al directorio.",
+    "open_file_permission_error": "Permiso denegado al acceder al archivo.",
+    "rename_file_permission_error": "Permiso denegado al renombrar el archivo.",
 
     "action_new_file_error_occurred": "No se puede crear el archivo; ocurrió un error."
                                       "\nVerifique los permisos del sistema de archivos.",

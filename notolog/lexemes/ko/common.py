@@ -107,9 +107,19 @@ lexemes = {
     "field_dir_path_dialog_caption": "디렉토리 선택",
     "field_file_path_dialog_caption": "파일 선택",
 
+    "dialog_select_default_dir_title": "기본 폴더 선택",
+    "dialog_select_default_dir_label": "노트를 위한 기본 폴더를 선택하세요",
+    "dialog_select_default_dir_input_placeholder_text": "기본 노트 폴더",
+    "dialog_select_default_dir_button_ok": "선택",
+    "dialog_select_default_dir_button_cancel": "취소",
+
     "load_file_encryption_password_mismatch": "암호화 비밀번호가 일치하지 않습니다!",
-    "load_file_encryption_password_incorrect": "암호화 비밀번호가 정확하지 않습니다!",
-    "load_file_none_content_error": "파일을 불러올 수 없습니다.",
+    "load_file_encryption_password_incorrect": "암호화 비밀번호가 잘못되었습니다!",
+    "load_file_none_content_error": "파일을 로드할 수 없습니다.",
+
+    "open_dir_permission_error": "디렉토리에 접근할 수 없습니다.",
+    "open_file_permission_error": "파일에 접근할 권한이 거부되었습니다.",
+    "rename_file_permission_error": "파일 이름을 변경할 권한이 거부되었습니다.",
 
     "action_new_file_error_occurred": "파일을 생성할 수 없습니다; 오류가 발생했습니다。\n파일 시스템 권한을 확인하십시오。",
     "save_active_file_error_occurred": "파일을 저장할 수 없습니다; 오류가 발생했습니다。",

@@ -23,7 +23,7 @@ import logging
 from threading import Lock
 
 # ONNX Runtime GenAI
-from onnxruntime_genai import Generator, GeneratorParams, Model, Tokenizer, TokenizerStream
+from onnxruntime_genai import Config, Generator, GeneratorParams, Model, Tokenizer, TokenizerStream
 
 
 class ModelHelper:
@@ -98,8 +98,12 @@ class ModelHelper:
             raise AttributeError(f"'{type(self).__name__}' model path is not set")
         # Log event
         self.logger.info(f'Initializing model: {self.model_path}')
+        # Configure the model settings
+        config = Config(self.model_path)
+        config.clear_providers()
+        # config.append_provider(execution_provider := "cuda")
         # Init model
-        self.model = Model(self.model_path)
+        self.model = Model(config)
         self.tokenizer = Tokenizer(self.model)
         self.tokenizer_stream = self.tokenizer.create_stream()
 
@@ -113,15 +117,19 @@ class ModelHelper:
         vocab_size = getattr(params, 'vocab_size', 0)
         self.logger.debug(f'Model vocabulary size: {vocab_size}')
         params.set_search_options(**search_options)
-        params.input_ids = input_tokens
+        if hasattr(params, 'input_ids'):  # v0.5.2: input_ids not set in GeneratorParams
+            params.input_ids = input_tokens
         # params.use_cuda = False
         self.generator = Generator(self.model, params)  # type: Generator
+        if hasattr(self.generator, 'append_tokens'):
+            self.generator.append_tokens(input_tokens)
         return self.generator
 
     def generate_output(self):
         if not self.generator.is_done():
             # Get tokens for this iteration
-            self.generator.compute_logits()
+            if hasattr(self.generator, 'compute_logits'):  # v0.5.2: Must call ComputeLogits before GenerateNextToken
+                self.generator.compute_logits()
             self.generator.generate_next_token()
             new_tokens = self.generator.get_next_tokens()
             # Only one token, double check token counting logic if changed

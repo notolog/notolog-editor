@@ -26,7 +26,7 @@ import os
 from typing import Any, Union, Iterable
 from json import JSONDecodeError
 
-from .helpers.file_helper import read_file
+from .helpers import file_helper
 from .encrypt.enc_helper import EncHelper
 
 from .exceptions.file_header_empty_exception import FileHeaderEmptyException
@@ -171,7 +171,7 @@ class FileHeader:
             return header_line
 
     def load_file(self, file_path: str) -> tuple[Any, str]:
-        file_data = read_file(file_path)
+        file_data = file_helper.read_file(file_path)
         return self.load(file_data)
 
     def load(self, file_data: str) -> tuple[Any, Union[str, None]]:

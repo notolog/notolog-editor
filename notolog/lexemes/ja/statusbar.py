@@ -1,5 +1,7 @@
 # Japanese lexemes statusbar.py
 lexemes = {
+    "statusbar_path_home_label": "ノートのホームフォルダー",
+    "statusbar_path_home_accessible_name": "ノートのホームフォルダーに移動",
     "statusbar_litter_bin_label": "ごみ箱",
     "statusbar_litter_bin_accessible_name": "ごみ箱の内容を表示",
 

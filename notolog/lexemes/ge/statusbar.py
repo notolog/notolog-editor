@@ -1,5 +1,7 @@
 # Georgian lexemes statusbar.py
 lexemes = {
+    "statusbar_path_home_label": "შენიშვნების მთავარი ფოლდერი",
+    "statusbar_path_home_accessible_name": "გადასვლა შენიშვნების მთავარ ფოლდერზე",
     "statusbar_litter_bin_label": "ნაგავსაყრელი",
     "statusbar_litter_bin_accessible_name": "ნაგავსაყრელის შიგთავსის ჩვენება",
 

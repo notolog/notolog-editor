@@ -25,7 +25,7 @@ from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkRe
 from .settings import Settings
 from .app_config import AppConfig
 from .lexemes.lexemes import Lexemes
-from .helpers.file_helper import size_f, save_file
+from .helpers import file_helper
 
 from urllib.parse import urlparse
 from typing import Union
@@ -120,10 +120,10 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
         # File path to save
         file_path = os.path.join(self.folder.path(), file_name)
         # Save received data
-        if save_file(file_path, data, as_bytearray=True):
-            self.logger.debug(f"Resource saved {url} to {file_path} [{size_f(len(data))}]")
+        if file_helper.save_file(file_path, data, as_bytearray=True):
+            self.logger.debug(f"Resource saved {url} to {file_path} [{file_helper.size_f(len(data))}]")
         else:
-            self.logger.debug(f"Resource not saved {url} to {file_path} [{size_f(len(data))}]")
+            self.logger.debug(f"Resource not saved {url} to {file_path} [{file_helper.size_f(len(data))}]")
 
     def handle_network_reply(self, reply):
         # Get received status code, say 200
@@ -143,7 +143,7 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
                 url = reply.url().toString()
                 data = reply.readAll()  # type: QByteArray
 
-                self.logger.debug(f"Resource data downloaded {url} [{size_f(len(data))}]")
+                self.logger.debug(f"Resource data downloaded {url} [{file_helper.size_f(len(data))}]")
 
                 # Store the image within the app's cache first
                 self.cache_pixmap(url, data)

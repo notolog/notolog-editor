@@ -1,5 +1,7 @@
 # French lexemes statusbar.py
 lexemes = {
+    "statusbar_path_home_label": "Dossier d'accueil des notes",
+    "statusbar_path_home_accessible_name": "Naviguer vers le dossier d'accueil des notes",
     "statusbar_litter_bin_label": "Corbeille",
     "statusbar_litter_bin_accessible_name": "Afficher le contenu de la corbeille",
 

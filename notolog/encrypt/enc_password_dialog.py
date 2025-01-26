@@ -35,7 +35,7 @@ class EncPasswordDialog(QDialog):
         self.parent = parent
 
         if self.parent and hasattr(self.parent, 'font'):
-            # Apply font from the main window to the dialog
+            # Apply the font from the main window to this dialog
             self.setFont(self.parent.font())
 
         self.settings = Settings(parent=self)

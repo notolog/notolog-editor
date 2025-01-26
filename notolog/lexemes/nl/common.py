@@ -108,9 +108,19 @@ lexemes = {
     "field_dir_path_dialog_caption": "Selecteer Map",
     "field_file_path_dialog_caption": "Selecteer Bestand",
 
-    "load_file_encryption_password_mismatch": "Versleutelingswachtwoord komt niet overeen!",
-    "load_file_encryption_password_incorrect": "Onjuist versleutelingswachtwoord!",
-    "load_file_none_content_error": "Bestand kan niet worden geladen.",
+    "dialog_select_default_dir_title": "Selecteer Standaardmap",
+    "dialog_select_default_dir_label": "Selecteer de standaardmap voor notities",
+    "dialog_select_default_dir_input_placeholder_text": "Standaardmap voor notities",
+    "dialog_select_default_dir_button_ok": "Selecteren",
+    "dialog_select_default_dir_button_cancel": "Annuleren",
+
+    "load_file_encryption_password_mismatch": "Encryptiewachtwoord komt niet overeen!",
+    "load_file_encryption_password_incorrect": "Onjuist encryptiewachtwoord!",
+    "load_file_none_content_error": "Het bestand kan niet worden geladen.",
+
+    "open_dir_permission_error": "Toegang tot de map geweigerd.",
+    "open_file_permission_error": "Toegang tot het bestand geweigerd.",
+    "rename_file_permission_error": "Hernoemen van het bestand geweigerd.",
 
     "action_new_file_error_occurred": "Kan bestand niet maken; er is een fout opgetreden."
                                       "\nControleer bestandsysteemrechten.",

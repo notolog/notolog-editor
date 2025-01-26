@@ -109,9 +109,19 @@ lexemes = {
     "field_dir_path_dialog_caption": "Valitse Hakemisto",
     "field_file_path_dialog_caption": "Valitse Tiedosto",
 
-    "load_file_encryption_password_mismatch": "Salaussalasana ei täsmää!",
-    "load_file_encryption_password_incorrect": "Väärä salaussalasana!",
-    "load_file_none_content_error": "Tiedostoa ei voi ladata.",
+    "dialog_select_default_dir_title": "Valitse oletuskansio",
+    "dialog_select_default_dir_label": "Valitse muistiinpanojen oletuskansio",
+    "dialog_select_default_dir_input_placeholder_text": "Oletusmuistiinpanokansio",
+    "dialog_select_default_dir_button_ok": "Valitse",
+    "dialog_select_default_dir_button_cancel": "Peruuta",
+
+    "load_file_encryption_password_mismatch": "Salausavain ei täsmää!",
+    "load_file_encryption_password_incorrect": "Väärä salausavain!",
+    "load_file_none_content_error": "Tiedostoa ei voida ladata.",
+
+    "open_dir_permission_error": "Käyttö estetty, kun yritettiin avata hakemistoa.",
+    "open_file_permission_error": "Pääsy tiedostoon evätty.",
+    "rename_file_permission_error": "Uudelleennimeämisen oikeudet evätty.",
 
     "action_new_file_error_occurred": "Tiedostoa ei voida luoda; virhe tapahtui.\nTarkista tiedostojärjestelmän oikeudet.",
     "save_active_file_error_occurred": "Tiedostoa ei voida tallentaa; virhe tapahtui.",

@@ -107,9 +107,19 @@ lexemes = {
     "field_dir_path_dialog_caption": "ディレクトリを選択",
     "field_file_path_dialog_caption": "ファイルを選択",
 
+    "dialog_select_default_dir_title": "デフォルトフォルダーを選択",
+    "dialog_select_default_dir_label": "メモ用のデフォルトフォルダーを選択してください",
+    "dialog_select_default_dir_input_placeholder_text": "デフォルトのメモフォルダー",
+    "dialog_select_default_dir_button_ok": "選択",
+    "dialog_select_default_dir_button_cancel": "キャンセル",
+
     "load_file_encryption_password_mismatch": "暗号化パスワードが一致しません！",
-    "load_file_encryption_password_incorrect": "暗号化パスワードが正しくありません！",
+    "load_file_encryption_password_incorrect": "暗号化パスワードが間違っています！",
     "load_file_none_content_error": "ファイルを読み込めません。",
+
+    "open_dir_permission_error": "ディレクトリへのアクセスが拒否されました。",
+    "open_file_permission_error": "ファイルにアクセスする権限がありません。",
+    "rename_file_permission_error": "ファイルの名前を変更する権限がありません。",
 
     "action_new_file_error_occurred": "ファイルを作成できませんでした；エラーが発生しました。\nファイルシステムの権限を確認してください。",
     "save_active_file_error_occurred": "ファイルを保存できませんでした；エラーが発生しました。",

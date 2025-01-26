@@ -1,5 +1,7 @@
 # Turkish lexemes statusbar.py
 lexemes = {
+    "statusbar_path_home_label": "Notlar ana klasörü",
+    "statusbar_path_home_accessible_name": "Notlar ana klasörüne gidin",
     "statusbar_litter_bin_label": "Çöp kutusu",
     "statusbar_litter_bin_accessible_name": "Çöp kutusu içeriğini göster",
 

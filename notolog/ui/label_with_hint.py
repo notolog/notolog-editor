@@ -39,7 +39,7 @@ class LabelWithHint(QLabel):
         self.parent = parent  # type: NotologEditor
 
         if self.parent and hasattr(self.parent, 'font'):
-            # Apply font from the main window to the dialog
+            # Apply the font from the main window to this dialog
             self.setFont(self.parent.font())
 
         self.logger = logging.getLogger('label_with_hint')

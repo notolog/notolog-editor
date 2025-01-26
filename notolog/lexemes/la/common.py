@@ -109,9 +109,19 @@ lexemes = {
     "field_dir_path_dialog_caption": "Directory Select",
     "field_file_path_dialog_caption": "File Select",
 
-    "load_file_encryption_password_mismatch": "Signi codicis discrepantia!",
-    "load_file_encryption_password_incorrect": "Signum codicis incorrectum!",
-    "load_file_none_content_error": "Fasciculum onerare non potest.",
+    "dialog_select_default_dir_title": "Elige Indicem Praedefinitum",
+    "dialog_select_default_dir_label": "Elige indicem praedefinitum pro notis",
+    "dialog_select_default_dir_input_placeholder_text": "Index Notarum Praedefinitus",
+    "dialog_select_default_dir_button_ok": "Elige",
+    "dialog_select_default_dir_button_cancel": "Abice",
+
+    "load_file_encryption_password_mismatch": "Clavis encryptionis non congruit!",
+    "load_file_encryption_password_incorrect": "Clavis encryptionis iniusta est!",
+    "load_file_none_content_error": "Fasciculus oneri subici non potest.",
+
+    "open_dir_permission_error": "Permissio negata ad indicem accedendum.",
+    "open_file_permission_error": "Accessus ad fasciculum negatus.",
+    "rename_file_permission_error": "Renominatio fasciculi negata.",
 
     "action_new_file_error_occurred": "Filem creare non potest; error occurrit.\nPermissiones systematis file inspice.",
     "save_active_file_error_occurred": "Filem servare non potest; error occurrit.",

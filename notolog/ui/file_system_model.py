@@ -26,7 +26,7 @@ from typing import Any
 
 from . import ThemeHelper
 
-from ..helpers.file_helper import remove_trailing_numbers
+from ..helpers import file_helper
 
 
 class FileSystemModel(QFileSystemModel):
@@ -97,7 +97,7 @@ class FileSystemModel(QFileSystemModel):
         # Item's text color decoration
         if role == Qt.ItemDataRole.ForegroundRole:
             file_path = self.filePath(index)
-            if remove_trailing_numbers(file_path).endswith('del'):
+            if file_helper.remove_trailing_numbers(file_path).endswith('del'):
                 color = self.theme_helper.get_color('main_tree_file_type_del')
                 return QColor(color)
 
@@ -128,7 +128,7 @@ class FileSystemModel(QFileSystemModel):
                 elif info.suffix() == 'enc':
                     color = self.theme_helper.get_color('main_tree_file_type_enc')
                     return self.theme_helper.get_icon(theme_icon='file-earmark-lock2.svg', color=QColor(color))
-                elif remove_trailing_numbers(info.suffix()) == 'del':
+                elif file_helper.remove_trailing_numbers(info.suffix()) == 'del':
                     color = self.theme_helper.get_color('main_tree_file_type_del')
                     return self.theme_helper.get_icon(theme_icon='file-earmark-x.svg', color=QColor(color))
                 else:

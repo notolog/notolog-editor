@@ -109,9 +109,19 @@ lexemes = {
     "field_dir_path_dialog_caption": "डायरेक्टरी चुनें",
     "field_file_path_dialog_caption": "फ़ाइल चुनें",
 
-    "load_file_encryption_password_mismatch": "एन्क्रिप्शन पासवर्ड मेल नहीं खाता!",
-    "load_file_encryption_password_incorrect": "एन्क्रिप्शन पासवर्ड गलत है!",
+    "dialog_select_default_dir_title": "डिफ़ॉल्ट फ़ोल्डर चुनें",
+    "dialog_select_default_dir_label": "नोट्स के लिए डिफ़ॉल्ट फ़ोल्डर चुनें",
+    "dialog_select_default_dir_input_placeholder_text": "डिफ़ॉल्ट नोट्स फ़ोल्डर",
+    "dialog_select_default_dir_button_ok": "चुनें",
+    "dialog_select_default_dir_button_cancel": "रद्द करें",
+
+    "load_file_encryption_password_mismatch": "एन्क्रिप्शन पासवर्ड मेल नहीं खा रहा!",
+    "load_file_encryption_password_incorrect": "गलत एन्क्रिप्शन पासवर्ड!",
     "load_file_none_content_error": "फ़ाइल लोड नहीं की जा सकती।",
+
+    "open_dir_permission_error": "डायरेक्टरी तक पहुंच की अनुमति अस्वीकृत।",
+    "open_file_permission_error": "फ़ाइल तक पहुंचने की अनुमति अस्वीकृत।",
+    "rename_file_permission_error": "फ़ाइल का नाम बदलने की अनुमति अस्वीकृत।",
 
     "action_new_file_error_occurred": "फ़ाइल नहीं बनाई जा सकती; एक त्रुटि हुई।\nफ़ाइल सिस्टम अनुमतियों की जाँच करें।",
     "save_active_file_error_occurred": "फ़ाइल सहेज नहीं सकते; एक त्रुटि हुई।",

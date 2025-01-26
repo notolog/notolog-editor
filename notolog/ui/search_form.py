@@ -18,7 +18,7 @@ For detailed instructions and project information, please see the repository's R
 """
 
 from PySide6.QtCore import Qt, QSize, Signal
-from PySide6.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QHBoxLayout, QSizePolicy
+from PySide6.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QHBoxLayout, QVBoxLayout, QSizePolicy
 from PySide6.QtGui import QColor
 
 from . import Settings
@@ -110,13 +110,23 @@ class SearchForm(QWidget):
         ]
 
     def init_ui(self):
-        # Set up the main layout and internal components
-        search_layout = QHBoxLayout(self)
+
+        # Create the main vertical layout
+        main_layout = QVBoxLayout(self)
+        main_layout.setContentsMargins(0, 0, 0, 0)  # Equal top and bottom margins
+        main_layout.setSpacing(0)
+
+        # Create a container widget to hold the vertically centered search form
+        search_container = QWidget()
+        main_layout.addWidget(search_container)
+
+        # Set up the horizontal layout
+        search_layout = QHBoxLayout(search_container)
         # Adjust layout margins for proper spacing inside the toolbar
         search_layout.setContentsMargins(0, 0, 0, 0)
         search_layout.setSpacing(0)
 
-        # Searched text
+        # Text search input
         self._search_input = QLineEdit(self)
         self._search_input.setObjectName('search_input')
         self._search_input.setReadOnly(False)
@@ -255,7 +265,7 @@ class SearchForm(QWidget):
 
         # Configure button to display either an icon or text based on configuration.
         if icon:
-            # Calculate and set icon size based on button height.
+            # Calculate and set icon size based on the search input height.
             icon_width = icon_height = int(size_hint.height() * 0.7)
             icon_button.setIconSize(QSize(icon_width, icon_height))
             icon_button.setIcon(icon)  # Set the icon.

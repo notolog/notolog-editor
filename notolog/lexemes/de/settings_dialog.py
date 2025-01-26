@@ -17,6 +17,11 @@ lexemes = {
     "general_app_theme_label": "Thema",
     "general_app_theme_combo_placeholder_text": "Thema wählen",
     "general_app_theme_combo_accessible_description": "Thema der App-Oberfläche",
+    "general_app_default_path_label": "Standardordner für Notizen",
+    "general_app_default_path_input_accessible_description": "Geben Sie den Standardordner an, "
+                                                             "in dem die Notizen gespeichert werden",
+    "general_app_default_path_input_placeholder_text": "Wählen oder geben Sie einen Ordnerpfad ein",
+    "general_app_elements_visibility_label": "Sichtbarkeit der Elemente verwalten",
     "general_app_main_menu_label": "Hauptmenü",
     "general_app_main_menu_checkbox": "Hauptmenü anzeigen",
     "general_app_main_menu_checkbox_accessible_description": "Das Haupt-Dropdown-Menü der App anzeigen",

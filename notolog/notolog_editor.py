@@ -55,6 +55,8 @@ from .ui.settings_dialog import SettingsDialog
 from .ui.ai_assistant.ai_assistant import AIAssistant
 from .ui.about_popup import AboutPopup
 from .ui.file_tree_context_menu import FileTreeContextMenu
+from .ui.message_box import MessageBox
+from .ui.default_path_dialog import DefaultPathDialog
 
 # Highlight
 from .highlight.md_highlighter import MdHighlighter
@@ -72,7 +74,7 @@ from cryptography.fernet import InvalidToken, InvalidSignature
 from .helpers.theme_helper import ThemeHelper
 from .helpers.clipboard_helper import ClipboardHelper
 from .helpers.update_helper import UpdateHelper
-from .helpers.file_helper import res_path, size_f, save_file
+from .helpers import file_helper
 
 # Lexemes
 from .lexemes.lexemes import Lexemes
@@ -86,7 +88,7 @@ from PySide6.QtGui import QGuiApplication, QIcon, QAction, QPalette, QShortcut, 
 from PySide6.QtGui import QTextDocument, QTextCursor, QTextBlock, QDesktopServices, QPixmap, QPixmapCache
 from PySide6.QtWidgets import QWidget, QMainWindow, QVBoxLayout, QSplitter, QListView, QTextBrowser
 from PySide6.QtWidgets import QPlainTextEdit, QSizePolicy
-from PySide6.QtWidgets import QLineEdit, QDialog, QMessageBox, QStyle
+from PySide6.QtWidgets import QLineEdit, QDialog, QStyle
 from PySide6.QtWidgets import QAbstractItemView, QFileSystemModel, QFileDialog
 
 from qasync import asyncClose
@@ -109,7 +111,7 @@ import logging
 
 if TYPE_CHECKING:
     from PySide6.QtGui import QScreen  # noqa: F401
-    from PySide6.QtWidgets import QStatusBar, QToolBar  # noqa: F401
+    from PySide6.QtWidgets import QStatusBar, QToolBar, QMenu  # noqa: F401
     from PySide6.QtGui import QTextBlockUserData  # noqa: F401
     from .text_block_data import TextBlockData  # noqa: F401
 
@@ -313,8 +315,8 @@ class NotologEditor(QMainWindow):
         app_config_path = AppConfig().get_app_config_path()
         if (not os.path.exists(app_config_path) and not os.access(os.path.dirname(app_config_path), os.W_OK)
                 or not os.access(AppConfig().get_app_config_path(), os.W_OK)):
-            self.message_box(self.lexemes.get('message_app_config_file_access',
-                                              file_path=AppConfig().get_app_config_path()), icon_type=2)
+            MessageBox(text=self.lexemes.get('message_app_config_file_access',
+                                             file_path=AppConfig().get_app_config_path()), icon_type=2, parent=self)
 
         # Run once again to refresh all dependant UI elements that have been initialized
         self.set_mode(mode)
@@ -397,7 +399,7 @@ class NotologEditor(QMainWindow):
             self.create_status_toolbar()
             # Refresh all dependant UI elements that have been initialized
             self.estate.refresh()
-            self.statusbar['data_size_label'].setText("%s" % size_f(len(self.content)))
+            self.statusbar['data_size_label'].setText("%s" % file_helper.size_f(len(self.content)))
             # Update line numbers widget
             self.line_numbers.setFont(self.font())
             # Get app's global font size
@@ -525,8 +527,7 @@ class NotologEditor(QMainWindow):
             # Clear search fields and statuses
             self.action_search_clear()
             # Remove warning from the statusbar in edit mode
-            # TODO: Update to specify when warning sign should be visible in EDIT mode as well.
-            if hasattr(self, 'statusbar'):
+            if hasattr(self, 'statusbar') and self.get_current_file_path():
                 self.statusbar.show_warning(visible=False)
         else:
             """
@@ -720,7 +721,7 @@ class NotologEditor(QMainWindow):
             self.resize(QSize(self.settings.ui_width, self.settings.ui_height))
         # Set maximum size equals the size of the screen
         self.setMaximumSize(geo_screen.size())
-        # Frameless
+        # Set the dialog to be frameless
         # self.setWindowFlag(Qt.WindowType.FramelessWindowHint)
         self.setGeometry(
             QStyle.alignedRect(
@@ -784,6 +785,10 @@ class NotologEditor(QMainWindow):
             splitter.setSizes([position, total_size - position])
 
         self.logger.debug(f"Updated splitter widgets proportions: {splitter.sizes()}")
+
+        if not self.settings.default_path and not self.is_quiet_mode():
+            # Select default path
+            self.select_default_path_dialog()
 
     def init_palette(self):
         # Optionally, customize the palette (Fusion, etc.) for a dark mode look
@@ -1033,7 +1038,7 @@ class NotologEditor(QMainWindow):
         if not active_path:
             # Occasionally, the root index may disappear during tree element filtering
             # when recursiveFilteringEnabled=True
-            active_path = self.tree_active_dir
+            active_path = self.tree_active_dir if self.tree_active_dir else QDir.currentPath()
         return active_path
 
     def set_current_path(self, tree_path: str) -> None:
@@ -1042,7 +1047,7 @@ class NotologEditor(QMainWindow):
         """
         # Path's index
         index = self.file_model.index(tree_path)
-        if os.path.isfile(tree_path):
+        if file_helper.is_file_openable(tree_path):
             # Set current file
             self.file_path = tree_path
             # Update current file index
@@ -1150,11 +1155,19 @@ class NotologEditor(QMainWindow):
         self.logger.debug('Rename file "%s" to "%s"' % (from_file_path, to_file_path))
 
         if not os.path.isfile(to_file_path):
-            os.rename(from_file_path, to_file_path)
-            self.load_file(to_file_path)
+            if file_helper.is_writable_path(from_file_path) and file_helper.is_writable_path(to_file_path):
+                os.rename(from_file_path, to_file_path)
+                if file_helper.is_file_openable(to_file_path):
+                    self.load_file(to_file_path)
+                else:
+                    self.logger.warning(f"Permission denied when accessing the file {to_file_path}")
+                    MessageBox(text=self.lexemes.get('open_file_permission_error'), icon_type=2, parent=self)
+            else:
+                self.logger.warning(f"Permission denied when renaming the file {from_file_path} to {to_file_path}")
+                MessageBox(text=self.lexemes.get('rename_file_permission_error'), icon_type=2, parent=self)
         else:
             self.logger.debug('File with the same name is already exists "%s"' % to_file_path)
-            self.message_box(self.lexemes.get('dialog_file_rename_warning_exists'), icon_type=2)
+            MessageBox(text=self.lexemes.get('dialog_file_rename_warning_exists'), icon_type=2, parent=self)
 
         if callable(callback):
             callback()
@@ -1184,23 +1197,27 @@ class NotologEditor(QMainWindow):
         if os.path.isfile(file_path):
             del_filename_tpl = '%s.del%s'
             i = 0
-            while ((del_file_path := res_path(del_filename_tpl % (file_path, i if i > 0 else '')))
+            while ((del_file_path := file_helper.res_path(del_filename_tpl % (file_path, i if i > 0 else '')))
                    and os.path.isfile(del_file_path)):
                 i += 1
             if not os.path.isfile(del_file_path):
-                os.rename(file_path, del_file_path)
-                self.logger.debug('File (reversibly) deleted to "%s"', del_file_path)
+                if file_helper.is_writable_path(file_path) and file_helper.is_writable_path(del_file_path):
+                    os.rename(file_path, del_file_path)
+                    self.logger.debug('File (reversibly) deleted to "%s"', del_file_path)
+                else:
+                    self.logger.warning(f"Permission denied when renaming the file {file_path} to {del_file_path}")
+                    MessageBox(text=self.lexemes.get('rename_file_permission_error'), icon_type=2, parent=self)
             else:
                 self.logger.debug('Cannot delete file, error occurred "%s"' % del_file_path)
-                self.message_box(self.lexemes.get('dialog_file_delete_error'), icon_type=2)
+                MessageBox(text=self.lexemes.get('dialog_file_delete_error'), icon_type=2, parent=self)
             # Check deleted file was actually shown
             if self.get_current_file_path() == file_path:
                 any_file_path = self.get_any_file()
-                if any_file_path is not None:
+                if file_helper.is_file_openable(any_file_path):
                     self.load_file(any_file_path)
         else:
             self.logger.debug('File not found "%s"' % file_path)
-            self.message_box(self.lexemes.get('dialog_file_delete_error_not_found'), 2)
+            MessageBox(text=self.lexemes.get('dialog_file_delete_error_not_found'), icon_type=2, parent=self)
         if callable(callback):
             callback()
 
@@ -1232,16 +1249,16 @@ class NotologEditor(QMainWindow):
                 self.logger.debug(f"File {file_path} has been completely deleted.")
             except OSError as e:
                 self.logger.warning(f"Error: {e.strerror}. Could not delete {file_path}.")
-                self.message_box(self.lexemes.get('dialog_file_delete_error'), icon_type=2)
+                MessageBox(text=self.lexemes.get('dialog_file_delete_error'), icon_type=2, parent=self)
 
             # Check deleted file was actually shown
             if self.get_current_file_path() == file_path:
                 any_file_path = self.get_any_file()
-                if any_file_path is not None:
+                if file_helper.is_file_openable(any_file_path):
                     self.load_file(any_file_path)
         else:
             self.logger.debug('File not found "%s"' % file_path)
-            self.message_box(self.lexemes.get('dialog_file_delete_error_not_found'), 2)
+            MessageBox(text=self.lexemes.get('dialog_file_delete_error_not_found'), icon_type=2, parent=self)
         if callable(callback):
             callback()
 
@@ -1300,11 +1317,20 @@ class NotologEditor(QMainWindow):
         self.logger.debug('Restore file "%s" to "%s"' % (from_file_path, to_file_path))
 
         if not os.path.isfile(to_file_path):
-            os.rename(from_file_path, to_file_path)
-            self.load_file(to_file_path)
+            if file_helper.is_writable_path(from_file_path) and file_helper.is_writable_path(to_file_path):
+                os.rename(from_file_path, to_file_path)
+                if file_helper.is_file_openable(to_file_path):
+                    self.load_file(to_file_path)
+                else:
+                    self.logger.warning(f"Permission denied when accessing the file {to_file_path}")
+                    MessageBox(text=self.lexemes.get('open_file_permission_error'), icon_type=2, parent=self)
+            else:
+                self.logger.warning(f"Permission denied when renaming the file {from_file_path} to {to_file_path}")
+                MessageBox(text=self.lexemes.get('rename_file_permission_error'), icon_type=2, parent=self)
         else:
             self.logger.debug(f'File with the name "{to_file_path}" is already exists')
-            self.message_box(self.lexemes.get('dialog_file_restore_warning_exists', file_name=to_file_path), icon_type=2)
+            MessageBox(text=self.lexemes.get('dialog_file_restore_warning_exists', file_name=to_file_path),
+                       icon_type=2, parent=self)
 
         if callable(callback):
             callback()
@@ -1324,83 +1350,9 @@ class NotologEditor(QMainWindow):
             tree_index = self.tree_proxy_model.index(file_pos, 0, root_index)
             any_file_index = self.tree_proxy_model.mapToSource(tree_index)
             any_file_path = self.file_model.filePath(any_file_index)
-            if os.path.isfile(any_file_path):
+            if file_helper.is_file_openable(any_file_path):
                 return any_file_path
         return None
-
-    def message_box(self, text: str, icon_type: int = 0, frameless: bool = False, timer_sec: int = None,
-                    callback=None) -> None:
-        """
-        Show popup message box
-
-        Icon type enum:
-        NoIcon(0) | Information(1) | Warning(2) | Critical(3) | Question(4)
-        """
-
-        if self.is_quiet_mode():
-            return
-
-        box = QMessageBox(self)
-        box.setFont(self.font())
-
-        button_ok = None
-
-        if frameless:
-            # Frameless
-            box.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.FramelessWindowHint)
-            # Remove all buttons
-            box.setStandardButtons(QMessageBox.StandardButton.NoButton)
-            box.setModal(False)
-            box.setContentsMargins(0, 10, 20, 0)
-        else:
-            """
-            More info about the enum: https://doc.qt.io/qt-6/qmessagebox.html#StandardButton-enum
-            Variants:
-            * QMessageBox.StandardButton.Yes
-            * QMessageBox.StandardButton.No
-            """
-            box.setStandardButtons(QMessageBox.StandardButton.Ok)
-            button_ok = box.button(QMessageBox.StandardButton.Ok)
-            button_ok.setText(self.lexemes.get('dialog_message_box_button_ok'))
-            # Set default button
-            box.setDefaultButton(QMessageBox.StandardButton.Ok)
-
-        """
-        More info about the enum: https://doc.qt.io/qt-6/qmessagebox.html#Icon-enum
-        Variants:
-        * NoIcon(0)
-        * Information(1)
-        * Warning(2)
-        * Critical(3)
-        * Question(4)
-        """
-        box.setIcon(QMessageBox.Icon(icon_type))
-        box.setWindowTitle(self.lexemes.get('dialog_message_box_title'))
-        box.setText(text)
-
-        box.setGeometry(QStyle.alignedRect(
-                        Qt.LayoutDirection.LeftToRight,
-                        Qt.AlignmentFlag.AlignCenter,
-                        box.size(),
-                        self.geometry()))
-
-        # Engage timer before show the dialog
-        if timer_sec is not None:
-            QTimer.singleShot(timer_sec * 1000, lambda: box.accept())
-
-        if frameless:
-            # Use open() to show non-blocking message box
-            box.open()
-            return
-
-        # Show dialog
-        box.exec()
-
-        if box.clickedButton() == button_ok:
-            self.logger.debug('Message box button clicked')
-            # Execute the callback if it is defined
-            if callable(callback):
-                callback()
 
     def enc_new_password_dialog(self) -> Union[EncPassword, None]:
         """
@@ -1496,6 +1448,23 @@ class NotologEditor(QMainWindow):
         More info about: https://doc.qt.io/qt-6/qobject.html#deleteLater
         """
         dialog.deleteLater()
+
+    def select_default_path_dialog(self):
+        dialog = DefaultPathDialog(parent=self)
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            # Get selected path
+            default_dir_path = dialog.get_path()
+            self.select_default_path_dialog_callback(default_dir_path=default_dir_path)
+        else:
+            self.logger.debug('Select default dir cancellation')
+
+    def select_default_path_dialog_callback(self, default_dir_path: str = None) -> None:
+        """
+        The callback method for default path dialog.
+        """
+        self.logger.debug("Select default path dialog callback '%s'" % default_dir_path)
+        # Set selected path into settings
+        self.settings.default_path = default_dir_path
 
     def get_edit_widget(self) -> Union[EditWidget, None]:
         if hasattr(self, 'text_edit') and isinstance(self.text_edit, EditWidget):
@@ -2340,10 +2309,16 @@ class NotologEditor(QMainWindow):
 
         if self.save_file_content(file_path, content):
             # Load new file content
-            return self.load_file(file_path)
+            if file_helper.is_file_openable(file_path):
+                return self.load_file(file_path)
+            else:
+                self.logger.warning(f"Permission denied when accessing the file {file_path}")
+                MessageBox(text=self.lexemes.get('open_file_permission_error'), icon_type=2, parent=self)
+                return False
         else:
             self.logger.warning('Cannot save file "%s"' % file_path)
-            self.message_box(self.lexemes.get('action_new_file_error_occurred'), icon_type=2)
+            # Do not show the warning popup to enable further notifications
+            # MessageBox(text=self.lexemes.get('action_new_file_error_occurred'), icon_type=2, parent=self)
             return False
 
     def action_open_file(self) -> None:
@@ -2367,11 +2342,15 @@ class NotologEditor(QMainWindow):
             # https://doc.qt.io/qt-6/qfiledialog.html#Option-enum
             options=QFileDialog.Option.DontUseCustomDirectoryIcons
         )
-        if os.path.isfile(file_path):
+
+        if file_helper.is_file_openable(file_path):
             # Save any unsaved changes
             self.save_active_file(clear_after=True)
             # Load file for current mode
             self.load_file(file_path)
+        else:
+            self.logger.warning(f"Permission denied when accessing the file {file_path}")
+            MessageBox(text=self.lexemes.get('open_file_permission_error'), icon_type=2, parent=self)
 
     def action_save_file(self, file_path: str = None) -> None:
         """
@@ -2483,7 +2462,7 @@ class NotologEditor(QMainWindow):
 
         # The file is already encrypted
         if self.is_file_encrypted(current_file_path):
-            self.message_box(self.lexemes.get('encrypt_file_warning_file_is_already_encrypted'), icon_type=2)
+            MessageBox(text=self.lexemes.get('encrypt_file_warning_file_is_already_encrypted'), icon_type=2, parent=self)
             return
 
         # TODO update when '.enc' extension is not in use anymore
@@ -2563,7 +2542,11 @@ class NotologEditor(QMainWindow):
         if result:
             self.header = file_header
             self.content = file_body
-            self.load_file(to_file_path)
+            if file_helper.is_file_openable(to_file_path):
+                self.load_file(to_file_path)
+            else:
+                self.logger.warning(f"Permission denied when accessing the file {to_file_path}")
+                MessageBox(text=self.lexemes.get('open_file_permission_error'), icon_type=2, parent=self)
 
         if callable(callback):
             callback()
@@ -2580,7 +2563,7 @@ class NotologEditor(QMainWindow):
 
         # The file is encrypted
         if not self.is_file_encrypted(current_file_path):
-            self.message_box(self.lexemes.get('decrypt_file_warning_file_is_not_encrypted'), icon_type=2)
+            MessageBox(text=self.lexemes.get('decrypt_file_warning_file_is_not_encrypted'), icon_type=2, parent=self)
             return
 
         # TODO update when '.enc' extension is not in use anymore
@@ -2646,7 +2629,11 @@ class NotologEditor(QMainWindow):
 
         # Switch to the new file
         if result:
-            self.load_file(to_file_path)
+            if file_helper.is_file_openable(to_file_path):
+                self.load_file(to_file_path)
+            else:
+                self.logger.warning(f"Permission denied when accessing the file {to_file_path}")
+                MessageBox(text=self.lexemes.get('open_file_permission_error'), icon_type=2, parent=self)
 
         if callable(callback):
             callback()
@@ -2796,8 +2783,8 @@ class NotologEditor(QMainWindow):
             # Copy text to the clipboard
             ClipboardHelper.set_text(updated_text)
             # Show frameless message box closing by timer as a tooltip
-            self.message_box(self.lexemes.get('dialog_color_picker_color_copied_to_the_clipboard'),
-                             frameless=True, timer_sec=2)
+            MessageBox(text=self.lexemes.get('dialog_color_picker_color_copied_to_the_clipboard'),
+                       frameless=True, timer_sec=2, parent=self)
 
     def action_ai_assistant(self) -> None:
         """
@@ -2878,8 +2865,8 @@ class NotologEditor(QMainWindow):
 
         # Delete the application configuration file
         if not AppConfig().delete_app_config():
-            self.message_box(self.lexemes.get('message_app_config_file_access',
-                                              file_path=AppConfig().get_app_config_path()), icon_type=2)
+            MessageBox(text=self.lexemes.get('message_app_config_file_access',
+                                             file_path=AppConfig().get_app_config_path()), icon_type=2, parent=self)
 
         if callable(callback):
             callback()
@@ -2898,7 +2885,7 @@ class NotologEditor(QMainWindow):
     def check_for_updates_handler(self, res_json: dict):
         # Show popup with update data
         if 'status' in res_json and 'msg' in res_json:
-            self.message_box(res_json['msg'], icon_type=(1 if res_json['status'] == UpdateHelper.STATUS_OK else 2))
+            MessageBox(text=res_json['msg'], icon_type=(1 if res_json['status'] == UpdateHelper.STATUS_OK else 2), parent=self)
         else:
             self.logger.warning('Check for update response data in a wrong format')
 
@@ -2970,7 +2957,11 @@ class NotologEditor(QMainWindow):
             # Reset stored cursor values within settings
             self.reset_settings_cursor_pos()
             # Load file content
-            self.load_file(file_path)
+            if file_helper.is_file_openable(file_path):
+                self.load_file(file_path)
+            else:
+                self.logger.warning(f"Permission denied when accessing the file {file_path}")
+                MessageBox(text=self.lexemes.get('open_file_permission_error'), icon_type=2, parent=self)
         if os.path.isdir(file_path):
             self.logger.debug("Dir selected within the tree '%s'" % file_path)
             self.set_current_path(file_path)
@@ -2989,7 +2980,7 @@ class NotologEditor(QMainWindow):
         self.header = header
         # Update content size label
         if hasattr(self, 'statusbar'):
-            self.statusbar['data_size_label'].setText("%s" % size_f(len(self.content)))
+            self.statusbar['data_size_label'].setText("%s" % file_helper.size_f(len(self.content)))
         if self.get_mode() == Mode.EDIT:
             self.load_content_edit(self.header, self.content)
             # Restore cursor applied later upon document 'content_set' event
@@ -3066,7 +3057,7 @@ class NotologEditor(QMainWindow):
                     self.logger.debug('Wrong encryption password but another encrypted file is opened')
                     if self.enc_password is not None:
                         # Show other file password mismatch message
-                        self.message_box(self.lexemes.get('load_file_encryption_password_mismatch'), icon_type=2)
+                        MessageBox(text=self.lexemes.get('load_file_encryption_password_mismatch'), icon_type=2, parent=self)
                         # If password not matched N-times, load default page then
                         if self.get_enc_password_dialog_cnt() >= 3:
                             # Reset encryption helper
@@ -3107,7 +3098,7 @@ class NotologEditor(QMainWindow):
                     # Reset encryption helper and password
                     self.reset_encrypt_helper()
                     # Show file password mismatch message
-                    self.message_box(self.lexemes.get('load_file_encryption_password_incorrect'), icon_type=3)
+                    MessageBox(text=self.lexemes.get('load_file_encryption_password_incorrect'), icon_type=3, parent=self)
                     # If password not matched N-times, load default page then
                     if self.get_enc_password_dialog_cnt() >= 3:
                         # Reset encryption password dialogue count
@@ -3161,7 +3152,7 @@ class NotologEditor(QMainWindow):
         if file_header or file_body:  # File body equal to None when file is just created but the header was removed
             self.load_content(file_header, file_body if file_body else '')
         else:
-            self.message_box(self.lexemes.get('load_file_none_content_error'), icon_type=2)
+            MessageBox(text=self.lexemes.get('load_file_none_content_error'), icon_type=2, parent=self)
             return False
 
         # Confirm current file path is set
@@ -3245,7 +3236,7 @@ class NotologEditor(QMainWindow):
         self.logger.debug('Saving file "%s"' % file_path)
 
         # Save the file
-        write_res = save_file(file_path, content)
+        write_res = file_helper.save_file(file_path, content)
 
         if write_res is False:
             # Display a warning in the status bar if the save fails
@@ -3274,6 +3265,11 @@ class NotologEditor(QMainWindow):
         # Get current file path
         current_file_path = self.get_current_file_path()
 
+        if not current_file_path:
+            # No file specified for saving
+            self.logger.warning('No file specified to save')
+            return None
+
         # The dialog about empty content was shown at least once
         if allow_save_empty_content is not None:
             self.estate.allow_save_empty = allow_save_empty_content
@@ -3284,8 +3280,8 @@ class NotologEditor(QMainWindow):
         if not os.path.exists(current_file_path) and not os.access(os.path.dirname(current_file_path), os.W_OK):
             self.logger.warning(f"Cannot save active file '{current_file_path}', check if it was moved or deleted")
             self.toggle_save_timer(state=False)
-            self.message_box(self.lexemes.get('save_active_file_error_occurred'), icon_type=2,
-                             callback=self.toggle_save_timer)
+            MessageBox(text=self.lexemes.get('save_active_file_error_occurred'), icon_type=2,
+                       callback=self.toggle_save_timer, parent=self)
             return False
 
         # Edit widget
@@ -3300,8 +3296,8 @@ class NotologEditor(QMainWindow):
         if os.path.exists(current_file_path) and not os.access(current_file_path, os.W_OK):
             self.logger.warning(f"Cannot save active file '{current_file_path}'")
             self.toggle_save_timer(state=False)
-            self.message_box(self.lexemes.get('save_active_file_error_occurred'), icon_type=2,
-                             callback=self.toggle_save_timer)
+            MessageBox(text=self.lexemes.get('save_active_file_error_occurred'), icon_type=2,
+                       callback=self.toggle_save_timer, parent=self)
             return False
 
         # If new content is empty ask confirmation to be sure
@@ -3378,8 +3374,8 @@ class NotologEditor(QMainWindow):
                     edit_widget.clear()
             else:
                 self.toggle_save_timer(state=False)
-                self.message_box(self.lexemes.get('save_active_file_error_occurred'), icon_type=2,
-                                 callback=self.toggle_save_timer)
+                MessageBox(text=self.lexemes.get('save_active_file_error_occurred'), icon_type=2,
+                           callback=self.toggle_save_timer, parent=self)
 
             # Grayscale save button at the toolbar
             if hasattr(self.toolbar, 'toolbar_save_button'):
@@ -3456,23 +3452,28 @@ class NotologEditor(QMainWindow):
         """
         if (not ignore_settings
                 and self.settings.file_path is not None
-                and os.path.isfile(self.settings.file_path)):
+                and file_helper.is_file_openable(self.settings.file_path)):
             file_path = self.settings.file_path
         else:
             script_dir = os.path.dirname(os.path.realpath(__file__))
             parent_dir = os.path.dirname(script_dir)
             file_path = os.path.join(parent_dir, 'README.md')
-            # Fallback option
-            if not os.path.isfile(file_path):
-                file_path = os.path.join(parent_dir, 'docs', 'Examples.md')
-            # file_path = res_path('README.md')  # Not working well with venv
         # If no file exist then try to load any file
-        if file_path is not None and not os.path.isfile(file_path):
+        if not file_helper.is_file_openable(file_path):
             file_path = self.get_any_file()
-        if file_path is not None:
+        if file_helper.is_file_openable(file_path):
             return self.load_file(file_path)
         # The last fallback is try to create a new empty file
-        return self.action_new_file()
+        new_file_result = self.action_new_file()
+        if not new_file_result:
+            # Use QDir.homePath() or QDir.currentPath() as a fallback option
+            default_path = self.settings.default_path if self.settings.default_path else QDir.homePath()
+            self.set_current_path(default_path)
+            # Confirm the current path to update status bar elements in edge cases
+            self.confirm_current_path()
+            if hasattr(self, 'statusbar'):
+                self.statusbar.show_warning(visible=True, tooltip=self.lexemes.get('action_new_file_error_occurred'))
+        return new_file_result
 
     def load_content_html(self, header: FileHeader, content: str) -> None:
         """

@@ -109,9 +109,19 @@ lexemes = {
     "field_dir_path_dialog_caption": "Выбрать каталог",
     "field_file_path_dialog_caption": "Выбрать файл",
 
-    "load_file_encryption_password_mismatch": "Несоответствие пароля шифрования!",
+    "dialog_select_default_dir_title": "Выберите папку по умолчанию",
+    "dialog_select_default_dir_label": "Выберите основную папку для заметок",
+    "dialog_select_default_dir_input_placeholder_text": "Основная папка для заметок",
+    "dialog_select_default_dir_button_ok": "Выбрать",
+    "dialog_select_default_dir_button_cancel": "Отмена",
+
+    "load_file_encryption_password_mismatch": "Пароль шифрования не совпадает!",
     "load_file_encryption_password_incorrect": "Неверный пароль шифрования!",
-    "load_file_none_content_error": "Невозможно загрузить файл.",
+    "load_file_none_content_error": "Файл не может быть загружен.",
+
+    "open_dir_permission_error": "Нет доступа к директории.",
+    "open_file_permission_error": "Доступ к файлу запрещён.",
+    "rename_file_permission_error": "Переименование файла запрещено.",
 
     "action_new_file_error_occurred": "Не удается создать файл; произошла ошибка.\nПроверьте разрешения файловой системы.",
     "save_active_file_error_occurred": "Не удается сохранить файл; произошла ошибка.",

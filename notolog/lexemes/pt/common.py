@@ -111,9 +111,19 @@ lexemes = {
     "field_dir_path_dialog_caption": "Selecionar Diretório",
     "field_file_path_dialog_caption": "Selecionar Arquivo",
 
-    "load_file_encryption_password_mismatch": "Senha de criptografia não confere!",
+    "dialog_select_default_dir_title": "Selecionar Pasta Padrão",
+    "dialog_select_default_dir_label": "Selecione a pasta padrão para notas",
+    "dialog_select_default_dir_input_placeholder_text": "Pasta Padrão de Notas",
+    "dialog_select_default_dir_button_ok": "Selecionar",
+    "dialog_select_default_dir_button_cancel": "Cancelar",
+
+    "load_file_encryption_password_mismatch": "Senha de criptografia não corresponde!",
     "load_file_encryption_password_incorrect": "Senha de criptografia incorreta!",
     "load_file_none_content_error": "Não foi possível carregar o arquivo.",
+
+    "open_dir_permission_error": "Permissão negada ao acessar o diretório.",
+    "open_file_permission_error": "Permissão negada ao acessar o arquivo.",
+    "rename_file_permission_error": "Permissão negada ao renomear o arquivo.",
 
     "action_new_file_error_occurred": "Não é possível criar o arquivo; ocorreu um erro."
                                       "\nVerifique as permissões do sistema de arquivos.",

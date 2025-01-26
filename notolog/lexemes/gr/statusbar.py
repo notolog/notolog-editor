@@ -1,5 +1,7 @@
 # Greek lexemes statusbar.py
 lexemes = {
+    "statusbar_path_home_label": "Φάκελος αρχικής σελίδας σημειώσεων",
+    "statusbar_path_home_accessible_name": "Πλοηγηθείτε στον φάκελο αρχικής σελίδας σημειώσεων",
     "statusbar_litter_bin_label": "Κάδος απορριμμάτων",
     "statusbar_litter_bin_accessible_name": "Εμφάνιση περιεχομένου κάδου απορριμμάτων",
 

@@ -104,9 +104,19 @@ lexemes = {
     "field_dir_path_dialog_caption": "选择目录",
     "field_file_path_dialog_caption": "选择文件",
 
-    "load_file_encryption_password_mismatch": "加密密码不匹配!",
-    "load_file_encryption_password_incorrect": "加密密码错误!",
+    "dialog_select_default_dir_title": "选择默认文件夹",
+    "dialog_select_default_dir_label": "选择用于笔记的默认文件夹",
+    "dialog_select_default_dir_input_placeholder_text": "默认笔记文件夹",
+    "dialog_select_default_dir_button_ok": "选择",
+    "dialog_select_default_dir_button_cancel": "取消",
+
+    "load_file_encryption_password_mismatch": "加密密码不匹配！",
+    "load_file_encryption_password_incorrect": "加密密码错误！",
     "load_file_none_content_error": "无法加载文件。",
+
+    "open_dir_permission_error": "访问目录时被拒绝。",
+    "open_file_permission_error": "访问文件时权限被拒绝。",
+    "rename_file_permission_error": "重命名文件时权限被拒绝。",
 
     "action_new_file_error_occurred": "无法创建文件；发生错误。\n检查文件系统权限。",
     "save_active_file_error_occurred": "无法保存文件；发生错误。",

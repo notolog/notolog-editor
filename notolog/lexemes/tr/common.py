@@ -107,9 +107,19 @@ lexemes = {
     "field_dir_path_dialog_caption": "Dizin Seç",
     "field_file_path_dialog_caption": "Dosya Seç",
 
-    "load_file_encryption_password_mismatch": "Şifreleme şifresi uyuşmuyor!",
-    "load_file_encryption_password_incorrect": "Şifreleme şifresi yanlış!",
-    "load_file_none_content_error": "Dosya yüklenemedi.",
+    "dialog_select_default_dir_title": "Varsayılan Klasörü Seç",
+    "dialog_select_default_dir_label": "Notlar için varsayılan klasörü seçin",
+    "dialog_select_default_dir_input_placeholder_text": "Varsayılan Notlar Klasörü",
+    "dialog_select_default_dir_button_ok": "Seç",
+    "dialog_select_default_dir_button_cancel": "İptal",
+
+    "load_file_encryption_password_mismatch": "Şifreleme şifresi eşleşmiyor!",
+    "load_file_encryption_password_incorrect": "Hatalı şifreleme şifresi!",
+    "load_file_none_content_error": "Dosya yüklenemiyor.",
+
+    "open_dir_permission_error": "Dizine erişim izni reddedildi.",
+    "open_file_permission_error": "Dosyaya erişim izni reddedildi.",
+    "rename_file_permission_error": "Dosya adı değiştirme izni reddedildi.",
 
     "action_new_file_error_occurred": "Dosya oluşturulamıyor; bir hata oluştu.\nDosya sistemi izinlerini kontrol edin.",
     "save_active_file_error_occurred": "Dosya kaydedilemiyor; bir hata oluştu.",

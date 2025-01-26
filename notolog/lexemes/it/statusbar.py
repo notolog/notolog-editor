@@ -1,5 +1,7 @@
 # Italian lexemes statusbar.py
 lexemes = {
+    "statusbar_path_home_label": "Cartella principale delle note",
+    "statusbar_path_home_accessible_name": "Vai alla cartella principale delle note",
     "statusbar_litter_bin_label": "Cestino",
     "statusbar_litter_bin_accessible_name": "Mostra il contenuto del cestino",
 

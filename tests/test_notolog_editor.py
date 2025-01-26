@@ -16,7 +16,7 @@ License: MIT License
 For detailed instructions and project information, please see the repository's README.md.
 """
 
-from PySide6.QtCore import QTimer
+from PySide6.QtCore import QTimer, QDir
 from PySide6.QtGui import QTextDocument
 
 from notolog.notolog_editor import NotologEditor
@@ -27,6 +27,7 @@ from notolog.edit_widget import EditWidget
 from notolog.file_header import FileHeader
 from notolog.encrypt.enc_helper import EncHelper
 from notolog.editor_state import Encryption
+from notolog.ui.message_box import MessageBox
 
 from logging import Logger
 
@@ -45,7 +46,7 @@ class TestNotologEditor:
     def test_obj_lexemes(self, mocker):
         # Return empty lexemes
         mocker.patch.object(Lexemes, 'load_lexemes', return_value={})
-        # Init lexemes
+        # Initialize lexemes
         _lexemes = Lexemes()
         # Mock get lexeme results
         mocker.patch.object(_lexemes, 'get', return_value='Lorem ipsum')
@@ -82,20 +83,34 @@ class TestNotologEditor:
     def test_obj_settings(self):
         yield Settings()
 
-    def test_notolog_editor_load_default_page(self, mocker, test_obj_notolog_editor, test_obj_settings, tmp_path):
+    @pytest.fixture(scope="function")
+    def test_params_fixture(self, request):
+        # Retrieve parameter values from the test request.
+        param_values = request.param
+
+        yield param_values
+
+    @pytest.fixture(scope="function")
+    def test_exp_params_fixture(self, request):
+        """
+        Fixture to pass params and get expected results.
+        This method is used only for passing params via pytest fixture.
+        """
+        # Retrieve parameter values from the test request.
+        param_values = request.param
+
+        yield param_values
+
+    def test_notolog_editor_load_default_page(self, mocker, test_obj_notolog_editor, test_obj_settings):
         """
         Check that the default page is loaded
         @param mocker: pytest fixture
         @param test_obj_notolog_editor: NotologEditor instance
         @param test_obj_settings: Settings instance
-        @param tmp_path: fixture to get the path to a temporary directory
         @return: None
         """
         test_obj_notolog_editor.settings = test_obj_settings
         assert isinstance(test_obj_notolog_editor.settings, Settings)
-
-        # Specify a side effect method for the mocked object
-        mocker.patch('os.path.isfile', side_effect=lambda filename: filename.endswith('.md'))
 
         mock_method1 = mocker.patch.object(test_obj_notolog_editor, 'get_any_file', return_value=None)
         mock_method2 = mocker.patch.object(test_obj_notolog_editor, 'load_file', return_value=True)
@@ -113,63 +128,154 @@ class TestNotologEditor:
         # Assert that the method was called once with the param(s)
         mock_method2.assert_called_once_with(os.path.normpath('%s/README.md') % test_file_parent_dir)
 
-    def test_notolog_editor_load_default_page_any(self, mocker, test_obj_notolog_editor, test_obj_settings):
+    @pytest.mark.parametrize(
+        "test_params_fixture, test_exp_params_fixture",
+        [
+            ((None, {'README.md': True, 'Test_File_Path.Py': True}),  # Test params
+             (False, True, False, 'README.md')),  # Expected params
+            (('Test_File_Path.Py', {'README.md': False, 'Test_File_Path.Py': True}),  # Test params
+             (True, True, False, 'Test_File_Path.Py')),  # Expected params
+            (('Test_File_Path.Py', {'README.md': False, 'Test_File_Path.Py': False}),  # Test params
+             (True, False, True, 'Test_File_Path.Py')),  # Expected params
+        ],
+        indirect=True
+    )
+    def test_notolog_editor_load_default_page_any(self, mocker, test_obj_notolog_editor, test_obj_settings,
+                                                  test_params_fixture, test_exp_params_fixture):
         """
-        Check that an any page is loaded instead of default page
+        Check that an any page is loaded instead of the default page
         @param mocker: pytest fixture
         @param test_obj_notolog_editor: NotologEditor instance
         @param test_obj_settings: Settings instance
+        @param test_params_fixture: Test params
+        @param test_exp_params_fixture: Expected params
         @return: None
         """
+
+        any_file_path, is_file_openable_map = test_params_fixture
+        get_any_file_called, load_file_called, action_new_file_called, exp_file_path = test_exp_params_fixture
+
         # test_obj_notolog_editor.settings = mocker.Mock()
         test_obj_notolog_editor.settings = test_obj_settings
         assert isinstance(test_obj_notolog_editor.settings, Settings)
 
-        mocker.patch.object(os.path, 'isfile', return_value=False)
+        # Specify a side effect method for the mocked object
+        mocker.patch('os.path.dirname', return_value='')  # To assert that the function is only checking the filename
+        mocker.patch('notolog.helpers.file_helper.is_file_openable',
+                     side_effect=lambda k: is_file_openable_map.get(k, None))
 
-        mock_method1 = mocker.patch.object(test_obj_notolog_editor, 'get_any_file', return_value='Test_File_Path.Py')
+        mock_method1 = mocker.patch.object(test_obj_notolog_editor, 'get_any_file', return_value=any_file_path)
         mock_method2 = mocker.patch.object(test_obj_notolog_editor, 'load_file', return_value=True)
+        mock_method3 = mocker.patch.object(test_obj_notolog_editor, 'action_new_file', return_value=True)
 
         # Call the method under test
         result = test_obj_notolog_editor.load_default_page()
         assert result is True
 
+        if get_any_file_called:
+            # Assert that the method was called once
+            mock_method1.assert_called_once()
+        else:
+            mock_method1.assert_not_called()
+
+        if load_file_called:
+            # Assert that the method was called once with the param(s)
+            mock_method2.assert_called_once_with(exp_file_path)
+        else:
+            mock_method2.assert_not_called()
+
+        if action_new_file_called:
+            # Assert that the method was called once
+            mock_method3.assert_called_once()
+        else:
+            mock_method3.assert_not_called()
+
+    @pytest.mark.parametrize(
+        "test_params_fixture, test_exp_params_fixture",
+        [
+            ((None, QDir.homePath()),  # Test params
+             QDir.homePath()),  # Expected params
+            (('Test_Dir_Path', QDir.homePath()),  # Test params
+             'Test_Dir_Path'),  # Expected params
+        ],
+        indirect=True
+    )
+    def test_notolog_editor_load_default_page_nothing(self, mocker, test_obj_notolog_editor, test_obj_settings,
+                                                      test_params_fixture, test_exp_params_fixture):
+        """
+        Check that the default page is loaded
+        @param mocker: pytest fixture
+        @param test_obj_notolog_editor: NotologEditor instance
+        @param test_obj_settings: Settings instance
+        @param test_params_fixture: Test params
+        @param test_exp_params_fixture: Expected params
+        @return: None
+        """
+
+        settings_default_path, home_dir_path = test_params_fixture
+        exp_default_path = test_exp_params_fixture
+
+        test_obj_notolog_editor.settings = test_obj_settings
+        assert isinstance(test_obj_notolog_editor.settings, Settings)
+
+        # Mock the settings object
+        settings = MagicMock(spec=Settings)
+        setattr(settings, 'default_path', settings_default_path)
+        test_obj_notolog_editor.settings = settings
+
+        mocker.patch('notolog.helpers.file_helper.is_file_openable', return_value=False)
+
+        mock_method1 = mocker.patch.object(test_obj_notolog_editor, 'get_any_file', return_value=None)
+        mock_method2 = mocker.patch.object(test_obj_notolog_editor, 'load_file', return_value=None)
+        mock_method3 = mocker.patch.object(test_obj_notolog_editor, 'action_new_file', return_value=False)
+        mock_method4 = mocker.patch.object(test_obj_notolog_editor, 'set_current_path', return_value=True)
+        mock_method5 = mocker.patch.object(test_obj_notolog_editor, 'confirm_current_path', return_value=True)
+
+        # Call the method under test
+        result = test_obj_notolog_editor.load_default_page()
+        assert result is False
+
         # Assert that the method was called once
         mock_method1.assert_called_once()
-        # Assert that the method was called once with the param(s)
-        mock_method2.assert_called_once_with('Test_File_Path.Py')
-
-    @pytest.fixture(scope="function")
-    def test_exp_params_fixture(self, request):
-        # Retrieve parameter values from the test request.
-        param_values = request.param
-
-        yield param_values
+        # Assert that the method wasn't called
+        mock_method2.assert_not_called()
+        # Assert that the method was called once
+        mock_method3.assert_called_once()
+        # Assert that the methods were called once
+        mock_method4.assert_called_once_with(exp_default_path)
+        mock_method5.assert_called_once()
 
     @pytest.mark.parametrize(
         "test_exp_params_fixture",
         [
-            (Mode.VIEW, 'new-document-1.md', None, None, 1, True, True),
-            (Mode.VIEW, 'new-document-1.md', None, None, 1, False, False),
-            (Mode.VIEW, 'new-document-1.md', False, None, 1, True, True),
-            (Mode.VIEW, 'new-document-9999.md', True, None, 9999, True, False),
-            (Mode.VIEW, 'new-document-1.md', False, 'Lorem ipsum', 1, True, True),
+            (Mode.VIEW, 'new-document-1.md', None, None, 1, True, True, True),
+            (Mode.VIEW, 'new-document-1.md', None, None, 1, True, False, False),
+            (Mode.VIEW, 'new-document-1.md', None, None, 1, False, None, False),
+            (Mode.VIEW, 'new-document-1.md', False, None, 1, True, True, True),
+            (Mode.VIEW, 'new-document-9999.md', True, None, 9999, True, True, False),
+            (Mode.VIEW, 'new-document-1.md', False, 'Lorem ipsum', 1, True, True, True),
+            (Mode.VIEW, 'new-document-1.md', False, 'Lorem ipsum', 1, True, False, False),
         ],
         indirect=True
     )
     def test_notolog_editor_action_new_file(self, mocker, test_obj_notolog_editor, test_exp_params_fixture):
-        mode, file_path, isfile, content, res_path_call_cnt, res_save_file, res_exp = test_exp_params_fixture
+        # Expected params
+        mode, file_path, isfile, content, res_path_call_cnt, res_save_file, is_file_openable, res_exp\
+            = test_exp_params_fixture
 
         mocker.patch.object(test_obj_notolog_editor, 'get_mode', return_value=mode)
         mocker.patch.object(test_obj_notolog_editor, 'toggle_mode', return_value=None)
         setattr(test_obj_notolog_editor, 'debug', False)
         setattr(test_obj_notolog_editor, 'logging', False)
 
+        # Message box
+        MessageBox.__new__ = MagicMock(return_value=None)
+
         mock_res_path = mocker.patch.object(test_obj_notolog_editor, 'get_tree_active_dir', return_value=file_path)
-        # mock_res_path = mocker.patch('app.notolog_editor.res_path', return_value=file_path)
         # fixture arg: monkeypatch
         # monkeypatch.setattr('app.notolog_editor.res_path', lambda _file_path: _file_path == file_path)
         mocker.patch.object(os.path, 'isfile', return_value=isfile)
+        mocker.patch('notolog.helpers.file_helper.is_file_openable', return_value=is_file_openable)
 
         mock_save_file_content = mocker.patch.object(test_obj_notolog_editor, 'save_file_content', return_value=res_save_file)
         mocker.patch.object(test_obj_notolog_editor, 'load_file', return_value=True)
@@ -244,9 +350,11 @@ class TestNotologEditor:
         mock_store_doc_cursor_pos = mocker.patch.object(test_obj_notolog_editor, 'store_doc_cursor_pos',
                                                         return_value=None)
         mock_toggle_save_timer = mocker.patch.object(test_obj_notolog_editor, 'toggle_save_timer', return_value=None)
-        mock_message_box = mocker.patch.object(test_obj_notolog_editor, 'message_box', return_value=None)
         mock_common_dialog = mocker.patch.object(test_obj_notolog_editor, 'common_dialog', return_value=None)
         mock_get_encryption = mocker.patch.object(test_obj_notolog_editor, 'get_encryption', return_value=encryption)
+
+        # Message box
+        mock_message_box = MessageBox.__new__ = MagicMock(return_value=None)
 
         mock_edit_widget = MagicMock(spec=EditWidget)
         mock_edit_widget_to_plain_text = mocker.patch.object(mock_edit_widget, 'toPlainText', return_value=content)

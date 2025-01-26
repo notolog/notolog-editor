@@ -305,7 +305,7 @@ class AIAssistant(QDialog):
         self.save_history_button.setToolTip(self.lexemes.get('dialog_button_save_history'))
         buttons_layout.addWidget(self.save_history_button)
 
-        # To fill the space between
+        # To fill the space between the elements
         spacer_widget = QWidget()
         spacer_widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         buttons_layout.addWidget(spacer_widget, 3)

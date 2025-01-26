@@ -17,6 +17,11 @@ lexemes = {
     "general_app_theme_label": "Θέμα",
     "general_app_theme_combo_placeholder_text": "Επιλέξτε θέμα",
     "general_app_theme_combo_accessible_description": "Θέμα διεπαφής της εφαρμογής",
+    "general_app_default_path_label": "Προεπιλεγμένος φάκελος για σημειώσεις",
+    "general_app_default_path_input_accessible_description": "Καθορίστε τον προεπιλεγμένο φάκελο όπου θα αποθηκεύονται "
+                                                             "οι σημειώσεις",
+    "general_app_default_path_input_placeholder_text": "Επιλέξτε ή εισάγετε μια διαδρομή φακέλου",
+    "general_app_elements_visibility_label": "Διαχείριση ορατότητας στοιχείων",
     "general_app_main_menu_label": "Κύριο Μενού",
     "general_app_main_menu_checkbox": "Εμφάνιση Κύριου Μενού",
     "general_app_main_menu_checkbox_accessible_description": "Εμφάνιση του κύριου αναδυόμενου μενού της εφαρμογής",

@@ -1,5 +1,7 @@
 # Dutch lexemes statusbar.py
 lexemes = {
+    "statusbar_path_home_label": "Thuismap voor notities",
+    "statusbar_path_home_accessible_name": "Navigeer naar de thuismap voor notities",
     "statusbar_litter_bin_label": "Prullenbak",
     "statusbar_litter_bin_accessible_name": "Toon inhoud prullenbak",
 

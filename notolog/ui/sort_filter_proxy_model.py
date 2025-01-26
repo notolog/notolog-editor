@@ -21,7 +21,7 @@ from PySide6.QtCore import QModelIndex, QSortFilterProxyModel, QRegularExpressio
 import os
 import logging
 
-from ..helpers.file_helper import remove_trailing_numbers
+from ..helpers import file_helper
 
 
 class SortFilterProxyModel(QSortFilterProxyModel):
@@ -73,7 +73,7 @@ class SortFilterProxyModel(QSortFilterProxyModel):
         else:
             file_path = source_model.filePath(index)  # noqa
             extension = file_path.split(".")[-1]
-            return not self._extensions or remove_trailing_numbers(extension).lower() in self._extensions
+            return not self._extensions or file_helper.remove_trailing_numbers(extension).lower() in self._extensions
 
     def lessThan(self, left: QModelIndex, right: QModelIndex) -> bool:
         # Get the source model

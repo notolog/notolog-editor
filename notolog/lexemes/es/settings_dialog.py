@@ -17,6 +17,11 @@ lexemes = {
     "general_app_theme_label": "Tema",
     "general_app_theme_combo_placeholder_text": "Elegir un tema",
     "general_app_theme_combo_accessible_description": "Tema de la interfaz de la app",
+    "general_app_default_path_label": "Carpeta predeterminada para notas",
+    "general_app_default_path_input_accessible_description": "Especifique la carpeta predeterminada donde se "
+                                                             "almacenarán las notas",
+    "general_app_default_path_input_placeholder_text": "Seleccione o ingrese una ruta de carpeta",
+    "general_app_elements_visibility_label": "Administrar la visibilidad de los elementos",
     "general_app_main_menu_label": "Menú Principal",
     "general_app_main_menu_checkbox": "Mostrar menú principal",
     "general_app_main_menu_checkbox_accessible_description": "Mostrar el menú desplegable principal de la aplicación",

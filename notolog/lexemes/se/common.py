@@ -108,9 +108,19 @@ lexemes = {
     "field_dir_path_dialog_caption": "Välj Katalog",
     "field_file_path_dialog_caption": "Välj Fil",
 
-    "load_file_encryption_password_mismatch": "Krypteringslösenordet stämmer inte!",
+    "dialog_select_default_dir_title": "Välj standardmapp",
+    "dialog_select_default_dir_label": "Välj standardmappen för anteckningar",
+    "dialog_select_default_dir_input_placeholder_text": "Standardmapp för anteckningar",
+    "dialog_select_default_dir_button_ok": "Välj",
+    "dialog_select_default_dir_button_cancel": "Avbryt",
+
+    "load_file_encryption_password_mismatch": "Krypteringslösenordet matchar inte!",
     "load_file_encryption_password_incorrect": "Fel krypteringslösenord!",
-    "load_file_none_content_error": "Filen kan inte laddas.",
+    "load_file_none_content_error": "Filen kan inte läsas in.",
+
+    "open_dir_permission_error": "Åtkomst nekad till katalogen.",
+    "open_file_permission_error": "Åtkomst till filen nekad.",
+    "rename_file_permission_error": "Tillstånd nekad vid namnbyte av filen.",
 
     "action_new_file_error_occurred": "Kan inte skapa fil; ett fel inträffade."
                                       "\nKontrollera behörigheterna i filsystemet.",

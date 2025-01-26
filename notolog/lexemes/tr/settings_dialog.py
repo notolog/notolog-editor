@@ -1,5 +1,6 @@
 # Turkish lexemes settings_dialog.py
 lexemes = {
+    # Ayarlar
     "window_title": "Ayarlar",
 
     "button_close": "Kapat",
@@ -16,6 +17,10 @@ lexemes = {
     "general_app_theme_label": "Tema",
     "general_app_theme_combo_placeholder_text": "Bir tema seçin",
     "general_app_theme_combo_accessible_description": "Uygulamanın arayüz teması",
+    "general_app_default_path_label": "Notlar için varsayılan klasör",
+    "general_app_default_path_input_accessible_description": "Notların saklanacağı varsayılan klasörü belirtin",
+    "general_app_default_path_input_placeholder_text": "Bir klasör yolu seçin veya girin",
+    "general_app_elements_visibility_label": "Öğelerin görünürlüğünü yönet",
     "general_app_main_menu_label": "Ana Menü",
     "general_app_main_menu_checkbox": "Ana Menüyü Göster",
     "general_app_main_menu_checkbox_accessible_description": "Uygulamanın ana açılır menüsünü göster",

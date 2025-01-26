@@ -187,15 +187,34 @@ class SettingsDialog(QDialog):
              "placeholder_text": self.lexemes.get('general_app_theme_combo_placeholder_text'),
              "accessible_description":
                  self.lexemes.get('general_app_theme_combo_accessible_description')},
+            # Label for the default path input field
+            {"type": LabelWithHint, "kwargs": {
+                "tooltip": ('general_app_default_path_input_accessible_description',
+                            self.lexemes.get('general_app_default_path_input_accessible_description'))},
+             "name": "settings_dialog_general_app_default_path_label", "alignment": Qt.AlignmentFlag.AlignLeft,
+             "text": self.lexemes.get('general_app_default_path_label'),
+             "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
+            # Input field for the default folder for notes
+            {"type": DirPathLineEdit, "kwargs": {"settings": self.settings},
+             "name": "settings_dialog_general_app_default_path:default_path", "read_only": False,
+             "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
+             "placeholder_text": self.lexemes.get('general_app_default_path_input_placeholder_text'),
+             "accessible_description":
+                 self.lexemes.get('general_app_default_path_input_accessible_description')},
             # Horizontal spacer
             {"type": HorizontalLineSpacer, "callback": lambda obj: tab_general_layout.addWidget(obj)},
-            # Main menu label
+            # Elements visibility label
             {"type": QLabel, "name": "settings_dialog_general_app_main_menu_label",
              "props": {"setProperty": ("class", "group-header-label")},
              "alignment": Qt.AlignmentFlag.AlignLeft, "style": {"bold": True},
+             "text": self.lexemes.get('general_app_elements_visibility_label'),
+             "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
+            # Main menu label
+            {"type": QLabel, "name": "settings_dialog_general_app_main_menu_label",
+             "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('general_app_main_menu_label'),
              "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
-            # Either show or not main menu
+            # Toggle to show or hide the main menu
             {"type": QCheckBox,
              # Lexeme key : Object name
              "name": "settings_dialog_general_app_main_menu_checkbox:show_main_menu",
@@ -203,14 +222,11 @@ class SettingsDialog(QDialog):
              "text": self.lexemes.get('general_app_main_menu_checkbox'),
              "accessible_description":
                  self.lexemes.get('general_app_main_menu_checkbox_accessible_description')},
-            # Horizontal spacer
-            {"type": HorizontalLineSpacer, "callback": lambda obj: tab_general_layout.addWidget(obj)},
-            # Status bar settings block label
+            # Label for the status bar settings block
             {"type": QLabel, "name": "settings_dialog_general_statusbar_label", "alignment": Qt.AlignmentFlag.AlignLeft,
-             "props": {"setProperty": ("class", "group-header-label")},
-             "text": self.lexemes.get('general_statusbar_label'), "style": {"bold": True},
+             "text": self.lexemes.get('general_statusbar_label'),
              "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
-            # Either show or not global position at status bar
+            # Toggle to show or hide the global position in the status bar
             {"type": QCheckBox,
              # Lexeme key : Object name
              "name": "settings_dialog_general_statusbar_show_global_cursor_position_checkbox"

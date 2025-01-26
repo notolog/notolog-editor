@@ -1,5 +1,7 @@
 # Swedish lexemes statusbar.py
 lexemes = {
+    "statusbar_path_home_label": "Hemmappar för anteckningar",
+    "statusbar_path_home_accessible_name": "Navigera till anteckningarnas hemmappar",
     "statusbar_litter_bin_label": "Papperskorg",
     "statusbar_litter_bin_accessible_name": "Visa papperskorgens innehåll",
 

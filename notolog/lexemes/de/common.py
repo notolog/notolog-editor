@@ -112,9 +112,19 @@ lexemes = {
     "field_dir_path_dialog_caption": "Verzeichnis auswählen",
     "field_file_path_dialog_caption": "Datei auswählen",
 
-    "load_file_encryption_password_mismatch": "Verschlüsselungspasswort stimmt nicht überein!",
-    "load_file_encryption_password_incorrect": "Falsches Verschlüsselungspasswort!",
-    "load_file_none_content_error": "Datei kann nicht geladen werden.",
+    "dialog_select_default_dir_title": "Standardordner auswählen",
+    "dialog_select_default_dir_label": "Wählen Sie den Standardordner für Notizen",
+    "dialog_select_default_dir_input_placeholder_text": "Standardnotizenordner",
+    "dialog_select_default_dir_button_ok": "Auswählen",
+    "dialog_select_default_dir_button_cancel": "Abbrechen",
+
+    "load_file_encryption_password_mismatch": "Verschlüsselungs-Passwort stimmt nicht überein!",
+    "load_file_encryption_password_incorrect": "Falsches Verschlüsselungs-Passwort!",
+    "load_file_none_content_error": "Die Datei kann nicht geladen werden.",
+
+    "open_dir_permission_error": "Zugriff auf das Verzeichnis verweigert.",
+    "open_file_permission_error": "Zugriff auf die Datei verweigert.",
+    "rename_file_permission_error": "Umbenennen der Datei verweigert.",
 
     "action_new_file_error_occurred": "Datei kann nicht erstellt werden; ein Fehler ist aufgetreten."
                                       "\nÜberprüfen Sie die Dateisystemberechtigungen.",

@@ -113,9 +113,19 @@ lexemes = {
     "field_dir_path_dialog_caption": "Επιλέξτε Κατάλογο",
     "field_file_path_dialog_caption": "Επιλέξτε Αρχείο",
 
-    "load_file_encryption_password_mismatch": "Αναντιστοιχία κωδικού κρυπτογράφησης!",
+    "dialog_select_default_dir_title": "Επιλογή προεπιλεγμένου φακέλου",
+    "dialog_select_default_dir_label": "Επιλέξτε τον προεπιλεγμένο φάκελο για σημειώσεις",
+    "dialog_select_default_dir_input_placeholder_text": "Προεπιλεγμένος φάκελος σημειώσεων",
+    "dialog_select_default_dir_button_ok": "Επιλογή",
+    "dialog_select_default_dir_button_cancel": "Ακύρωση",
+
+    "load_file_encryption_password_mismatch": "Το κωδικός κρυπτογράφησης δεν ταιριάζει!",
     "load_file_encryption_password_incorrect": "Λάθος κωδικός κρυπτογράφησης!",
     "load_file_none_content_error": "Το αρχείο δεν μπορεί να φορτωθεί.",
+
+    "open_dir_permission_error": "Δεν επιτρέπεται η πρόσβαση στον κατάλογο.",
+    "open_file_permission_error": "Δεν επιτρέπεται η πρόσβαση στο αρχείο.",
+    "rename_file_permission_error": "Δεν επιτρέπεται η μετονομασία του αρχείου.",
 
     "action_new_file_error_occurred": "Δεν είναι δυνατή η δημιουργία αρχείου· προέκυψε σφάλμα."
                                       "\nΕλέγξτε τα δικαιώματα του συστήματος αρχείων.",

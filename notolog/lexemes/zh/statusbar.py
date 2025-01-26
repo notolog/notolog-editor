@@ -1,5 +1,7 @@
 # Chinese lexemes statusbar.py
 lexemes = {
+    "statusbar_path_home_label": "笔记主文件夹",
+    "statusbar_path_home_accessible_name": "导航到笔记主文件夹",
     "statusbar_litter_bin_label": "垃圾箱",
     "statusbar_litter_bin_accessible_name": "显示垃圾箱内容",
 

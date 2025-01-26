@@ -24,7 +24,7 @@ from typing import Union
 from PySide6.QtCore import QFile, QIODevice
 
 from .app_config import AppConfig
-from .helpers.file_helper import res_path
+from .helpers import file_helper
 from .enums.themes import Themes
 
 
@@ -175,7 +175,7 @@ class Theme:
         Load CSS file and return result as a string.
         QTextEdit implementation
         """
-        file_path = QFile(res_path(path))
+        file_path = QFile(file_helper.res_path(path))
         if not file_path.open(QIODevice.OpenModeFlag.ReadOnly | QIODevice.OpenModeFlag.Text):
             return None
         # with open(file_path, 'r', encoding='utf-8') as file:

@@ -110,9 +110,19 @@ lexemes = {
     "field_dir_path_dialog_caption": "აირჩიეთ დირექტორია",
     "field_file_path_dialog_caption": "აირჩიეთ ფაილი",
 
-    "load_file_encryption_password_mismatch": "დაშიფრვის პაროლის უთანასწორობა!",
-    "load_file_encryption_password_incorrect": "დაშიფრვის პაროლი არასწორია!",
-    "load_file_none_content_error": "ფაილი ვერ იტვირთება.",
+    "dialog_select_default_dir_title": "აირჩიეთ ნაგულისხმევი ფოლდერი",
+    "dialog_select_default_dir_label": "აირჩიეთ ნოტებისთვის ნაგულისხმევი ფოლდერი",
+    "dialog_select_default_dir_input_placeholder_text": "ნაგულისხმევი ნოტების ფოლდერი",
+    "dialog_select_default_dir_button_ok": "არჩევა",
+    "dialog_select_default_dir_button_cancel": "გაუქმება",
+
+    "load_file_encryption_password_mismatch": "შიფრირების პაროლი არ ემთხვევა!",
+    "load_file_encryption_password_incorrect": "შესაშიფრი პაროლი არასწორია!",
+    "load_file_none_content_error": "ფაილის ჩატვირთვა შეუძლებელია.",
+
+    "open_dir_permission_error": "ფოლდერის წვდომა უარყოფილია.",
+    "open_file_permission_error": "ფაილზე წვდომა უარყოფილია.",
+    "rename_file_permission_error": "ფაილის გადარქმევის ნებართვა უარყოფილია.",
 
     "action_new_file_error_occurred": "ფაილის შექმნა ვერ ხერხდება; მოხდა შეცდომა.\nგადამოწმეთ ფაილის სისტემის ნებართვები.",
     "save_active_file_error_occurred": "ფაილის შენახვა ვერ ხერხდება; მოხდა შეცდომა.",

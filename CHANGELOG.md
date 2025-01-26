@@ -1,6 +1,25 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.1.2] - 2025-01-26
+
+### Added
+- Added a default notes folder path to the app settings and a dedicated UI class for selecting the folder. Additionally, added the ability to change the default notes folder in the settings dialog. The default path is now used when no file is available to open.
+- Added a home button to the status bar for quick navigation to the default notes folder.
+- Added the ability to increase toolbar icon sizes, synced with changes to the app's font size. Toolbar elements are now properly vertically centered.
+
+### Changed
+- File helper methods are now accessible with the `file_helper` prefix to enable correct mocking when running tests.
+- The `self.message_box` method in `NotologEditor` class has been moved to the dedicated `MessageBox` class.
+
+### Updated
+- Adjusted the settings dialog in the general app settings tab for a smoother user experience.
+- Updated font rendering to prefer no hinting, preserving the font's original design and displaying glyphs exactly as intended, without pixel grid alignment adjustments.
+
+### Fixed
+- Fixed ONNX Runtime GenAI code to ensure compatibility with both versions 0.5.2 and 0.6.0rc1.
+- Adjusted file system access checks when opening, saving, or renaming files.
+
 ## [1.1.1] - 2025-01-11
 
 ### Changed

@@ -20,6 +20,7 @@ from PySide6.QtCore import QDir
 
 import os
 import sys
+import logging
 
 from typing import Union
 
@@ -69,7 +70,26 @@ def size_f(size: int, suffix: str = "B") -> str:
     return f"{round(size, 1)}{units[i]}{suffix}"
 
 
-def read_file(file_path: str, as_bytearray: bool = False) -> Union[str, bytearray]:
+def can_access_file(file_path: str, mode: str) -> bool:
+    """
+    Check if the file is accessible with the specified mode.
+
+    Args:
+        file_path (str): The path to the file.
+        mode (str): The mode to check ('r' for read, 'w' for write).
+
+    Returns:
+        bool: True if the file is accessible with the specified mode, False otherwise.
+    """
+    if mode == 'r':
+        return file_path and os.path.isfile(file_path) and os.access(file_path, os.R_OK)
+    elif mode == 'w':
+        dir_path = os.path.dirname(file_path) or '.'
+        return os.access(file_path, os.W_OK) if file_path and os.path.isfile(file_path) else os.access(dir_path, os.W_OK)
+    return False
+
+
+def read_file(file_path: str, as_bytearray: bool = False) -> Union[str, bytearray, None]:
     """
     Read file content from the specified path.
 
@@ -79,9 +99,11 @@ def read_file(file_path: str, as_bytearray: bool = False) -> Union[str, bytearra
             if False, returns the content as a string. Defaults to False.
 
     Returns:
-        str or bytearray or None: Returns the file content as a string or bytearray depending on the value of `b`.
-        Returns None if the file cannot be read.
+        Union[str, bytearray, None]: Returns the file content as a string or bytearray,
+                                     or None if the file cannot be read.
     """
+    if not can_access_file(file_path, 'r'):
+        return None
 
     """
     # Qt implementation could be like
@@ -90,12 +112,15 @@ def read_file(file_path: str, as_bytearray: bool = False) -> Union[str, bytearra
         # file.size()
         return file.readAll()
     """
-    # a bytes-like object or string
+
     mode = 'rb' if as_bytearray else 'r'
-    # without 3-char extension: file_path[:-4]
-    with (open(file_path, mode) if as_bytearray
-          else open(file_path, mode, encoding='utf-8') as file):  # No encoding in bin mode
-        return file.read()
+    try:
+        with open(file_path, mode, encoding=None if as_bytearray else 'utf-8') as file:
+            return file.read()
+    except (OSError, IOError) as e:
+        logger = logging.getLogger("file_helper")
+        logger.warning(f"Error reading file {file_path}: {e}")
+        return None
 
 
 def save_file(file_path: str, data: Union[str, bytearray], as_bytearray: bool = False) -> bool:
@@ -104,31 +129,48 @@ def save_file(file_path: str, data: Union[str, bytearray], as_bytearray: bool = 
 
     Args:
         file_path (str): The path to the file where content will be saved.
-        data (str or bytearray): The content to save, which can be either a string or a bytearray.
-        as_bytearray (bool): Indicates whether the data should be saved as a bytearray.
-            If False and data is a bytearray, it will be converted to a string before saving.
-            Defaults to False.
+        data (Union[str, bytearray]): The content to save.
+        as_bytearray (bool): If True, saves the content as a bytearray;
+                             otherwise saves it as a string. Defaults to False.
 
     Returns:
         bool: True if the content was successfully saved, False otherwise.
     """
-
-    # Check if the directory has write permissions
-    if not os.path.isfile(file_path) and not os.access(os.path.dirname(file_path), os.W_OK):
-        return False
-
-    # Check if the file has write permissions
-    if os.path.isfile(file_path) and not os.access(file_path, os.W_OK):
+    if not can_access_file(file_path, 'w'):
         return False
 
     # a bytes-like object or string
     mode = 'wb' if as_bytearray else 'w'
+    try:
+        with open(file_path, mode, encoding=None if as_bytearray else 'utf-8') as file:
+            file.write(data)
+            return True
+    except (OSError, IOError) as e:
+        logger = logging.getLogger("file_helper")
+        logger.warning(f"Error saving file {file_path}: {e}")
+        return False
 
-    # without 3-char extension: file_path[:-4]
-    with (open(file_path, mode) if as_bytearray
-          else open(file_path, mode, encoding='utf-8') as file):  # No encoding in bin mode
-        file.write(data)
+
+def is_file_openable(file_path: str) -> bool:
+    """
+    Check if a file is openable.
+
+    Args:
+        file_path (str): The path to the file.
+
+    Returns:
+        bool: True if the file can be opened, False otherwise.
+    """
+    if not can_access_file(file_path, 'r'):
+        return False
+    try:
+        with open(file_path, 'r'):
+            pass
         return True
+    except (OSError, IOError) as e:
+        logger = logging.getLogger("file_helper")
+        logger.warning(f"Error opening file {file_path}: {e}")
+        return False
 
 
 def remove_trailing_numbers(text) -> str:

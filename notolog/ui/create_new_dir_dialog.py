@@ -17,12 +17,14 @@ For detailed instructions and project information, please see the repository's R
 """
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QHBoxLayout, QVBoxLayout, QStyle, QMessageBox
+from PySide6.QtWidgets import QDialog, QLabel, QLineEdit, QPushButton, QHBoxLayout, QVBoxLayout, QStyle
 from PySide6.QtGui import QFontMetrics
 
 from . import Settings
 from . import Lexemes
 from . import ThemeHelper
+
+from ..ui.message_box import MessageBox
 
 import os
 import logging
@@ -43,7 +45,7 @@ class CreateNewDirDialog(QDialog):
         self.parent = parent
 
         if self.parent and hasattr(self.parent, 'font'):
-            # Apply font from the main window to the dialog
+            # Apply the font from the main window to this dialog
             self.setFont(self.parent.font())
 
         self.settings = Settings(parent=self)
@@ -85,7 +87,7 @@ class CreateNewDirDialog(QDialog):
         self.ok_button.setEnabled(False)
 
         # https://doc.qt.io/qt-6/qt.html#FocusPolicy-enum
-        self.cancel_button = QPushButton(self.lexemes.get('dialog_create_new_dir_button_cancel'),
+        self.cancel_button = QPushButton(self.lexemes.get('dialog_create_new_dir_button_cancel'),  # noqa
                                          focusPolicy=Qt.FocusPolicy.NoFocus)
         self.cancel_button.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogCancelButton))
         self.cancel_button.clicked.connect(self.reject)
@@ -114,17 +116,15 @@ class CreateNewDirDialog(QDialog):
         dir_name = self.new_dir_name.text()
 
         if not dir_name:
-            QMessageBox.warning(self,
-                                self.lexemes.get('dialog_create_new_dir_warning_empty_title'),
-                                self.lexemes.get('dialog_create_new_dir_warning_empty_text'))
+            MessageBox(title=self.lexemes.get('dialog_create_new_dir_warning_empty_title'),
+                       text=self.lexemes.get('dialog_create_new_dir_warning_empty_text'), icon_type=2, parent=self)
             return
 
         if len(dir_name) > self.DIR_NAME_MAX_LENGTH:
             # This statement shouldn't be reachable anyway
-            QMessageBox.warning(self,
-                                self.lexemes.get('dialog_create_new_dir_warning_too_long_title'),
-                                self.lexemes.get('dialog_create_new_dir_warning_too_long_text',
-                                                 symbols=self.DIR_NAME_MAX_LENGTH))
+            MessageBox(title=self.lexemes.get('dialog_create_new_dir_warning_too_long_title'),
+                       text=self.lexemes.get('dialog_create_new_dir_warning_too_long_text',
+                                             symbols=self.DIR_NAME_MAX_LENGTH), icon_type=2, parent=self)
             return
 
         if self.create_new_dir_dialog_callback(new_dir_name=dir_name):

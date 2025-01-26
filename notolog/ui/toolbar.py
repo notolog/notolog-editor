@@ -51,7 +51,7 @@ class ToolBar(QToolBar):
         self.parent = parent  # type: NotologEditor
 
         if self.parent and hasattr(self.parent, 'font'):
-            # Apply font from the main window to the dialog
+            # Apply the font from the main window to this dialog
             self.setFont(self.parent.font())
 
         self.logger = logging.getLogger('toolbar')
@@ -89,9 +89,21 @@ class ToolBar(QToolBar):
         """
 
         # Adjust layout margins for proper spacing
-        self.setContentsMargins(0, 0, 5, 2)
+        self.setContentsMargins(0, 1, 5, 1)
 
-        # Initialize previous icon type to manage delimiters.
+        # Initialize the search form.
+        self.search_form = SearchForm(parent=self)
+
+        # Calculate and set the icon size based on the height of the search input.
+        # Set the fixed size for the search form first, or use a hinted size.
+        desired_height = self.search_form.sizeHint().height()
+        icon_width = icon_height = int(desired_height * 0.9)
+        self.setIconSize(QSize(icon_width, icon_height))
+
+        # Set a minimum height for the toolbar
+        self.setMinimumHeight(int(desired_height * 1.5))
+
+        # Initialize the previous icon type to manage delimiters
         prev_type = None
 
         # Iterate over action configurations.
@@ -118,8 +130,7 @@ class ToolBar(QToolBar):
         central_spacer.setSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.MinimumExpanding)
         self.addWidget(central_spacer)
 
-        # Initialize and add the search form.
-        self.search_form = SearchForm(parent=self)
+        # Add the search form.
         self.addWidget(self.search_form)
 
         # Set the toolbar's stylesheet from the theme helper.
@@ -129,7 +140,7 @@ class ToolBar(QToolBar):
         """
         Helper to create, add to the toolbar and return button with an icon.
         """
-        # Theme icon with a fallback to a system one
+        # Use a themed icon with a fallback to a system icon
         system_icon = conf['system_icon'] if 'system_icon' in conf else None
         theme_icon = conf['theme_icon'] if 'theme_icon' in conf else None
         theme_icon_color = QColor(conf['color']) if 'color' in conf \
@@ -148,9 +159,6 @@ class ToolBar(QToolBar):
         if 'name' in conf:
             icon_button.setObjectName(conf['name'])
         icon_button.setToolTip(label)
-        # Set the button height to match the search input field height, maintaining the aspect ratio.
-        icon_width = icon_height = int(icon_button.height() * 0.8)
-        icon_button.setIconSize(QSize(icon_width, icon_height))
         icon_button.setDefaultAction(icon_action)
         # icon_action.setChecked(True)
         if 'accessible_name' in conf:
@@ -159,12 +167,12 @@ class ToolBar(QToolBar):
         # Add the button to the toolbar
         self.addWidget(icon_button)
 
-        # Add internal variable to access the icon later, say for state toggle
+        # Add an internal variable to access the icon later, e.g., for state toggling
         if 'var_name' in conf:
             if hasattr(self, conf['var_name']):
                 self.logger.debug('Variable "%s" is already set! Re-writing it...' % conf['var_name'])
             setattr(self, conf['var_name'], icon_button)  # type: QToolButton
-        # If the icon has a switched off check, check it here
+        # If the icon has a switched-off check, handle it here
         if ('switched_off_check' in conf
                 and callable(conf['switched_off_check'])
                 and conf['switched_off_check']()):

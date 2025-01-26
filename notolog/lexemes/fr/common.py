@@ -113,9 +113,19 @@ lexemes = {
     "field_dir_path_dialog_caption": "Sélectionner un Répertoire",
     "field_file_path_dialog_caption": "Sélectionner un Fichier",
 
-    "load_file_encryption_password_mismatch": "Non-concordance du mot de passe de chiffrement !",
-    "load_file_encryption_password_incorrect": "Mot de passe de chiffrement incorrect !",
-    "load_file_none_content_error": "Impossible de charger le fichier.",
+    "dialog_select_default_dir_title": "Sélectionner le dossier par défaut",
+    "dialog_select_default_dir_label": "Sélectionnez le dossier par défaut pour les notes",
+    "dialog_select_default_dir_input_placeholder_text": "Dossier des notes par défaut",
+    "dialog_select_default_dir_button_ok": "Sélectionner",
+    "dialog_select_default_dir_button_cancel": "Annuler",
+
+    "load_file_encryption_password_mismatch": "Erreur de correspondance du mot de passe de chiffrement !",
+    "load_file_encryption_password_incorrect": "Mot de passe de chiffrement incorrect !",
+    "load_file_none_content_error": "Le fichier ne peut pas être chargé.",
+
+    "open_dir_permission_error": "Permission refusée pour accéder au répertoire.",
+    "open_file_permission_error": "Permission refusée lors de l'accès au fichier.",
+    "rename_file_permission_error": "Permission refusée lors du renommage du fichier.",
 
     "action_new_file_error_occurred": "Impossible de créer le fichier ; une erreur est survenue."
                                       "\nVérifiez les autorisations du système de fichiers.",

@@ -1,5 +1,6 @@
 # Hindi lexemes settings_dialog.py
 lexemes = {
+    # सेटिंग्स संवाद
     "window_title": "सेटिंग्स",
 
     "button_close": "बंद करें",
@@ -16,6 +17,10 @@ lexemes = {
     "general_app_theme_label": "थीम",
     "general_app_theme_combo_placeholder_text": "एक थीम चुनें",
     "general_app_theme_combo_accessible_description": "एप्लिकेशन की इंटरफ़ेस थीम",
+    "general_app_default_path_label": "नोट्स के लिए डिफ़ॉल्ट फ़ोल्डर",
+    "general_app_default_path_input_accessible_description": "डिफ़ॉल्ट फ़ोल्डर निर्दिष्ट करें जहाँ नोट्स सहेजे जाएंगे",
+    "general_app_default_path_input_placeholder_text": "फ़ोल्डर पथ चुनें या दर्ज करें",
+    "general_app_elements_visibility_label": "तत्वों की दृश्यता प्रबंधित करें",
     "general_app_main_menu_label": "मुख्य मेनू",
     "general_app_main_menu_checkbox": "मुख्य मेनू दिखाएं",
     "general_app_main_menu_checkbox_accessible_description": "ऐप का मुख्य ड्रॉपडाउन मेनू दिखाएं",

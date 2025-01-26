@@ -23,7 +23,7 @@ from .app_config import AppConfig
 from .enums.themes import Themes
 from .enums.languages import Languages
 from .helpers.settings_helper import SettingsHelper
-from .helpers.file_helper import is_writable_path
+from .helpers import file_helper
 
 from typing import TYPE_CHECKING, Any
 from threading import Lock
@@ -99,7 +99,7 @@ class Settings(QSettings):
     def get_instance(self):
         settings_file_path = self.get_filename()
         # Check file permissions
-        if not is_writable_path(settings_file_path):
+        if not file_helper.is_writable_path(settings_file_path):
             self.logger.warning(f"Permission denied: Cannot write to the file {settings_file_path}")
             settings_file_path = None
         # Initialize settings with either a custom or the default path
@@ -138,6 +138,7 @@ class Settings(QSettings):
         self.create_property("show_main_menu", bool, True)
         self.create_property("show_deleted_files", bool, False)
         self.create_property("show_global_cursor_position", bool, False)
+        self.create_property("default_path", str, "")
         # Editor state
         self.create_property("file_path", str, "")
         self.create_property("mode", int, 0)

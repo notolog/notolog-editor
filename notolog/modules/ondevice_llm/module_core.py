@@ -100,7 +100,7 @@ class ModuleCore(BaseAiCore):
         self.logger.debug(f'Module {__name__} loaded')
 
     def get_search_options(self):
-        search_options = {}
+        search_options = {'batch_size': 1}
         if hasattr(self.settings, 'module_ondevice_llm_response_temperature'):
             search_options.update({'temperature': self.settings.module_ondevice_llm_response_temperature})
         if (hasattr(self.settings, 'module_ondevice_llm_response_max_tokens')
@@ -244,7 +244,7 @@ class ModuleCore(BaseAiCore):
                 await asyncio.sleep(0.05)  # Sleep to allow UI to update
         except asyncio.CancelledError:
             self.logger.info("Generation cancelled")
-        except (WindowsError, RecursionError) as e:
+        except RecursionError as e:
             self.logger.error(f"Error occurred: {e}")
             # raise
         except (SystemExit, Exception) as e:

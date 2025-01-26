@@ -107,9 +107,19 @@ lexemes = {
     "field_dir_path_dialog_caption": "Select Directory",
     "field_file_path_dialog_caption": "Select File",
 
+    "dialog_select_default_dir_title": "Select Default Folder",
+    "dialog_select_default_dir_label": "Select the default folder for notes",
+    "dialog_select_default_dir_input_placeholder_text": "Default Notes Folder",
+    "dialog_select_default_dir_button_ok": "Select",
+    "dialog_select_default_dir_button_cancel": "Cancel",
+
     "load_file_encryption_password_mismatch": "Encryption password mismatch!",
     "load_file_encryption_password_incorrect": "Incorrect encryption password!",
-    "load_file_none_content_error": "File cannot be loaded.",
+    "load_file_none_content_error": "The file cannot be loaded.",
+
+    "open_dir_permission_error": "Permission denied when accessing the directory.",
+    "open_file_permission_error": "Permission denied when accessing the file.",
+    "rename_file_permission_error": "Permission denied when renaming the file.",
 
     "action_new_file_error_occurred": "Cannot create file; an error occurred.\nCheck file system permissions.",
     "save_active_file_error_occurred": "Cannot save file; an error occurred.",

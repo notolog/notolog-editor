@@ -1,5 +1,7 @@
 # Russian lexemes statusbar.py
 lexemes = {
+    "statusbar_path_home_label": "Домашняя папка заметок",
+    "statusbar_path_home_accessible_name": "Перейти в домашнюю папку заметок",
     "statusbar_litter_bin_label": "Корзина",
     "statusbar_litter_bin_accessible_name": "Показать содержимое корзины",
 
