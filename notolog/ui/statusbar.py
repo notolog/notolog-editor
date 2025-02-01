@@ -16,13 +16,14 @@ License: MIT License
 For detailed instructions and project information, please see the repository's README.md.
 """
 
-from PySide6.QtCore import Qt, QDir
+from PySide6.QtCore import Qt, QDir, QSize
 from PySide6.QtGui import QColor
-from PySide6.QtWidgets import QStatusBar, QWidget, QLabel, QPushButton, QSizePolicy
+from PySide6.QtWidgets import QStatusBar, QWidget, QHBoxLayout, QLabel, QPushButton, QSizePolicy
 
 import logging
 from typing import TYPE_CHECKING, Any, Dict, List
 
+from . import AppConfig
 from . import Settings
 from . import Lexemes
 from . import ThemeHelper
@@ -36,6 +37,9 @@ if TYPE_CHECKING:
 
 
 class StatusBar(QStatusBar):
+
+    BASE_ICON_SIZE = 64  # type: int
+
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -58,6 +62,7 @@ class StatusBar(QStatusBar):
 
         self._elements = {}  # Label storage
 
+        self.labels_layout = None  # type: Union[QHBoxLayout, None]
         self.data_size_label = None  # type: Union[QLabel, None]
         self.mode_label = None  # type: Union[QLabel, None]
         self.save_progress_label = None  # type: Union[QLabel, None]
@@ -70,55 +75,80 @@ class StatusBar(QStatusBar):
         self.init()
 
     def init(self):
-        # Attach styles to the QStatusBar
+        # Apply styles to the QStatusBar
         self.setStyleSheet(self.theme_helper.get_css('statusbar'))
 
-        # Draw the statusbar icons
+        # Adjust margins for better alignment
+        self.setContentsMargins(5, 0, 0, 0)
+
+        # Create a container widget to hold the labels
+        labels_container = QWidget(self)
+
+        # Set up the horizontal layout
+        self.labels_layout = QHBoxLayout(labels_container)
+        # Adjust layout margins for proper spacing inside the toolbar
+        self.labels_layout.setContentsMargins(0, 0, 0, 0)
+
+        # Add text labels to the status bar
+        self.add_labels()
+
+        # Render status bar icons
         self.draw_icons()
 
         central_spacer = QWidget(self)
         central_spacer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-
+        # Add a central spacer to balance layout spacing
         self.addPermanentWidget(central_spacer)
 
+        # Add the labels container widget to the status bar
+        self.addPermanentWidget(labels_container)
+
+    def add_labels(self):
+        # File size label
         self.data_size_label = QLabel(self)
         self.data_size_label.setFont(self.font())
-        self.addPermanentWidget(self.data_size_label)
+        self.labels_layout.addWidget(self.data_size_label)
 
+        # Save in progress label
         self.save_progress_label = QLabel(self)
         self.save_progress_label.setFont(self.font())
         self.save_progress_label.setVisible(False)
         self.save_progress_label.setText(self.lexemes.get('statusbar_save_progress_label'))
-        self.addPermanentWidget(self.save_progress_label)
+        self.labels_layout.addWidget(self.save_progress_label)
 
-        self.addPermanentWidget(VerticalLineSpacer())
+        self.labels_layout.addWidget(VerticalLineSpacer())
 
+        # Main editor area mode label
         self.mode_label = QLabel(self)
         self.mode_label.setFont(self.font())
         """
         Do not set object name similar to the lexeme to avoid double update with the unprocessed lexeme's placeholders.
         E.g.: self.mode_label.setObjectName('statusbar_mode_label')
         """
-        self.addPermanentWidget(self.mode_label)
+        self.labels_layout.addWidget(self.mode_label)
 
-        self.addPermanentWidget(VerticalLineSpacer())
+        self.labels_layout.addWidget(VerticalLineSpacer())
 
+        # File encryption label
         self.encryption_label = QLabel(self)
         self.encryption_label.setFont(self.font())
-        self.addPermanentWidget(self.encryption_label)
+        self.labels_layout.addWidget(self.encryption_label)
 
-        self.addPermanentWidget(VerticalLineSpacer())
+        self.labels_layout.addWidget(VerticalLineSpacer())
 
+        # Document source label
         self.source_label = QLabel(self)
         self.source_label.setFont(self.font())
-        self.addPermanentWidget(self.source_label)
+        self.labels_layout.addWidget(self.source_label)
 
-        self.addPermanentWidget(VerticalLineSpacer())
+        self.labels_layout.addWidget(VerticalLineSpacer())
 
+        # Cursor position label
         self.cursor_label = QLabel(self)
         self.cursor_label.setFont(self.font())
-        self.addPermanentWidget(self.cursor_label)
+        self.labels_layout.addWidget(self.cursor_label)
 
+        # Warning label (initially hidden)
         self.warning_label = QPushButton(self)
         self.warning_label.setVisible(False)
         self.warning_label.setFlat(True)
@@ -127,7 +157,7 @@ class StatusBar(QStatusBar):
         icon = self.theme_helper.get_icon(theme_icon='exclamation-triangle-fill.svg',
                                           color=QColor(self.theme_helper.get_color('statusbar_warning_icon_color')))
         self.warning_label.setIcon(icon)
-        self.addPermanentWidget(self.warning_label)
+        self.labels_layout.addWidget(self.warning_label)
         self.warning_label.clicked.connect(
             lambda: TooltipHelper.show_tooltip(widget=self.warning_label, text=self.warning_label.toolTip()))
 
@@ -136,26 +166,26 @@ class StatusBar(QStatusBar):
         Main statusbar items map for convenience.
         """
         return [
-            # Litter bin (inactive)
-            {'type': 'action', 'weight': 1, 'name': 'statusbar_litter_bin_label', 'system_icon': 'user-trash',
-             'theme_icon': 'trash3.svg', 'color': self.theme_helper.get_color('statusbar_litter_bin_icon_color'),
-             'label': self.lexemes.get('statusbar_litter_bin_label'),
-             'accessible_name': self.lexemes.get('statusbar_litter_bin_accessible_name'),
-             'action': lambda: self.set_litter_bin_visibility(True), 'var_name': 'litter_bin_label',
-             'active_state_check': lambda: not self.settings.show_deleted_files},
-            # Litter bin (active)
-            {'type': 'action', 'weight': 1, 'name': 'statusbar_litter_bin_label_active', 'system_icon': 'user-trash-full',
-             'theme_icon': 'trash3-fill.svg', 'color': self.theme_helper.get_color('statusbar_litter_bin_icon_color_active'),
-             'label': self.lexemes.get('statusbar_litter_bin_label'),
-             'accessible_name': self.lexemes.get('statusbar_litter_bin_accessible_name'),
-             'action': lambda: self.set_litter_bin_visibility(False), 'var_name': 'litter_bin_label',
-             'active_state_check': lambda: self.settings.show_deleted_files},
-            # Home button
-            {'type': 'action', 'weight': 2, 'name': 'statusbar_path_home_label', 'system_icon': 'go-home',
+            # Home button (static position; other buttons may replace one another)
+            {'type': 'action', 'weight': 1, 'name': 'statusbar_path_home_label', 'system_icon': 'go-home',
              'theme_icon': 'house-door.svg', 'color': self.theme_helper.get_color('statusbar_path_home_icon_color'),
              'label': self.lexemes.get('statusbar_path_home_label'),
              'accessible_name': self.lexemes.get('statusbar_path_home_accessible_name'),
              'action': self.action_path_home, 'var_name': 'path_home_label'},
+            # Litter bin (inactive)
+            {'type': 'action', 'weight': 2, 'name': 'statusbar_litter_bin_label', 'system_icon': 'user-trash',
+             'theme_icon': 'trash3.svg', 'color': self.theme_helper.get_color('statusbar_litter_bin_icon_color'),
+             'label': self.lexemes.get('statusbar_litter_bin_label'),
+             'accessible_name': self.lexemes.get('statusbar_litter_bin_accessible_name'),
+             'action': lambda: self.toggle_litter_bin_button(), 'var_name': 'litter_bin_label',
+             'active_state_check': lambda: not self.settings.show_deleted_files},
+            # Litter bin (active)
+            {'type': 'action', 'weight': 2, 'name': 'statusbar_litter_bin_label_active', 'system_icon': 'user-trash-full',
+             'theme_icon': 'trash3-fill.svg', 'color': self.theme_helper.get_color('statusbar_litter_bin_icon_color_active'),
+             'label': self.lexemes.get('statusbar_litter_bin_label'),
+             'accessible_name': self.lexemes.get('statusbar_litter_bin_accessible_name'),
+             'action': lambda: self.toggle_litter_bin_button(), 'var_name': 'litter_bin_label',
+             'active_state_check': lambda: self.settings.show_deleted_files},
         ]
 
     def get_statusbar_icon_by_name(self, name):
@@ -176,29 +206,48 @@ class StatusBar(QStatusBar):
                         and not conf['active_state_check']()):
                     continue
                 # Add the statusbar icon if all conditions are met
-                existed_icon = getattr(self, conf['var_name']) if hasattr(self, conf['var_name']) else None
-                self.append_statusbar_icon(conf, existed_icon)
+                existing_icon = getattr(self, conf['var_name']) if hasattr(self, conf['var_name']) else None
+                self.append_statusbar_icon(conf, icon_button=existing_icon)
 
-    def append_statusbar_icon(self, conf, button=None):
+    def append_statusbar_icon(self, conf, icon_button=None):
         """
         Helper to create, add to the statusbar and return button with an icon.
         """
+
+        # Validate that the passed icon button exists and hasn't been deleted already
+        try:
+            icon_button.objectName()
+        except (AttributeError, RuntimeError):
+            icon_button = QPushButton(self)
+            # Ensure action is only set once to avoid multiple assignments
+            action = conf['action'] if 'action' in conf else None
+            if action is not None:
+                icon_button.clicked.connect(action)
+
+        # Dynamically set the button height based on the labels size
+        button_width = button_height = self.labels_layout.sizeHint().height()
+        icon_button.setMinimumWidth(button_width)
+        icon_button.setMinimumHeight(button_height)
+        icon_width = icon_height = int(button_height * 0.7)
+        icon_button.setIconSize(QSize(icon_width, icon_height))
+
         # Use a themed icon with a fallback to a system icon
         system_icon = conf['system_icon'] if 'system_icon' in conf else None
         theme_icon = conf['theme_icon'] if 'theme_icon' in conf else None
         theme_icon_color = QColor(conf['color']) if 'color' in conf \
             else self.theme_helper.get_color('statusbar_icon_color_default')
-        icon = self.theme_helper.get_icon(theme_icon=theme_icon, system_icon=system_icon, color=theme_icon_color)
+        # Increase the icon size based on the ratio between the actual and base font sizes
+        width = height = max(self.BASE_ICON_SIZE,
+                             int(self.settings.app_font_size / AppConfig().get_font_base_size()) * self.BASE_ICON_SIZE)
+        # Retrieve a new icon with the specified parameters
+        icon = self.theme_helper.get_icon(theme_icon=theme_icon, system_icon=system_icon, color=theme_icon_color,
+                                          width=width, height=height)
 
         # Button with an icon
         label = conf['label'] if 'label' in conf else ''
-        icon_button = button if isinstance(button, QPushButton) else QPushButton(self)
         icon_button.setFlat(True)
         icon_button.setIcon(icon)
         icon_button.setCursor(Qt.CursorShape.PointingHandCursor)
-        action = conf['action'] if 'action' in conf else None  # Action triggered on click
-        if action is not None:
-            icon_button.clicked.connect(action)
         if 'name' in conf:
             icon_button.setObjectName(conf['name'])
         icon_button.setToolTip(label)
@@ -246,10 +295,35 @@ class StatusBar(QStatusBar):
             else:
                 conf = self.get_statusbar_icon_by_name('statusbar_litter_bin_label')
             # Update an existing button
-            self.append_statusbar_icon(conf, self.litter_bin_label)
+            try:
+                self.append_statusbar_icon(conf, self.litter_bin_label)
+            except RuntimeError as e:
+                # Handle specific errors, e.g., object already deleted
+                self.logger.warning(f"Error occurred {e}")
 
         if 'app_theme' in data:
-            self.draw_icons()
+            # Re-draw the statusbar icons
+            try:
+                self.draw_icons()
+            except RuntimeError as e:
+                # Handle specific errors, e.g., object already deleted
+                self.logger.warning(f"Error occurred {e}")
+
+        if 'app_font_size' in data:
+            try:
+                self.refresh_element_fonts()
+                self.draw_icons()
+            except RuntimeError as e:
+                # Handle specific errors, e.g., object already deleted
+                self.logger.warning(f"Error occurred {e}")
+
+    def refresh_element_fonts(self, parent=None):
+        if parent is None:
+            parent = self
+        for widget in parent.children():
+            if hasattr(widget, 'setFont'):
+                widget.setFont(self.parent.font())
+                self.refresh_element_fonts(parent=widget)
 
     def toggle_litter_bin_button(self):
         self.set_litter_bin_visibility(not self.settings.show_deleted_files)

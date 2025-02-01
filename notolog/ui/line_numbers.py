@@ -215,7 +215,8 @@ class LineNumbers(QWidget):
         self.update_width()
         # Or it can be like this: height = self.editor.frameGeometry().height()
         self.setGeometry(
-            QRect(element_cr.left(), element_cr.top(), self.line_numbers_width(), element_cr.height())
+            QRect(element_cr.left(), element_cr.top(),
+                  self.line_numbers_width(), element_cr.height() + self.fontMetrics().height())
         )
 
     def line_numbers_width(self) -> int:

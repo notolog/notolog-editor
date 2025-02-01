@@ -99,23 +99,28 @@ class MainHighlighter(QSyntaxHighlighter):
             raise NotImplementedError(f'Method highlightBlock() have to be implemented in subclass {cls.__name__}.')
 
     def override_colors(self):
+        """
+        Proof-of-concept method for overriding the colors applied to the highlighter's syntax.
+        Consider replacing the entire style map, such as with background patterns.
+        """
         for item in self.theme:
-            """
-            Proof of concept method of how to override the colors set to highlighter's syntax.
-            Consider overriding the whole map with styles like background pattern.
-            """
-            # Get color values from the theme helper
-            # For example: 'md_color_h1_text', where the 'md' is the theme prefix, and the 'h1_text' is the item
+            # Retrieve color values from the theme helper.
+            # Example: 'md_color_h1_text', where 'md' is the theme prefix and 'h1_text' is the item.
             _color = self.theme_helper.get_color(f'{self.theme_ini_prefix}_color_{item}', css_format=True)
+            _alt_color = self.theme_helper.get_color(f'{self.theme_ini_prefix}_alt_color_{item}', css_format=True)
             _background_color = self.theme_helper.get_color(f'{self.theme_ini_prefix}_background_color_{item}')
             _background_color_inner = self.theme_helper.get_color(
                 f'{self.theme_ini_prefix}_background_color_{item}_inner')
             self.logger.debug(
                 f"Prefix[{self.theme_ini_prefix}] '{item}', color: '{_color}', bg color: '{_background_color}'")
-            # At the moment all the colors set in string format, like 'red', 'darkCyan', etc.
+            # Currently, all colors are set as strings, such as 'red', 'darkCyan', etc.
             if _color and isinstance(_color, str):
-                # Set up color no matter if it was set up or not
+                # Set up the color regardless of whether it was already configured
                 self.theme[item]['color'] = _color
+            # Alt color refers to the underline or strikethrough line color, formatted the same as 'color'
+            if _alt_color and isinstance(_alt_color, str):
+                # Set up the alt color regardless of whether it was already configured
+                self.theme[item]['alt_color'] = _alt_color
             # Background override
             if _background_color and isinstance(_background_color, str):
                 if 'bg' in self.theme[item]:
@@ -124,9 +129,9 @@ class MainHighlighter(QSyntaxHighlighter):
                     elif isinstance(self.theme[item]['bg'], str):
                         self.theme[item]['bg'] = _background_color
                 else:
-                    # Set up background color no matter if it was set up or not
+                    # Set up the background color regardless of whether it was already configured
                     self.theme[item]['bg'] = _background_color
-            # Inner color applied to elements within another element, such as Italic text within a Blockquote
+            # Inner color applied to elements nested within another, such as italic text in a blockquote
             if _background_color_inner and isinstance(_background_color_inner, str):
                 if 'bg_inner' in self.theme[item]:
                     if 'color' in self.theme[item]['bg_inner']:
@@ -153,11 +158,12 @@ class MainHighlighter(QSyntaxHighlighter):
         """
 
         color = kwargs['color'] if 'color' in kwargs else ''
+        alt_color = kwargs['alt_color'] if 'alt_color' in kwargs else ''
         style = kwargs['style'] if 'style' in kwargs else ''
         bg = kwargs['bg'] if 'bg' in kwargs else {}
         font_size_ratio = kwargs['font_size_ratio'] if 'font_size_ratio' in kwargs else 1.0
 
-        if not (color or style or bg or font_size_ratio):
+        if not (color or alt_color or style or bg or font_size_ratio):
             return
 
         cformat = QTextCharFormat()
@@ -195,8 +201,12 @@ class MainHighlighter(QSyntaxHighlighter):
             cformat.setFontItalic(True)
         if 'underline' in style:
             cformat.setFontUnderline(True)
+            if alt_color:
+                cformat.setUnderlineColor(QColor(alt_color))
         if 'strikethrough' in style:
             cformat.setFontStrikeOut(True)
+            if alt_color:
+                cformat.setUnderlineColor(QColor(alt_color))
         if 'monospace' in style:
             if loaded_monospace_font := FontLoader.get_monospace_font():
                 monospace_font = QFont(loaded_monospace_font)

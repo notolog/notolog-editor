@@ -725,12 +725,19 @@ class SettingsDialog(QDialog):
                     # found_objects = self.findChildren(QObject, object_name, Qt.FindChildrenRecursively)
 
                     for obj in found_objects:
-                        if (isinstance(obj, (QLabel, LabelWithHint, QCheckBox, QComboBox, QPushButton))
+                        if (isinstance(obj, (QLabel, LabelWithHint, QCheckBox, QComboBox))
                                 and hasattr(obj, 'setText')
                                 and callable(getattr(obj, 'setText'))):
                             self.logger.debug(
                                 f'Object lexeme update: {obj.objectName()} with id: {id(obj)}, lexeme "{lexeme}"')
                             obj.setText(lexeme)
+                        if isinstance(obj, QPushButton):
+                            self.logger.debug(
+                                f'Object lexeme update: {obj.objectName()} with id: {id(obj)}, lexeme "{lexeme}"')
+                            if obj.text():  # Update only if a text value was previously set
+                                obj.setText(lexeme)
+                            if obj.toolTip():  # Update only if a text value was previously set
+                                obj.setToolTip(lexeme)
                         if isinstance(obj, LabelWithHint):
                             if obj.property('tooltip_lexeme'):
                                 # Lexeme must be default_scope='settings_dialog'

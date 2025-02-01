@@ -21,6 +21,7 @@ from PySide6.QtCore import QSize
 from PySide6.QtGui import QAction, QColor
 from PySide6.QtWidgets import QToolBar, QWidget, QMenu, QToolButton, QSizePolicy
 
+from . import AppConfig
 from . import Settings
 from . import Lexemes
 from . import ThemeHelper
@@ -38,6 +39,8 @@ if TYPE_CHECKING:
 
 class ToolBar(QToolBar):
     # Main window toolbar class
+
+    BASE_ICON_SIZE = 64  # type: int
 
     def __init__(self, parent, actions=None, refresh=None):
         """
@@ -97,7 +100,7 @@ class ToolBar(QToolBar):
         # Calculate and set the icon size based on the height of the search input.
         # Set the fixed size for the search form first, or use a hinted size.
         desired_height = self.search_form.sizeHint().height()
-        icon_width = icon_height = int(desired_height * 0.9)
+        icon_width = icon_height = int(desired_height * 0.85)
         self.setIconSize(QSize(icon_width, icon_height))
 
         # Set a minimum height for the toolbar
@@ -145,7 +148,12 @@ class ToolBar(QToolBar):
         theme_icon = conf['theme_icon'] if 'theme_icon' in conf else None
         theme_icon_color = QColor(conf['color']) if 'color' in conf \
             else self.theme_helper.get_color('toolbar_icon_color_default')
-        icon = self.theme_helper.get_icon(theme_icon=theme_icon, system_icon=system_icon, color=theme_icon_color)
+        # Increase the icon size based on the ratio between the actual and base font sizes
+        width = height = max(self.BASE_ICON_SIZE,
+                             int(self.settings.app_font_size / AppConfig().get_font_base_size()) * self.BASE_ICON_SIZE)
+        # Retrieve a new icon with the specified parameters
+        icon = self.theme_helper.get_icon(theme_icon=theme_icon, system_icon=system_icon, color=theme_icon_color,
+                                          width=width, height=height)
 
         # Button's action
         label = conf['label'] if 'label' in conf else ''

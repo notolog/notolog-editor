@@ -1,6 +1,25 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.1.3] - 2025-02-01
+
+### Added
+- Added the ability to set underline and strikethrough line colors separately in the theme's Markdown configuration file. Also, adjusted these colors across all themes for better consistency.
+
+### Changed
+- Enabled dynamic DPI adjustment for toolbar icons based on the ratio between the actual and base font sizes, ensuring sharper rendering at higher font sizes.
+- Adjusted Markdown syntax highlighting for underlined elements - now their default color matches the main theme color. However, this can still be overridden by the theme's Markdown configuration file.
+- Updated conditions for refreshing `QPushButton` text and tooltips in the settings dialog, ensuring they are only modified if those values were previously set.
+
+### Updated
+- Slightly adjusted toolbar icon sizes.
+- Refined colors in the 'Default' theme for the line number area.
+
+### Fixed
+- Fixed multiple status bar objects being created, which previously caused log errors related to deleted objects and could also impact performance.
+- Disabled the save button when no changes are detected to ensure the correct button state after the `textChanged` signal, even when no actual text change occurs.
+- Fixed the content size label text update in the status bar when a file is saved.
+
 ## [1.1.2] - 2025-01-26
 
 ### Added

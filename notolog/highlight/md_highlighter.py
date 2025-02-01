@@ -71,8 +71,8 @@ class MdHighlighter(MainHighlighter):
         'h6': {'color': 'white', 'font_size_ratio': 1.3,
                'bg': {'color': 'darkCyan', 'pattern': Qt.BrushStyle.Dense4Pattern}},
         'h6_text': {'color': 'darkCyan', 'font_size_ratio': 1.3, 'style': 'bold'},
-        's': {'color': 'grey', 'style': 'strikethrough'},
-        'u': {'color': 'black', 'style': 'underline'},
+        's': {'color': 'grey', 'style': 'strikethrough', 'alt_color': 'grey'},  # Alt color used for the strikethrough line
+        'u': {'color': '', 'style': 'underline', 'alt_color': ''},  # Alt color here refers to the underline color
         'code': {'color': 'magenta', 'bg': {'color': 'magenta', 'pattern': Qt.BrushStyle.Dense6Pattern}},
         'codel': {'color': 'yellow', 'style': 'monospace',
                   'bg': {'color': 'darkMagenta', 'pattern': Qt.BrushStyle.Dense2Pattern}},

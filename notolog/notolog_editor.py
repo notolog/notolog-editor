@@ -318,7 +318,7 @@ class NotologEditor(QMainWindow):
             MessageBox(text=self.lexemes.get('message_app_config_file_access',
                                              file_path=AppConfig().get_app_config_path()), icon_type=2, parent=self)
 
-        # Run once again to refresh all dependant UI elements that have been initialized
+        # Run once again to refresh all dependent UI elements that have been initialized
         self.set_mode(mode)
         self.set_source(source)
 
@@ -395,12 +395,11 @@ class NotologEditor(QMainWindow):
             self.tree_filter.setFont(self.font())
             # Re-draw main menu
             self.draw_menu()
-            # Update statusbar
-            self.create_status_toolbar()
-            # Refresh all dependant UI elements that have been initialized
+            # The statusbar will be updated within its own settings update handler
+            # self.create_status_toolbar()
+            # Refresh all dependent UI elements that have been initialized
             self.estate.refresh()
-            self.statusbar['data_size_label'].setText("%s" % file_helper.size_f(len(self.content)))
-            # Update line numbers widget
+            # Update the line numbers widget
             self.line_numbers.setFont(self.font())
             # Get app's global font size
             self.md_highlighter.font_size = AppConfig().get_font_size()
@@ -408,7 +407,7 @@ class NotologEditor(QMainWindow):
             if self.get_mode() == Mode.EDIT:
                 # Resource greedy syntax re-highlight
                 self.md_highlighter.rehighlight()
-                # Update line numbers widget width
+                # Update the line numbers widget width
                 self.line_numbers.update_numbers()
 
         if 'app_language' in data and hasattr(self, 'lexemes'):
@@ -1485,7 +1484,7 @@ class NotologEditor(QMainWindow):
         edit_widget = EditWidget()
         # Block widget's signals
         was_blocked = edit_widget.blockSignals(True)
-        self.logger.debug(f'Creating view widget, signals was blocked "{was_blocked}"')
+        self.logger.debug(f'Creating edit widget, signals was blocked "{was_blocked}"')
         # Apply font from the main window to the widget
         edit_widget.document().setDefaultFont(self.font())
         edit_widget.setContentsMargins(0, 0, 0, 0)
@@ -1520,7 +1519,7 @@ class NotologEditor(QMainWindow):
 
         # Restore widget's signals
         edit_widget.blockSignals(was_blocked)
-        self.logger.debug(f'View widget created, signals was un-blocked "{was_blocked}"')
+        self.logger.debug(f'Edit widget created, signals was un-blocked "{was_blocked}"')
 
         # Save created object to the internal variable
         self.text_edit = edit_widget
@@ -1742,7 +1741,7 @@ class NotologEditor(QMainWindow):
 
         self.logger.debug('Text changed signal from %s' % (self.sender()))
 
-        # Make save button active at the toolbar, even if no changes to save resources with no check
+        # Enable the save button in the toolbar, even if no changes were detected
         if hasattr(self.toolbar, 'toolbar_save_button'):
             self.toolbar.toolbar_save_button.setDisabled(False)
 
@@ -2978,7 +2977,7 @@ class NotologEditor(QMainWindow):
         # Store current state
         self.content = content
         self.header = header
-        # Update content size label
+        # Update the content size label in the statusbar
         if hasattr(self, 'statusbar'):
             self.statusbar['data_size_label'].setText("%s" % file_helper.size_f(len(self.content)))
         if self.get_mode() == Mode.EDIT:
@@ -3290,6 +3289,9 @@ class NotologEditor(QMainWindow):
 
         # If there are no changes to save, do nothing.
         if self.content == file_content:
+            # Disable the save button in the toolbar if it was active
+            if hasattr(self.toolbar, 'toolbar_save_button'):
+                self.toolbar.toolbar_save_button.setDisabled(True)
             return None
 
         # Handle the case where the file no longer exists and cannot be saved
@@ -3322,7 +3324,7 @@ class NotologEditor(QMainWindow):
             # Show saving progress in the status bar
             if hasattr(self, 'statusbar'):
                 self.statusbar['save_progress_label'].setVisible(True)
-            # Grayscale save button(s) at the toolbar
+            # Disable the save button in the toolbar
             if hasattr(self.toolbar, 'toolbar_save_button'):
                 self.toolbar.toolbar_save_button.setDisabled(True)
 
@@ -3372,12 +3374,15 @@ class NotologEditor(QMainWindow):
                 # Clear field's data
                 if clear_after:
                     edit_widget.clear()
+                elif hasattr(self, 'statusbar'):
+                    # Update the content size label in the statusbar
+                    self.statusbar['data_size_label'].setText("%s" % file_helper.size_f(len(self.content)))
             else:
                 self.toggle_save_timer(state=False)
                 MessageBox(text=self.lexemes.get('save_active_file_error_occurred'), icon_type=2,
                            callback=self.toggle_save_timer, parent=self)
 
-            # Grayscale save button at the toolbar
+            # Disable the save button in the toolbar
             if hasattr(self.toolbar, 'toolbar_save_button'):
                 self.toolbar.toolbar_save_button.setDisabled(save_result)
 

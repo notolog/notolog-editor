@@ -28,6 +28,7 @@ from notolog.file_header import FileHeader
 from notolog.encrypt.enc_helper import EncHelper
 from notolog.editor_state import Encryption
 from notolog.ui.message_box import MessageBox
+from notolog.ui.statusbar import StatusBar
 
 from logging import Logger
 
@@ -344,6 +345,9 @@ class TestNotologEditor:
         mocker.patch.object(test_obj_notolog_editor, 'toggle_mode', return_value=None)
         setattr(test_obj_notolog_editor, 'debug', False)
         setattr(test_obj_notolog_editor, 'logging', False)
+
+        mock_statusbar = MagicMock(spec=StatusBar)
+        setattr(test_obj_notolog_editor, 'statusbar', mock_statusbar)
 
         mocker.patch.object(test_obj_notolog_editor, 'get_current_file_path', return_value=file_path)
 
