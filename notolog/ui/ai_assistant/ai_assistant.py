@@ -696,9 +696,13 @@ class AIAssistant(QDialog):
                     # Update model name (any updates in settings)
                     self.model_name_label.setText('')
             except RuntimeError:
-                # Object can be deleted already
+                # The object may have already been deleted
                 pass
 
         if 'app_theme' in data:
-            # Update the widget's stylesheet with the selected theme
-            self.setStyleSheet(self.theme_helper.get_css('ai_assistant'))
+            try:
+                # Apply the selected theme to the widget's stylesheet
+                self.setStyleSheet(self.theme_helper.get_css('ai_assistant'))
+            except RuntimeError:
+                # The object may have already been deleted
+                pass

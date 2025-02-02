@@ -327,7 +327,7 @@ class ModuleCore(BaseAiCore):
                                                   # The only GGUF files are now supported
                                                   self.lexemes.get('module_llama_cpp_config_path_input_filter_text')},
              "name": "settings_dialog_module_llama_cpp_config_path:module_llama_cpp_model_path",
-             "read_only": False, "max_length": 256,
+             "read_only": False, "max_length": 2048,
              "callback": lambda obj: tab_module_llama_cpp_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
              "placeholder_text": self.lexemes.get('module_llama_cpp_config_path_input_placeholder_text'),
              "accessible_description":

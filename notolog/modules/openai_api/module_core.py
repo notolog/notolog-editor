@@ -381,7 +381,7 @@ class ModuleCore(BaseAiCore):
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # OpenAI API url line input
             {"type": QLineEdit, "name": "settings_dialog_module_openai_api_url:module_openai_api_url",
-             "read_only": False, "max_length": 128,
+             "read_only": False, "max_length": 2048,
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
              "placeholder_text": self.lexemes.get('module_openai_api_url_input_placeholder_text'),
              "accessible_description":
@@ -395,7 +395,7 @@ class ModuleCore(BaseAiCore):
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # OpenAI API key line input
             {"type": QLineEdit, "name": "settings_dialog_module_openai_api_key:module_openai_api_key",
-             "read_only": False, "max_length": 128, "props": {"setEchoMode": QLineEdit.EchoMode.Password},
+             "read_only": False, "max_length": 2048, "props": {"setEchoMode": QLineEdit.EchoMode.Password},
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
              "placeholder_text": self.lexemes.get('module_openai_api_key_input_placeholder_text'),
              "accessible_description":

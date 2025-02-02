@@ -1,6 +1,15 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.1.4] - 2025-02-02
+
+### Updated
+- Increased the value of the 'max_length' parameter for text and path edit fields, allowing longer values to be stored. This also expands the space available for storing new OpenAI API keys in the protected field.
+- Updated lexemes for the 'Module llama.cpp' to provide clearer error messages when an LLM model is either missing or unsupported.
+
+### Fixed
+- Resolved a minor issue where changing the theme could trigger log errors related to deleted objects if the AI Assistant had been previously used.
+
 ## [1.1.3] - 2025-02-01
 
 ### Added

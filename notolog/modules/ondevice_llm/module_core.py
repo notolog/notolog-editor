@@ -306,7 +306,7 @@ class ModuleCore(BaseAiCore):
             # Input field for the model path
             {"type": DirPathLineEdit, "kwargs": {"settings": self.settings},
              "name": "settings_dialog_ondevice_llm_config_path:module_ondevice_llm_model_path",
-             "read_only": False, "max_length": 256,
+             "read_only": False, "max_length": 2048,
              "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
              "placeholder_text": self.lexemes.get('module_ondevice_llm_config_path_input_placeholder_text'),
              "accessible_description":

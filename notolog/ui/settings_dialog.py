@@ -751,7 +751,7 @@ class SettingsDialog(QDialog):
                                 self.lexemes.get('general_app_font_size_label', size=self.settings.app_font_size))
 
         if setting_name == 'app_theme' or sender_widget.objectName().endswith('app_theme'):
-            # Update the widget's stylesheet with the selected theme
+            # Apply the selected theme to the widget's stylesheet
             self.setStyleSheet(self.theme_helper.get_css('settings_dialog'))
             # Update font size to correct the tab widget's font
             self.update_font_size(font_size=self.settings.app_font_size)
