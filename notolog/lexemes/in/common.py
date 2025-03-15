@@ -3,7 +3,8 @@ lexemes = {
     "app_title": "नोटोलॉग एडिटर",
     "app_title_with_sub": "{app_title} - {sub_title}",
 
-    "tree_filter_accessible_desc": "फ़ाइल फ़िल्टर फ़ील्ड",
+    "tree_filter_input_placeholder_text": "त्वरित फ़िल्टर",
+    "tree_filter_input_accessible_desc": "फ़ाइलों और निर्देशिकाओं को नाम से फ़िल्टर करें",
 
     "menu_action_copy_file_path": "फ़ाइल पथ की प्रतिलिपि बनाएँ",
     "menu_action_rename": "नाम बदलें",

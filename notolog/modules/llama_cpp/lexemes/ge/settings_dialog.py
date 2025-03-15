@@ -15,9 +15,9 @@ lexemes = {
         "აყენებს ტოკენების რაოდენობას, რომელსაც მოდელი გამოიყენებს პასუხების გენერირებისთვის. კონტროლირებს წინა კონტექსტის\n"
         "გამოყენების რაოდენობას.",
 
-    "module_llama_cpp_chat_formats_label": "ჩეთის ფორმატები",
-    "module_llama_cpp_chat_formats_combo_placeholder_text": "აირჩიეთ ჩეთის ფორმატი",
-    "module_llama_cpp_chat_formats_combo_accessible_description":
+    "module_llama_cpp_config_chat_formats_label": "ჩეთის ფორმატები",
+    "module_llama_cpp_config_chat_formats_combo_placeholder_text": "აირჩიეთ ჩეთის ფორმატი",
+    "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "ჩამოშლილი მენიუ მოდელის საუბარების ფორმატის არჩევისთვის.",
 
     "module_llama_cpp_config_system_prompt_label": "სისტემის პრომპტი",

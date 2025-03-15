@@ -66,7 +66,7 @@ class ToolBar(QToolBar):
 
         self.theme_helper = ThemeHelper()
 
-        # Load lexemes for selected language and scope
+        # Load lexemes for the selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='toolbar')
 
         if self.settings.toolbar_icons is None or self.settings.toolbar_icons == 0:

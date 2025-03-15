@@ -14,9 +14,9 @@ lexemes = {
     "module_llama_cpp_config_context_window_input_accessible_description":
         "모델이 응답을 생성하는 데 고려하는 토큰 수를 설정합니다. 얼마나 많은 이전 콘텍스트가 사용되는지를 제어합니다.",
 
-    "module_llama_cpp_chat_formats_label": "채팅 형식",
-    "module_llama_cpp_chat_formats_combo_placeholder_text": "채팅 형식 선택",
-    "module_llama_cpp_chat_formats_combo_accessible_description":
+    "module_llama_cpp_config_chat_formats_label": "채팅 형식",
+    "module_llama_cpp_config_chat_formats_combo_placeholder_text": "채팅 형식 선택",
+    "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "모델 대화에 사용되는 형식을 선택하기 위한 드롭다운 메뉴입니다.",
 
     "module_llama_cpp_config_system_prompt_label": "시스템 프롬프트",

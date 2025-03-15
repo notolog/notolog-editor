@@ -326,7 +326,7 @@ class ModuleCore(BaseAiCore):
             {"type": FilePathLineEdit, "kwargs": {"settings": self.settings, "ext_filter": "%s (*.gguf)" %
                                                   # The only GGUF files are now supported
                                                   self.lexemes.get('module_llama_cpp_config_path_input_filter_text')},
-             "name": "settings_dialog_module_llama_cpp_config_path:module_llama_cpp_model_path",
+             "name": "settings_dialog_module_llama_cpp_config_path_input:module_llama_cpp_model_path",
              "read_only": False, "max_length": 2048,
              "callback": lambda obj: tab_module_llama_cpp_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
              "placeholder_text": self.lexemes.get('module_llama_cpp_config_path_input_placeholder_text'),
@@ -356,20 +356,20 @@ class ModuleCore(BaseAiCore):
              "callback": lambda obj: tab_module_llama_cpp_config_layout.addWidget(obj)},
             # Label for supported chat formats
             {"type": LabelWithHint, "kwargs": {
-                "tooltip": ('module_llama_cpp_chat_formats_combo_accessible_description',
-                            self.lexemes.get('module_llama_cpp_chat_formats_combo_accessible_description'))},
-             "name": "settings_dialog_module_llama_cpp_chat_formats_label",
+                "tooltip": ('module_llama_cpp_config_chat_formats_combo_accessible_description',
+                            self.lexemes.get('module_llama_cpp_config_chat_formats_combo_accessible_description'))},
+             "name": "settings_dialog_module_llama_cpp_config_chat_formats_label",
              "alignment": Qt.AlignmentFlag.AlignLeft,
-             "text": self.lexemes.get('module_llama_cpp_chat_formats_label'),
+             "text": self.lexemes.get('module_llama_cpp_config_chat_formats_label'),
              "callback": lambda obj: tab_module_llama_cpp_config_layout.addWidget(obj)},
             # Dropdown for selecting a supported chat format
             {"type": EnumComboBox, "args": [sorted(LlmChatFormats, key=lambda member: member.is_default)],
-             "name": "settings_dialog_module_llama_cpp_chat_formats_combo:"
+             "name": "settings_dialog_module_llama_cpp_config_chat_formats_combo:"
                      "module_llama_cpp_chat_format",
              "callback": lambda obj: tab_module_llama_cpp_config_layout.addWidget(obj),
-             "placeholder_text": self.lexemes.get('module_llama_cpp_chat_formats_combo_placeholder_text'),
+             "placeholder_text": self.lexemes.get('module_llama_cpp_config_chat_formats_combo_placeholder_text'),
              "accessible_description":
-                 self.lexemes.get('module_llama_cpp_chat_formats_combo_accessible_description')},
+                 self.lexemes.get('module_llama_cpp_config_chat_formats_combo_accessible_description')},
             # Horizontal line spacer
             {"type": HorizontalLineSpacer, "callback": lambda obj: tab_module_llama_cpp_config_layout.addWidget(obj)},
             # Label for the system prompt text editor
@@ -382,7 +382,7 @@ class ModuleCore(BaseAiCore):
              "callback": lambda obj: tab_module_llama_cpp_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # Text editor field for the system prompt
             {"type": QPlainTextEdit,
-             "name": "settings_dialog_module_llama_cpp_system_prompt:"
+             "name": "settings_dialog_module_llama_cpp_config_system_prompt_edit:"
                      "module_llama_cpp_system_prompt",
              "callback": lambda obj: tab_module_llama_cpp_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
              "placeholder_text": self.lexemes.get('module_llama_cpp_config_system_prompt_edit_placeholder_text'),
@@ -406,7 +406,7 @@ class ModuleCore(BaseAiCore):
              "props": {'setFocusPolicy': Qt.FocusPolicy.StrongFocus, 'setTickPosition': QSlider.TickPosition.TicksAbove,
                        'setTickInterval': 5, 'setSingleStep': 5, 'setMinimum': 0, 'setMaximum': 100},
              "name": "settings_dialog_module_llama_cpp_config_response_temperature:"
-                     "module_llama_cpp_response_temperature",  # Lexeme key : Object name
+                     "module_llama_cpp_response_temperature",  # Lexeme key : Setting name
              "callback": lambda obj: tab_module_llama_cpp_config_layout.addWidget(obj),
              "on_value_change": self.temperature_change_handler,
              "accessible_description":
@@ -470,9 +470,10 @@ class ModuleCore(BaseAiCore):
 
     def settings_update_handler(self, data) -> None:
         """
-        Perform actions upon settings change. This function handles data represented as a dictionary,
-        where each key is the setting name and the corresponding value is the setting's new value.
-        Note: This operation can be resource-intensive.
+        Perform actions upon settings change.
+
+        Data is provided as a dictionary, where the key represents the setting name, and the value is its corresponding value.
+        Note: This operation updates UI elements and internal properties, which may be resource-intensive.
 
         Args:
             data (dict): Dictionary containing settings changes, e.g., {"module_llama_cpp_model_path": "..."}
@@ -481,7 +482,7 @@ class ModuleCore(BaseAiCore):
             None
         """
 
-        AppConfig().logger.debug('Settings update handler is in use "%s"' % data)
+        AppConfig().logger.debug(f'Settings update handler is processing: {data}')
 
         options = [
             'module_llama_cpp_model_path',

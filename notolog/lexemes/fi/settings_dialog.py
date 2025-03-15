@@ -31,6 +31,8 @@ lexemes = {
     "general_statusbar_show_global_cursor_position_checkbox": "Näytä globaali kursorin sijainti",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
         "Näytä globaali kursorin sijainti tilarivillä",
+    "general_statusbar_show_navigation_arrows_checkbox": "Näytä navigointinuolet",
+    "general_statusbar_show_navigation_arrows_checkbox_accessible_description": "Näytä navigointinuolet tilapalkissa",
 
     "editor_config_label": "Editorin konfigurointi",
     "editor_config_show_line_numbers_checkbox": "Näytä rivinumerot",

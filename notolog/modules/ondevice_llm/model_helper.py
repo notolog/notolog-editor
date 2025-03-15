@@ -75,7 +75,8 @@ class ModelHelper:
             # Check model path is correct
             self.model_path = model_path
             if (not os.path.isdir(self.model_path)
-                    or not os.path.isfile(os.path.join(self.model_path, 'tokenizer.model'))):
+                    or not any(f.endswith('.onnx') for f in os.listdir(self.model_path) if
+                               os.path.isfile(os.path.join(self.model_path, f)))):
                 self.logger.warning(f'Model not found in {self.model_path}')
                 self.model_path = None
 

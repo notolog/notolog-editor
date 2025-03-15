@@ -21,6 +21,7 @@ from PySide6.QtCore import Qt, QSize, Signal
 from PySide6.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QHBoxLayout, QVBoxLayout, QSizePolicy
 from PySide6.QtGui import QColor
 
+from . import AppConfig
 from . import Settings
 from . import Lexemes
 from . import ThemeHelper
@@ -39,6 +40,8 @@ class SearchForm(QWidget):
     and other elements to show the actual label and count of search results. This widget also exposes signals
     similar to a QLineEdit for external interaction.
     """
+
+    BASE_ICON_SIZE = 64  # type: int
 
     # Signals to mimic QLineEdit's textChanged and returnPressed events.
     textChanged = Signal(str)
@@ -243,6 +246,13 @@ class SearchForm(QWidget):
         This helper function creates and adds a search button to the specified layout of the toolbar.
         """
 
+        # Initialize a toolbar button with an icon.
+        icon_button = QPushButton(self)
+        if 'name' in button_conf:
+            icon_button.setObjectName(button_conf['name'])  # Set object name from configuration.
+        icon_button.setFont(self.font())
+
+        # Use a themed icon with a fallback to a system icon
         system_icon = button_conf['system_icon'] if 'system_icon' in button_conf else None
         theme_icon = button_conf['theme_icon'] if 'theme_icon' in button_conf else None
         theme_icon_color = QColor(button_conf['color']) if 'color' in button_conf \
@@ -250,20 +260,18 @@ class SearchForm(QWidget):
 
         icon = None
         if theme_icon:
-            # Get the theme icon, using a system default as a fallback.
-            icon = self.theme_helper.get_icon(theme_icon=theme_icon, system_icon=system_icon, color=theme_icon_color)
-
-        # Initialize a toolbar button with an icon.
-        icon_button = QPushButton(self)
-        if 'name' in button_conf:
-            icon_button.setObjectName(button_conf['name'])  # Set object name from configuration.
-        icon_button.setFont(self.font())
+            # Increase the icon size based on the ratio between the actual and base font sizes
+            width = height = max(self.BASE_ICON_SIZE,
+                                 int(self.settings.app_font_size / AppConfig().get_font_base_size()) * self.BASE_ICON_SIZE)
+            # Retrieve a new icon with the specified parameters
+            icon = self.theme_helper.get_icon(theme_icon=theme_icon, system_icon=system_icon, color=theme_icon_color,
+                                              width=width, height=height)
 
         # Match button size to the search input field's height, maintaining aspect ratio.
         size_hint = self._search_input.sizeHint()
-        icon_button.setMinimumSize(QSize(size_hint.height(), size_hint.height()))
+        icon_button.setFixedSize(QSize(size_hint.height(), size_hint.height()))
 
-        # Configure button to display either an icon or text based on configuration.
+        # Configure the button to display either an icon or text based on the configuration.
         if icon:
             # Calculate and set icon size based on the search input height.
             icon_width = icon_height = int(size_hint.height() * 0.7)

@@ -15,9 +15,9 @@ lexemes = {
         "Asettaa tokenien määrän, jota malli harkitsee vastauksia tuottaessaan.\n"
         "Hallitsee kuinka paljon aiempaa kontekstia käytetään.",
 
-    "module_llama_cpp_chat_formats_label": "Keskustelumuodot",
-    "module_llama_cpp_chat_formats_combo_placeholder_text": "Valitse keskustelumuoto",
-    "module_llama_cpp_chat_formats_combo_accessible_description":
+    "module_llama_cpp_config_chat_formats_label": "Keskustelumuodot",
+    "module_llama_cpp_config_chat_formats_combo_placeholder_text": "Valitse keskustelumuoto",
+    "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "Pudotusvalikko mallikeskustelujen muodon valitsemiseksi.",
 
     "module_llama_cpp_config_system_prompt_label": "Järjestelmäkehotus",

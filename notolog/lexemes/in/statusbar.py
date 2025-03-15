@@ -2,6 +2,10 @@
 lexemes = {
     "statusbar_path_home_label": "नोट्स होम फ़ोल्डर",
     "statusbar_path_home_accessible_name": "नोट्स होम फ़ोल्डर पर जाएं",
+    "statusbar_previous_path_label": "इतिहास में पिछली फ़ाइल",
+    "statusbar_previous_path_accessible_name": "इतिहास में पिछली फ़ाइल पर जाएं",
+    "statusbar_next_path_label": "इतिहास में अगली फ़ाइल",
+    "statusbar_next_path_accessible_name": "इतिहास में अगली फ़ाइल पर जाएं",
     "statusbar_litter_bin_label": "कचरा डिब्बा",
     "statusbar_litter_bin_accessible_name": "कचरा डिब्बे की सामग्री दिखाएं",
 

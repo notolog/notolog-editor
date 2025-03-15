@@ -75,7 +75,7 @@ class ModuleCore(BaseAiCore):
 
         self.logger = logging.getLogger('module_ondevice_llm')
 
-        # Load lexemes for selected language and scope
+        # Load lexemes for the selected language and scope
         self.lexemes = Lexemes(self.settings.app_language,
                                default_scope='settings_dialog',
                                lexemes_dir=self.get_lexemes_path())
@@ -305,7 +305,7 @@ class ModuleCore(BaseAiCore):
              "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # Input field for the model path
             {"type": DirPathLineEdit, "kwargs": {"settings": self.settings},
-             "name": "settings_dialog_ondevice_llm_config_path:module_ondevice_llm_model_path",
+             "name": "settings_dialog_module_ondevice_llm_config_path_input:module_ondevice_llm_model_path",
              "read_only": False, "max_length": 2048,
              "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
              "placeholder_text": self.lexemes.get('module_ondevice_llm_config_path_input_placeholder_text'),
@@ -328,7 +328,7 @@ class ModuleCore(BaseAiCore):
              "props": {'setFocusPolicy': Qt.FocusPolicy.StrongFocus, 'setTickPosition': QSlider.TickPosition.TicksAbove,
                        'setTickInterval': 5, 'setSingleStep': 5, 'setMinimum': 0, 'setMaximum': 100},
              "name": "settings_dialog_module_ondevice_llm_config_response_temperature:"
-                     "module_ondevice_llm_response_temperature",  # Lexeme key : Object name
+                     "module_ondevice_llm_response_temperature",  # Lexeme key : Setting name
              "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj),
              "on_value_change": self.temperature_change_handler,
              "accessible_description":
@@ -390,8 +390,9 @@ class ModuleCore(BaseAiCore):
     def settings_update_handler(self, data) -> None:
         """
         Perform actions upon settings change.
-        Data comes in a view of a dictionary, where is the key is the setting name, and the value is the actual value.
-        Can be resource greedy.
+
+        Data is provided as a dictionary, where the key represents the setting name, and the value is its corresponding value.
+        Note: This operation updates UI elements and internal properties, which may be resource-intensive.
 
         Args:
             data dict: say {"module_ondevice_llm_model_path": "..."}
@@ -400,7 +401,7 @@ class ModuleCore(BaseAiCore):
             None
         """
 
-        AppConfig().logger.debug('Settings update handler is in use "%s"' % data)
+        AppConfig().logger.debug(f'Settings update handler is processing: {data}')
 
         options = [
             'module_ondevice_llm_model_path',

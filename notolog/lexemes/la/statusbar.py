@@ -2,6 +2,10 @@
 lexemes = {
     "statusbar_path_home_label": "Domus fasciculus notarum",
     "statusbar_path_home_accessible_name": "Naviga ad domum fasciculi notarum",
+    "statusbar_previous_path_label": "Fasciculus prior in historia",
+    "statusbar_previous_path_accessible_name": "I ad fasciculum priorem in historia",
+    "statusbar_next_path_label": "Fasciculus proximus in historia",
+    "statusbar_next_path_accessible_name": "I ad fasciculum proximum in historia",
     "statusbar_litter_bin_label": "Fiscina",
     "statusbar_litter_bin_accessible_name": "Ostendere contentum fiscinae",
 

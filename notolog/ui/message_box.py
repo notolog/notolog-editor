@@ -48,7 +48,7 @@ class MessageBox(QMessageBox):
 
         self.logger = logging.getLogger('message_box')
 
-        # Load lexemes for selected language and scope
+        # Load lexemes for the selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='common')
 
         self.title = title if title else self.lexemes.get('dialog_message_box_title')

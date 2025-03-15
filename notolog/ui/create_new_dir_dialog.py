@@ -52,7 +52,7 @@ class CreateNewDirDialog(QDialog):
 
         self.logger = logging.getLogger('create_new_dir_dialog')
 
-        # Load lexemes for selected language and scope
+        # Load lexemes for the selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='common')
 
         self.theme_helper = ThemeHelper()

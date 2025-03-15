@@ -2,6 +2,10 @@
 lexemes = {
     "statusbar_path_home_label": "Muistiinpanojen kotikansio",
     "statusbar_path_home_accessible_name": "Siirry muistiinpanojen kotikansioon",
+    "statusbar_previous_path_label": "Edellinen tiedosto historiassa",
+    "statusbar_previous_path_accessible_name": "Siirry edelliseen tiedostoon historiassa",
+    "statusbar_next_path_label": "Seuraava tiedosto historiassa",
+    "statusbar_next_path_accessible_name": "Siirry seuraavaan tiedostoon historiassa",
     "statusbar_litter_bin_label": "Roskakori",
     "statusbar_litter_bin_accessible_name": "Näytä roskakorin sisältö",
 

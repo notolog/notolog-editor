@@ -31,6 +31,8 @@ lexemes = {
     "general_statusbar_show_global_cursor_position_checkbox": "ग्लोबल कर्सर स्थिति दिखाएं",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
         "स्थिति पट्टी में ग्लोबल कर्सर स्थिति दिखाएं",
+    "general_statusbar_show_navigation_arrows_checkbox": "नेविगेशन तीर दिखाएं",
+    "general_statusbar_show_navigation_arrows_checkbox_accessible_description": "स्टेटस बार में नेविगेशन तीर दिखाएं",
 
     "editor_config_label": "संपादक कॉन्फ़िगरेशन",
     "editor_config_show_line_numbers_checkbox": "लाइन संख्याएँ दिखाएं",

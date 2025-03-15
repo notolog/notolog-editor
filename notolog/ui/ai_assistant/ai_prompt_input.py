@@ -40,7 +40,7 @@ class AIPromptInput(QTextEdit):
 
         self.logger = logging.getLogger('ai_prompt_input')
 
-        # Load lexemes for selected language and scope
+        # Load lexemes for the selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='ai_assistant')
 
         # Callback function to handle send request

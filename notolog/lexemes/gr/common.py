@@ -3,7 +3,8 @@ lexemes = {
     "app_title": "Επεξεργαστής Notolog",
     "app_title_with_sub": "{app_title} - {sub_title}",
 
-    "tree_filter_accessible_desc": "Πεδίο φίλτρου αρχείου",
+    "tree_filter_input_placeholder_text": "Γρήγορο φίλτρο",
+    "tree_filter_input_accessible_desc": "Φιλτράρισμα αρχείων και καταλόγων ανά όνομα",
 
     "menu_action_copy_file_path": "Αντιγραφή διαδρομής αρχείου",
     "menu_action_rename": "Μετονομασία",

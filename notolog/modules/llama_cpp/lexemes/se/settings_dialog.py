@@ -16,9 +16,9 @@ lexemes = {
         "Anger antalet tokens som modellen överväger för att generera svar.\n"
         "Kontrollerar hur mycket tidigare kontext som används.",
 
-    "module_llama_cpp_chat_formats_label": "Chatformat",
-    "module_llama_cpp_chat_formats_combo_placeholder_text": "Välj ett chattformat",
-    "module_llama_cpp_chat_formats_combo_accessible_description":
+    "module_llama_cpp_config_chat_formats_label": "Chatformat",
+    "module_llama_cpp_config_chat_formats_combo_placeholder_text": "Välj ett chattformat",
+    "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "Dropdown-menyn för att välja formatet som används för modellsamtal.",
 
     "module_llama_cpp_config_system_prompt_label": "Systemprompt",

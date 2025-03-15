@@ -3,7 +3,8 @@ lexemes = {
     "app_title": "Notolog Editor",
     "app_title_with_sub": "{app_title} - {sub_title}",
 
-    "tree_filter_accessible_desc": "Bestandsfilterveld",
+    "tree_filter_input_placeholder_text": "Snelfilter",
+    "tree_filter_input_accessible_desc": "Bestanden en mappen filteren op naam",
 
     "menu_action_copy_file_path": "Kopieer bestandspad",
     "menu_action_rename": "Hernoemen",

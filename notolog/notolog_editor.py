@@ -41,8 +41,10 @@ from .view_processor import ViewProcessor
 from .view_decorator import ViewDecorator
 from .image_downloader import ImageDownloader
 from .async_highlighter import AsyncHighlighter
+from .file_history_manager import FileHistoryManager
 
 # UI
+from .ui.file_tree import FileTree
 from .ui.file_system_model import FileSystemModel
 from .ui.sort_filter_proxy_model import SortFilterProxyModel
 from .ui.toolbar import ToolBar
@@ -87,9 +89,7 @@ from PySide6.QtCore import QRegularExpression, QItemSelectionModel, QFileSystemW
 from PySide6.QtGui import QGuiApplication, QIcon, QAction, QPalette, QShortcut, QFont, QKeySequence
 from PySide6.QtGui import QTextDocument, QTextCursor, QTextBlock, QDesktopServices, QPixmap, QPixmapCache
 from PySide6.QtWidgets import QWidget, QMainWindow, QVBoxLayout, QSplitter, QListView, QTextBrowser
-from PySide6.QtWidgets import QPlainTextEdit, QSizePolicy
-from PySide6.QtWidgets import QLineEdit, QDialog, QStyle
-from PySide6.QtWidgets import QAbstractItemView, QFileSystemModel, QFileDialog
+from PySide6.QtWidgets import QPlainTextEdit, QSizePolicy, QDialog, QStyle, QFileSystemModel, QFileDialog
 
 from qasync import asyncClose
 import asyncio
@@ -105,6 +105,7 @@ from .etree_extension import ElementTreeExtension
 import emoji
 
 import os
+import time
 from typing import TYPE_CHECKING, Union, Optional, Callable, List, Dict, Any
 
 import logging
@@ -171,12 +172,8 @@ class NotologEditor(QMainWindow):
         self.settings = Settings(parent=self)
         self.settings.value_changed.connect(
             lambda v: self.settings_update_handler(v))
-        """
-        Set theme:
-        self.settings.theme = 'bordo'
-        """
 
-        # Load lexemes for selected language and scope
+        # Load lexemes for the selected language and scope
         self.lexemes = Lexemes(self.settings.app_language)
 
         self.screen = None  # type: Union[QScreen, None]
@@ -266,11 +263,9 @@ class NotologEditor(QMainWindow):
         # Resource Downloader
         self.resource_downloader = None  # type: Union[ImageDownloader, None]
 
-        # File tree and variable
-        self.tree_container = None  # type: Union[QWidget, None]
+        # File tree related objects
         self.file_model = None  # type: Union[FileSystemModel, None]
         self.tree_view = None  # type: Union[QListView, None]
-        self.tree_filter = None  # type: Union[QLineEdit, None]
         self.tree_proxy_model = None  # type: Union[SortFilterProxyModel, None]
         self.file_watcher = None  # type: Union[QFileSystemWatcher, None]
         self.tree_active_dir = None  # type: Union[str, None]
@@ -285,6 +280,9 @@ class NotologEditor(QMainWindow):
 
         # Statusbar
         self.statusbar = None  # type: Union[StatusBar, QStatusBar, None]
+
+        # File navigation history manager instance
+        self.history_manager = None  # type: Union[FileHistoryManager, None]
 
         # Current document's variables
         self.col_num = 0  # Column where cursor located at
@@ -360,120 +358,127 @@ class NotologEditor(QMainWindow):
 
     def settings_update_handler(self, data: dict) -> None:
         """
-        Perform actions upon settings change.
-        Data comes in a view of a dictionary, where is the key is the setting name, and the value is the actual value.
-        Can be resource greedy.
+        Handle application settings updates.
 
-        @param data: dict, say {"show_line_numbers": True}
+        Data is provided as a dictionary, where the key represents the setting name, and the value is its corresponding value.
+        Note: This operation updates UI elements and internal properties, which may be resource-intensive.
+
+        @param data: dict, e.g., {"show_line_numbers": True}
         @return: None
         """
 
-        self.logger.debug('Settings update handler is in use "%s"' % data)
+        self.logger.debug(f'Settings update handler is processing: {data}')
 
         if 'show_line_numbers' in data and hasattr(self, 'line_numbers'):
-            # Show / hide line numbers area
+            # Show or hide the line numbers area
             self.line_numbers.update_numbers()
 
         if 'app_font_size' in data and hasattr(self, 'theme_helper'):
-            # Set up global font params
+            # Set up global font settings
             self.init_font()
-            # View document
+
+            # Retrieve and update the document view font
             view_doc = self.get_view_doc()  # type: QTextDocument
-            # Apply font from the main window to the widget
             view_doc.setDefaultFont(self.font())
-            """
-            # Or via view widget, also works
-            view_widget = self.get_view_widget()  # type: Union[ViewWidget, QTextBrowser]
-            view_widget.document().setDefaultFont(self.font())
-            """
-            # Edit widget
+
+            # Alternatively, update the font via the view widget
+            # view_widget = self.get_view_widget()  # type: Union[ViewWidget, QTextBrowser]
+            # view_widget.document().setDefaultFont(self.font())
+
+            # Update the font for the editor widget
             edit_widget = self.get_edit_widget()  # type: Union[EditWidget, QPlainTextEdit]
             edit_widget.document().setDefaultFont(self.font())
-            # Apply font from the main window to the widget
-            self.tree_view.setFont(self.font())
-            # Apply font from the main window to the widget
-            self.tree_filter.setFont(self.font())
-            # Re-draw main menu
+
+            # Refresh UI elements that depend on the font size
             self.draw_menu()
-            # The statusbar will be updated within its own settings update handler
-            # self.create_status_toolbar()
-            # Refresh all dependent UI elements that have been initialized
             self.estate.refresh()
-            # Update the line numbers widget
             self.line_numbers.setFont(self.font())
-            # Get app's global font size
+
+            # Apply updated font size to syntax highlighting
             self.md_highlighter.font_size = AppConfig().get_font_size()
-            # Re-highlight syntax if Mode.EDIT
+
+            # If in edit mode, refresh syntax highlighting
             if self.get_mode() == Mode.EDIT:
-                # Resource greedy syntax re-highlight
-                self.md_highlighter.rehighlight()
-                # Update the line numbers widget width
+                self.md_highlighter.rehighlight()  # This may be resource-intensive
                 self.line_numbers.update_numbers()
 
         if 'app_language' in data and hasattr(self, 'lexemes'):
-            # Reload lexemes with a new app language
+            # Reload lexemes with the updated application language
             self.lexemes = Lexemes(self.settings.app_language)
-            # Trigger editor state update
+
+            # Refresh the editor state and update the window title
             self.estate.refresh()
-            # Update window title
-            self.set_app_title()  # Generic title without sub part
-            # Update toolbar
+            self.set_app_title()
+
+            # Refresh toolbar icons and colors
             self.create_icons_toolbar(refresh=True)
+
+            # Update search bar placeholder text if applicable
             if hasattr(self, 'toolbar') and hasattr(self.toolbar, 'search_form'):
-                # Search field placeholder to empty
                 self.toolbar.search_form.set_placeholder_text(
-                    self.lexemes.get('search_input_placeholder_text', scope='toolbar'))
-            # Re-draw main menu
+                    self.lexemes.get('search_input_placeholder_text', scope='toolbar')
+                )
+
+            # Refresh the main menu
             self.draw_menu()
 
         if 'app_theme' in data and hasattr(self, 'theme_helper'):
+            # Reload the theme settings
             self.theme_helper = ThemeHelper()
-            # Update app's palette styles
+
+            # Apply the updated theme palette
             self.init_palette()
-            # Tree container
-            tree_container = self.get_tree_container()  # type: Union[QWidget]
-            tree_container.setStyleSheet(self.theme_helper.get_css('tree_view'))  # Re-apply styles to the elements
+
+            # Clear any highlights in the file tree
             self.file_model.clear_highlights()
-            # self.toolbar.setStyleSheet(self.theme_helper.get_css('toolbar'))
-            self.create_icons_toolbar(refresh=True)  # Custom method to set up icon colors, etc.
+
+            # Refresh toolbar icons and colors
+            self.create_icons_toolbar(refresh=True)
+
+            # Apply the new theme to the status bar
             self.statusbar.setStyleSheet(self.theme_helper.get_css('statusbar'))
-            # View document
+
+            # Retrieve and apply theme styles to the document view
             view_doc = self.get_view_doc()  # type: QTextDocument
-            view_doc.setDefaultStyleSheet(self.theme_helper.get_css('styles'))  # Mind the setDefaultStyleSheet()
-            # Edit widget
+            view_doc.setDefaultStyleSheet(self.theme_helper.get_css('styles'))
+
+            # Apply styles to the editor widget
             edit_widget = self.get_edit_widget()  # type: Union[EditWidget, QPlainTextEdit]
             edit_widget.setStyleSheet(self.theme_helper.get_css('editor'))
-            # View widget
+
+            # Apply styles to the viewer widget
             view_widget = self.get_view_widget()  # type: Union[ViewWidget, QTextBrowser]
             view_widget.setStyleSheet(self.theme_helper.get_css('viewer'))
-            # Update code highlighter to reload color scheme
+
+            # Refresh syntax highlighting with the new theme
             self.md_highlighter = MdHighlighter(document=edit_widget.document())
-            # Update view highlighter to reload color scheme
             self.view_highlighter = ViewHighlighter(document=view_doc)
-            # To allow view document reload highlighter styles
+
+            # Reload active file to apply the updated styles
             self.reload_active_file()
 
         if 'show_main_menu' in data:
-            # Re-draw main menu
+            # Refresh the main menu
             self.draw_menu()
 
         if (any(item in ['viewer_highlight_todos', 'viewer_process_emojis']  # Check item
                 # Take item from the data
                 for item in data)
                 and self.get_mode() == Mode.VIEW):
-            # To allow view document reload highlighter styles and other processing
             self.reload_active_file()
 
         if 'show_global_cursor_position' in data:
-            # To allow to reload the statusbar
+            # Refresh the status bar to reflect cursor position updates
             self.estate.refresh()
 
         if 'viewer_open_link_confirmation' in data:
-            # View widget
+            # Retrieve the view widget
             view_widget = self.get_view_widget()  # type: Union[ViewWidget, QTextBrowser]
-            # Disconnect previous lambda
+
+            # Disconnect any previous event handlers
             view_widget.anchorClicked.disconnect()
-            # Set up connection again
+
+            # Reconnect the event handler for handling link clicks
             view_widget.anchorClicked.connect(self.open_link_dialog_proxy())
 
     def editor_state_update_handler(self, data: dict) -> None:  # noqa: C901 - consider simplifying this method
@@ -665,6 +670,9 @@ class NotologEditor(QMainWindow):
         # Main status toolbar
         self.create_status_toolbar()
 
+        # File navigation history manager instance
+        self.history_manager = FileHistoryManager()
+
         # Create a splitter and set its orientation to horizontal (widgets from left to right)
         splitter = QSplitter(self)
         splitter.setOrientation(Qt.Orientation.Horizontal)
@@ -762,10 +770,6 @@ class NotologEditor(QMainWindow):
         editor_container = self.get_editor_container()
         editor_container.resize(self.weight_to_px_uno * self.AREA_WEIGHT_EDIT, ui_height)
 
-        # Tree container
-        tree_container = self.get_tree_container()
-        tree_container.resize(self.weight_to_px_uno * self.AREA_WEIGHT_TREE, ui_height)
-
         # Keep the tree's minimum width
         self.tree_view.setMinimumWidth(self.weight_to_px_uno * self.AREA_WEIGHT_TREE)
         """
@@ -785,8 +789,11 @@ class NotologEditor(QMainWindow):
 
         self.logger.debug(f"Updated splitter widgets proportions: {splitter.sizes()}")
 
+        # Set and signal a global update before displaying any blocking dialog
+        self.settings.ui_init_ts = time.time_ns()
+
         if not self.settings.default_path and not self.is_quiet_mode():
-            # Select default path
+            # Show the default path selection dialog
             self.select_default_path_dialog()
 
     def init_palette(self):
@@ -864,108 +871,61 @@ class NotologEditor(QMainWindow):
 
         return self.editor_container
 
-    def get_tree_container(self) -> Union[QWidget, None]:
-        if hasattr(self, 'tree_container') and isinstance(self.tree_container, QWidget):
-            return self.tree_container
-
-        self.logger.warning('Trying to access tree container widget that was not created')
-
-        return None
-
-    def create_navigation_panel(self) -> QWidget:
+    def create_navigation_panel(self) -> Union[FileTree, QWidget]:
         """
-        Main navigation tree.
+        Creates the main file system navigation panel with a tree structure.
+
+        Returns:
+            FileTree: The main container that holds the navigation tree.
         """
 
+        # Initialize file system model for tree navigation
         self.file_model = FileSystemModel()
-        self.file_model.setRootPath(QDir.currentPath())  # Or it can be just a '.'
-        """
-        Also: QDir.AllEntries, QDir.Filter.NoDotAndDotDot
-        """
-        self.file_model.setFilter(QDir.Filter.NoDot | QDir.Filter.Dirs | QDir.Filter.Files)
-        """
-        Show only these files in the list (implemented via proxy sort model)
-        self.file_model.setNameFilters(['*.md', '*.txt', '*.html', '*.enc'])
-        """
-        # Do not show greyed filter results
-        self.file_model.setNameFilterDisables(False)
+        self.file_model.setRootPath(QDir.currentPath())  # Base directory for file system model
+        self.file_model.setFilter(QDir.Filter.NoDot | QDir.Filter.Dirs | QDir.Filter.Files)  # Hide '.' but keep '..'
+        self.file_model.setNameFilterDisables(False)  # Ensure filtered results are shown properly
 
-        # Either QTreeView(self) or QListView(self) are working fine
-        self.tree_view = QListView(self)
-        # Apply font from the main window to the widget
-        self.tree_view.setFont(self.font())
-        """
-        Use adjust_tree_current_root_index() to set up root index via proxy model instead of:
-        self.tree_view.setModel(self.file_model)
-        self.tree_view.setRootIndex(self.file_model.index(QDir.currentPath()))
+        # Apply file type filters to display only specific extensions in the list
+        # (Filtering is handled through the proxy sort model)
+        # self.file_model.setNameFilters(['*.md', '*.txt', '*.html', '*.enc'])
 
-        Other QTreeView methods that can be helpful here:
-        self.tree_view.setColumnWidth(0, self.weight_to_px_uno)
-        self.tree_view.setHeaderHidden(True)
-        """
-
-        """
-        Choose NoSelection to prevent item being selected upon mouse right-click.
-        The selection will appear later within self.set_current_path()
-
-        More info about the enum: https://doc.qt.io/qt-6/qabstractitemview.html#SelectionMode-enum
-        """
-        self.tree_view.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
-
-        self.tree_view.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self.tree_view.customContextMenuRequested.connect(
-            lambda pos: self.show_tree_context_menu(self.tree_view, pos)
-        )
-
-        # Connect the clicked event to handle file selection
-        self.tree_view.clicked.connect(self.action_nav_select_file)
-
-        self.tree_filter = QLineEdit(self, textChanged=self.on_tree_filter_text_changed)
-        # Apply font from the main window to the widget
-        self.tree_filter.setFont(self.font())
-        self.tree_filter.setReadOnly(False)
-        self.tree_filter.setMaxLength(256)
-        self.tree_filter.setMinimumWidth(self.weight_to_px_uno)
-        self.tree_filter.setAccessibleDescription(self.lexemes.get('tree_filter_accessible_desc'))
-
+        # Sorting & filtering proxy model
         self.tree_proxy_model = SortFilterProxyModel(
             extensions=self.supported_file_extensions,
-            sourceModel=self.file_model,  # Or tree_proxy_model.setSourceModel(self.file_model)
+            sourceModel=self.file_model,  # self.tree_proxy_model.setSourceModel(self.file_model)
+            # Enables deep filtering, displaying folders containing matching files
             recursiveFilteringEnabled=True,  # It will also display '/' if any item is found in the path from the root
-            # More info about the enum https://doc.qt.io/qt-6/qfilesystemmodel.html#Roles-enum
-            filterRole=QFileSystemModel.Roles.FileNameRole | QFileSystemModel.Roles.FilePathRole,
-            # To filter file names without case sensitivity
+            # More info about the filterRole and the enum https://doc.qt.io/qt-6/qfilesystemmodel.html#Roles-enum
+            filterRole=(
+                    QFileSystemModel.Roles.FileNameRole |
+                    QFileSystemModel.Roles.FilePathRole  # Filter by name and path
+            ),
             # More info about the property https://doc.qt.io/qt-6/qsortfilterproxymodel.html#filterCaseSensitivity-prop
-            filterCaseSensitivity=Qt.CaseSensitivity.CaseInsensitive)
-        self.tree_proxy_model.sort(0, order=Qt.SortOrder.AscendingOrder)
-        self.tree_view.setModel(self.tree_proxy_model)
+            filterCaseSensitivity=Qt.CaseSensitivity.CaseInsensitive  # Case-insensitive filtering
+        )
+        self.tree_proxy_model.sort(0, Qt.SortOrder.AscendingOrder)  # Sort files in ascending order
+
+        # Main file tree container
+        file_tree = FileTree(
+            parent=self,
+            proxy_model=self.tree_proxy_model,
+            minimum_width=self.weight_to_px_uno,
+            clicked_callback=self.action_nav_select_file,
+            text_changed_callback=self.on_tree_filter_text_changed,
+            context_menu_callback=lambda pos: self.show_tree_context_menu(self.tree_view, pos)
+        )
+
+        # Retrieve and update tree's list view
+        self.tree_view = file_tree.get_list_view()
         self.adjust_tree_current_root_index()
 
+        # Set up file system watcher for live updates
         self.file_watcher = QFileSystemWatcher()
-        self.file_watcher.addPath(QDir.currentPath())  # Watch for changes in the current directory
-
+        watch_path = QDir.currentPath()  # Consider using self.get_tree_active_dir() for dynamic tracking
+        self.file_watcher.addPath(watch_path)  # Watch for changes in the selected directory
         self.file_watcher.directoryChanged.connect(self.on_dir_changed)
 
-        """
-        More info about the QVBoxLayout: https://doc.qt.io/qt-6/qvboxlayout.html
-        Inherits methods from QBoxLayout: https://doc.qt.io/qt-6/qboxlayout.html
-        """
-        tree_layout = QVBoxLayout()
-        tree_layout.setContentsMargins(0, 0, 0, 0)
-        tree_layout.addWidget(self.tree_filter)
-        tree_layout.addWidget(self.tree_view)
-
-        tree_container = QWidget(self)
-        tree_container.setLayout(tree_layout)
-        """
-        More info about stylesheets: https://doc.qt.io/qt-6/stylesheet-reference.html
-        """
-        tree_container.setStyleSheet(self.theme_helper.get_css('tree_view'))
-
-        # Save created object to the internal variable
-        self.tree_container = tree_container
-
-        return self.tree_container
+        return file_tree  # Return the main navigation panel
 
     def on_dir_changed(self, path) -> None:
         """
@@ -1000,23 +960,30 @@ class NotologEditor(QMainWindow):
 
     def adjust_tree_current_root_index(self) -> None:
         """
-        Note: Adjustment is based on the file path, not the active tree directory.
+        Adjusts the file tree's root index based on the current file path.
+
+        Note: The adjustment is based on the file path, not the active tree directory.
         """
-        # dir_path = QDir.homePath()
-        # dir_path = QDir.currentPath()
+
+        if self.tree_view is None:
+            self.logger.debug("File tree view is not initialized.")
+            return
+
         dir_path = os.path.dirname(str(self.get_current_file_path()))
         root_index = self.file_model.index(dir_path)
-        """
-        More info about this mapping https://doc.qt.io/qt-6/qsortfilterproxymodel.html#mapFromSource
-        """
+
+        # Map the source model index to the proxy model index.
+        # More details: https://doc.qt.io/qt-6/qsortfilterproxymodel.html#mapFromSource
         proxy_index = self.tree_proxy_model.mapFromSource(root_index)
         self.tree_view.setRootIndex(proxy_index)
 
-        # View document
+        # Retrieve the view document
         view_doc = self.get_view_doc()  # type: QTextDocument
-        # Set up document's base resource path
+
+        # Set the document's base resource path
         """
-        If a resource file not found QTextBrowser will try to search either this script or package root path (IDE run).
+        If a resource file is not found, QTextBrowser will attempt to locate it
+        either in the script's directory or the package root path (when running in an IDE).
         """
         view_doc.setBaseUrl(QUrl.fromLocalFile(dir_path + os.sep))
 
@@ -1580,7 +1547,7 @@ class NotologEditor(QMainWindow):
         if is_file:
             # Load local file
             if execute:
-                self.load_file(url.toString())
+                self.safely_open_file(url.toString())
             return True
 
         return None
@@ -2341,7 +2308,13 @@ class NotologEditor(QMainWindow):
             # https://doc.qt.io/qt-6/qfiledialog.html#Option-enum
             options=QFileDialog.Option.DontUseCustomDirectoryIcons
         )
+        # Open the file safely
+        self.safely_open_file(file_path)
 
+    def safely_open_file(self, file_path):
+        """
+        Open the file safely, handling potential errors.
+        """
         if file_helper.is_file_openable(file_path):
             # Save any unsaved changes
             self.save_active_file(clear_after=True)
@@ -3162,6 +3135,9 @@ class NotologEditor(QMainWindow):
             prev_opened_color = self.theme_helper.get_color('main_tree_file_highlighted_prev_opened', True)
             self.file_model.highlight(self.file_model.index(current_file_path), os.path.basename(current_file_path),
                                       color=prev_opened_color)
+
+        # Add file path to the navigation history
+        self.history_manager.add_file(file_path)
 
         return True
 

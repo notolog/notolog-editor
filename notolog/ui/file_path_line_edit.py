@@ -44,7 +44,7 @@ class FilePathLineEdit(QLineEdit):
 
         self.logger = logging.getLogger('file_path_line_edit')
 
-        # Load lexemes for selected language and scope
+        # Load lexemes for the selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='common')
 
         self.theme_helper = ThemeHelper()

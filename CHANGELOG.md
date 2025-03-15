@@ -1,6 +1,26 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.1.5] - 2025-03-15
+
+### Added
+- Added file navigation history, allowing navigation between previously opened files. Toggle the visibility of navigation arrows in the status bar via the settings (enabled by default).
+- Added the 'ui_init_ts' setting property, which is set upon UI initialization completion to allow catching this event via the settings change signal. This can be useful for scheduling actions upon final UI initialization.
+
+### Changed
+- Refined the model file presence check in the 'On Device LLM' module. Now checks files by the '.onnx' extension.
+- Slightly adjusted the color of the quick filter text in the file tree for the Strawberry theme.
+- Refactored the file tree widget by moving its container to a dedicated file.
+
+### Updated
+- Updated quick filter lexemes in the file tree.
+- Adjusted search form button icons to maintain DPI scaling during resizing.
+
+### Fixed
+- Fixed missing font update in the file tree after a settings change.
+- Fixed status bar lexeme updates after a system language change to ensure correct usage in future updates.
+- Fixed interactive placeholder and accessible description text updates when changing the language in the settings dialog.
+
 ## [1.1.4] - 2025-02-02
 
 ### Updated

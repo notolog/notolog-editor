@@ -31,6 +31,6 @@ QListView::item:selected:!focus {
 }
 /* Navigation tree filter field */
 QLineEdit {
-    color: #aa3333;
+    color: #cc3355;
     background-color: #fff7f7;
 }

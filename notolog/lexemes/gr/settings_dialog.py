@@ -33,6 +33,9 @@ lexemes = {
     "general_statusbar_show_global_cursor_position_checkbox": "Εμφάνιση Παγκόσμιας Θέσης Δρομέα",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
         "Εμφάνιση της παγκόσμιας θέσης του δρομέα στη γραμμή κατάστασης",
+    "general_statusbar_show_navigation_arrows_checkbox": "Εμφάνιση βελών πλοήγησης",
+    "general_statusbar_show_navigation_arrows_checkbox_accessible_description":
+        "Εμφάνιση των βελών πλοήγησης στη γραμμή κατάστασης",
 
     "editor_config_label": "Ρυθμίσεις Επεξεργαστή",
     "editor_config_show_line_numbers_checkbox": "Εμφάνιση Αριθμών Γραμμών",

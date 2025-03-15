@@ -16,9 +16,9 @@ lexemes = {
         "Legt die Anzahl der Tokens fest, die das Modell für die Erzeugung von Antworten berücksichtigt.\n"
         "Steuert, wie viel vorheriger Kontext verwendet wird.",
 
-    "module_llama_cpp_chat_formats_label": "Chat-Formate",
-    "module_llama_cpp_chat_formats_combo_placeholder_text": "Chat-Format auswählen",
-    "module_llama_cpp_chat_formats_combo_accessible_description":
+    "module_llama_cpp_config_chat_formats_label": "Chat-Formate",
+    "module_llama_cpp_config_chat_formats_combo_placeholder_text": "Chat-Format auswählen",
+    "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "Dropdown-Menü zur Auswahl des Formats, das für Modellgespräche verwendet wird.",
 
     "module_llama_cpp_config_system_prompt_label": "Systemaufforderung",

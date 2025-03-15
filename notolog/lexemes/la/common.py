@@ -3,7 +3,8 @@ lexemes = {
     "app_title": "Editorium Notolog",
     "app_title_with_sub": "{app_title} - {sub_title}",
 
-    "tree_filter_accessible_desc": "Locus filtrationis fasciculorum",
+    "tree_filter_input_placeholder_text": "Filtrum celer",
+    "tree_filter_input_accessible_desc": "Filtra fasciculos et directorios per nomen",
 
     "menu_action_copy_file_path": "Via fasciculi exemplum",
     "menu_action_rename": "Nomen Mutare",

@@ -31,6 +31,8 @@ lexemes = {
     "general_statusbar_show_global_cursor_position_checkbox": "显示全局光标位置",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
         "在状态栏显示全局光标位置",
+    "general_statusbar_show_navigation_arrows_checkbox": "显示导航箭头",
+    "general_statusbar_show_navigation_arrows_checkbox_accessible_description": "在状态栏中显示导航箭头",
 
     "editor_config_label": "编辑器配置",
     "editor_config_show_line_numbers_checkbox": "显示行号",

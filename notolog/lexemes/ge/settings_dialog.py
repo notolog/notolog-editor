@@ -31,6 +31,8 @@ lexemes = {
     "general_statusbar_show_global_cursor_position_checkbox": "მსოფლიო კურსორის პოზიციის ჩვენება",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
         "აჩვენეთ კურსორის მსოფლიო პოზიცია სტატუსის ზოლში",
+    "general_statusbar_show_navigation_arrows_checkbox": "ნავიგაციის ისრების ჩვენება",
+    "general_statusbar_show_navigation_arrows_checkbox_accessible_description": "ნავიგაციის ისრების გამოჩენა სტატუსბარში",
 
     "editor_config_label": "რედაქტორის კონფიგურაცია",
     "editor_config_show_line_numbers_checkbox": "ხაზების ნომრების ჩვენება",

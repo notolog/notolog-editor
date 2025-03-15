@@ -80,7 +80,7 @@ class ModuleCore(BaseAiCore):
 
         self.logger = logging.getLogger('module_openai_api')
 
-        # Load lexemes for selected language and scope
+        # Load lexemes for the selected language and scope
         self.lexemes = Lexemes(self.settings.app_language,
                                default_scope='settings_dialog',
                                lexemes_dir=self.get_lexemes_path())
@@ -380,7 +380,7 @@ class ModuleCore(BaseAiCore):
              "text": self.lexemes.get('module_openai_api_url_label'),
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # OpenAI API url line input
-            {"type": QLineEdit, "name": "settings_dialog_module_openai_api_url:module_openai_api_url",
+            {"type": QLineEdit, "name": "settings_dialog_module_openai_api_url_input:module_openai_api_url",
              "read_only": False, "max_length": 2048,
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
              "placeholder_text": self.lexemes.get('module_openai_api_url_input_placeholder_text'),
@@ -394,7 +394,7 @@ class ModuleCore(BaseAiCore):
              "text": self.lexemes.get('module_openai_api_key_label'),
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # OpenAI API key line input
-            {"type": QLineEdit, "name": "settings_dialog_module_openai_api_key:module_openai_api_key",
+            {"type": QLineEdit, "name": "settings_dialog_module_openai_api_key_input:module_openai_api_key",
              "read_only": False, "max_length": 2048, "props": {"setEchoMode": QLineEdit.EchoMode.Password},
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
              "placeholder_text": self.lexemes.get('module_openai_api_key_input_placeholder_text'),
@@ -430,7 +430,7 @@ class ModuleCore(BaseAiCore):
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # Text editor field for the system prompt
             {"type": QPlainTextEdit,
-             "name": "settings_dialog_module_openai_api_base_system_prompt:"
+             "name": "settings_dialog_module_openai_api_base_system_prompt_edit:"
                      "module_openai_api_base_system_prompt",
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
              "placeholder_text": self.lexemes.get('module_openai_api_base_system_prompt_edit_placeholder_text'),
@@ -453,7 +453,7 @@ class ModuleCore(BaseAiCore):
              "props": {'setFocusPolicy': Qt.FocusPolicy.StrongFocus, 'setTickPosition': QSlider.TickPosition.TicksAbove,
                        'setTickInterval': 5, 'setSingleStep': 5, 'setMinimum': 0, 'setMaximum': 100},
              "name": "settings_dialog_module_openai_api_base_response_temperature:"
-                     "module_openai_api_base_response_temperature",  # Lexeme key : Object name
+                     "module_openai_api_base_response_temperature",  # Lexeme key : Setting name
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj),
              "on_value_change": self.temperature_change_handler,
              "accessible_description":
@@ -515,8 +515,9 @@ class ModuleCore(BaseAiCore):
     def settings_update_handler(self, data) -> None:
         """
         Perform actions upon settings change.
-        Data comes in a view of a dictionary, where is the key is the setting name, and the value is the actual value.
-        Can be resource greedy.
+
+        Data is provided as a dictionary, where the key represents the setting name, and the value is its corresponding value.
+        Note: This operation updates UI elements and internal properties, which may be resource-intensive.
 
         Args:
             data dict: say {"module_openai_api_model": "..."}
@@ -525,7 +526,7 @@ class ModuleCore(BaseAiCore):
             None
         """
 
-        AppConfig().logger.debug('Settings update handler is in use "%s"' % data)
+        AppConfig().logger.debug(f'Settings update handler is processing: {data}')
 
         options = [
             'module_openai_api_url',

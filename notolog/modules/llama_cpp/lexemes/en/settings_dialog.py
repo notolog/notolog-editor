@@ -15,9 +15,9 @@ lexemes = {
         "Sets the number of tokens the model considers for generating responses. "
         "Controls how much prior context is used.",
 
-    "module_llama_cpp_chat_formats_label": "Chat Formats",
-    "module_llama_cpp_chat_formats_combo_placeholder_text": "Select a chat format",
-    "module_llama_cpp_chat_formats_combo_accessible_description":
+    "module_llama_cpp_config_chat_formats_label": "Chat Formats",
+    "module_llama_cpp_config_chat_formats_combo_placeholder_text": "Select a chat format",
+    "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "Dropdown menu to select the format used for model conversations.",
 
     "module_llama_cpp_config_system_prompt_label": "System Prompt",

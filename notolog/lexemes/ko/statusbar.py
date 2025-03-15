@@ -2,6 +2,10 @@
 lexemes = {
     "statusbar_path_home_label": "노트 홈 폴더",
     "statusbar_path_home_accessible_name": "노트 홈 폴더로 이동",
+    "statusbar_previous_path_label": "기록에서 이전 파일",
+    "statusbar_previous_path_accessible_name": "기록에서 이전 파일로 이동",
+    "statusbar_next_path_label": "기록에서 다음 파일",
+    "statusbar_next_path_accessible_name": "기록에서 다음 파일로 이동",
     "statusbar_litter_bin_label": "휴지통",
     "statusbar_litter_bin_accessible_name": "휴지통 내용 보기",
 

@@ -2,6 +2,10 @@
 lexemes = {
     "statusbar_path_home_label": "ノートのホームフォルダー",
     "statusbar_path_home_accessible_name": "ノートのホームフォルダーに移動",
+    "statusbar_previous_path_label": "履歴内の前のファイル",
+    "statusbar_previous_path_accessible_name": "履歴内の前のファイルへ移動",
+    "statusbar_next_path_label": "履歴内の次のファイル",
+    "statusbar_next_path_accessible_name": "履歴内の次のファイルへ移動",
     "statusbar_litter_bin_label": "ごみ箱",
     "statusbar_litter_bin_accessible_name": "ごみ箱の内容を表示",
 

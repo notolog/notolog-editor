@@ -137,8 +137,10 @@ class Settings(QSettings):
         # Global settings
         self.create_property("show_main_menu", bool, True)
         self.create_property("show_deleted_files", bool, False)
+        self.create_property("show_navigation_arrows", bool, True)
         self.create_property("show_global_cursor_position", bool, False)
         self.create_property("default_path", str, "")
+        self.create_property("ui_init_ts", int, 0)
         # Editor state
         self.create_property("file_path", str, "")
         self.create_property("mode", int, 0)

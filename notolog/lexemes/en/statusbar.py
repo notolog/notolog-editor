@@ -2,6 +2,10 @@
 lexemes = {
     "statusbar_path_home_label": "Notes home folder",
     "statusbar_path_home_accessible_name": "Navigate to the notes home folder",
+    "statusbar_previous_path_label": "Previous file in history",
+    "statusbar_previous_path_accessible_name": "Go to the previous file in history",
+    "statusbar_next_path_label": "Next file in history",
+    "statusbar_next_path_accessible_name": "Go to the next file in history",
     "statusbar_litter_bin_label": "Litter bin",
     "statusbar_litter_bin_accessible_name": "Show litter bin content",
 

@@ -2,6 +2,10 @@
 lexemes = {
     "statusbar_path_home_label": "Φάκελος αρχικής σελίδας σημειώσεων",
     "statusbar_path_home_accessible_name": "Πλοηγηθείτε στον φάκελο αρχικής σελίδας σημειώσεων",
+    "statusbar_previous_path_label": "Προηγούμενο αρχείο στο ιστορικό",
+    "statusbar_previous_path_accessible_name": "Μετάβαση στο προηγούμενο αρχείο στο ιστορικό",
+    "statusbar_next_path_label": "Επόμενο αρχείο στο ιστορικό",
+    "statusbar_next_path_accessible_name": "Μετάβαση στο επόμενο αρχείο στο ιστορικό",
     "statusbar_litter_bin_label": "Κάδος απορριμμάτων",
     "statusbar_litter_bin_accessible_name": "Εμφάνιση περιεχομένου κάδου απορριμμάτων",
 

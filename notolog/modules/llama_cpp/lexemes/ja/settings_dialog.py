@@ -14,9 +14,9 @@ lexemes = {
     "module_llama_cpp_config_context_window_input_accessible_description":
         "モデルがレスポンスを生成するために考慮するトークンの数を設定します。どれだけの前のコンテキストが使用されるかを制御します。",
 
-    "module_llama_cpp_chat_formats_label": "チャット形式",
-    "module_llama_cpp_chat_formats_combo_placeholder_text": "チャット形式を選択してください",
-    "module_llama_cpp_chat_formats_combo_accessible_description":
+    "module_llama_cpp_config_chat_formats_label": "チャット形式",
+    "module_llama_cpp_config_chat_formats_combo_placeholder_text": "チャット形式を選択してください",
+    "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "モデル会話に使用される形式を選択するためのドロップダウンメニューです。",
 
     "module_llama_cpp_config_system_prompt_label": "システムプロンプト",

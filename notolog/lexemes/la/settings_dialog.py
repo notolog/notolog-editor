@@ -31,6 +31,9 @@ lexemes = {
     "general_statusbar_show_global_cursor_position_checkbox": "Ostende Globalem Cursoris Positionem",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
         "Ostende globalem cursoris positionem in status barra",
+    "general_statusbar_show_navigation_arrows_checkbox": "Monstra sagittas navigationis",
+    "general_statusbar_show_navigation_arrows_checkbox_accessible_description":
+        "Monstra sagittas navigationis in barra status",
 
     "editor_config_label": "Editoris Configuratio",
     "editor_config_show_line_numbers_checkbox": "Ostende Numeros Linearum",

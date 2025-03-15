@@ -31,6 +31,8 @@ lexemes = {
     "general_statusbar_show_global_cursor_position_checkbox": "グローバルカーソル位置を表示",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
         "ステータスバーにグローバルカーソル位置を表示する",
+    "general_statusbar_show_navigation_arrows_checkbox": "ナビゲーション矢印を表示",
+    "general_statusbar_show_navigation_arrows_checkbox_accessible_description": "ステータスバーにナビゲーション矢印を表示",
 
     "editor_config_label": "エディタ設定",
     "editor_config_show_line_numbers_checkbox": "行番号を表示",

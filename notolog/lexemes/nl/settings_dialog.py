@@ -31,6 +31,9 @@ lexemes = {
     "general_statusbar_show_global_cursor_position_checkbox": "Toon globale cursorpositie",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
         "Toon de globale cursorpositie in de statusbalk",
+    "general_statusbar_show_navigation_arrows_checkbox": "Navigatiepijlen weergeven",
+    "general_statusbar_show_navigation_arrows_checkbox_accessible_description":
+        "Navigatiepijlen weergeven in de statusbalk",
 
     "editor_config_label": "Editor Configuratie",
     "editor_config_show_line_numbers_checkbox": "Toon regelnummers",

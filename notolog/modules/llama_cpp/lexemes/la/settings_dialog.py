@@ -14,9 +14,9 @@ lexemes = {
     "module_llama_cpp_config_context_window_input_accessible_description":
         "Statuit numerum signorum quae model considerat ad responsa generanda. Moderatur quantum contextus prioris utitur.",
 
-    "module_llama_cpp_chat_formats_label": "Formae Colloquii",
-    "module_llama_cpp_chat_formats_combo_placeholder_text": "Elige formam colloquii",
-    "module_llama_cpp_chat_formats_combo_accessible_description":
+    "module_llama_cpp_config_chat_formats_label": "Formae Colloquii",
+    "module_llama_cpp_config_chat_formats_combo_placeholder_text": "Elige formam colloquii",
+    "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "Menu dropdown ad formam eligendam quae ad colloquia modeli utitur.",
 
     "module_llama_cpp_config_system_prompt_label": "Promptum Systematis",

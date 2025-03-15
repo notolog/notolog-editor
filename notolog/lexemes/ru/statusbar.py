@@ -2,6 +2,10 @@
 lexemes = {
     "statusbar_path_home_label": "Домашняя папка заметок",
     "statusbar_path_home_accessible_name": "Перейти в домашнюю папку заметок",
+    "statusbar_previous_path_label": "Предыдущий файл в истории",
+    "statusbar_previous_path_accessible_name": "Перейти к предыдущему файлу в истории",
+    "statusbar_next_path_label": "Следующий файл в истории",
+    "statusbar_next_path_accessible_name": "Перейти к следующему файлу в истории",
     "statusbar_litter_bin_label": "Корзина",
     "statusbar_litter_bin_accessible_name": "Показать содержимое корзины",
 

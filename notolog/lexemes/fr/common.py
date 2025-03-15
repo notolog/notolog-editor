@@ -3,7 +3,8 @@ lexemes = {
     "app_title": "Éditeur Notolog",
     "app_title_with_sub": "{app_title} - {sub_title}",
 
-    "tree_filter_accessible_desc": "Champ de filtre de fichier",
+    "tree_filter_input_placeholder_text": "Filtre rapide",
+    "tree_filter_input_accessible_desc": "Filtrer les fichiers et répertoires par nom",
 
     "menu_action_copy_file_path": "Copier le chemin du fichier",
     "menu_action_rename": "Renommer",

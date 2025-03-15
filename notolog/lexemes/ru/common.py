@@ -3,7 +3,8 @@ lexemes = {
     "app_title": "Редактор Notolog",
     "app_title_with_sub": "{app_title} - {sub_title}",
 
-    "tree_filter_accessible_desc": "Поле фильтра файлов",
+    "tree_filter_input_placeholder_text": "Быстрый фильтр",
+    "tree_filter_input_accessible_desc": "Фильтрация файлов и каталогов по имени",
 
     "menu_action_copy_file_path": "Копировать путь файла",
     "menu_action_rename": "Переименовать",

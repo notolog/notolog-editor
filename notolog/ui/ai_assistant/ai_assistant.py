@@ -131,7 +131,7 @@ class AIAssistant(QDialog):
 
         self.theme_helper = ThemeHelper()
 
-        # Load lexemes for selected language and scope
+        # Load lexemes for the selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='ai_assistant')
 
         # Dialog layout
@@ -678,8 +678,9 @@ class AIAssistant(QDialog):
     def settings_update_handler(self, data) -> None:
         """
         Perform actions upon settings change.
-        Data comes in a view of a dictionary, where is the key is the setting name, and the value is the actual value.
-        Can be resource greedy.
+
+        Data is provided as a dictionary, where the key represents the setting name, and the value is its corresponding value.
+        Note: This operation updates UI elements and internal properties, which may be resource-intensive.
 
         Args:
             data dict: say {"settings_key": "..."}
@@ -688,7 +689,7 @@ class AIAssistant(QDialog):
             None
         """
 
-        self.logger.debug('Settings update handler is in use "%s"' % data)
+        self.logger.debug(f'Settings update handler is processing: {data}')
 
         if 'module_ondevice_llm_model_path' in data or 'ai_config_inference_module' in data:
             try:

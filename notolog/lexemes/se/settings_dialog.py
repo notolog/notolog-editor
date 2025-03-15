@@ -31,6 +31,8 @@ lexemes = {
     "general_statusbar_show_global_cursor_position_checkbox": "Visa global muspekareposition",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
         "Visa den globala muspekarepositionen i statusfältet",
+    "general_statusbar_show_navigation_arrows_checkbox": "Visa navigeringspilar",
+    "general_statusbar_show_navigation_arrows_checkbox_accessible_description": "Visa navigeringspilar i statusfältet",
 
     "editor_config_label": "Redigerarkonfiguration",
     "editor_config_show_line_numbers_checkbox": "Visa radnummer",

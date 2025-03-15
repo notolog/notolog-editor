@@ -2,6 +2,10 @@
 lexemes = {
     "statusbar_path_home_label": "Notizen-Startordner",
     "statusbar_path_home_accessible_name": "Zum Startordner der Notizen navigieren",
+    "statusbar_previous_path_label": "Vorherige Datei in der Historie",
+    "statusbar_previous_path_accessible_name": "Zur vorherigen Datei in der Historie gehen",
+    "statusbar_next_path_label": "Nächste Datei in der Historie",
+    "statusbar_next_path_accessible_name": "Zur nächsten Datei in der Historie gehen",
     "statusbar_litter_bin_label": "Papierkorb",
     "statusbar_litter_bin_accessible_name": "Inhalt des Papierkorbs anzeigen",
 

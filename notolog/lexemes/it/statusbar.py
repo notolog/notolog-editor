@@ -2,6 +2,10 @@
 lexemes = {
     "statusbar_path_home_label": "Cartella principale delle note",
     "statusbar_path_home_accessible_name": "Vai alla cartella principale delle note",
+    "statusbar_previous_path_label": "File precedente nella cronologia",
+    "statusbar_previous_path_accessible_name": "Vai al file precedente nella cronologia",
+    "statusbar_next_path_label": "File successivo nella cronologia",
+    "statusbar_next_path_accessible_name": "Vai al file successivo nella cronologia",
     "statusbar_litter_bin_label": "Cestino",
     "statusbar_litter_bin_accessible_name": "Mostra il contenuto del cestino",
 

@@ -66,7 +66,7 @@ class SettingsDialog(QDialog):
 
         self.logger = logging.getLogger('settings_dialog')
 
-        # Load lexemes for selected language and scope
+        # Load lexemes for the selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='settings_dialog')
 
         self.setWindowTitle(self.lexemes.get('window_title'))
@@ -171,7 +171,7 @@ class SettingsDialog(QDialog):
             # Available languages dropdown list
             {"type": EnumComboBox,
              "args": [sorted(Languages, key=lambda member: (not member.is_default, str(member.value)))],
-             "name": "settings_dialog_general_app_language_combo:app_language",  # Lexeme key : Object name
+             "name": "settings_dialog_general_app_language_combo:app_language",  # Lexeme key : Setting name
              "callback": lambda obj: tab_general_layout.addWidget(obj),
              "placeholder_text": self.lexemes.get('general_app_language_combo_placeholder_text'),
              "accessible_description":
@@ -182,7 +182,7 @@ class SettingsDialog(QDialog):
              "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # Available themes dropdown list
             {"type": EnumComboBox, "args": [sorted(Themes, key=lambda member: (not member.is_default, str(member.value)))],
-             "name": "settings_dialog_general_app_theme_combo:app_theme",  # Lexeme key : Object name
+             "name": "settings_dialog_general_app_theme_combo:app_theme",  # Lexeme key : Setting name
              "callback": lambda obj: tab_general_layout.addWidget(obj),
              "placeholder_text": self.lexemes.get('general_app_theme_combo_placeholder_text'),
              "accessible_description":
@@ -196,7 +196,7 @@ class SettingsDialog(QDialog):
              "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # Input field for the default folder for notes
             {"type": DirPathLineEdit, "kwargs": {"settings": self.settings},
-             "name": "settings_dialog_general_app_default_path:default_path", "read_only": False,
+             "name": "settings_dialog_general_app_default_path_input:default_path", "read_only": False,
              "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
              "placeholder_text": self.lexemes.get('general_app_default_path_input_placeholder_text'),
              "accessible_description":
@@ -216,7 +216,7 @@ class SettingsDialog(QDialog):
              "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # Toggle to show or hide the main menu
             {"type": QCheckBox,
-             # Lexeme key : Object name
+             # Lexeme key : Setting name
              "name": "settings_dialog_general_app_main_menu_checkbox:show_main_menu",
              "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
              "text": self.lexemes.get('general_app_main_menu_checkbox'),
@@ -226,9 +226,18 @@ class SettingsDialog(QDialog):
             {"type": QLabel, "name": "settings_dialog_general_statusbar_label", "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('general_statusbar_label'),
              "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
+            # Toggle the visibility of navigation arrows in the status bar
+            {"type": QCheckBox,
+             # Lexeme key : Setting name
+             "name": "settings_dialog_general_statusbar_show_navigation_arrows_checkbox"
+                     ":show_navigation_arrows",
+             "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
+             "text": self.lexemes.get('general_statusbar_show_navigation_arrows_checkbox'),
+             "accessible_description":
+                 self.lexemes.get('general_statusbar_show_navigation_arrows_checkbox_accessible_description')},
             # Toggle to show or hide the global position in the status bar
             {"type": QCheckBox,
-             # Lexeme key : Object name
+             # Lexeme key : Setting name
              "name": "settings_dialog_general_statusbar_show_global_cursor_position_checkbox"
                      ":show_global_cursor_position",
              "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
@@ -248,7 +257,7 @@ class SettingsDialog(QDialog):
                        'setTickInterval': 5, 'setSingleStep': 1,
                        'setMinimum': AppConfig().get_font_min_size(),
                        'setMaximum': AppConfig().get_font_max_size()},
-             "name": "settings_dialog_general_app_font_size_slider:app_font_size",  # Lexeme key : Object name
+             "name": "settings_dialog_general_app_font_size_slider:app_font_size",  # Lexeme key : Setting name
              "callback": lambda obj: tab_general_layout.addWidget(obj),
              "accessible_description":
                  self.lexemes.get('general_app_font_size_slider_accessible_description')},
@@ -283,7 +292,7 @@ class SettingsDialog(QDialog):
              "callback": lambda obj: tab_editor_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # Either to show or not editor's line numbers
             {"type": QCheckBox,
-             # Lexeme key : Object name
+             # Lexeme key : Setting name
              "name": "settings_dialog_editor_config_show_line_numbers_checkbox:show_line_numbers",
              "callback": lambda obj: tab_editor_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
              "text": self.lexemes.get('editor_config_show_line_numbers_checkbox'),
@@ -320,7 +329,7 @@ class SettingsDialog(QDialog):
              "callback": lambda obj: tab_viewer_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # Either to show or not viewer's emojis
             {"type": QCheckBox,
-             # Lexeme key : Object name
+             # Lexeme key : Setting name
              "name": "settings_dialog_viewer_config_process_emojis_checkbox:viewer_process_emojis",
              "callback": lambda obj: tab_viewer_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
              "text": self.lexemes.get('viewer_config_process_emojis_checkbox'),
@@ -331,7 +340,7 @@ class SettingsDialog(QDialog):
              "callback": lambda obj: tab_viewer_config_layout.addWidget(obj)},
             # Either to show or not viewer's TODOs
             {"type": QCheckBox,
-             # Lexeme key : Object name
+             # Lexeme key : Setting name
              "name": "settings_dialog_viewer_config_highlight_todos_checkbox:viewer_highlight_todos",
              "callback": lambda obj: tab_viewer_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
              "text": self.lexemes.get('viewer_config_highlight_todos_checkbox'),
@@ -342,7 +351,7 @@ class SettingsDialog(QDialog):
              "callback": lambda obj: tab_viewer_config_layout.addWidget(obj)},
             # Either to show open link confirmation dialog or not
             {"type": QCheckBox,
-             # Lexeme key : Object name
+             # Lexeme key : Setting name
              "name": "settings_dialog_viewer_config_open_link_confirmation_checkbox:viewer_open_link_confirmation",
              "callback": lambda obj: tab_viewer_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
              "text": self.lexemes.get('viewer_config_open_link_confirmation_checkbox'),
@@ -353,7 +362,7 @@ class SettingsDialog(QDialog):
              "callback": lambda obj: tab_viewer_config_layout.addWidget(obj)},
             # Auto save downloaded resources on disk
             {"type": QCheckBox,
-             # Lexeme key : Object name
+             # Lexeme key : Setting name
              "name": "settings_dialog_viewer_config_save_resources_checkbox:viewer_save_resources",
              "callback": lambda obj: tab_viewer_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
              "text": self.lexemes.get('viewer_config_save_resources_checkbox'),
@@ -415,7 +424,7 @@ class SettingsDialog(QDialog):
              "callback": lambda obj: tab_ai_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # Auto save downloaded resources on disk
             {"type": QCheckBox,
-             # Lexeme key : Object name
+             # Lexeme key : Setting name
              "name": "settings_dialog_ai_config_multi_turn_dialogue_checkbox:ai_config_multi_turn_dialogue",
              "callback": lambda obj: tab_ai_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
              "text": self.lexemes.get('ai_config_multi_turn_dialogue_checkbox'),
@@ -426,7 +435,7 @@ class SettingsDialog(QDialog):
              "callback": lambda obj: tab_ai_config_layout.addWidget(obj)},
             # Auto save downloaded resources on disk
             {"type": QCheckBox,
-             # Lexeme key : Object name
+             # Lexeme key : Setting name
              "name": "settings_dialog_ai_config_convert_to_md_checkbox:ai_config_convert_to_md",
              "callback": lambda obj: tab_ai_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
              "text": self.lexemes.get('ai_config_convert_to_md_checkbox'),
@@ -750,6 +759,29 @@ class SettingsDialog(QDialog):
                             obj.setText(
                                 self.lexemes.get('general_app_font_size_label', size=self.settings.app_font_size))
 
+                # Create a regex pattern to match object names within the given scope
+                regex = QRegularExpression(f"{scope}_.*?")
+                # Search for editable fields (QLineEdit, QPlainTextEdit, including DirPathLineEdit and FilePathLineEdit)
+                # that match the regex pattern.
+                found_objects = self.findChildren(QLineEdit, regex)
+                found_objects += self.findChildren(QPlainTextEdit, regex)
+                for obj in found_objects:
+                    # Extract the object name and setting name from the object
+                    object_name, _setting_name = self.parse_object_name(obj.objectName())
+
+                    # Set placeholder text if the object supports it and a lexeme exists
+                    if hasattr(obj, 'setPlaceholderText') and callable(getattr(obj, 'setPlaceholderText')):
+                        placeholder_lexeme_key = f'{object_name}_placeholder_text'.replace(f'{scope}_', '')
+                        if placeholder_lexeme := self.lexemes.get(placeholder_lexeme_key):
+                            obj.setPlaceholderText(placeholder_lexeme)
+
+                    # Set accessible description if the object supports it and a lexeme exists
+                    if hasattr(obj, 'setAccessibleDescription') and callable(getattr(obj, 'setAccessibleDescription')):
+                        accessible_description_lexeme_key = (f'{object_name}_accessible_description'
+                                                             .replace(f'{scope}_', ''))
+                        if accessible_description_lexeme := self.lexemes.get(accessible_description_lexeme_key):
+                            obj.setAccessibleDescription(accessible_description_lexeme)
+
         if setting_name == 'app_theme' or sender_widget.objectName().endswith('app_theme'):
             # Apply the selected theme to the widget's stylesheet
             self.setStyleSheet(self.theme_helper.get_css('settings_dialog'))
@@ -783,7 +815,7 @@ class SettingsDialog(QDialog):
                 # Align with the dialog font size (mostly for QLabel)
                 if hasattr(obj, 'setFont'):
                     obj.setFont(self.font())
-                if hasattr(obj, 'toolTip'):
+                if hasattr(obj, 'tooltip'):
                     obj.setStyleSheet("QToolTip { font-size: %dpt; }" % font_size)
                 if obj.objectName() == "settings_dialog_general_app_font_size_label":
                     """

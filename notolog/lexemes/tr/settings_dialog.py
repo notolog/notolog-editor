@@ -31,6 +31,9 @@ lexemes = {
     "general_statusbar_show_global_cursor_position_checkbox": "Genel İmleç Pozisyonunu Göster",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
         "Durum çubuğunda genel imleç pozisyonunu göster",
+    "general_statusbar_show_navigation_arrows_checkbox": "Gezinme oklarını göster",
+    "general_statusbar_show_navigation_arrows_checkbox_accessible_description":
+        "Durum çubuğunda gezinme oklarını göster",
 
     "editor_config_label": "Editör Yapılandırması",
     "editor_config_show_line_numbers_checkbox": "Satır Numaralarını Göster",

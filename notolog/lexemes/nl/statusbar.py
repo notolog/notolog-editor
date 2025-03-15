@@ -2,6 +2,10 @@
 lexemes = {
     "statusbar_path_home_label": "Thuismap voor notities",
     "statusbar_path_home_accessible_name": "Navigeer naar de thuismap voor notities",
+    "statusbar_previous_path_label": "Vorige bestand in geschiedenis",
+    "statusbar_previous_path_accessible_name": "Ga naar het vorige bestand in de geschiedenis",
+    "statusbar_next_path_label": "Volgende bestand in geschiedenis",
+    "statusbar_next_path_accessible_name": "Ga naar het volgende bestand in de geschiedenis",
     "statusbar_litter_bin_label": "Prullenbak",
     "statusbar_litter_bin_accessible_name": "Toon inhoud prullenbak",
 

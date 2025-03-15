@@ -3,7 +3,8 @@ lexemes = {
     "app_title": "Notolog რედაქტორი",
     "app_title_with_sub": "{app_title} - {sub_title}",
 
-    "tree_filter_accessible_desc": "ფაილის ფილტრის ველი",
+    "tree_filter_input_placeholder_text": "სწრაფი ფილტრი",
+    "tree_filter_input_accessible_desc": "გაფილტვრა ფაილებისა და დირექტორიების სახელის მიხედვით",
 
     "menu_action_copy_file_path": "ფაილის გზის კოპირება",
     "menu_action_rename": "გადარქმევა",

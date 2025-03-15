@@ -14,9 +14,9 @@ lexemes = {
     "module_llama_cpp_config_context_window_input_accessible_description":
         "设置模型生成响应时考虑的令牌数量。控制使用多少先前上下文。",
 
-    "module_llama_cpp_chat_formats_label": "聊天格式",
-    "module_llama_cpp_chat_formats_combo_placeholder_text": "选择聊天格式",
-    "module_llama_cpp_chat_formats_combo_accessible_description":
+    "module_llama_cpp_config_chat_formats_label": "聊天格式",
+    "module_llama_cpp_config_chat_formats_combo_placeholder_text": "选择聊天格式",
+    "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "用于选择模型对话格式的下拉菜单。",
 
     "module_llama_cpp_config_system_prompt_label": "系统提示",

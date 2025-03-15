@@ -16,9 +16,9 @@ lexemes = {
         "Stelt het aantal tokens in dat het model overweegt bij het genereren van reacties.\n"
         "Beheert hoeveel voorgaande context wordt gebruikt.",
 
-    "module_llama_cpp_chat_formats_label": "Chatformaten",
-    "module_llama_cpp_chat_formats_combo_placeholder_text": "Selecteer een chatformaat",
-    "module_llama_cpp_chat_formats_combo_accessible_description":
+    "module_llama_cpp_config_chat_formats_label": "Chatformaten",
+    "module_llama_cpp_config_chat_formats_combo_placeholder_text": "Selecteer een chatformaat",
+    "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "Dropdownmenu om het formaat te selecteren dat gebruikt wordt voor modelgesprekken.",
 
     "module_llama_cpp_config_system_prompt_label": "Systeemprompt",

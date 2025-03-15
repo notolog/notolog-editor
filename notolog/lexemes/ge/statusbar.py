@@ -2,6 +2,10 @@
 lexemes = {
     "statusbar_path_home_label": "შენიშვნების მთავარი ფოლდერი",
     "statusbar_path_home_accessible_name": "გადასვლა შენიშვნების მთავარ ფოლდერზე",
+    "statusbar_previous_path_label": "წინა ფაილი ისტორიაში",
+    "statusbar_previous_path_accessible_name": "გადასვლა წინა ფაილზე ისტორიაში",
+    "statusbar_next_path_label": "შემდეგი ფაილი ისტორიაში",
+    "statusbar_next_path_accessible_name": "გადასვლა შემდეგ ფაილზე ისტორიაში",
     "statusbar_litter_bin_label": "ნაგავსაყრელი",
     "statusbar_litter_bin_accessible_name": "ნაგავსაყრელის შიგთავსის ჩვენება",
 

@@ -2,6 +2,10 @@
 lexemes = {
     "statusbar_path_home_label": "Dossier d'accueil des notes",
     "statusbar_path_home_accessible_name": "Naviguer vers le dossier d'accueil des notes",
+    "statusbar_previous_path_label": "Fichier précédent dans l'historique",
+    "statusbar_previous_path_accessible_name": "Aller au fichier précédent dans l'historique",
+    "statusbar_next_path_label": "Fichier suivant dans l'historique",
+    "statusbar_next_path_accessible_name": "Aller au fichier suivant dans l'historique",
     "statusbar_litter_bin_label": "Corbeille",
     "statusbar_litter_bin_accessible_name": "Afficher le contenu de la corbeille",
 

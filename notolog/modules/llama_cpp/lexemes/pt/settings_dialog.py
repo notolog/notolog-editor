@@ -14,9 +14,9 @@ lexemes = {
     "module_llama_cpp_config_context_window_input_accessible_description":
         "Define o número de tokens que o modelo considera para gerar respostas. Controla quanto do contexto anterior é usado.",
 
-    "module_llama_cpp_chat_formats_label": "Formatos de Chat",
-    "module_llama_cpp_chat_formats_combo_placeholder_text": "Selecione um formato de chat",
-    "module_llama_cpp_chat_formats_combo_accessible_description":
+    "module_llama_cpp_config_chat_formats_label": "Formatos de Chat",
+    "module_llama_cpp_config_chat_formats_combo_placeholder_text": "Selecione um formato de chat",
+    "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "Menu suspenso para selecionar o formato usado para conversas do modelo.",
 
     "module_llama_cpp_config_system_prompt_label": "Prompt do Sistema",

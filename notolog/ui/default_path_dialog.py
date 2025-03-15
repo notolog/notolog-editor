@@ -55,7 +55,7 @@ class DefaultPathDialog(QDialog):
 
         self.logger = logging.getLogger('path_dialog')
 
-        # Load lexemes for selected language and scope
+        # Load lexemes for the selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='common')
 
         self.path_field = None  # type: Union[DirPathLineEdit, QLineEdit, None]

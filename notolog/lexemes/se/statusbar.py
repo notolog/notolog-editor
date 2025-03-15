@@ -2,6 +2,10 @@
 lexemes = {
     "statusbar_path_home_label": "Hemmappar för anteckningar",
     "statusbar_path_home_accessible_name": "Navigera till anteckningarnas hemmappar",
+    "statusbar_previous_path_label": "Föregående fil i historiken",
+    "statusbar_previous_path_accessible_name": "Gå till föregående fil i historiken",
+    "statusbar_next_path_label": "Nästa fil i historiken",
+    "statusbar_next_path_accessible_name": "Gå till nästa fil i historiken",
     "statusbar_litter_bin_label": "Papperskorg",
     "statusbar_litter_bin_accessible_name": "Visa papperskorgens innehåll",
 

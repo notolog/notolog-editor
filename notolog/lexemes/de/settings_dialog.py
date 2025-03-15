@@ -32,6 +32,9 @@ lexemes = {
     "general_statusbar_show_global_cursor_position_checkbox": "Globale Cursorposition anzeigen",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
         "Globale Cursorposition in der Statusleiste anzeigen",
+    "general_statusbar_show_navigation_arrows_checkbox": "Navigationspfeile anzeigen",
+    "general_statusbar_show_navigation_arrows_checkbox_accessible_description":
+        "Navigationspfeile in der Statusleiste anzeigen",
 
     "editor_config_label": "Editor-Konfiguration",
     "editor_config_show_line_numbers_checkbox": "Zeilennummern anzeigen",

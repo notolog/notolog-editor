@@ -3,7 +3,8 @@ lexemes = {
     "app_title": "Notolog エディタ",
     "app_title_with_sub": "{app_title} - {sub_title}",
 
-    "tree_filter_accessible_desc": "ファイルフィルタフィールド",
+    "tree_filter_input_placeholder_text": "クイックフィルター",
+    "tree_filter_input_accessible_desc": "ファイルとディレクトリを名前でフィルター",
 
     "menu_action_copy_file_path": "ファイルパスをコピー",
     "menu_action_rename": "名前を変更",

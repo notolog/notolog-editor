@@ -43,7 +43,7 @@ class EncPasswordResetDialog(QDialog):
 
         self.logger = logging.getLogger('enc_password_reset_dialog')
 
-        # Load lexemes for selected language and scope
+        # Load lexemes for the selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='common')
 
         title = self.lexemes.get('dialog_encrypt_password_reset_title')

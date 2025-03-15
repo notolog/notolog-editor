@@ -16,9 +16,9 @@ lexemes = {
         "Καθορίζει τον αριθμό των tokens που λαμβάνει υπόψη το μοντέλο για τη δημιουργία απαντήσεων.\n"
         "Ελέγχει πόσο προηγούμενο πλαίσιο χρησιμοποιείται.",
 
-    "module_llama_cpp_chat_formats_label": "Μορφές Συνομιλίας",
-    "module_llama_cpp_chat_formats_combo_placeholder_text": "Επιλέξτε μια μορφή συνομιλίας",
-    "module_llama_cpp_chat_formats_combo_accessible_description":
+    "module_llama_cpp_config_chat_formats_label": "Μορφές Συνομιλίας",
+    "module_llama_cpp_config_chat_formats_combo_placeholder_text": "Επιλέξτε μια μορφή συνομιλίας",
+    "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "Μενού dropdown για την επιλογή της μορφής που χρησιμοποιείται για τις συνομιλίες μοντέλων.",
 
     "module_llama_cpp_config_system_prompt_label": "Προτροπή Συστήματος",

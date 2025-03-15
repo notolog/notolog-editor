@@ -3,7 +3,8 @@ lexemes = {
     "app_title": "Notolog 编辑器",
     "app_title_with_sub": "{app_title} - {sub_title}",
 
-    "tree_filter_accessible_desc": "文件过滤器字段",
+    "tree_filter_input_placeholder_text": "快速筛选",
+    "tree_filter_input_accessible_desc": "按名称筛选文件和目录",
 
     "menu_action_copy_file_path": "复制文件路径",
     "menu_action_rename": "重命名",

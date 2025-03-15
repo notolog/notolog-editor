@@ -32,6 +32,8 @@ from . import TooltipHelper
 from .sort_filter_proxy_model import SortFilterProxyModel
 from .vertical_line_spacer import VerticalLineSpacer
 
+from ..file_history_manager import FileHistoryManager
+
 if TYPE_CHECKING:
     from typing import Union  # noqa
 
@@ -57,8 +59,12 @@ class StatusBar(QStatusBar):
 
         self.theme_helper = ThemeHelper()
 
-        # Load lexemes for selected language and scope
+        # Load lexemes for the selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='statusbar')
+
+        # File navigation history manager instance
+        self.history_manager = FileHistoryManager()
+        self.history_manager.history_updated.connect(self.update_history_buttons)
 
         self._elements = {}  # Label storage
 
@@ -165,7 +171,8 @@ class StatusBar(QStatusBar):
         """
         Main statusbar items map for convenience.
         """
-        return [
+
+        icons = [
             # Home button (static position; other buttons may replace one another)
             {'type': 'action', 'weight': 1, 'name': 'statusbar_path_home_label', 'system_icon': 'go-home',
              'theme_icon': 'house-door.svg', 'color': self.theme_helper.get_color('statusbar_path_home_icon_color'),
@@ -180,13 +187,36 @@ class StatusBar(QStatusBar):
              'action': lambda: self.toggle_litter_bin_button(), 'var_name': 'litter_bin_label',
              'active_state_check': lambda: not self.settings.show_deleted_files},
             # Litter bin (active)
-            {'type': 'action', 'weight': 2, 'name': 'statusbar_litter_bin_label_active', 'system_icon': 'user-trash-full',
+            {'type': 'action', 'weight': 3, 'name': 'statusbar_litter_bin_label_active', 'system_icon': 'user-trash-full',
              'theme_icon': 'trash3-fill.svg', 'color': self.theme_helper.get_color('statusbar_litter_bin_icon_color_active'),
              'label': self.lexemes.get('statusbar_litter_bin_label'),
              'accessible_name': self.lexemes.get('statusbar_litter_bin_accessible_name'),
              'action': lambda: self.toggle_litter_bin_button(), 'var_name': 'litter_bin_label',
              'active_state_check': lambda: self.settings.show_deleted_files},
         ]
+
+        # Add navigation arrows at the end if enabled in the settings
+        if hasattr(self.settings, 'show_navigation_arrows') and self.settings.show_navigation_arrows:
+            ic_idx = len(icons)  # Icon index
+            icons += [
+                # Backward navigation button for file history (static position; other buttons may replace one another)
+                {'type': 'action', 'weight': ic_idx+1, 'name': 'statusbar_previous_path_label',
+                 'system_icon': 'go-previous',
+                 'theme_icon': 'arrow-left.svg',
+                 'color': self.theme_helper.get_color('statusbar_previous_path_icon_color'),
+                 'label': self.lexemes.get('statusbar_previous_path_label'),
+                 'accessible_name': self.lexemes.get('statusbar_previous_path_accessible_name'),
+                 'action': self.action_previous_path, 'var_name': 'previous_path_label'},
+                # Forward navigation button for file history (static position; other buttons may replace one another)
+                {'type': 'action', 'weight': ic_idx+2, 'name': 'statusbar_next_path_label', 'system_icon': 'go-next',
+                 'theme_icon': 'arrow-right.svg',
+                 'color': self.theme_helper.get_color('statusbar_next_path_icon_color'),
+                 'label': self.lexemes.get('statusbar_next_path_label'),
+                 'accessible_name': self.lexemes.get('statusbar_next_path_accessible_name'),
+                 'action': self.action_next_path, 'var_name': 'next_path_label'},
+            ]
+
+        return icons
 
     def get_statusbar_icon_by_name(self, name):
         """
@@ -276,30 +306,55 @@ class StatusBar(QStatusBar):
         if self.parent and hasattr(self.parent, 'set_current_path') and callable(self.parent.set_current_path):
             self.parent.set_current_path(default_path)
 
+    def action_previous_path(self):
+        """
+        Navigate to the previous file in history.
+        """
+        file_path = self.history_manager.prev_file()
+        if file_path and self.parent and hasattr(self.parent, 'safely_open_file'):
+            self.parent.safely_open_file(file_path)
+
+    def action_next_path(self):
+        """
+        Navigate to the next file in history.
+        """
+        file_path = self.history_manager.next_file()
+        if file_path and self.parent and hasattr(self.parent, 'safely_open_file'):
+            self.parent.safely_open_file(file_path)
+
+    def update_history_buttons(self):
+        """
+        Enable or disable navigation buttons based on history state.
+        """
+        try:
+            if hasattr(self, 'previous_path_label') and isinstance(self.previous_path_label, QPushButton):
+                self.previous_path_label.setEnabled(self.history_manager.has_prev())
+                if hasattr(self.settings, 'show_navigation_arrows'):
+                    self.previous_path_label.setVisible(self.settings.show_navigation_arrows)
+            if hasattr(self, 'next_path_label') and isinstance(self.next_path_label, QPushButton):
+                self.next_path_label.setEnabled(self.history_manager.has_next())
+                if hasattr(self.settings, 'show_navigation_arrows'):
+                    self.next_path_label.setVisible(self.settings.show_navigation_arrows)
+        except RuntimeError as e:
+            # Handle specific errors, e.g., object already deleted
+            self.logger.warning(f"Error occurred {e}")
+
     def settings_update_handler(self, data: dict) -> None:
         """
         Perform actions upon settings change.
-        Data comes in a view of a dictionary, where is the key is the setting name, and the value is the actual value.
-        Can be resource greedy.
+
+        Data is provided as a dictionary, where the key represents the setting name, and the value is its corresponding value.
+        Note: This operation updates UI elements and internal properties, which may be resource-intensive.
 
         @param data: dict, say {"show_deleted_files": True}
         @return: None
         """
 
-        self.logger.debug('Settings update handler is in use "%s"' % data)
+        self.logger.debug(f'Settings update handler is processing: {data}')
 
-        if 'show_deleted_files' in data and hasattr(self, 'litter_bin_label'):
-            # Update the state of the litter bin icon button
-            if self.settings.show_deleted_files:
-                conf = self.get_statusbar_icon_by_name('statusbar_litter_bin_label_active')
-            else:
-                conf = self.get_statusbar_icon_by_name('statusbar_litter_bin_label')
-            # Update an existing button
-            try:
-                self.append_statusbar_icon(conf, self.litter_bin_label)
-            except RuntimeError as e:
-                # Handle specific errors, e.g., object already deleted
-                self.logger.warning(f"Error occurred {e}")
+        if 'show_deleted_files' in data:
+            # Update the status bar buttons
+            self.draw_icons()
 
         if 'app_theme' in data:
             # Re-draw the statusbar icons
@@ -316,6 +371,15 @@ class StatusBar(QStatusBar):
             except RuntimeError as e:
                 # Handle specific errors, e.g., object already deleted
                 self.logger.warning(f"Error occurred {e}")
+
+        if 'app_language' in data:
+            # Reload lexemes for the selected language and scope
+            self.lexemes = Lexemes(self.settings.app_language, default_scope='statusbar')
+
+        if {'show_navigation_arrows', 'ui_init_ts'} & data.keys():
+            # Update the status bar buttons
+            self.draw_icons()
+            self.update_history_buttons()
 
     def refresh_element_fonts(self, parent=None):
         if parent is None:

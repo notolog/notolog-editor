@@ -31,6 +31,8 @@ lexemes = {
     "general_statusbar_show_global_cursor_position_checkbox": "전역 커서 위치 보기",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
         "상태 바에서 전역 커서 위치 표시",
+    "general_statusbar_show_navigation_arrows_checkbox": "탐색 화살표 표시",
+    "general_statusbar_show_navigation_arrows_checkbox_accessible_description": "상태 표시줄에서 탐색 화살표 표시",
 
     "editor_config_label": "편집기 설정",
     "editor_config_show_line_numbers_checkbox": "줄 번호 표시",

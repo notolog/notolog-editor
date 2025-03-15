@@ -3,7 +3,8 @@ lexemes = {
     "app_title": "Notolog Editori",
     "app_title_with_sub": "{app_title} - {sub_title}",
 
-    "tree_filter_accessible_desc": "Tiedostosuodattimen kenttä",
+    "tree_filter_input_placeholder_text": "Pikasuodatin",
+    "tree_filter_input_accessible_desc": "Suodata tiedostot ja hakemistot nimen mukaan",
 
     "menu_action_copy_file_path": "Kopioi tiedostopolku",
     "menu_action_rename": "Nimeä uudelleen",

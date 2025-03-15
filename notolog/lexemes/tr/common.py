@@ -3,7 +3,8 @@ lexemes = {
     "app_title": "Notolog Editörü",
     "app_title_with_sub": "{app_title} - {sub_title}",
 
-    "tree_filter_accessible_desc": "Dosya filtre alanı",
+    "tree_filter_input_placeholder_text": "Hızlı filtre",
+    "tree_filter_input_accessible_desc": "Dosyaları ve dizinleri isme göre filtrele",
 
     "menu_action_copy_file_path": "Dosya yolunu kopyala",
     "menu_action_rename": "Yeniden Adlandır",

@@ -15,9 +15,9 @@ lexemes = {
         "Modelin yanıtları üretmek için dikkate aldığı token sayısını belirler.\n"
         "Ne kadar önceki bağlamın kullanıldığını kontrol eder.",
 
-    "module_llama_cpp_chat_formats_label": "Sohbet Formatları",
-    "module_llama_cpp_chat_formats_combo_placeholder_text": "Bir sohbet formatı seçin",
-    "module_llama_cpp_chat_formats_combo_accessible_description":
+    "module_llama_cpp_config_chat_formats_label": "Sohbet Formatları",
+    "module_llama_cpp_config_chat_formats_combo_placeholder_text": "Bir sohbet formatı seçin",
+    "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "Model konuşmaları için kullanılan formatı seçmek için açılır menü.",
 
     "module_llama_cpp_config_system_prompt_label": "Sistem İstem",

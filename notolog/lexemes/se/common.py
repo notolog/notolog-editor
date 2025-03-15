@@ -3,7 +3,8 @@ lexemes = {
     "app_title": "Notolog Redigerare",
     "app_title_with_sub": "{app_title} - {sub_title}",
 
-    "tree_filter_accessible_desc": "Filterfält för filer",
+    "tree_filter_input_placeholder_text": "Snabbfilter",
+    "tree_filter_input_accessible_desc": "Filtrera filer och kataloger efter namn",
 
     "menu_action_copy_file_path": "Kopiera filsökväg",
     "menu_action_rename": "Byt namn",

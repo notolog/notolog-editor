@@ -16,9 +16,9 @@ lexemes = {
         "Устанавливает количество токенов, которые модель учитывает при генерации ответов.\n"
         "Контролирует, сколько предыдущего контекста используется.",
 
-    "module_llama_cpp_chat_formats_label": "Форматы чата",
-    "module_llama_cpp_chat_formats_combo_placeholder_text": "Выберите формат чата",
-    "module_llama_cpp_chat_formats_combo_accessible_description":
+    "module_llama_cpp_config_chat_formats_label": "Форматы чата",
+    "module_llama_cpp_config_chat_formats_combo_placeholder_text": "Выберите формат чата",
+    "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "Выпадающее меню для выбора формата, используемого для разговоров модели.",
 
     "module_llama_cpp_config_system_prompt_label": "Системный промпт",

@@ -16,9 +16,9 @@ lexemes = {
         "Définit le nombre de jetons que le modèle considère pour générer des réponses.\n"
         "Contrôle la quantité de contexte préalable utilisée.",
 
-    "module_llama_cpp_chat_formats_label": "Formats de chat",
-    "module_llama_cpp_chat_formats_combo_placeholder_text": "Sélectionnez un format de chat",
-    "module_llama_cpp_chat_formats_combo_accessible_description":
+    "module_llama_cpp_config_chat_formats_label": "Formats de chat",
+    "module_llama_cpp_config_chat_formats_combo_placeholder_text": "Sélectionnez un format de chat",
+    "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "Menu déroulant pour sélectionner le format utilisé pour les conversations modèles.",
 
     "module_llama_cpp_config_system_prompt_label": "Invite de système",

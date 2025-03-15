@@ -2,6 +2,10 @@
 lexemes = {
     "statusbar_path_home_label": "Notlar ana klasörü",
     "statusbar_path_home_accessible_name": "Notlar ana klasörüne gidin",
+    "statusbar_previous_path_label": "Geçmişteki önceki dosya",
+    "statusbar_previous_path_accessible_name": "Geçmişteki önceki dosyaya git",
+    "statusbar_next_path_label": "Geçmişteki sonraki dosya",
+    "statusbar_next_path_accessible_name": "Geçmişteki sonraki dosyaya git",
     "statusbar_litter_bin_label": "Çöp kutusu",
     "statusbar_litter_bin_accessible_name": "Çöp kutusu içeriğini göster",
 

@@ -17,9 +17,9 @@ lexemes = {
         "वह संख्या निर्धारित करता है जिसे मॉडल प्रतिक्रियाएं उत्पन्न करने के लिए विचार में रखता है। यह\n"
         "नियंत्रित करता है कि कितना पूर्व संदर्भ प्रयुक्त होता है।",
 
-    "module_llama_cpp_chat_formats_label": "चैट प्रारूप",
-    "module_llama_cpp_chat_formats_combo_placeholder_text": "एक चैट प्रारूप का चयन करें",
-    "module_llama_cpp_chat_formats_combo_accessible_description":
+    "module_llama_cpp_config_chat_formats_label": "चैट प्रारूप",
+    "module_llama_cpp_config_chat_formats_combo_placeholder_text": "एक चैट प्रारूप का चयन करें",
+    "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "मॉडल वार्तालापों के लिए प्रयुक्त प्रारूप का चयन करने के लिए ड्रॉपडाउन मेनू।",
 
     "module_llama_cpp_config_system_prompt_label": "सिस्टम प्रॉम्प्ट",

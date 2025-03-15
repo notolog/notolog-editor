@@ -16,9 +16,9 @@ lexemes = {
         "Imposta il numero di token che il modello considera per generare risposte.\n"
         "Controlla quanta contestazione precedente viene utilizzata.",
 
-    "module_llama_cpp_chat_formats_label": "Formati di chat",
-    "module_llama_cpp_chat_formats_combo_placeholder_text": "Seleziona un formato di chat",
-    "module_llama_cpp_chat_formats_combo_accessible_description":
+    "module_llama_cpp_config_chat_formats_label": "Formati di chat",
+    "module_llama_cpp_config_chat_formats_combo_placeholder_text": "Seleziona un formato di chat",
+    "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "Menu a tendina per selezionare il formato utilizzato per le conversazioni del modello.",
 
     "module_llama_cpp_config_system_prompt_label": "Prompt del sistema",

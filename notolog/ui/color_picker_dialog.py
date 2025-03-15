@@ -43,7 +43,7 @@ class ColorPickerDialog(QDialog):
 
         self.logger = logging.getLogger('color_picker_dialog')
 
-        # Load lexemes for selected language and scope
+        # Load lexemes for the selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='color_picker_dialog')
 
         self.setWindowTitle(self.lexemes.get('color_picker_title'))

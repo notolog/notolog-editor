@@ -45,7 +45,7 @@ class FileTreeContextMenu(QMenu):
 
         self.logger = logging.getLogger('file_tree_context_menu')
 
-        # Load lexemes for selected language and scope
+        # Load lexemes for the selected language and scope
         self.lexemes = Lexemes(self.settings.app_language, default_scope='common')
 
         # Theme helper
