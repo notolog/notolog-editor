@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "notolog"
-version = "1.1.5"
+version = "1.1.6"
 description = "Notolog - Python Markdown Editor"
 authors = ["Vadim Bakhrenkov"]
 license = "MIT"
@@ -89,7 +89,7 @@ IssueTracker = "https://github.com/notolog/notolog-editor/issues"
 [tool.poetry.dependencies]
 python = ">=3.9,<3.14"
 # Main packages
-cffi= "^1.17.0"
+cffi = "^1.17.0"
 click = "^8.1.7"
 cryptography = ">=43.0.1"
 emoji = "^2.14.0"

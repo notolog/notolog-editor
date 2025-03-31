@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2024-05-11 11:15:29.656338", "updated": "2024-05-11 11:15:29.656338"}} -->
+<!-- {"notolog.app": {"created": "2024-05-11 11:15:29.656338", "updated": "2025-03-30 23:37:10.736713"}} -->
 # Contributor Covenant Code of Conduct
 
 ## Our Pledge
@@ -36,6 +36,8 @@ This Code of Conduct applies within all project spaces, and it also applies when
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by contacting the project team at dev&#064;notolog.app. All complaints will be reviewed and investigated and will result in a response that is deemed necessary and appropriate to the circumstances. The project team is obligated to maintain confidentiality with regard to the reporter of an incident. Further details of specific enforcement policies may be posted separately.
+
+If the primary contact becomes temporarily unavailable for any reason, please open a private issue on GitHub or reach out to a project maintainer directly through their GitHub profile.
 
 Project maintainers who do not follow or enforce the Code of Conduct in good faith may face temporary or permanent repercussions as determined by other members of the project's leadership.
 

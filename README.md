@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2025-01-11 10:46:38.075950"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2025-03-30 23:37:18.087608"}} -->
 # Notolog
 
 [![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/) [![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor)](https://github.com/notolog/notolog-editor/blob/master/LICENSE) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)](https://pypi.org/project/notolog/) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/notolog/notolog-editor/tests.yaml)](https://github.com/notolog/notolog-editor/actions/workflows/tests.yaml) [![Conda Version](https://img.shields.io/conda/vn/conda-forge/notolog)](https://anaconda.org/conda-forge/notolog) [![PyPI - Downloads](https://img.shields.io/pypi/dm/notolog)](https://pypistats.org/packages/notolog)
@@ -334,4 +334,4 @@ All trademarks, registered trademarks, product names, and company names or logos
 If you find Notolog useful, consider giving it a star 🌟 on the [GitHub page](https://github.com/notolog/notolog-editor). This helps others discover the project and contributes to its growth. Thank you for your support!
 
 ---
-_This README.md file has been carefully crafted and edited using the Notolog editor itself._
+_This README.md file has been carefully crafted and edited using the Notolog Editor itself._

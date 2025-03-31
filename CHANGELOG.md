@@ -1,6 +1,17 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.1.6] - 2025-03-31
+
+### Changed
+- Editing a text document with a non-empty search form now updates the search result counter instead of resetting the form, preserving the current search text.
+
+### Updated
+- Updated the Contributor Covenant Code of Conduct file to include guidance on contacting project maintainers.
+
+### Fixed
+- Fixed missing color constants for status bar navigation arrows across all themes, which could cause them to be invisible in some cases.
+
 ## [1.1.5] - 2025-03-15
 
 ### Added

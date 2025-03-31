@@ -1702,11 +1702,11 @@ class NotologEditor(QMainWindow):
 
     def on_text_changed(self) -> None:
         """
-        When text is changed, or when formatting is applied.
-        More info about the signal: https://doc.qt.io/qt-6/qplaintextedit.html#textChanged
+        Triggered when the text changes or formatting is applied.
+        See: https://doc.qt.io/qt-6/qplaintextedit.html#textChanged
         """
 
-        self.logger.debug('Text changed signal from %s' % (self.sender()))
+        self.logger.debug(f'Text changed signal from {self.sender()}')
 
         # Enable the save button in the toolbar, even if no changes were detected
         if hasattr(self.toolbar, 'toolbar_save_button'):
@@ -1717,8 +1717,10 @@ class NotologEditor(QMainWindow):
         if hasattr(self, 'async_highlighter') and self.async_highlighter:
             self.async_highlighter.rehighlight_in_queue(full_rehighlight=False)
 
-        # The searched text and its position can both be changed.
-        self.action_search_clear()
+        # Refresh search results if search text is active
+        searched_text = self.get_action_search_text()
+        if searched_text:
+            self.action_search_on(searched_text=searched_text)
 
     def on_modification_changed(self, changed) -> None:
         """
