@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2025-03-30 23:37:18.087608"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2025-04-06 20:10:00.337392"}} -->
 # Notolog
 
 [![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/) [![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor)](https://github.com/notolog/notolog-editor/blob/master/LICENSE) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)](https://pypi.org/project/notolog/) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/notolog/notolog-editor/tests.yaml)](https://github.com/notolog/notolog-editor/actions/workflows/tests.yaml) [![Conda Version](https://img.shields.io/conda/vn/conda-forge/notolog)](https://anaconda.org/conda-forge/notolog) [![PyPI - Downloads](https://img.shields.io/pypi/dm/notolog)](https://pypistats.org/packages/notolog)
@@ -8,17 +8,21 @@ Notolog is an open-source Markdown editor licensed under the MIT License. Combin
 
 ## Instant Setup
 
-Using pip:
+**Using pip:**
 ```sh
 pip install notolog
 ```
 
-Via conda:
+**Via conda:**
 ```sh
 conda install notolog -c conda-forge
 ```
 
-To start 🚀 the app, simply run:
+**Ubuntu/Debian `.deb` package:**
+
+Download and install [the latest .deb release](https://github.com/notolog/notolog-debian/releases/latest) from the [Notolog Debian Package Builder](https://github.com/notolog/notolog-debian) repository.
+
+**To start 🚀 the app, simply run:**
 ```
 notolog
 ```
@@ -155,6 +159,19 @@ notolog
 ```
 
 Just activate the environment and run the app next time.
+
+### Install Debian Package
+
+Download [the latest release](https://github.com/notolog/notolog-debian/releases/latest) from the [Notolog Debian Package Builder](https://github.com/notolog/notolog-debian) repository.
+
+Install the package with:
+```sh
+sudo dpkg -i notolog_X.Y.Z_amd64.deb
+```
+
+*This is an early build for the x86_64 architecture. Future releases may include additional architectures and improvements.*
+
+The builder repository contains the open-source packaging scripts, along with automated linting and build pipelines via GitHub Actions.
 
 ### Install from Source
 
