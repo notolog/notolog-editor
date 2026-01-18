@@ -25,7 +25,7 @@ Website: https://notolog.app
 PyPI: https://pypi.org/project/notolog
 
 Author: Vadim Bakhrenkov
-Copyright: 2024-2025 Vadim Bakhrenkov
+Copyright: 2024-2026 Vadim Bakhrenkov
 License: MIT License
 
 For detailed instructions and project information, please see the repository's README.md.
@@ -270,7 +270,7 @@ class NotologEditor(QMainWindow):
         self.file_watcher = None  # type: Union[QFileSystemWatcher, None]
         self.tree_active_dir = None  # type: Union[str, None]
 
-        self.supported_file_extensions = ['md', 'txt', 'html', 'enc']
+        self.supported_file_extensions = ['md', 'txt', 'htm', 'html', 'enc']
 
         # Line numbers within the document
         self.line_numbers = None  # type: Union[LineNumbers, None]
@@ -1500,56 +1500,121 @@ class NotologEditor(QMainWindow):
         self.line_numbers = LineNumbers(editor=widget)
 
     def open_link_dialog_proxy(self):
-        # Open confirmation set for external link
-        if self.settings.viewer_open_link_confirmation:
-            # Open a link after confirmation dialog only
-            return lambda url: (
-                # Check if the clicked anchor is a local link
-                self.check_local_link(url, True) if self.check_local_link(url) else self.common_dialog(
-                    self.lexemes.get('dialog_open_link_title'),
-                    self.lexemes.get(name='dialog_open_link_text',
-                                     url=url.toString()),
-                    # Open url with system browser
-                    callback=lambda dialog_callback:
-                    # Open link in a system browser and run dialog's callback
-                    (QDesktopServices.openUrl(url), dialog_callback())))
-        # Just open a link without a confirmation dialog
-        return lambda url: self.check_local_link(url, True)
+        """
+        Returns a handler for anchor clicks based on settings.
 
-    def check_local_link(self, url: QUrl, execute: bool = False) -> Any:
-        # Anchor
-        if url.toString().startswith('#'):
-            # Anchor is an internal doc link starts with '#'
+        The handler determines whether to:
+        - Open local files directly in-app (no dialog)
+        - Open external URLs in browser (with optional confirmation dialog)
+        """
+        def handle_link(url: QUrl):
+            result = self.check_local_link(url)
+            if result is True:
+                # Local file - open directly in-app
+                self.check_local_link(url, execute=True)
+            elif result is False:
+                # External URL - open in browser (with optional confirmation)
+                if self.settings.viewer_open_link_confirmation:
+                    self.common_dialog(
+                        self.lexemes.get('dialog_open_link_title'),
+                        self.lexemes.get(name='dialog_open_link_text', url=url.toString()),
+                        callback=lambda dialog_callback: (
+                            QDesktopServices.openUrl(url),
+                            dialog_callback()
+                        )
+                    )
+                else:
+                    QDesktopServices.openUrl(url)
+            else:
+                # Unknown or blocked - log and ignore, or show info
+                self.logger.debug(f"Link not handled: {url.toString()}")
+
+        return handle_link
+
+    def check_local_link(self, url: QUrl, execute: bool = False) -> Any:  # noqa: C901
+        """
+        Check if a URL points to a local file and optionally open it.
+
+        Args:
+            url: The QUrl to check
+            execute: If True, actually open the file; if False, just check if it's local
+
+        Returns:
+            True: URL is a local file/anchor (open in-app)
+            False: URL is an external http/https link (open in browser)
+            None: URL type is unknown or blocked
+        """
+        url_str = url.toString()
+
+        # Anchor - internal document link
+        if url_str.startswith('#'):
             if execute:
                 self.get_view_widget().setSource(url)
             return True
 
         # Expandable/collapsible blocks
-        if url.toString().startswith('expandable') or url.toString().startswith('collapsible'):
+        if url_str.startswith('expandable') or url_str.startswith('collapsible'):
             return True
 
-        # Try external link
-        if not (url.isRelative() or url.isLocalFile()):
-            # Open in a system browser
+        # External http/https links - open in browser
+        url_scheme = url.scheme().lower()
+        if url_scheme in ('http', 'https'):
             if execute:
                 QDesktopServices.openUrl(url)
             return False
 
-        # Try to find local file
+        # Block potentially dangerous URL schemes
+        if url_scheme and url_scheme not in ('', 'file'):
+            self.logger.warning(f"Blocked potentially unsafe URL scheme: {url_scheme}")
+            return None
+
+        # Get the path from URL
+        url_path = url.toLocalFile() if url.isLocalFile() else url_str
+
+        # Resolve relative paths against current file's directory
+        if not os.path.isabs(url_path):
+            current_file = self.get_current_file_path() if hasattr(self, 'get_current_file_path') else None
+            if current_file:
+                current_dir = os.path.dirname(os.path.abspath(current_file))
+                url_path = os.path.normpath(os.path.join(current_dir, url_path))
+                self.logger.debug(f"Resolved relative link '{url_str}' to '{url_path}'")
+            else:
+                self.logger.debug(f"Cannot resolve relative link '{url_str}': no current file")
+
+        # Resolve symlinks and get absolute path
         try:
-            is_file = os.path.isfile(url.toString())
+            resolved_path = os.path.realpath(url_path)
+        except (OSError, ValueError) as e:
+            self.logger.warning(f"Failed to resolve path '{url_path}': {e}")
+            return None
+
+        # Check file extension - allow supported file types
+        file_ext = os.path.splitext(resolved_path)[1].lower().lstrip('.')
+        allowed_extensions = [ext for ext in self.supported_file_extensions if ext != 'enc']
+        if file_ext and file_ext not in allowed_extensions:
+            self.logger.debug(f"File extension '{file_ext}' not in allowed list: {allowed_extensions}")
+            return None
+
+        # Check if file exists
+        try:
+            is_file = os.path.isfile(resolved_path)
         except PermissionError:
-            self.logger.warning(f"Permission denied when accessing the file: {url.toString()}")
+            self.logger.warning(f"Permission denied when accessing: {resolved_path}")
             is_file = False
         except OSError as e:
-            self.logger.warning(f"Error when checking the file: {e}")
+            self.logger.warning(f"Error checking file '{resolved_path}': {e}")
             is_file = False
+
         if is_file:
-            # Load local file
+            # Open local file directly in-app
             if execute:
-                self.safely_open_file(url.toString())
+                self.logger.debug(f"Opening local file: {resolved_path}")
+                self.safely_open_file(resolved_path)
             return True
 
+        # File doesn't exist - this might be a valid local link to a non-existent file
+        # or a relative link that couldn't be resolved properly
+        self.logger.debug(f"File not found: {resolved_path}")
         return None
 
     def get_view_doc(self) -> QTextDocument:

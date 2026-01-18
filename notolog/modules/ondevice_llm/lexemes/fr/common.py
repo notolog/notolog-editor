@@ -3,6 +3,8 @@ lexemes = {
     # Common
     "module_ondevice_llm_name": "LLM sur appareil",
 
+    "module_ondevice_llm_model_loading": ("Chargement du modèle, veuillez patienter "
+                                          "(peut prendre jusqu'à 60 secondes lors du premier lancement)..."),
     "module_ondevice_llm_model_exception": "Erreur modèle non trouvé : {error_msg}",
     "module_ondevice_llm_task_exception": "Impossible d'initialiser le générateur de modèle : {error_msg}",
 }

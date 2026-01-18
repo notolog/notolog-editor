@@ -10,13 +10,12 @@ Website: https://notolog.app
 PyPI: https://pypi.org/project/notolog
 
 Author: Vadim Bakhrenkov
-Copyright: 2024-2025 Vadim Bakhrenkov
+Copyright: 2024-2026 Vadim Bakhrenkov
 License: MIT License
 
 For detailed instructions and project information, please see the repository's README.md.
 """
 
-from PySide6.QtCore import QEventLoop
 from PySide6.QtWidgets import QApplication, QStyleFactory
 
 from notolog.app import main
@@ -24,8 +23,6 @@ from notolog.app_config import AppConfig
 from notolog.notolog_editor import NotologEditor
 
 from types import SimpleNamespace
-
-from unittest.mock import AsyncMock
 
 import sys
 import pytest
@@ -81,12 +78,37 @@ class TestApp:
         # Simulate command-line arguments
         monkeypatch.setattr(sys, "argv", [])
 
-        event_loop = mocker.patch.object(QEventLoop, '__init__', return_value=None)
-        mocker.patch.object(asyncio, 'set_event_loop', return_value=None)
-        # AsyncMock mock class is designed to simulate asynchronous calls and can be awaited.
-        mocker.patch.object(asyncio, 'Event', return_value=SimpleNamespace(**{'set': lambda: None, 'wait': AsyncMock()}))
-        mocker.patch.object(event_loop, 'run_until_complete', return_value=None)
+        # Create a proper async coroutine function for event.wait() that returns immediately
+        async def mock_wait():
+            return None
 
+        # Helper to consume coroutines without running them (to avoid un-awaited warnings)
+        def consume_coroutine(coro):
+            if asyncio.iscoroutine(coro):
+                coro.close()  # Close the coroutine to prevent "was never awaited" warning
+            return None
+
+        # Create a mock event loop with proper methods
+        mock_loop = mocker.MagicMock()
+        mock_loop.__enter__ = mocker.MagicMock(return_value=mock_loop)
+        mock_loop.__exit__ = mocker.MagicMock(return_value=False)
+        # Make run_until_complete consume the coroutine without running it
+        mock_loop.run_until_complete = mocker.MagicMock(side_effect=consume_coroutine)
+
+        # Mock QEventLoop to return our mock_loop instance
+        mocker.patch('notolog.app.QEventLoop', return_value=mock_loop)
+
+        mocker.patch.object(asyncio, 'set_event_loop', return_value=None)
+        # Create a mock Event with a proper async wait method that returns a coroutine
+        mocker.patch.object(asyncio, 'Event', return_value=SimpleNamespace(**{'set': lambda: None, 'wait': mock_wait}))
+
+        # Mock aboutToQuit signal to prevent waiting
+        mock_about_to_quit = mocker.MagicMock()
+        mock_about_to_quit.connect = mocker.MagicMock(return_value=None)
+        mocker.patch.object(QApplication, 'aboutToQuit', new_callable=mocker.PropertyMock, return_value=mock_about_to_quit)
+
+        # Mock NotologEditor initialization to prevent UI creation that causes segfault
+        mocker.patch.object(NotologEditor, '__init__', return_value=None)
         test_notolog_editor_show = mocker.patch.object(NotologEditor, 'show', wraps=lambda: None)
         # Prevent resource processing, including 'process_document_images'
         mocker.patch.object(NotologEditor, 'load_content_html', return_value=None)

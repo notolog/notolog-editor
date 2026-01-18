@@ -22,5 +22,7 @@ lexemes = {
     "dialog_message_copy_tooltip": "Kopiera text",
     "dialog_message_copied_tooltip": "Kopierad",
 
+    "dialog_prompt_history_file_header": "# AI-assistent [{datetime}]",
+
     "dialog_error_loading_model": "Fel vid laddning av anpassad modell",
 }

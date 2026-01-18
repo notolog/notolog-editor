@@ -22,5 +22,7 @@ lexemes = {
     "dialog_message_copy_tooltip": "Exemplum textus",
     "dialog_message_copied_tooltip": "Exemplar",
 
+    "dialog_prompt_history_file_header": "# Assistens AI [{datetime}]",
+
     "dialog_error_loading_model": "Error loading mos proprius",
 }

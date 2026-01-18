@@ -10,25 +10,27 @@ Website: https://notolog.app
 PyPI: https://pypi.org/project/notolog
 
 Author: Vadim Bakhrenkov
-Copyright: 2024-2025 Vadim Bakhrenkov
+Copyright: 2024-2026 Vadim Bakhrenkov
 License: MIT License
 
 For detailed instructions and project information, please see the repository's README.md.
 """
 
-from PySide6.QtWidgets import QApplication
-
-from notolog.app_config import AppConfig
-
 import os
 import sys
 import pytest
 
-os.environ.pop("QT_QPA_PLATFORM", None)
+# IMPORTANT: Set environment variables BEFORE importing PySide6
+# Use offscreen platform for Qt to prevent segfaults when no display is available
+os.environ["QT_QPA_PLATFORM"] = "offscreen"
 # Force Qt style override to avoid:
 # QApplication: invalid style override 'kvantum' passed, ignoring it.
 #    Available styles: Windows, Fusion
 os.environ["QT_STYLE_OVERRIDE"] = "Fusion"
+
+# Now import PySide6 after environment is set
+from PySide6.QtWidgets import QApplication  # noqa: E402
+from notolog.app_config import AppConfig  # noqa: E402
 
 
 @pytest.fixture
@@ -53,6 +55,6 @@ def test_app(mocker):
 
     yield app
 
-    # Cleanup
-    app.quit()
+    # Cleanup - don't call quit() here as it causes segfaults
+    # The session-level cleanup in conftest.py will handle it
     app.processEvents()

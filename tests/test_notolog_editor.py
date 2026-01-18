@@ -10,7 +10,7 @@ Website: https://notolog.app
 PyPI: https://pypi.org/project/notolog
 
 Author: Vadim Bakhrenkov
-Copyright: 2024-2025 Vadim Bakhrenkov
+Copyright: 2024-2026 Vadim Bakhrenkov
 License: MIT License
 
 For detailed instructions and project information, please see the repository's README.md.
@@ -519,3 +519,73 @@ class TestNotologEditor:
 
     def test_is_quiet_mode(self, test_obj_notolog_editor):
         assert test_obj_notolog_editor.is_quiet_mode()
+
+    @pytest.mark.parametrize(
+        "test_exp_params_fixture",
+        [
+            # Anchors - should return True (local)
+            ('#section-1', None, True),
+            ('#heading', None, True),
+            # Expandable/collapsible - should return True
+            ('expandable-1', None, True),
+            ('collapsible-2', None, True),
+            # External http/https URLs - should return False (external)
+            ('https://example.com', None, False),
+            ('http://example.com/page', None, False),
+            ('https://github.com/notolog/notolog-editor', None, False),
+            # Dangerous schemes - should return None (blocked)
+            ('javascript:alert(1)', None, None),
+            ('ftp://example.com', None, None),
+            ('data:text/html,<script>alert(1)</script>', None, None),
+            # Note: file:// is allowed as it's a valid local file scheme
+        ],
+        indirect=True
+    )
+    def test_check_local_link_schemes(self, mocker, test_obj_notolog_editor, test_exp_params_fixture):
+        """Test check_local_link correctly identifies different URL schemes."""
+        from PySide6.QtCore import QUrl
+
+        url_string, _, expected_result = test_exp_params_fixture
+        url = QUrl(url_string)
+
+        result = test_obj_notolog_editor.check_local_link(url, execute=False)
+
+        assert result == expected_result
+
+    @pytest.mark.parametrize(
+        "test_exp_params_fixture",
+        [
+            # Relative markdown links - should return True if file exists
+            ('readme.md', 'readme.md', True),
+            ('./relative.md', 'relative.md', True),
+            # Non-existent files - should return None
+            ('nonexistent.md', None, None),
+            # Unsupported extensions (no extension or blocked) - should return None
+            ('script.py', 'script.py', None),
+        ],
+        indirect=True
+    )
+    def test_check_local_link_relative_paths(self, mocker, test_obj_notolog_editor, test_exp_params_fixture, tmp_path):
+        """Test check_local_link correctly resolves relative paths."""
+        from PySide6.QtCore import QUrl
+
+        url_string, file_to_create, expected_result = test_exp_params_fixture
+
+        # Set up required attributes for check_local_link
+        test_obj_notolog_editor.supported_file_extensions = ['md', 'txt', 'htm', 'html', 'enc']
+
+        # Set current file path (used by get_current_file_path()) to a file in tmp_path
+        current_file = tmp_path / 'current.md'
+        current_file.touch()
+        test_obj_notolog_editor.file_path = str(current_file)
+
+        # Create the target file if needed
+        if file_to_create:
+            target_path = tmp_path / file_to_create
+            target_path.parent.mkdir(parents=True, exist_ok=True)
+            target_path.touch()
+
+        url = QUrl(url_string)
+        result = test_obj_notolog_editor.check_local_link(url, execute=False)
+
+        assert result == expected_result

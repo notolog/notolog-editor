@@ -6,13 +6,13 @@ lexemes = {
     "module_openai_api_url_label": "URL API",
     "module_openai_api_url_input_placeholder_text": "URL API",
     "module_openai_api_url_input_accessible_description":
-        "URL API OpenAI — это адрес конечной точки API, который может изменяться в зависимости от сервиса и версии.\n"
+        "URL API OpenAI - это адрес конечной точки API, который может изменяться в зависимости от сервиса и версии.\n"
         "AI Assistant использует ту, что предназначена для функций чатов или завершения текста.\n"
         "Обратитесь к официальной документации OpenAI API, чтобы получить текущий URL.",
     "module_openai_api_key_label": "Ключ API",
     "module_openai_api_key_input_placeholder_text": "Ключ API",
     "module_openai_api_key_input_accessible_description":
-        "Ключ API OpenAI — это секретный токен, используемый для аутентификации запросов к конечной точке API.",
+        "Ключ API OpenAI - это секретный токен, используемый для аутентификации запросов к конечной точке API.",
     "module_openai_api_supported_models_label": "Поддерживаемые модели",
     "module_openai_api_model_names_combo_placeholder_text": "Выбрать модель",
     "module_openai_api_model_names_combo_accessible_description":

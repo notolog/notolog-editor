@@ -22,5 +22,7 @@ lexemes = {
     "dialog_message_copy_tooltip": "复制文本",
     "dialog_message_copied_tooltip": "已复制",
 
+    "dialog_prompt_history_file_header": "# AI助手 [{datetime}]",
+
     "dialog_error_loading_model": "加载自定义模型错误",
 }

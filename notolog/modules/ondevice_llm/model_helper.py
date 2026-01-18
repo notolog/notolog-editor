@@ -11,7 +11,7 @@ Website: https://notolog.app
 PyPI: https://pypi.org/project/notolog
 
 Author: Vadim Bakhrenkov
-Copyright: 2024-2025 Vadim Bakhrenkov
+Copyright: 2024-2026 Vadim Bakhrenkov
 License: MIT License
 
 For detailed instructions and project information, please see the repository's README.md.
@@ -108,6 +108,10 @@ class ModelHelper:
         self.tokenizer = Tokenizer(self.model)
         self.tokenizer_stream = self.tokenizer.create_stream()
 
+    def is_model_loaded(self) -> bool:
+        """Check if the model is already initialized."""
+        return hasattr(self, 'model') and self.model is not None
+
     def get_input_tokens(self, prompt):
         input_tokens = self.tokenizer.encode(prompt)
         return input_tokens
@@ -162,3 +166,19 @@ class ModelHelper:
     def convert_temperature(temperature: int = 0):
         """ Convert the integer value of temperature to a float. """
         return temperature / 100
+
+    def cleanup(self):
+        """
+        Release model resources explicitly.
+        Call this method when the model is no longer needed to free memory.
+        """
+        if hasattr(self, 'generator') and self.generator:
+            self.generator = None
+        if hasattr(self, 'tokenizer_stream') and self.tokenizer_stream:
+            self.tokenizer_stream = None
+        if hasattr(self, 'tokenizer') and self.tokenizer:
+            self.tokenizer = None
+        if hasattr(self, 'model') and self.model:
+            del self.model
+            self.model = None
+        self.logger.info("Model resources released")

@@ -22,5 +22,7 @@ lexemes = {
     "dialog_message_copy_tooltip": "Αντιγραφή κειμένου",
     "dialog_message_copied_tooltip": "Αντιγράφηκε",
 
+    "dialog_prompt_history_file_header": "# Βοηθός AI [{datetime}]",
+
     "dialog_error_loading_model": "Σφάλμα φόρτωσης προσαρμοσμένου μοντέλου",
 }

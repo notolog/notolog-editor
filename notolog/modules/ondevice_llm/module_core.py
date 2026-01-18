@@ -11,14 +11,15 @@ Website: https://notolog.app
 PyPI: https://pypi.org/project/notolog
 
 Author: Vadim Bakhrenkov
-Copyright: 2024-2025 Vadim Bakhrenkov
+Copyright: 2024-2026 Vadim Bakhrenkov
 License: MIT License
 
 For detailed instructions and project information, please see the repository's README.md.
 """
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtWidgets import QVBoxLayout, QWidget, QLabel, QSpinBox, QSlider, QSizePolicy, QScrollArea
+from PySide6.QtWidgets import QVBoxLayout, QWidget, QLabel, QSpinBox, QSlider, QSizePolicy, QScrollArea, QApplication
+from PySide6.QtGui import QCursor
 
 import os
 import logging
@@ -176,9 +177,39 @@ class ModuleCore(BaseAiCore):
         self.init_callback = init_callback
         self.finished_callback = finished_callback
 
-        # Init model
+        # Init model - handle long loading time gracefully
         try:
-            self.model_helper.init_model()
+            # Only show loading message if model is not yet loaded
+            model_needs_loading = not self.model_helper.is_model_loaded()
+            if model_needs_loading:
+                # Show loading message to user before model loading starts
+                self.update_signal.emit(
+                    self.lexemes.get("module_ondevice_llm_model_loading", scope='common',
+                                     default="Loading model, please wait..."),
+                    None, None, EnumMessageType.DEFAULT, EnumMessageStyle.INFO)
+
+                # Set busy cursor to indicate activity to the window manager
+                QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
+
+                # Process pending events to ensure UI updates and cursor change are visible
+                # This also signals to the window manager that the app is responsive
+                QApplication.processEvents()
+
+                # Yield control briefly to allow Qt event loop to fully process
+                await asyncio.sleep(0.05)
+
+                try:
+                    # Run model initialization in executor
+                    # Note: ONNX model loading holds the GIL, so this may still block
+                    # but the busy cursor and processed events help prevent "not responding"
+                    loop = asyncio.get_running_loop()
+                    await loop.run_in_executor(None, self.model_helper.init_model)
+                finally:
+                    # Always restore cursor
+                    QApplication.restoreOverrideCursor()
+            else:
+                # Model already loaded, just ensure it's initialized
+                self.model_helper.init_model()
         except (AttributeError, Exception) as e:
             self.logger.error(f'{e}')
             # Complete init
@@ -269,6 +300,10 @@ class ModuleCore(BaseAiCore):
             # Allow to finish callback, do not remove:
             # > self.generator_task.remove_done_callback(self.finished_callback)
             self.generator_task.cancel()
+            try:
+                await self.generator_task
+            except asyncio.CancelledError:
+                pass  # Expected when task is cancelled
 
     def extend_settings_dialog_fields_conf(self, tab_widget) -> list:
         # On Device LLM Config

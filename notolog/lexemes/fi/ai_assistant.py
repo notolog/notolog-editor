@@ -22,5 +22,7 @@ lexemes = {
     "dialog_message_copy_tooltip": "Kopioi teksti",
     "dialog_message_copied_tooltip": "Kopioitu",
 
+    "dialog_prompt_history_file_header": "# Tekoälyavustaja [{datetime}]",
+
     "dialog_error_loading_model": "Virhe ladattaessa mukautettua mallia",
 }

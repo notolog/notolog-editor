@@ -10,7 +10,7 @@ Website: https://notolog.app
 PyPI: https://pypi.org/project/notolog
 
 Author: Vadim Bakhrenkov
-Copyright: 2024-2025 Vadim Bakhrenkov
+Copyright: 2024-2026 Vadim Bakhrenkov
 License: MIT License
 
 For detailed instructions and project information, please see the repository's README.md.
@@ -242,3 +242,76 @@ class TestModelHelper:
 
         # Assert the outputs match the expected results
         assert outputs == expected_outputs
+
+    @pytest.mark.skipif(not is_module_available('llama_cpp'), reason="llama_cpp module not available")
+    def test_is_model_loaded_initially_false(self, mocker, tmp_path):
+        """Test that is_model_loaded returns False when no model is loaded."""
+        # Create a dummy model file
+        dummy_model = tmp_path / "test.gguf"
+        dummy_model.touch()
+
+        # Mock the singleton to get a fresh instance
+        ModelHelper._instance = None
+
+        helper = ModelHelper(model_path=str(dummy_model), search_options={})
+
+        assert helper.is_model_loaded() is False
+
+    @pytest.mark.skipif(not is_module_available('llama_cpp'), reason="llama_cpp module not available")
+    def test_is_model_loaded_after_model_set(self, mocker, tmp_path):
+        """Test that is_model_loaded returns True when model attribute is set."""
+        # Create a dummy model file
+        dummy_model = tmp_path / "test.gguf"
+        dummy_model.touch()
+
+        # Mock the singleton to get a fresh instance
+        ModelHelper._instance = None
+
+        helper = ModelHelper(model_path=str(dummy_model), search_options={})
+
+        # Manually set a mock model
+        helper.model = mocker.MagicMock()
+
+        assert helper.is_model_loaded() is True
+
+    @pytest.mark.skipif(not is_module_available('llama_cpp'), reason="llama_cpp module not available")
+    def test_cleanup_releases_resources(self, mocker, tmp_path):
+        """Test that cleanup method properly releases model resources."""
+        # Create a dummy model file
+        dummy_model = tmp_path / "test.gguf"
+        dummy_model.touch()
+
+        # Mock the singleton to get a fresh instance
+        ModelHelper._instance = None
+
+        helper = ModelHelper(model_path=str(dummy_model), search_options={})
+
+        # Set mock resources
+        helper.model = mocker.MagicMock()
+        helper.generator = mocker.MagicMock()
+
+        # Call cleanup
+        helper.cleanup()
+
+        # Verify resources are released
+        assert helper.model is None
+        assert helper.generator is None
+
+    @pytest.mark.skipif(not is_module_available('llama_cpp'), reason="llama_cpp module not available")
+    def test_is_model_loaded_after_cleanup(self, mocker, tmp_path):
+        """Test that is_model_loaded returns False after cleanup."""
+        # Create a dummy model file
+        dummy_model = tmp_path / "test.gguf"
+        dummy_model.touch()
+
+        # Mock the singleton to get a fresh instance
+        ModelHelper._instance = None
+
+        helper = ModelHelper(model_path=str(dummy_model), search_options={})
+
+        # Set and then cleanup
+        helper.model = mocker.MagicMock()
+        assert helper.is_model_loaded() is True
+
+        helper.cleanup()
+        assert helper.is_model_loaded() is False

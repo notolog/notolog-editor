@@ -10,7 +10,7 @@ Website: https://notolog.app
 PyPI: https://pypi.org/project/notolog
 
 Author: Vadim Bakhrenkov
-Copyright: 2024-2025 Vadim Bakhrenkov
+Copyright: 2024-2026 Vadim Bakhrenkov
 License: MIT License
 
 For detailed instructions and project information, please see the repository's README.md.
@@ -266,3 +266,28 @@ class TestImageDownloader:
         mime_type, file_extension = test_exp_params_fixture
 
         assert test_downloader_obj.mime_to_extension(mime_type) == file_extension
+
+    @pytest.mark.parametrize(
+        "test_exp_params_fixture, test_downloader_obj",
+        [
+            # Valid http/https URLs should be detected as external
+            (('https://example.com/image.png', 'example.com', False), None),
+            (('https://notolog.app/image.png', 'example.com', True), None),
+            (('http://notolog.app/image.png', 'example.com', True), None),
+            # Invalid schemes should return False for security
+            (('file:///etc/passwd', 'example.com', False), None),
+            (('javascript:alert(1)', 'example.com', False), None),
+            (('data:image/png;base64,abc', 'example.com', False), None),
+            (('ftp://example.com/file', 'example.com', False), None),
+            # Empty or relative URLs
+            (('/local/path/image.png', 'example.com', False), None),
+            (('relative/path.png', 'example.com', False), None),
+        ],
+        indirect=True
+    )
+    def test_is_external_url_scheme_validation(self, test_exp_params_fixture, test_downloader_obj: ImageDownloader):
+        """Test that is_external_url only allows http/https schemes for security."""
+        url, base_domain, expected_result = test_exp_params_fixture
+
+        result = test_downloader_obj.is_external_url(url, base_domain)
+        assert result == expected_result

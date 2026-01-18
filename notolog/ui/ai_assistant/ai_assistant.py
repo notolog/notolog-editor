@@ -18,7 +18,7 @@ Website: https://notolog.app
 PyPI: https://pypi.org/project/notolog
 
 Author: Vadim Bakhrenkov
-Copyright: 2024-2025 Vadim Bakhrenkov
+Copyright: 2024-2026 Vadim Bakhrenkov
 License: MIT License
 
 For detailed instructions and project information, please see the repository's README.md.
@@ -375,7 +375,12 @@ class AIAssistant(QDialog):
         self.messages_layout.addWidget(message_label, alignment=Qt.AlignmentFlag.AlignBottom)
 
         # Emit message added signal
-        self.message_added.emit(message_text, request_msg_id, response_msg_id, message_type)
+        # Use -1 as sentinel value for None to avoid C++ type conversion errors
+        self.message_added.emit(
+            message_text,
+            request_msg_id if request_msg_id is not None else -1,
+            response_msg_id if response_msg_id is not None else -1,
+            message_type)
 
         # Unique message id
         return message_id

@@ -22,5 +22,7 @@ lexemes = {
     "dialog_message_copy_tooltip": "Копировать текст",
     "dialog_message_copied_tooltip": "Скопировано",
 
+    "dialog_prompt_history_file_header": "# ИИ Помощник [{datetime}]",
+
     "dialog_error_loading_model": "Ошибка загрузки пользовательской модели",
 }

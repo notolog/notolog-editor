@@ -22,5 +22,7 @@ lexemes = {
     "dialog_message_copy_tooltip": "ტექსტის კოპირება",
     "dialog_message_copied_tooltip": "დაკოპირებულია",
 
+    "dialog_prompt_history_file_header": "# AI ასისტენტი [{datetime}]",
+
     "dialog_error_loading_model": "შეცდომა საბაჟო მოდელის ჩატვირთვისას",
 }

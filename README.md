@@ -1,9 +1,10 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2025-04-06 20:10:00.337392"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2026-01-18 13:57:00.794379"}} -->
 # Notolog
 
-[![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/) [![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor)](https://github.com/notolog/notolog-editor/blob/master/LICENSE) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)](https://pypi.org/project/notolog/) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/notolog/notolog-editor/tests.yaml)](https://github.com/notolog/notolog-editor/actions/workflows/tests.yaml) [![Conda Version](https://img.shields.io/conda/vn/conda-forge/notolog)](https://anaconda.org/conda-forge/notolog) [![PyPI - Downloads](https://img.shields.io/pypi/dm/notolog)](https://pypistats.org/packages/notolog)
-
+[![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/) [![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor)](https://github.com/notolog/notolog-editor/blob/master/LICENSE) [![PyPI - Python Version](https://img.shields.io/badge/python-3.10+-blue.svg)](https://pypi.org/project/notolog/) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/notolog/notolog-editor/tests.yaml)](https://github.com/notolog/notolog-editor/actions/workflows/tests.yaml) [![Conda Version](https://img.shields.io/conda/vn/conda-forge/notolog)](https://anaconda.org/conda-forge/notolog) [![PyPI - Downloads](https://img.shields.io/pypi/dm/notolog)](https://pypistats.org/packages/notolog)
 Notolog is an open-source Markdown editor licensed under the MIT License. Combining simplicity with powerful tools and an AI Assistant, it's built with Python and PySide6 to help you tackle programming challenges and sharpen your Markdown skills in a cozy, efficient way.
+
+📖 **[Documentation](docs/index.md)** | 🪲 **[Report Issues](https://github.com/notolog/notolog-editor/issues)** | 💡 **[Request Features](https://github.com/notolog/notolog-editor/issues)**
 
 
 ## Instant Setup
@@ -91,7 +92,7 @@ Below is a glimpse of the UI, featuring the settings window:
 
 ## Installation
 
-Ensure **Python 3.9 or higher** is installed. For more details, visit [python.org](https://python.org).
+Ensure **Python 3.10 or higher** is installed. For more details, visit [python.org](https://python.org).
 
 Using a virtual environment is recommended to avoid version conflicts. From Python 3.6, venv is the recommended method to create virtual environments. For more information check [Creation of virtual environments](https://docs.python.org/3/library/venv.html). Alternatively, you can execute the Notolog source code and set up virtual environment with your favorite Python code editor.
 
@@ -151,7 +152,7 @@ Then, execute the installation command:
 conda install notolog -c conda-forge
 ```
 
-This will fetch and install the latest version of Notolog compatible with Python 3.9 or newer from the [conda-forge packages](https://anaconda.org/conda-forge/notolog).
+This will fetch and install the latest version of Notolog compatible with Python 3.10 or newer from the [conda-forge packages](https://anaconda.org/conda-forge/notolog).
 
 Run Notolog:
 ```sh
@@ -207,9 +208,15 @@ python -m notolog.app
 
 ### Module llama.cpp
 
-By default, the module is included in the base installation but not activated (unlike the Conda installation, where a compiler toolchain is included for environment setup needs). However, it can be enabled by installing the `llama-cpp-python` package (Python Bindings for llama.cpp). Below is a quick installation summary:
+The `llama-cpp-python` package is an optional dependency that enables GGUF model support. It is not included in the base installation because it requires a C++ compiler to build.
+
+**Installation options:**
 
 ```sh
+# Option 1: Install with extras (recommended)
+pip install notolog[llama]
+
+# Option 2: Install separately
 pip install llama-cpp-python
 ```
 
@@ -235,7 +242,7 @@ To minimize installation overhead and streamline dependency management, dependen
 
 To install these dependencies, run: `python dev_install.py test`. The `tomli` package is required to execute this script; you can install it using `pip install tomli`.
 
-This approach helps manage test dependencies independently from the main application dependencies, ensuring a cleaner and more manageable setup.
+This approach helps manage test dependencies independently of the main application dependencies, ensuring a cleaner and more manageable setup.
 
 <details>
 <summary>Run Tests</summary>

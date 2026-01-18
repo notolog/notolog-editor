@@ -11,7 +11,7 @@ Website: https://notolog.app
 PyPI: https://pypi.org/project/notolog
 
 Author: Vadim Bakhrenkov
-Copyright: 2024-2025 Vadim Bakhrenkov
+Copyright: 2024-2026 Vadim Bakhrenkov
 License: MIT License
 
 For detailed instructions and project information, please see the repository's README.md.
@@ -139,6 +139,10 @@ class ModelHelper:
             self.logger.critical(f"Unexpected error during model initialization: {e}")
             raise
 
+    def is_model_loaded(self) -> bool:
+        """Check if the model is already initialized."""
+        return getattr(self, 'model', None) is not None
+
     def get_input_tokens(self, text):
         # Check if the model is initialized
         if not getattr(self, 'model', None):
@@ -235,3 +239,15 @@ class ModelHelper:
         Convert an integer temperature to a float for use in model settings.
         """
         return temperature / 100
+
+    def cleanup(self):
+        """
+        Release model resources explicitly.
+        Call this method when the model is no longer needed to free memory.
+        """
+        if hasattr(self, 'generator') and self.generator:
+            self.generator = None
+        if hasattr(self, 'model') and self.model:
+            del self.model
+            self.model = None
+        self.logger.info("Model resources released")

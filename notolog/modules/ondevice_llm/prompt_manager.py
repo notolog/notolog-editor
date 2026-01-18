@@ -11,7 +11,7 @@ Website: https://notolog.app
 PyPI: https://pypi.org/project/notolog
 
 Author: Vadim Bakhrenkov
-Copyright: 2024-2025 Vadim Bakhrenkov
+Copyright: 2024-2026 Vadim Bakhrenkov
 License: MIT License
 
 For detailed instructions and project information, please see the repository's README.md.
@@ -142,6 +142,12 @@ class PromptManager(QObject):
         return prompt
 
     def add_message(self, message_text, request_msg_id, response_msg_id, message_type: EnumMessageType):
+        # Convert sentinel value -1 back to None (used to avoid C++ type conversion errors)
+        if request_msg_id == -1:
+            request_msg_id = None
+        if response_msg_id == -1:
+            response_msg_id = None
+
         self.logger.debug(f'Add message: {message_text}, {response_msg_id}, {message_type}')
         if message_type == EnumMessageType.USER_INPUT:
             self.add_request(message_text, request_msg_id)

@@ -12,7 +12,7 @@ Website: https://notolog.app
 PyPI: https://pypi.org/project/notolog
 
 Author: Vadim Bakhrenkov
-Copyright: 2024-2025 Vadim Bakhrenkov
+Copyright: 2024-2026 Vadim Bakhrenkov
 License: MIT License
 
 For detailed instructions and project information, please see the repository's README.md.
@@ -253,8 +253,12 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
     def is_external_url(url, base_domain='example.com'):
         """
         Determine if the given URL is an external URL.
+        Only allows http and https schemes for security.
         """
         parsed_url = urlparse(url)
+        # Security: Only allow http/https schemes
+        if parsed_url.scheme not in ('http', 'https'):
+            return False
         return not (parsed_url.netloc == '' or parsed_url.netloc.endswith(base_domain))
 
     @staticmethod

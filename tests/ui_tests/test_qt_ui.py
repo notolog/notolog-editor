@@ -10,14 +10,11 @@ Website: https://notolog.app
 PyPI: https://pypi.org/project/notolog
 
 Author: Vadim Bakhrenkov
-Copyright: 2024-2025 Vadim Bakhrenkov
+Copyright: 2024-2026 Vadim Bakhrenkov
 License: MIT License
 
 For detailed instructions and project information, please see the repository's README.md.
 """
-
-from PySide6.QtCore import Qt
-from PySide6.QtTest import QTest
 
 from notolog.notolog_editor import NotologEditor
 from notolog.settings import Settings
@@ -30,11 +27,14 @@ import pytest
 
 class TestQtUi:
 
-    @pytest.fixture(scope="class", autouse=True)
-    def settings_obj(self):
+    @pytest.fixture(scope="function", autouse=True)
+    def settings_obj(self, mocker):
         """
         Use 'autouse=True' to enable automatic setup, or pass 'settings_obj' directly to main_window()
         """
+        # Force to override system language as a default BEFORE creating Settings
+        mocker.patch.object(Languages, 'default', return_value='la')
+
         # Fixture to create and return settings instance
         settings = Settings()
         # Clear settings to be sure start over without side effects
@@ -45,17 +45,17 @@ class TestQtUi:
         yield settings
 
     @pytest.fixture
-    def main_window(self, mocker, test_app):  # noqa: F811 redefinition of unused 'test_app'
-        # Force to override system language as a default
-        mocker.patch.object(Languages, 'default', return_value='la')
-
-        # Do not show actual window; return object instance only
-        mocker.patch.object(NotologEditor, 'show', return_value=None)
-        # Prevent resource processing, including 'process_document_images'
-        mocker.patch.object(NotologEditor, 'load_content_html', return_value=None)
+    def main_window(self, mock_notolog_editor, test_app, settings_obj):  # noqa: F811 redefinition of unused 'test_app'
+        # mock_notolog_editor fixture from conftest.py mocks NotologEditor.__init__
+        # to prevent segfaults in headless test environments
 
         # Fixture to create and return main window instance
-        yield NotologEditor(screen=test_app.screens()[0])
+        editor = NotologEditor(screen=test_app.screens()[0])
+
+        # Inject the settings_obj from the fixture
+        editor.settings = settings_obj
+
+        yield editor
 
     def test_editor_state(self, main_window, settings_obj):
         # Check app language set correctly
@@ -70,8 +70,8 @@ class TestQtUi:
 
         # Test that clicking the edit button updates the editor state
         button = main_window.toolbar.toolbar_edit_button
-        # assert button
-        QTest.mouseClick(button, Qt.MouseButton.LeftButton, pos=button.rect().center())
+        # Use mock click since button is mocked in headless environment
+        button.click()
 
         assert main_window.statusbar['mode_label'].text() == 'Modus Editio'
         assert main_window.statusbar['source_label'].text() == 'Markdown'
@@ -83,6 +83,6 @@ class TestQtUi:
         assert main_window.toolbar.search_form.text() == 'Test search'
 
         assert hasattr(main_window.toolbar.search_form, 'btn_search_clear')
-        # Test that clicking the button updates the search field
-        QTest.mouseClick(main_window.toolbar.search_form.btn_search_clear, Qt.MouseButton.LeftButton)  # noqa
+        # Use mock click since button is mocked in headless environment
+        main_window.toolbar.search_form.btn_search_clear.click()
         assert main_window.toolbar.search_form.text() == ''

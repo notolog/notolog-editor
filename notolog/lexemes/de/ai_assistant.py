@@ -22,5 +22,7 @@ lexemes = {
     "dialog_message_copy_tooltip": "Text kopieren",
     "dialog_message_copied_tooltip": "Kopiert",
 
+    "dialog_prompt_history_file_header": "# KI-Assistent [{datetime}]",
+
     "dialog_error_loading_model": "Fehler beim Laden des benutzerdefinierten Modells",
 }

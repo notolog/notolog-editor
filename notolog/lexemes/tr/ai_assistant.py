@@ -21,5 +21,7 @@ lexemes = {
     "dialog_message_copy_tooltip": "Metni kopyala",
     "dialog_message_copied_tooltip": "Kopyalandı",
 
+    "dialog_prompt_history_file_header": "# AI Asistanı [{datetime}]",
+
     "dialog_error_loading_model": "Özel model yüklenirken hata",
 }

@@ -22,5 +22,7 @@ lexemes = {
     "dialog_message_copy_tooltip": "텍스트 복사",
     "dialog_message_copied_tooltip": "복사됨",
 
+    "dialog_prompt_history_file_header": "# AI 어시스턴트 [{datetime}]",
+
     "dialog_error_loading_model": "사용자 정의 모델 로딩 오류",
 }

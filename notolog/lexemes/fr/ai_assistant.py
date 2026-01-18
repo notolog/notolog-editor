@@ -22,5 +22,7 @@ lexemes = {
     "dialog_message_copy_tooltip": "Copier le texte",
     "dialog_message_copied_tooltip": "Copié",
 
+    "dialog_prompt_history_file_header": "# Assistant IA [{datetime}]",
+
     "dialog_error_loading_model": "Erreur lors du chargement du modèle personnalisé",
 }

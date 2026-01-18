@@ -21,5 +21,7 @@ lexemes = {
     "dialog_message_copy_tooltip": "पाठ कॉपी करें",
     "dialog_message_copied_tooltip": "कॉपी किया गया",
 
+    "dialog_prompt_history_file_header": "# एआई सहायक [{datetime}]",
+
     "dialog_error_loading_model": "कस्टम मॉडल लोड करने में त्रुटि",
 }

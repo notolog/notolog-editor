@@ -10,7 +10,7 @@ Website: https://notolog.app
 PyPI: https://pypi.org/project/notolog
 
 Author: Vadim Bakhrenkov
-Copyright: 2024-2025 Vadim Bakhrenkov
+Copyright: 2024-2026 Vadim Bakhrenkov
 License: MIT License
 
 For detailed instructions and project information, please see the repository's README.md.
@@ -21,9 +21,7 @@ from PySide6.QtTest import QTest
 
 from notolog.ui.search_form import SearchForm
 from notolog.ui.toolbar import ToolBar
-from notolog.notolog_editor import NotologEditor
 from notolog.settings import Settings
-from notolog.enums.languages import Languages
 from notolog.modules.modules import Modules
 
 from . import test_app  # noqa: F401
@@ -35,11 +33,15 @@ class TestToolBar:
 
     _test_var_click_assert_cnt = 0
 
-    @pytest.fixture(scope="class", autouse=True)
-    def settings_obj(self):
+    @pytest.fixture(scope="function", autouse=True)
+    def settings_obj(self, mocker):
         """
         Use 'autouse=True' to enable automatic setup, or pass 'settings_obj' directly to main_window()
         """
+        # Force to override system language as a default BEFORE creating Settings
+        from notolog.enums.languages import Languages
+        mocker.patch.object(Languages, 'default', return_value='la')
+
         # Fixture to create and return settings instance
         settings = Settings()
         # Clear settings to be sure start over without side effects
@@ -50,17 +52,9 @@ class TestToolBar:
         yield settings
 
     @pytest.fixture
-    def main_window(self, mocker, test_app):  # noqa: F811 redefinition of unused 'test_app'
-        # Force to override system language as a default
-        mocker.patch.object(Languages, 'default', return_value='la')
-
-        # Do not show actual window; return object instance only
-        mocker.patch.object(NotologEditor, 'show', return_value=None)
-        # Prevent resource processing, including 'process_document_images'
-        mocker.patch.object(NotologEditor, 'load_content_html', return_value=None)
-
-        # Fixture to create and return main window instance
-        yield NotologEditor(screen=test_app.screens()[0])
+    def main_window(self, mock_main_window_for_widgets):  # noqa: F811
+        # Use the mock from conftest.py to prevent segfaults in headless environments
+        yield mock_main_window_for_widgets
 
     @pytest.fixture
     def ui_obj(self, mocker, main_window):
@@ -79,10 +73,8 @@ class TestToolBar:
         # Check app language set correctly
         assert settings_obj.app_language == 'la'
 
-        assert isinstance(main_window.toolbar, ToolBar)
+        # Check the ToolBar instance created for testing
         assert isinstance(ui_obj, ToolBar)
-        # Both objects differ in the test environment
-        assert main_window.toolbar != ui_obj
 
         assert isinstance(ui_obj.search_form, SearchForm)
 

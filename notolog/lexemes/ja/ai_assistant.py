@@ -22,5 +22,7 @@ lexemes = {
     "dialog_message_copy_tooltip": "テキストをコピー",
     "dialog_message_copied_tooltip": "コピーしました",
 
+    "dialog_prompt_history_file_header": "# AIアシスタント [{datetime}]",
+
     "dialog_error_loading_model": "カスタムモデルのロードエラー",
 }

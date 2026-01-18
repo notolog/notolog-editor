@@ -1,11 +1,10 @@
 [tool.poetry]
 name = "notolog"
-version = "1.1.6"
+version = "1.1.7"
 description = "Notolog - Python Markdown Editor"
 authors = ["Vadim Bakhrenkov"]
 license = "MIT"
 readme = "README.md"
-scripts = {notolog = "notolog.app:main"}
 include = [
     "CHANGELOG.md",
     "CODE_OF_CONDUCT.md",
@@ -23,34 +22,42 @@ include = [
 exclude = ["**/__pycache__", "**/*.pyc"]
 homepage = "https://notolog.app"
 repository = "https://github.com/notolog/notolog-editor"
-keywords = ["notolog", "python", "markdown", "editor", "ai", "llm", "text", "notes"]
+keywords = [
+    "notolog",
+    "python",
+    "markdown",
+    "editor",
+    "ai",
+    "llm",
+    "text",
+    "notes",
+    "pyside6",
+    "qt",
+    "gguf",
+    "onnx",
+    "llama-cpp",
+    "local-llm",
+    "privacy",
+    "encryption",
+    "note-taking",
+    "syntax-highlighting",
+]
 classifiers = [
-    # Development Status
     "Development Status :: 5 - Production/Stable",
-
-    # Intended Audience
     "Intended Audience :: Developers",
     "Intended Audience :: End Users/Desktop",
-
-    # License
     "License :: OSI Approved :: MIT License",
-
-    # Operating System
     "Operating System :: OS Independent",
     "Operating System :: MacOS",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: POSIX",
     "Operating System :: Unix",
-
-    # Programming Language
     "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
-
-    # Topics
+    "Programming Language :: Python :: 3.14",
     "Topic :: Text Editors",
     "Topic :: Text Editors :: Documentation",
     "Topic :: Text Editors :: Emacs",
@@ -60,8 +67,6 @@ classifiers = [
     "Topic :: Text Processing",
     "Topic :: Text Processing :: General",
     "Topic :: Text Processing :: Markup :: Markdown",
-
-    # Natural Language
     "Natural Language :: Chinese (Simplified)",
     "Natural Language :: Dutch",
     "Natural Language :: English",
@@ -82,37 +87,41 @@ classifiers = [
     "Natural Language :: Turkish",
 ]
 
+[tool.poetry.scripts]
+notolog = "notolog.app:main"
+
 [tool.poetry.urls]
+Documentation = "https://github.com/notolog/notolog-editor/docs/index.md"
 Changelog = "https://github.com/notolog/notolog-editor/blob/main/CHANGELOG.md"
 IssueTracker = "https://github.com/notolog/notolog-editor/issues"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.14"
-# Main packages
-cffi = "^1.17.0"
+python = ">=3.10,<3.15"
+cffi = ">=1.17.0"
 click = "^8.1.7"
 cryptography = ">=43.0.1"
 emoji = "^2.14.0"
 iniconfig = "^2.0.0"
 Markdown = "^3.7"
-packaging = "^24.0"
+packaging = ">=24.0"
 pluggy = "^1.5.0"
 pycparser = "^2.22"
 Pygments = "^2.18.0"
 PySide6_Essentials = ">=6.8.0.2"
-qasync = "^0.27.1"
+qasync = ">=0.27.1"
 shiboken6 = ">=6.8.0.2"
-tomli = "^2.0.1"
+tomli = "^2.0.1,<=2.0.1"
 tomli_w = "^1.0.0"
 typing_extensions = "^4.12.0"
-numpy = [
-    { version = "^1.26.4", markers = "sys_platform != 'darwin' and python_version < '3.10'" },
-    { version = "^2.1.0", markers = "python_version >= '3.10'" }
-]
-onnxruntime-genai = [
-    { version = "^0.2.0", markers = "sys_platform != 'darwin' and python_version < '3.10'" },
-    { version = "^0.5.1", markers = "python_version >= '3.10' and python_version < '3.13'" }
-]
+numpy = "^2.1.0"
+onnxruntime-genai = { version = "^0.6.0", markers = "python_version < '3.13'" }
+
+[tool.poetry.extras]
+llama = ["llama-cpp-python"]
+
+[tool.poetry.dependencies.llama-cpp-python]
+version = "^0.3.8"
+optional = true
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^7.0.0"
@@ -127,13 +136,13 @@ pytest-asyncio = "^0.23.7"
 pytest-cov = ">=5.0.0"
 pytest-mock = "^3.14.0"
 
-[build-system]
-requires = ["poetry-core>=1.5.0"]
-build-backend = "poetry.core.masonry.api"
-
 [tool.pytest.ini_options]
 asyncio_default_fixture_loop_scope = "function"
 filterwarnings = [
     "ignore::pytest.PytestConfigWarning",
     "ignore::pytest.PytestUnraisableExceptionWarning",
 ]
+
+[build-system]
+requires = ["poetry-core>=1.5.0"]
+build-backend = "poetry.core.masonry.api"

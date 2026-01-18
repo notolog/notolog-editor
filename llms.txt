@@ -1,0 +1,199 @@
+# Notolog Editor - LLM Context File
+
+> An open-source Markdown editor built with Python and PySide6, featuring AI-powered assistance with multiple LLM backends.
+
+## Project Overview
+
+**Name:** Notolog
+**Version:** 1.1.7
+**License:** MIT
+**Language:** Python 3.10+
+**Repository:** https://github.com/notolog/notolog-editor
+**Website:** https://notolog.app
+**PyPI:** https://pypi.org/project/notolog
+
+## Key Features
+
+- **Markdown Editor** with syntax highlighting and real-time preview
+- **AI Assistant** with multiple backends:
+  - OpenAI API (cloud-based)
+  - On-Device LLM (ONNX format)
+  - Module llama.cpp (GGUF format)
+- **File Encryption** using AES-128 with PBKDF2 (768,000 iterations)
+- **Multi-language Support** (18 languages)
+- **Customizable Themes** (6 built-in themes)
+- **Cross-platform** (Linux, macOS, Windows)
+
+## Architecture
+
+### Core Components
+
+- `notolog/app.py` - Main application entry point
+- `notolog/notolog_editor.py` - Main editor window (QMainWindow)
+- `notolog/edit_widget.py` - Markdown editing widget
+- `notolog/view_widget.py` - HTML preview widget
+- `notolog/settings.py` - Application settings management
+
+### AI Modules (modular architecture)
+
+- `notolog/modules/base_ai_core.py` - Base class for AI modules
+- `notolog/modules/openai_api/` - OpenAI API integration
+- `notolog/modules/ondevice_llm/` - ONNX Runtime GenAI integration
+- `notolog/modules/llama_cpp/` - llama.cpp Python bindings integration
+
+### UI Components
+
+- `notolog/ui/toolbar.py` - Main toolbar
+- `notolog/ui/search_form.py` - In-document search
+- `notolog/ui/ai_assistant/` - AI Assistant dialog
+- `notolog/ui/settings_dialog.py` - Settings configuration
+
+## Documentation
+
+- [Getting Started](docs/getting-started.md) - Installation and first steps
+- [User Guide](docs/user-guide.md) - Complete feature overview
+- [AI Assistant Guide](docs/ai-assistant.md) - AI features setup
+- [Configuration](docs/configuration.md) - Settings reference
+- [API Reference](docs/api-reference.md) - Developer documentation
+- [FAQ & Troubleshooting](docs/faq.md) - Common issues
+- [Examples](docs/examples.md) - Markdown syntax examples
+
+## Installation
+
+```bash
+# Using pip (recommended)
+pip install notolog
+
+# With llama.cpp support
+pip install notolog[llama]
+
+# Using conda
+conda install notolog -c conda-forge
+
+# From source
+git clone https://github.com/notolog/notolog-editor.git
+cd notolog-editor
+pip install .
+```
+
+## Development Setup
+
+```bash
+# Clone repository
+git clone https://github.com/notolog/notolog-editor.git
+cd notolog-editor
+
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate  # Linux/macOS
+# venv\Scripts\activate  # Windows
+
+# Install in development mode
+pip install -e .
+
+# Install development dependencies
+python dev_install.py dev
+
+# Install test dependencies
+python dev_install.py test
+
+# Run tests
+pytest tests/ --cov=notolog --cov-report=term
+```
+
+## Recent Changes (v1.1.7 - 2026-01-18)
+
+### Added
+- Model loading status messages for AI modules (first run may take 60s)
+- `is_model_loaded()` and `cleanup()` methods in AI model helpers
+- Comprehensive documentation in `docs/` directory
+- GitHub issue templates and PR template
+- `CONTRIBUTING.md` and `SECURITY.md`
+- Unit tests for model loading and URL validation
+
+### Fixed
+- AI model loading now runs in background thread with busy cursor
+- Relative Markdown links open in-app instead of browser (fixes #3)
+- Async task cancellation properly awaited
+- Signal emission with None values (C++ type conversion warnings)
+
+### Security
+- URL scheme whitelist validation (only http/https allowed for external URLs)
+
+## AI Module Development
+
+To create a custom AI module:
+
+```python
+from notolog.modules.base_ai_core import BaseAiCore
+
+class ModuleCore(BaseAiCore):
+    module_name = 'My AI Module'
+    extensions = ['ai_assistant', 'settings_dialog']
+
+    def get_prompt_manager(self):
+        return self.prompt_manager
+
+    async def request(self, user_prompt, request_msg_id, response_msg_id,
+                      init_callback=None, finished_callback=None):
+        # Implement inference logic
+        pass
+```
+
+## Dependencies
+
+### Core
+- PySide6 (>=6.8.0) - Qt6 bindings
+- cryptography (>=43.0.1) - File encryption
+- Markdown (^3.7) - Markdown processing
+- qasync (>=0.27.1) - Async Qt integration
+- Pygments (^2.18.0) - Code syntax highlighting
+
+### Optional
+- llama-cpp-python (^0.3.8) - GGUF model support
+- onnxruntime-genai (^0.6.0) - ONNX model support
+- openai - OpenAI API client
+
+## Testing
+
+```bash
+# Run all tests
+pytest tests/
+
+# Run with coverage
+pytest tests/ --cov=notolog --cov-report=html
+
+# Run specific module tests
+pytest tests/modules_tests/
+
+# Skip UI tests (for headless environments)
+pytest tests/ --ignore=tests/ui_tests/
+```
+
+## Code Style
+
+- **Style Guide:** PEP 8
+- **Max Line Length:** 127 characters
+- **Max Complexity:** 15
+- **Linting:** flake8
+
+```bash
+# Run linting
+flake8 . --count --exit-zero --max-complexity=15 --max-line-length=127 --per-file-ignores="__init__.py:F401" --statistics
+```
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## Security
+
+See [SECURITY.md](SECURITY.md) for vulnerability reporting.
+
+## License
+
+MIT License - Copyright (c) 2024-2026 Vadim Bakhrenkov
+
+---
+
+*This file provides context for Large Language Models working with the Notolog codebase.*

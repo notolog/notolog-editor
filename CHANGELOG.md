@@ -1,6 +1,45 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.1.7] - 2026-01-18
+
+### Added
+- Added model loading status message for AI modules to inform users when model initialization is in progress (up to 60 seconds on first run).
+- Added `is_model_loaded()` method to model helpers for checking model initialization state.
+- Added `cleanup()` methods to AI module model helpers for proper resource release.
+- Added `CONTRIBUTING.md` with contribution guidelines.
+- Added `SECURITY.md` with security policy and vulnerability reporting instructions.
+- Added GitHub issue templates for bug reports and feature requests.
+- Added GitHub pull request template.
+- Added comprehensive documentation in the `docs/` directory (getting started, user guide, AI assistant guide, configuration, FAQ, API reference, examples).
+- Added unit tests for `is_model_loaded()` and `cleanup()` methods in AI module model helpers.
+- Added unit tests for URL scheme validation in image downloader.
+
+### Changed
+- Now requires Python 3.10 or later. Added Python 3.14 to classifiers.
+- Made `llama-cpp-python` an optional dependency installable via `pip install notolog[llama]`.
+- AI model initialization now runs in a background executor with busy cursor to prevent "Application Not Responding" dialogs on Linux/Ubuntu.
+- Improved AI Assistant signal handling to prevent C++ type conversion warnings by using sentinel values.
+- Renamed `docs/Examples.md` to `docs/examples.md` for consistency with other documentation files.
+- Refactored `check_local_link()` to properly resolve relative paths.
+
+### Updated
+- Updated all 18 language translations with model loading messages for both AI modules (On-Device LLM and Module llama.cpp).
+- Added missing `dialog_prompt_history_file_header` lexeme to all AI Assistant language files.
+- Updated `README.md` with documentation links and improved installation instructions.
+- Updated the LICENSE year range to 2024-2026, along with other application files for consistency.
+- Improved test isolation with function-scoped fixtures.
+
+### Fixed
+- Fixed AI model loading blocking the UI thread, which caused system "not responding" dialogs.
+- Fixed async task cancellation to properly await task completion in AI modules.
+- Fixed signal emission with None values causing Qt/C++ type conversion warnings.
+- Fixed relative Markdown links (e.g., `[notes](./README.md)`) now open directly in-app instead of triggering external browser dialog (fixes #3).
+
+### Security
+- Added URL scheme whitelist validation to prevent potential security issues with non-http(s) URLs in image downloads.
+- Added URL scheme blocking in `check_local_link()` to prevent dangerous schemes like `javascript:`, `data:`, `ftp:`, etc.
+
 ## [1.1.6] - 2025-03-31
 
 ### Changed
