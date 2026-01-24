@@ -20,6 +20,13 @@ lexemes = {
         "Define o número máximo de tokens a serem recebidos em uma resposta, incluindo palavras e pontuações,\n"
         "controlando o comprimento da saída.",
 
+    "module_ondevice_llm_config_execution_provider_label": "Aceleração de Hardware",
+    "module_ondevice_llm_config_execution_provider_placeholder": "Selecionar provedor",
+    "module_ondevice_llm_config_execution_provider_accessible_description":
+        "Selecione o provedor de aceleração de hardware para inferência do modelo. As opções incluem:\n"
+        "CPU (padrão), CUDA (GPUs NVIDIA), DirectML (Windows), TensorRT, OpenVINO (Intel), QNN (Qualcomm), CoreML (Apple).\n"
+        "Nota: Provedores não-CPU requerem pacotes ONNX Runtime específicos (ex: onnxruntime-genai-cuda).",
+
     "module_ondevice_llm_config_prompt_history_size_label": "Tamanho do Histórico de Prompts",
     "module_ondevice_llm_config_prompt_history_size_input_accessible_description":
         "Controla o número de entradas no histórico de prompts que o sistema retém para referência.\n"

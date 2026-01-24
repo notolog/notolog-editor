@@ -15,6 +15,9 @@ lexemes = {
     "dialog_usage_tokens_answer": "答案：{tokens}",
     "dialog_usage_tokens_total": "总计：{tokens}",
 
+    "dialog_hardware_cpu_tooltip": "CPU推理",
+    "dialog_hardware_gpu_tooltip": "GPU加速",
+
     "dialog_button_send_request": "发送请求",
     "dialog_button_stop_request": "停止",
     "dialog_button_save_history": "保存对话历史",

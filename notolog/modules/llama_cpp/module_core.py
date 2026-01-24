@@ -274,10 +274,23 @@ class ModuleCore(BaseAiCore):
                         self.logger.debug(f"Task completed with result: {result}")
 
     async def run_generator(self, user_prompt, request_msg_id, response_msg_id):
+        """
+        Run the generator asynchronously, processing model output in a non-blocking way.
+
+        Args:
+            user_prompt: The chat history/prompt messages
+            request_msg_id: ID of the request message
+            response_msg_id: ID of the response message
+        """
+        generator = None
 
         try:
+            # Initialize generator with proper exception handling
             generator = self.model_helper.init_generator(user_prompt, ModelHelper.search_options)
-        except ModuleNotFoundError as e:
+            if generator is None:
+                raise RuntimeError("Failed to initialize model generator")
+
+        except (ModuleNotFoundError, RuntimeError) as e:
             self.logger.error(f'Cannot init model generator: {e}', exc_info=False)
             # Re-raise exceptions to indicate unresolved issues to the caller
             raise
@@ -287,40 +300,79 @@ class ModuleCore(BaseAiCore):
                 self.init_callback()
 
         try:
+            # Process generator output asynchronously
             while not self.generator_task.done():
-                await self.async_generator(generator, request_msg_id, response_msg_id)
-                await asyncio.sleep(0.01)  # Sleep briefly to allow the UI to update
-        except StopAsyncIteration:
-            self.logger.debug("Async generation completed")
+                try:
+                    await self.async_generator(generator, request_msg_id, response_msg_id)
+                    # Yield control to allow UI updates
+                    await asyncio.sleep(0.01)
+                except StopAsyncIteration:
+                    # Generation completed normally
+                    self.logger.debug("Async generation completed")
+                    break
+
         except asyncio.CancelledError:
-            self.logger.info("Generation cancelled")
+            self.logger.info("Generation cancelled by user")
+            raise  # Re-raise to properly handle cancellation
         except RecursionError as e:
-            self.logger.error(f"Error occurred: {e}")
+            self.logger.error(f"Recursion error occurred: {e}")
+            raise
         except (SystemExit, Exception) as e:
-            self.logger.error(f"Exception raised: {e}")
-        finally:  # Mark the end of the generation process
+            self.logger.error(f"Exception during generation: {e}", exc_info=True)
+            raise
+        finally:
+            # Ensure cleanup happens
             await self.stop_generator()
 
     async def async_generator(self, generator, request_msg_id, response_msg_id):
-        # Retrieve outputs for this iteration to process or display
-        outputs = await self.model_helper.generate_output(generator)
-        if len(outputs) > 0:  # there might be a space symbol
-            # Emit update message signal
-            self.update_signal.emit(outputs, request_msg_id, response_msg_id,
-                                    EnumMessageType.RESPONSE, EnumMessageStyle.DEFAULT)
-            # Emit update usage signal
-            self.update_usage_signal.emit(self.get_model_name(), 0, 1, 1, True)  # One token at the moment
+        """
+        Process one iteration of the generator and emit output signals.
+
+        Args:
+            generator: The model output generator
+            request_msg_id: ID of the request message
+            response_msg_id: ID of the response message
+
+        Raises:
+            StopAsyncIteration: When generation is complete
+        """
+        try:
+            # Retrieve outputs for this iteration to process or display
+            outputs = await self.model_helper.generate_output(generator)
+
+            # Emit output if there's content (including spaces)
+            if len(outputs) > 0:
+                # Emit update message signal
+                self.update_signal.emit(outputs, request_msg_id, response_msg_id,
+                                        EnumMessageType.RESPONSE, EnumMessageStyle.DEFAULT)
+                # Emit update usage signal (one token per iteration)
+                self.update_usage_signal.emit(self.get_model_name(), 0, 1, 1, True)
+        except StopAsyncIteration:
+            # Re-raise to signal completion
+            raise
+        except Exception as e:
+            self.logger.error(f"Error in async_generator: {e}", exc_info=True)
+            raise
 
     async def stop_generator(self):
-        # Cancel asynchronous tasks cleanly when necessary.
+        """
+        Cancel asynchronous generation tasks cleanly.
+
+        This method ensures proper cleanup when generation is stopped,
+        whether by user cancellation or completion.
+        """
         if self.generator_task and not self.generator_task.done():
-            # Ensure to finish callback execution; do not remove:
-            # > self.generator_task.remove_done_callback(self.finished_callback)
+            self.logger.debug("Stopping generator task")
+            # Cancel the task
             self.generator_task.cancel()
             try:
+                # Wait for the task to complete cancellation
                 await self.generator_task
             except asyncio.CancelledError:
-                pass  # Expected when task is cancelled
+                # Expected when task is cancelled
+                self.logger.debug("Generator task cancelled successfully")
+            except Exception as e:
+                self.logger.error(f"Error while stopping generator: {e}", exc_info=True)
 
     def extend_settings_dialog_fields_conf(self, tab_widget) -> list:
         # Configuration settings for Module llama.cpp

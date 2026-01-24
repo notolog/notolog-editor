@@ -32,6 +32,7 @@ class Languages(EnumBase):
     FR = "French"
     GE = "Georgian"
     GR = "Greek"
+    ID = "Indonesian"
     IN = "Hindi"
     IT = "Italian"
     JA = "Japanese"

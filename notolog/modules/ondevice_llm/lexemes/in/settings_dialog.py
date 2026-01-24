@@ -20,6 +20,13 @@ lexemes = {
         "प्रतिक्रिया में प्राप्त होने वाले टोकनों की अधिकतम संख्या निर्धारित करता है, जैसे शब्द और विराम चिह्न,\n"
         "आउटपुट की लंबाई को नियंत्रित करता है।",
 
+    "module_ondevice_llm_config_execution_provider_label": "हार्डवेयर त्वरण",
+    "module_ondevice_llm_config_execution_provider_placeholder": "प्रदाता चुनें",
+    "module_ondevice_llm_config_execution_provider_accessible_description":
+        "मॉडल अनुमान के लिए हार्डवेयर त्वरण प्रदाता चुनें। विकल्पों में शामिल हैं:\n"
+        "CPU (डिफ़ॉल्ट), CUDA (NVIDIA GPU), DirectML (Windows), TensorRT, OpenVINO (Intel), QNN (Qualcomm), CoreML (Apple).\n"
+        "नोट: गैर-CPU प्रदाताओं को विशिष्ट ONNX Runtime पैकेज की आवश्यकता होती है (जैसे onnxruntime-genai-cuda)।",
+
     "module_ondevice_llm_config_prompt_history_size_label": "प्रॉम्प्ट इतिहास का आकार",
     "module_ondevice_llm_config_prompt_history_size_input_accessible_description":
         "प्रणाली द्वारा संदर्भ के लिए बनाए रखी गई प्रॉम्प्ट इतिहास की प्रविष्टियों की संख्या को नियंत्रित करता है।\n"

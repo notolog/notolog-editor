@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-18 13:57:00.794379"}} -->
+<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-24 00:00:00.000000"}} -->
 # User Guide
 
 Complete guide to all Notolog features and functionality.
@@ -25,7 +25,7 @@ Notolog provides real-time syntax highlighting for:
 - **Headers** (`# H1`, `## H2`, etc.)
 - **Bold** (`**text**`) and *Italic* (`*text*`)
 - **Code blocks** (fenced with ``` or indented)
-- **Links** (`[text](url)`)
+- **Links** (`[text](https://notolog.app)`)
 - **Lists** (ordered and unordered)
 - **Blockquotes** (`> quote`)
 - **Tables**
@@ -35,11 +35,11 @@ Notolog provides real-time syntax highlighting for:
 
 Notolog uses the Python Markdown library with these extensions:
 
-| Extension | Description |
-|-----------|-------------|
-| `extra` | Abbreviations, attribute lists, definition lists, fenced code, footnotes, tables, Markdown in HTML |
-| `toc` | Table of Contents with header anchors |
-| `codehilite` | Syntax highlighting for code blocks |
+| Extension       | Description |
+|-----------------|-------------|
+| `extra`         | Abbreviations, attribute lists, definition lists, fenced code, footnotes, tables, Markdown in HTML |
+| `toc`           | Table of Contents with header anchors |
+| `codehilite`    | Syntax highlighting for code blocks |
 
 ### Code Blocks
 
@@ -54,14 +54,14 @@ def hello():
 
 ### TODO Highlighting
 
-Mark tasks with `@todo`:
+The `@todo` tag is a Notolog-exclusive feature (not standard Markdown). It is highlighted in both Edit and View modes for easy task tracking:
 
 ```markdown
 @todo Review documentation
 @todo Add more examples
 ```
 
-These are highlighted for easy identification.
+For more syntax examples, see the [Markdown Syntax Guide](markdown-syntax.md).
 
 ---
 
@@ -77,7 +77,7 @@ Toggle between Edit and View modes:
 - Rendered Markdown with proper styling
 - Clickable links (opens in browser)
 - Syntax-highlighted code blocks
-- Image display (local and remote)
+- Image display (local and remote) - see [Image Handling](#image-handling) below
 - Table formatting
 
 ### Image Handling
@@ -98,22 +98,30 @@ Configure in `Settings` → `Viewer` tab → `Auto-save external images to disk`
 The left panel shows your notes directory:
 
 - **Folders**: Displayed with folder icon
-- **Markdown files**: `.md`, `.txt`, `.htm`, `.html`
+- **Markdown and plain text files**: `.md`, `.txt`, `.htm`, `.html`
 - **Encrypted files**: `.enc` extension
 
 ### Creating Files and Folders
 
 **New File**:
-- Right-click → `New File`
-- Or use toolbar
+
+- Toolbar → `New File`
 
 **New Folder**:
-- Right-click → `New Folder`
+
+- Right-click on empty space in the file tree → `New Folder`
 
 ### Renaming and Deleting
 
 - Right-click on file/folder → `Rename` or `Delete`
 - Confirmation dialog prevents accidental deletion
+
+**Litter Bin**: Deletion is reversible by default. Deleted files are marked as deleted but remain on disk. When the "Litter bin" option is active (icon below the file tree), deleted files are visible and can be:
+
+- **Restored**: Right-click → Restore
+- **Deleted completely**: Right-click → Delete completely
+
+Note: When the Litter bin is inactive, deleted files are hidden from the file tree but still exist on disk and can be found via your system's file manager.
 
 ### File Meta-Headers
 
@@ -169,7 +177,7 @@ Notolog provides AES-128 encryption for sensitive notes.
 1. Open the file you want to encrypt
 2. Go to `File` → `Encrypt File` (or toolbar button)
 3. Enter a strong password
-4. Optionally add a password hint
+4. Optionally add a password hint (avoid using personal info like date of birth - use something memorable yet unique that won't give clues if the file is accessed by others)
 5. File is saved with `.enc` extension
 
 ### Opening Encrypted Files
@@ -205,13 +213,13 @@ Notolog includes 6 built-in themes:
 
 `Settings` → `General` tab → `Theme`
 
-Changes apply immediately.
+Changes apply immediately, no app reload needed.
 
 ---
 
 ## Multi-Language Support
 
-Notolog supports 18 languages:
+Notolog supports 19 languages:
 
 - English (default)
 - Chinese (Simplified) - 简体中文
@@ -222,6 +230,7 @@ Notolog supports 18 languages:
 - German - Deutsch
 - Greek - Ελληνικά
 - Hindi - हिन्दी
+- Indonesian - Bahasa Indonesia
 - Italian - Italiano
 - Japanese - 日本語
 - Korean - 한국어
@@ -236,7 +245,7 @@ Notolog supports 18 languages:
 
 `Settings` → `General` → `Language`
 
-Restart may be required for full effect.
+Instant, but in some cases restart may be required for full effect.
 
 ---
 
@@ -250,7 +259,8 @@ Access via `Settings` menu or toolbar.
 - **Theme**: Visual theme selection
 - **Default folder for notes**: Primary directory for notes
 - **Show Main Menu**: Toggle main menu visibility
-- **Status Bar options**: Navigation arrows, cursor position
+- **Show Navigation Arrows**: Display navigation arrows in the status bar
+- **Show Global Cursor Position**: Display cursor position in the status bar
 - **Font Size**: Adjust text size (range: 5-42)
 
 ### Editor Tab
@@ -261,14 +271,14 @@ Access via `Settings` menu or toolbar.
 
 - **Convert Text Emojis to Graphics**: Render emojis graphically
 - **Highlight TODOs**: Emphasize @todo tags
-- **Require Confirmation to Open Links**: Confirm before opening external links
+- **Require Confirmation to Open Links**: Show confirmation dialog before opening external links in your browser
 - **Auto-save external images to disk**: Save downloaded images locally
 
 ### AI Config Tab
 
-- **Active Inference Module**: Select AI backend
-- **Multi-turn dialogue**: Enable conversational memory
-- **Convert result to Markdown**: Format AI output as Markdown
+- **Active Inference Module**: Select from available AI inference modules
+- **Multi-turn dialogue with conversational memory**: Enable multi-turn dialogue that retains the previous prompt
+- **Convert the result to Markdown**: Convert AI output to Markdown format
 
 See [AI Assistant Guide](ai-assistant.md) for AI module-specific settings.
 

@@ -20,6 +20,13 @@ lexemes = {
         "응답에서 받을 수 있는 토큰의 최대 수를 설정합니다. 여기에는 단어와 구두점이 포함되며,\n"
         "출력의 길이를 제어합니다.",
 
+    "module_ondevice_llm_config_execution_provider_label": "하드웨어 가속",
+    "module_ondevice_llm_config_execution_provider_placeholder": "공급자 선택",
+    "module_ondevice_llm_config_execution_provider_accessible_description":
+        "모델 추론을 위한 하드웨어 가속 공급자를 선택합니다. 옵션에는:\n"
+        "CPU(기본값), CUDA(NVIDIA GPU), DirectML(Windows), TensorRT, OpenVINO(Intel), QNN(Qualcomm), CoreML(Apple).\n"
+        "참고: 비-CPU 공급자는 특정 ONNX Runtime 패키지가 필요합니다(예: onnxruntime-genai-cuda).",
+
     "module_ondevice_llm_config_prompt_history_size_label": "프롬프트 기록 크기",
     "module_ondevice_llm_config_prompt_history_size_input_accessible_description":
         "시스템에 의해 참조용으로 유지되는 프롬프트 기록의 항목 수를 제어합니다.\n"

@@ -5,6 +5,8 @@ lexemes = {
 
     "tree_filter_input_placeholder_text": "Filtro rápido",
     "tree_filter_input_accessible_desc": "Filtrar archivos y directorios por nombre",
+    "tree_filter_clear_button_tooltip": "Limpiar filtro",
+    "tree_filter_clear_button_accessible_name": "Limpiar campo de filtro",
 
     "menu_action_copy_file_path": "Copiar ruta del archivo",
     "menu_action_rename": "Renombrar",

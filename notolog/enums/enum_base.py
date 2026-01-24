@@ -36,6 +36,10 @@ class EnumBase(Enum):
         try:
             return cls._member_map_[key]
         except KeyError:
+            # Return default value if key is invalid, otherwise raise error
+            default_member = cls.default()
+            if default_member is not None:
+                return default_member
             raise KeyError(f"{key} is not a valid key for {cls.__name__}")
 
     @classmethod

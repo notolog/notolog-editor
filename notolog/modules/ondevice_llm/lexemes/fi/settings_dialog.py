@@ -20,6 +20,13 @@ lexemes = {
         "Määrittää vastaanotettavien merkkien enimmäismäärän vastauksessa, kuten sanat ja välimerkit,\n"
         "hallitsemalla tulosteen pituutta.",
 
+    "module_ondevice_llm_config_execution_provider_label": "Laitteistokiihdytys",
+    "module_ondevice_llm_config_execution_provider_placeholder": "Valitse tarjoaja",
+    "module_ondevice_llm_config_execution_provider_accessible_description":
+        "Valitse laitteistokiihdytyksen tarjoaja mallin päättelylle. Vaihtoehdot ovat:\n"
+        "CPU (oletus), CUDA (NVIDIA GPU), DirectML (Windows), TensorRT, OpenVINO (Intel), QNN (Qualcomm), CoreML (Apple).\n"
+        "Huom: Ei-CPU-tarjoajat vaativat erityisiä ONNX Runtime -paketteja (esim. onnxruntime-genai-cuda).",
+
     "module_ondevice_llm_config_prompt_history_size_label": "Kehotushistorian koko",
     "module_ondevice_llm_config_prompt_history_size_input_accessible_description":
         "Hallitsee järjestelmän säilyttämien kehotushistorian merkintöjen määrää viitteitä varten.\n"

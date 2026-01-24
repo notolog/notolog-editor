@@ -4,7 +4,7 @@ An open-source Markdown editor built with Python.
 
 File Details:
 - Purpose: Part of the 'Module llama.cpp' module.
-- Functionality: Provides helper functions to initialize and manage ONNX Runtime sessions for supported LLMs.
+- Functionality: Provides helper functions to initialize and manage llama.cpp models for supported LLMs.
 
 Repository: https://github.com/notolog/notolog-editor
 Website: https://notolog.app
@@ -20,6 +20,7 @@ For detailed instructions and project information, please see the repository's R
 import os
 import logging
 import asyncio
+import multiprocessing
 
 from threading import Lock
 
@@ -125,13 +126,21 @@ class ModelHelper:
         self.logger.info(f"Initializing model: {self.model_path}")
 
         try:
-            # Initialize the model
+            # Determine optimal thread count
+            n_threads = multiprocessing.cpu_count()
+
+            # Initialize the model with best practices from llama-cpp-python
             self.model = Llama(
                 model_path=self.model_path,
                 chat_format=self.chat_format,  # e.g., 'chatml', 'llama-2', 'gemma', etc.
                 n_ctx=self.n_ctx,  # Context window
+                n_batch=512,  # Prompt processing batch size (default from llama-cpp-python)
+                n_ubatch=512,  # Physical batch size for prompt processing
+                n_threads=n_threads,  # Use all available CPU cores
+                n_threads_batch=n_threads,  # Use all cores for batch processing
                 verbose=False  # Disable verbose output
             )
+            self.logger.info(f"Model initialized successfully with n_ctx={self.n_ctx}, n_threads={n_threads}")
         except (RuntimeError, ValueError) as e:
             self.logger.error(f"Model initialization failed for path '{self.model_path}' with error: {e}")
             raise
@@ -180,30 +189,65 @@ class ModelHelper:
         return generator
 
     async def async_wrap_iterator(self, iterator):
-        # Asynchronously handle output from generator
+        """
+        Asynchronously wrap the synchronous iterator from llama.cpp.
+
+        This method processes the streaming output in a non-blocking way,
+        yielding control to the event loop between chunks to keep the UI responsive.
+
+        Args:
+            iterator: The synchronous iterator from create_chat_completion(stream=True)
+
+        Yields:
+            str: Content tokens from the model output
+        """
+        # Process chunks from the synchronous iterator
         for chunk in iterator:
+            # Yield control to the event loop to prevent blocking
+            await asyncio.sleep(0)
+
+            # Extract delta from the response structure
             delta = chunk['choices'][0]['delta']
+
             if 'role' in delta:
-                output = f"{delta['role']}: "  # 'assistant: '
+                # Role indicator (e.g., 'assistant')
+                output = f"{delta['role']}: "
                 self.logger.debug(f"Role output: {output}")
-                await asyncio.sleep(0)  # Yield control to the event loop
-                yield ''  # output
+                yield ''  # Don't display role prefix in UI
             elif 'content' in delta:
-                tokens = delta['content']  # content might contain a space symbol, so do not do the split() on it
-                output = f"{tokens}"
+                # Actual content tokens - preserve all characters including spaces
+                tokens = delta['content']
                 self.logger.debug(f"Output token(s): {tokens}")
-                await asyncio.sleep(0)  # Yield control to the event loop
-                yield output
+                yield tokens
             elif 'finish_reason' in delta:
-                # For instance, if max_tokens limit reached: 'finish_reason': 'length'
+                # Completion finished
                 if delta['finish_reason'] is not None:
-                    self.logger.debug(f"Output finished with the reason: '{delta['finish_reason']}'")
+                    # For instance, if max_tokens limit reached: 'finish_reason': 'length'
+                    self.logger.debug(f"Output finished with reason: '{delta['finish_reason']}'")
                     yield ''
 
     async def generate_output(self, generator):
-        # Generate outputs for the model asynchronously.
-        async for item in self.async_wrap_iterator(generator):
-            return item
+        """
+        Generate outputs from the model asynchronously.
+
+        This method iterates through the async wrapper and returns one item at a time,
+        raising StopAsyncIteration when complete.
+
+        Args:
+            generator: The synchronous generator from create_chat_completion(stream=True)
+
+        Returns:
+            str: The next token/chunk from the model
+
+        Raises:
+            StopAsyncIteration: When the iteration is complete
+        """
+        try:
+            async for item in self.async_wrap_iterator(generator):
+                return item
+        except (StopIteration, GeneratorExit):
+            # Generator exhausted
+            pass
 
         # To stop the iteration
         raise StopAsyncIteration
@@ -244,10 +288,24 @@ class ModelHelper:
         """
         Release model resources explicitly.
         Call this method when the model is no longer needed to free memory.
+
+        This properly closes the model context and releases all associated resources
+        following best practices from llama-cpp-python.
         """
-        if hasattr(self, 'generator') and self.generator:
-            self.generator = None
-        if hasattr(self, 'model') and self.model:
-            del self.model
+        try:
+            if hasattr(self, 'generator') and self.generator:
+                self.generator = None
+
+            if hasattr(self, 'model') and self.model:
+                # Properly close the model context if it has a close method
+                if hasattr(self.model, 'close'):
+                    self.model.close()
+                del self.model
+                self.model = None
+
+            self.logger.info("Model resources released successfully")
+        except Exception as e:
+            self.logger.error(f"Error during cleanup: {e}")
+            # Still set to None to avoid partial cleanup state
             self.model = None
-        self.logger.info("Model resources released")
+            self.generator = None

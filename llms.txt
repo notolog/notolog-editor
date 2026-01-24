@@ -5,9 +5,10 @@
 ## Project Overview
 
 **Name:** Notolog
-**Version:** 1.1.7
+**Version:** 1.1.8
 **License:** MIT
 **Language:** Python 3.10+
+**Author:** Vadim Bakhrenkov
 **Repository:** https://github.com/notolog/notolog-editor
 **Website:** https://notolog.app
 **PyPI:** https://pypi.org/project/notolog
@@ -20,7 +21,7 @@
   - On-Device LLM (ONNX format)
   - Module llama.cpp (GGUF format)
 - **File Encryption** using AES-128 with PBKDF2 (768,000 iterations)
-- **Multi-language Support** (18 languages)
+- **Multi-language Support** (19 languages)
 - **Customizable Themes** (6 built-in themes)
 - **Cross-platform** (Linux, macOS, Windows)
 
@@ -53,10 +54,11 @@
 - [Getting Started](docs/getting-started.md) - Installation and first steps
 - [User Guide](docs/user-guide.md) - Complete feature overview
 - [AI Assistant Guide](docs/ai-assistant.md) - AI features setup
+- [AI Modules](docs/ai-modules.md) - AI modules documentation
 - [Configuration](docs/configuration.md) - Settings reference
 - [API Reference](docs/api-reference.md) - Developer documentation
 - [FAQ & Troubleshooting](docs/faq.md) - Common issues
-- [Examples](docs/examples.md) - Markdown syntax examples
+- [Markdown Syntax Examples](docs/markdown-syntax.md) - Markdown syntax examples
 
 ## Installation
 
@@ -101,24 +103,23 @@ python dev_install.py test
 pytest tests/ --cov=notolog --cov-report=term
 ```
 
-## Recent Changes (v1.1.7 - 2026-01-18)
+## AI Modules
 
-### Added
-- Model loading status messages for AI modules (first run may take 60s)
-- `is_model_loaded()` and `cleanup()` methods in AI model helpers
-- Comprehensive documentation in `docs/` directory
-- GitHub issue templates and PR template
-- `CONTRIBUTING.md` and `SECURITY.md`
-- Unit tests for model loading and URL validation
+### On Device LLM (ONNX Runtime GenAI)
+- Supports hardware acceleration via ExecutionProvider enum
+- Providers: CPU (default), CUDA, DirectML, OpenVINO, CoreML, TensorRT RTX, QNN, MIGraphX
+- CUDA/DirectML packages replace base package (cannot coexist)
+- Model helper with automatic fallback to CPU on provider errors
 
-### Fixed
-- AI model loading now runs in background thread with busy cursor
-- Relative Markdown links open in-app instead of browser (fixes #3)
-- Async task cancellation properly awaited
-- Signal emission with None values (C++ type conversion warnings)
+### Module llama.cpp
+- Uses llama-cpp-python for GGUF model inference
+- Automatic optimal thread count detection
+- Batch processing: n_batch=512, n_ubatch=512
+- CPU-only in current integration
 
-### Security
-- URL scheme whitelist validation (only http/https allowed for external URLs)
+### OpenAI API
+- Cloud-based inference via OpenAI-compatible endpoints
+- Supports custom API URLs for compatible services
 
 ## AI Module Development
 
@@ -151,7 +152,9 @@ class ModuleCore(BaseAiCore):
 
 ### Optional
 - llama-cpp-python (^0.3.8) - GGUF model support
-- onnxruntime-genai (^0.6.0) - ONNX model support
+- onnxruntime-genai (>=0.11.0,<1.0.0) - ONNX model support (CPU)
+- onnxruntime-genai-cuda - ONNX with CUDA support (replaces base package)
+- onnxruntime-genai-directml - ONNX with DirectML support (replaces base package)
 - openai - OpenAI API client
 
 ## Testing

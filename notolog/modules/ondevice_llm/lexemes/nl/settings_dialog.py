@@ -20,6 +20,15 @@ lexemes = {
         "Stelt het maximale aantal tokens in dat in een reactie ontvangen kan worden, zoals woorden en interpunctie,\n"
         "en beheert de lengte van de output.",
 
+    "module_ondevice_llm_config_execution_provider_label": "Hardwareversnelling",
+    "module_ondevice_llm_config_execution_provider_placeholder": "Selecteer provider",
+    "module_ondevice_llm_config_execution_provider_accessible_description":
+        "Selecteer de hardwareversnellingsprovider voor modelinferentie. Opties zijn:\n"
+        "CPU (standaard), CUDA (NVIDIA GPU's), DirectML (Windows), TensorRT, OpenVINO (Intel), "
+        "QNN (Qualcomm), CoreML (Apple).\n"
+        "Opmerking: Niet-CPU providers vereisen specifieke ONNX Runtime-pakketten "
+        "(bijv. onnxruntime-genai-cuda).",
+
     "module_ondevice_llm_config_prompt_history_size_label": "Grootte van de Promptgeschiedenis",
     "module_ondevice_llm_config_prompt_history_size_input_accessible_description":
         "Regelt het aantal invoeren in de promptgeschiedenis dat het systeem bewaart voor referentie.\n"

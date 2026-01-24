@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-18 13:57:00.794379"}} -->
+<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-24 00:00:00.000000"}} -->
 # Getting Started with Notolog
 
 This guide will help you install Notolog and get up and running quickly.
@@ -29,6 +29,9 @@ notolog_env\Scripts\activate     # Windows
 
 # Install Notolog
 pip install notolog
+
+# Or with llama.cpp support for GGUF models
+pip install notolog[llama]
 ```
 
 ### Method 2: Conda
@@ -47,12 +50,19 @@ conda install notolog -c conda-forge
 For Ubuntu/Debian users:
 
 ```bash
-# Download the latest release
+# Check the latest version at:
+# https://github.com/notolog/notolog-debian/releases
+
+# Download the latest release (replace X.Y.Z with the actual version, e.g., 1.1.6)
+wget https://github.com/notolog/notolog-debian/releases/download/vX.Y.Z/notolog_X.Y.Z_amd64.deb
+# Or
 wget https://github.com/notolog/notolog-debian/releases/latest/download/notolog_X.Y.Z_amd64.deb
 
 # Install
 sudo dpkg -i notolog_X.Y.Z_amd64.deb
 ```
+
+**Tip:** Visit the [releases page](https://github.com/notolog/notolog-debian/releases){:target="_blank"} to find the latest version number.
 
 ### Method 4: From Source
 
@@ -121,19 +131,20 @@ On first launch, you'll see the main editor window with:
 
 ### Keyboard Shortcuts
 
-| Action | Windows/Linux | macOS |
-|--------|---------------|-------|
-| New File | `Ctrl+N` | `⌘+N` |
-| Save | `Ctrl+S` | `⌘+S` |
-| Find | `Ctrl+F` | `⌘+F` |
-| Toggle Edit/View | `Ctrl+E` | `⌘+E` |
-| Settings | `Ctrl+,` | `⌘+,` |
-| AI Assistant | `Ctrl+Shift+A` | `⌘+Shift+A` |
+| Action | Windows/Linux | macOS | Status |
+|--------|---------------|-------|--------|
+| Save | `Ctrl+S` | `⌘+S` | ✓ |
+| Find | `Ctrl+F` | `⌘+F` | ✓ |
+| New File | `Ctrl+N` | `⌘+N` | *Planned* |
+| Toggle Edit/View | `Ctrl+E` | `⌘+E` | *Planned* |
+| Settings | `Ctrl+,` | `⌘+,` | *Planned* |
+| AI Assistant | `Ctrl+Shift+A` | `⌘+Shift+A` | *Planned* |
+
+*Shortcuts marked as "Planned" are not yet implemented.*
 
 ### File Tree Actions
 
-- **Single-click**: Select file
-- **Double-click**: Open file
+- **Single-click**: Open file
 - **Right-click**: Context menu (rename, delete, new file/folder)
 
 ### Editor Features
@@ -149,7 +160,7 @@ On first launch, you'll see the main editor window with:
 Now that you're set up, explore these features:
 
 1. **[User Guide](user-guide.md)** - Learn all the features
-2. **[AI Assistant](ai-assistant.md)** - Set up AI-powered writing help
+2. **[AI Assistant](ai-assistant.md)** - Chat with AI models locally or via API
 3. **[Configuration](configuration.md)** - Customize themes and settings
 4. **[File Encryption](user-guide.md#encryption)** - Secure sensitive notes
 
@@ -183,4 +194,4 @@ python3 --version  # Should be 3.10+
 
 ---
 
-*Need more help? Check the [FAQ](faq.md) or [open an issue](https://github.com/notolog/notolog-editor/issues).*
+*Need more help? Check the [FAQ](faq.md) or [start a discussion](https://github.com/notolog/notolog-editor/discussions).*

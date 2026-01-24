@@ -5,6 +5,8 @@ lexemes = {
 
     "tree_filter_input_placeholder_text": "Hızlı filtre",
     "tree_filter_input_accessible_desc": "Dosyaları ve dizinleri isme göre filtrele",
+    "tree_filter_clear_button_tooltip": "Filtreyi temizle",
+    "tree_filter_clear_button_accessible_name": "Filtre giriş alanını temizle",
 
     "menu_action_copy_file_path": "Dosya yolunu kopyala",
     "menu_action_rename": "Yeniden Adlandır",

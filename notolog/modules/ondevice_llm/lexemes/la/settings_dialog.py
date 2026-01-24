@@ -20,6 +20,13 @@ lexemes = {
         "Numerum summum signorum in responsione recipiendis constituit, ut verba et punctuationes,\n"
         "longitudinem productionis moderans.",
 
+    "module_ondevice_llm_config_execution_provider_label": "Acceleratio Ferramentaria",
+    "module_ondevice_llm_config_execution_provider_placeholder": "Elige provisorem",
+    "module_ondevice_llm_config_execution_provider_accessible_description":
+        "Elige provisorem accelerationis ferramentariae pro modeli inferentia. Optiones includunt:\n"
+        "CPU (defalta), CUDA (NVIDIA GPU), DirectML (Windows), TensorRT, OpenVINO (Intel), QNN (Qualcomm), CoreML (Apple).\n"
+        "Nota: Provisores non-CPU requirunt fasciculos ONNX Runtime specificos (e.g. onnxruntime-genai-cuda).",
+
     "module_ondevice_llm_config_prompt_history_size_label": "Magna Historia Prompti",
     "module_ondevice_llm_config_prompt_history_size_input_accessible_description":
         "Numerum inquisitionum in historia prompti, quam systema ad referentiam conservat, moderatur.\n"

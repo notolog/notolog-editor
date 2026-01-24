@@ -26,10 +26,16 @@ class OpenAiModelNames(EnumBase):
     # First param is model name
     # Second param is a legacy flag (e.g. legacy completions)
     # Third param in the tuple corresponds to default value
-    GPT_4O_MINI = ("gpt-4o-mini", False, True)
-    GPT_4 = "gpt-4-turbo"
+    GPT_5_2 = ("gpt-5.2", False, True)
+    GPT_5_1 = "gpt-5.1"
+    GPT_5 = "gpt-5"
+    GPT_4_1 = "gpt-4.1"
+    GPT_4_1_mini = "gpt-4.1-mini"
+    GPT_4O = "gpt-4o"
+    GPT_4O_MINI = "gpt-4o-mini"
+    GPT_4 = "gpt-4"
+    GPT_4_TURBO = ("gpt-4-turbo", True)
     GPT_3_5 = ("gpt-3.5-turbo", True)
-    GPT_3_5_LEGACY = ("gpt-3.5-turbo-instruct", True)
 
     def __init__(self, value, legacy=False, is_default=False, *args, **kwargs):
         super().__init__(value, is_default=is_default, *args, **kwargs)

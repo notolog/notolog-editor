@@ -20,6 +20,15 @@ lexemes = {
         "შეზღუდავს მოდელის პასუხებში ტოკენების რაოდენობას აქტუალური კონტექსტის ფანჯრის ლიმიტამდე.\n"
         "ნულოვანი მნიშვნელობა გამოიყენებს კონტექსტის ფანჯრის ჩათვლითი ტევადობას.",
 
+    "module_ondevice_llm_config_execution_provider_label": "აპარატურული აჩქარება",
+    "module_ondevice_llm_config_execution_provider_placeholder": "აირჩიეთ პროვაიდერი",
+    "module_ondevice_llm_config_execution_provider_accessible_description":
+        "აირჩიეთ აპარატურული აჩქარების პროვაიდერი მოდელის დასკვნისთვის. ვარიანტები მოიცავს:\n"
+        "CPU (ნაგულისხმევი), CUDA (NVIDIA GPU), DirectML (Windows), TensorRT, OpenVINO (Intel), "
+        "QNN (Qualcomm), CoreML (Apple).\n"
+        "შენიშვნა: არა-CPU პროვაიდერები საჭიროებენ სპეციალურ ONNX Runtime პაკეტებს "
+        "(მაგ. onnxruntime-genai-cuda).",
+
     "module_ondevice_llm_config_prompt_history_size_label": "პრომპტის ისტორიის ზომა",
     "module_ondevice_llm_config_prompt_history_size_input_accessible_description":
         "კონტროლირებს პრომპტების ისტორიაში ჩანაწერების რაოდენობას, რომელიც სისტემამ სარეფერენციოდ ინახავს.\n"

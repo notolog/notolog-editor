@@ -19,6 +19,13 @@ lexemes = {
         "设置响应中接收的最大令牌数，如单词和标点，\n"
         "控制输出的长度。",
 
+    "module_ondevice_llm_config_execution_provider_label": "硬件加速",
+    "module_ondevice_llm_config_execution_provider_placeholder": "选择提供程序",
+    "module_ondevice_llm_config_execution_provider_accessible_description":
+        "选择模型推理的硬件加速提供程序。选项包括：\n"
+        "CPU（默认）、CUDA（NVIDIA GPU）、DirectML（Windows）、TensorRT、OpenVINO（Intel）、QNN（高通）、CoreML（Apple）。\n"
+        "注意：非CPU提供程序需要特定的ONNX Runtime包（例如onnxruntime-genai-cuda）。",
+
     "module_ondevice_llm_config_prompt_history_size_label": "提示历史大小",
     "module_ondevice_llm_config_prompt_history_size_input_accessible_description":
         "控制系统保留用于参考的提示历史中的条目数量。\n"

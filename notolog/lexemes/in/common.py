@@ -5,6 +5,8 @@ lexemes = {
 
     "tree_filter_input_placeholder_text": "त्वरित फ़िल्टर",
     "tree_filter_input_accessible_desc": "फ़ाइलों और निर्देशिकाओं को नाम से फ़िल्टर करें",
+    "tree_filter_clear_button_tooltip": "फ़िल्टर साफ़ करें",
+    "tree_filter_clear_button_accessible_name": "फ़िल्टर इनपुट फ़ील्ड साफ़ करें",
 
     "menu_action_copy_file_path": "फ़ाइल पथ की प्रतिलिपि बनाएँ",
     "menu_action_rename": "नाम बदलें",

@@ -20,6 +20,13 @@ lexemes = {
         "応答で受け取るトークンの最大数を設定します。これには単語や句読点が含まれ、\n"
         "出力の長さを制御します。",
 
+    "module_ondevice_llm_config_execution_provider_label": "ハードウェアアクセラレーション",
+    "module_ondevice_llm_config_execution_provider_placeholder": "プロバイダーを選択",
+    "module_ondevice_llm_config_execution_provider_accessible_description":
+        "モデル推論のハードウェアアクセラレーションプロバイダーを選択します。オプションには：\n"
+        "CPU（デフォルト）、CUDA（NVIDIA GPU）、DirectML（Windows）、TensorRT、OpenVINO（Intel）、QNN（Qualcomm）、CoreML（Apple）。\n"
+        "注：非CPUプロバイダーには特定のONNX Runtimeパッケージが必要です（例：onnxruntime-genai-cuda）。",
+
     "module_ondevice_llm_config_prompt_history_size_label": "プロンプト履歴のサイズ",
     "module_ondevice_llm_config_prompt_history_size_input_accessible_description":
         "システムが参照用に保持するプロンプト履歴のエントリ数を制御します。\n"

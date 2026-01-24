@@ -1,11 +1,11 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2026-01-18 13:57:00.794379"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2026-01-24 00:00:00.000000"}} -->
 # Notolog
 
-[![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/) [![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor)](https://github.com/notolog/notolog-editor/blob/master/LICENSE) [![PyPI - Python Version](https://img.shields.io/badge/python-3.10+-blue.svg)](https://pypi.org/project/notolog/) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/notolog/notolog-editor/tests.yaml)](https://github.com/notolog/notolog-editor/actions/workflows/tests.yaml) [![Conda Version](https://img.shields.io/conda/vn/conda-forge/notolog)](https://anaconda.org/conda-forge/notolog) [![PyPI - Downloads](https://img.shields.io/pypi/dm/notolog)](https://pypistats.org/packages/notolog)
+[![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/) [![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor)](https://github.com/notolog/notolog-editor/blob/master/LICENSE) [![PyPI - Python Version](https://img.shields.io/badge/python-3.10+-blue.svg)](https://pypi.org/project/notolog/) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/notolog/notolog-editor/tests.yaml)](https://github.com/notolog/notolog-editor/actions/workflows/tests.yaml) [![PyPI - Downloads](https://img.shields.io/pypi/dm/notolog)](https://pypistats.org/packages/notolog) [![Conda Version](https://img.shields.io/conda/vn/conda-forge/notolog)](https://anaconda.org/conda-forge/notolog) [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/notolog)](https://anaconda.org/conda-forge/notolog)
 
-Notolog is an open-source Markdown editor licensed under the MIT License. Combining simplicity with powerful tools and an AI Assistant, it's built with Python and PySide6 to help you tackle programming challenges and sharpen your Markdown skills in a cozy, efficient way.
+Notolog is an open-source Markdown editor licensed under the MIT License. Combining simplicity with powerful tools and an AI Assistant, it's built with Python and PySide6 to prioritize user privacy through local-first design while helping you sharpen your Markdown skills in a cozy, efficient way.
 
-📖 **[Documentation](https://github.com/notolog/notolog-editor/blob/main/docs/index.md)** | 🪲 **[Report Issues](https://github.com/notolog/notolog-editor/issues)** | 💡 **[Request Features](https://github.com/notolog/notolog-editor/issues)**
+📖 **[Documentation](https://github.com/notolog/notolog-editor/blob/main/docs/index.md)** | 🪲 **[Report Issues](https://github.com/notolog/notolog-editor/issues)** | 💡 **[Request Features](https://github.com/notolog/notolog-editor/issues)** | 💬 **[Discussions](https://github.com/notolog/notolog-editor/discussions)**
 
 
 ## Instant Setup
@@ -13,6 +13,10 @@ Notolog is an open-source Markdown editor licensed under the MIT License. Combin
 **Using pip:**
 ```sh
 pip install notolog
+```
+Or with llama.cpp support:
+```sh
+pip install notolog[llama]
 ```
 
 **Via conda:**
@@ -65,6 +69,7 @@ Notolog supports multiple languages out of the box, enhancing its accessibility 
 - Deutsch (German)
 - Ελληνικά (Greek)
 - हिन्दी (Hindi)
+- Bahasa Indonesia (Indonesian)
 - Italiano (Italian)
 - 日本語 (Japanese)
 - 한국어 (Korean)
@@ -296,7 +301,7 @@ python -m build
 
 ## Contributing
 
-If you encounter any issues or would like to contribute to the project, please don't hesitate to [open an issue](https://github.com/notolog/notolog-editor/issues) or submit a [pull request](https://github.com/notolog/notolog-editor/pulls) on the project's [GitHub page](https://github.com/notolog/notolog-editor).
+If you encounter bugs or would like to request features, please [open an issue](https://github.com/notolog/notolog-editor/issues). For questions and general discussions, visit our [GitHub Discussions](https://github.com/notolog/notolog-editor/discussions). Pull requests are always welcome! See [CONTRIBUTING.md](https://github.com/notolog/notolog-editor/blob/main/CONTRIBUTING.md) for guidelines.
 
 
 ## License
@@ -323,9 +328,15 @@ This project uses third-party libraries and components, each subject to its own 
 
 **Disclaimer**: The 'On Device LLM' module uses ONNX Runtime to enable generative AI features and is not associated with Microsoft or ONNX Runtime.
 
+**GPU Acceleration**: CUDA and DirectML variants are separate packages that replace the base package:
+- CUDA (Linux/Windows with NVIDIA GPU): `pip install onnxruntime-genai-cuda`
+- DirectML (Windows): `pip install onnxruntime-genai-directml`
+
+**Note**: These packages cannot coexist. If you uninstall the GPU package, reinstall the base package (`pip install --force-reinstall onnxruntime-genai`) or the module won't work.
+
 ### Python Bindings for llama.cpp
 
-**Disclaimer**: The 'Module llama.cpp' module in this application utilizes the Python Bindings for llama.cpp to facilitate LLM inference with models in GGUF format. This module is independently developed and is not officially connected to either the llama-cpp-python or the llama.cpp projects.
+**Disclaimer**: The 'Module llama.cpp' in this application utilizes the Python bindings for llama.cpp to facilitate LLM inference with models in GGUF format. This module is independently developed and is not officially affiliated with either the llama-cpp-python or the llama.cpp projects.
 
 
 ## Security Disclaimer
@@ -356,7 +367,7 @@ All trademarks, registered trademarks, product names, and company names or logos
 
 ## Support Us
 
-If you find Notolog useful, consider giving it a star 🌟 on the [GitHub page](https://github.com/notolog/notolog-editor). This helps others discover the project and contributes to its growth. Thank you for your support!
+If you find Notolog useful, please consider giving it a star 🌟 on [GitHub](https://github.com/notolog/notolog-editor). Your support helps others discover the project and contributes to its continued development. Thank you!
 
 ---
 _This README.md file has been carefully crafted and edited using the Notolog Editor itself._

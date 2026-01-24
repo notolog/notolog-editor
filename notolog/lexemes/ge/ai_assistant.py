@@ -15,6 +15,9 @@ lexemes = {
     "dialog_usage_tokens_answer": "პასუხი: {tokens}",
     "dialog_usage_tokens_total": "ჯამში: {tokens}",
 
+    "dialog_hardware_cpu_tooltip": "CPU ინფერენცია",
+    "dialog_hardware_gpu_tooltip": "GPU აჩქარება",
+
     "dialog_button_send_request": "მოთხოვნის გაგზავნა",
     "dialog_button_stop_request": "შეჩერე",
     "dialog_button_save_history": "დიალოგის ისტორიის შენახვა",

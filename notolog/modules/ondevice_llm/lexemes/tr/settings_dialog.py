@@ -20,6 +20,15 @@ lexemes = {
         "Bir yanıtta alınabilecek maksimum token sayısını belirler, bu da kelimeler ve noktalama işaretlerini içerir,\n"
         "çıktının uzunluğunu kontrol eder.",
 
+    "module_ondevice_llm_config_execution_provider_label": "Donanım Hızlandırma",
+    "module_ondevice_llm_config_execution_provider_placeholder": "Sağlayıcı seçin",
+    "module_ondevice_llm_config_execution_provider_accessible_description":
+        "Model çıkarımı için donanım hızlandırma sağlayıcısını seçin. Seçenekler:\n"
+        "CPU (varsayılan), CUDA (NVIDIA GPU), DirectML (Windows), TensorRT, OpenVINO (Intel), "
+        "QNN (Qualcomm), CoreML (Apple).\n"
+        "Not: CPU dışı sağlayıcılar özel ONNX Runtime paketleri gerektirir "
+        "(örn: onnxruntime-genai-cuda).",
+
     "module_ondevice_llm_config_prompt_history_size_label": "Komut Geçmişi Boyutu",
     "module_ondevice_llm_config_prompt_history_size_input_accessible_description":
         "Sistem tarafından referans için tutulan komut geçmişindeki giriş sayısını kontrol eder.\n"

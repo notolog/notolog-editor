@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-18 13:57:00.794379"}} -->
+<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-24 00:00:00.000000"}} -->
 # AI Assistant Guide
 
 Notolog includes an AI-powered assistant that supports multiple backends for text generation and assistance.
@@ -25,7 +25,7 @@ The AI Assistant provides:
 - **Multiple backends** for flexibility
 - **Privacy options** with local LLM support
 
-Access via: `Tools` → `AI Assistant` or `Ctrl+Shift+A`
+Access via: `Tools` → `AI Assistant`
 
 ---
 
@@ -55,10 +55,10 @@ Access via: `Tools` → `AI Assistant` or `Ctrl+Shift+A`
 4. Configure optional settings:
 
 | Setting | Description | Default |
-|---------|-------------|---------|
+|---------|-------------|-------|
 | API URL | API endpoint URL | `https://api.openai.com/v1/chat/completions` |
 | API Key | Your OpenAI API key (stored encrypted) | (required) |
-| Supported Models | GPT model to use | gpt-3.5-turbo |
+| Supported Models | GPT model to use | gpt-5 |
 | System Prompt | Initial context/instructions | (empty) |
 | Temperature | Response creativity (0-100 → 0.0-1.0) | 20 (0.2) |
 | Maximum Response Tokens | Maximum response length (0 = unlimited) | 0 |
@@ -78,14 +78,14 @@ Run AI models locally using ONNX Runtime GenAI.
 
 ### Requirements
 
-- Python 3.10-3.12 (ONNX GenAI limitation)
+- Python 3.10-3.13 (ONNX GenAI limitation)
 - 8GB+ RAM (16GB recommended)
 - ONNX format model files
 
 ### Supported Models
 
 Download ONNX-optimized models from:
-- [Hugging Face ONNX models](https://huggingface.co/models?library=onnx)
+- [Hugging Face ONNX models](https://huggingface.co/models?library=onnx){:target="_blank"}
 - Microsoft's Phi models (recommended for efficiency)
 
 ### Configuration
@@ -145,8 +145,8 @@ sudo apt-get install build-essential
 ### Supported Models
 
 GGUF models from:
-- [TheBloke on Hugging Face](https://huggingface.co/TheBloke)
-- [llama.cpp model zoo](https://github.com/ggerganov/llama.cpp)
+- [Hugging Face GGUF Models](https://huggingface.co/models?library=gguf){:target="_blank"}
+- [TheBloke's Collection](https://huggingface.co/TheBloke){:target="_blank"} (historic archive, 2,000+ models)
 
 Recommended quantizations:
 - `Q4_K_M` - Good balance of size/quality
@@ -172,10 +172,10 @@ Recommended quantizations:
 ### Chat Formats
 
 Select based on your model:
-- `chatml` - Most common format
-- `llama-2` - Meta's Llama 2 models
-- `gemma` - Google's Gemma models
-- `mistral` - Mistral AI models
+* `chatml` - Most common format
+* `llama-2` - Meta's Llama 2 models
+* `gemma` - Google's Gemma models
+* `mistral` - Mistral AI models
 
 ---
 
@@ -183,7 +183,7 @@ Select based on your model:
 
 ### Basic Workflow
 
-1. Open AI Assistant (`Ctrl+Shift+A`)
+1. Open AI Assistant
 2. Select your preferred backend in Settings
 3. Type your prompt in the input field
 4. Press `Enter` or click Send
@@ -192,8 +192,8 @@ Select based on your model:
 ### Multi-line Prompts
 
 For longer prompts:
-- Use `Ctrl+Enter` for new lines
-- Press `Enter` to send
+* Use `Ctrl+Enter` for new lines
+* Press `Enter` to send
 
 ### Prompt Tips
 
@@ -317,8 +317,8 @@ xcode-select --install
 ## API Reference
 
 For developers extending AI functionality, see:
-- [API Reference - AI Modules](api-reference.md#ai-modules)
-- [Module Development Guide](api-reference.md#creating-modules)
+- [API Reference - Module Architecture](api-reference.md#module-architecture)
+- [Creating Custom Modules](api-reference.md#creating-custom-modules)
 
 ---
 

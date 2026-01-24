@@ -30,7 +30,7 @@ from qasync import asyncSlot
 
 from typing import TYPE_CHECKING, Callable
 
-from .model_helper import ModelHelper
+from .model_helper import ModelHelper, ExecutionProvider
 from .prompt_manager import PromptManager
 
 from ..base_ai_core import BaseAiCore
@@ -43,6 +43,7 @@ from ...ui.ai_assistant.ai_assistant import EnumMessageType, EnumMessageStyle
 from ...ui.dir_path_line_edit import DirPathLineEdit
 from ...ui.horizontal_line_spacer import HorizontalLineSpacer
 from ...ui.label_with_hint import LabelWithHint
+from ...ui.enum_combo_box import EnumComboBox
 
 if TYPE_CHECKING:
     # ONNX Runtime GenAI
@@ -92,8 +93,10 @@ class ModuleCore(BaseAiCore):
 
         model_path = self.settings.module_ondevice_llm_model_path
         search_options = self.get_search_options()
+        execution_provider = self.get_execution_provider()
         # Cached helper instance
-        self.model_helper = ModelHelper(model_path=model_path, search_options=search_options)
+        self.model_helper = ModelHelper(model_path=model_path, search_options=search_options,
+                                        execution_provider=execution_provider)
 
         # Just in case of debug of async events
         # asyncio.get_event_loop().set_debug(True)
@@ -108,6 +111,13 @@ class ModuleCore(BaseAiCore):
                 and self.settings.module_ondevice_llm_response_max_tokens > 0):
             search_options.update({'max_length': self.settings.module_ondevice_llm_response_max_tokens})
         return search_options
+
+    def get_execution_provider(self) -> ExecutionProvider:
+        """Get the configured execution provider from settings."""
+        if hasattr(self.settings, 'module_ondevice_llm_execution_provider'):
+            provider_str = self.settings.module_ondevice_llm_execution_provider
+            return ExecutionProvider.from_string(provider_str)
+        return ExecutionProvider.default()
 
     def init_prompt_manager(self, ai_dialog):
         """
@@ -257,10 +267,25 @@ class ModuleCore(BaseAiCore):
                         self.logger.debug(f"Task completed with result: {result}")
 
     async def run_generator(self, input_tokens, request_msg_id, response_msg_id):
+        """
+        Run the ONNX generator asynchronously, processing model output in a non-blocking way.
+
+        Following onnxruntime-genai v0.11.0+ API changes:
+        - Check is_done() AFTER generating each token (not before)
+        - This improves model quality during multi-turn conversations
+
+        Args:
+            input_tokens: Encoded input tokens
+            request_msg_id: ID of the request message
+            response_msg_id: ID of the response message
+        """
+        generator = None
 
         try:
             generator = self.model_helper.init_generator(input_tokens, ModelHelper.search_options)  # type: Generator
-        except ModuleNotFoundError as e:
+            if generator is None:
+                raise RuntimeError("Failed to initialize model generator")
+        except (ModuleNotFoundError, RuntimeError) as e:
             self.logger.error(f'Cannot init model generator: {e}', exc_info=False)
             # Re-raise to indicate unresolved issues to the caller
             raise
@@ -270,29 +295,46 @@ class ModuleCore(BaseAiCore):
                 self.init_callback()
 
         try:
-            while not generator.is_done():
+            # v0.11.0+ API: Loop continuously, check is_done() within async_generator
+            while True:
                 await self.async_generator(request_msg_id, response_msg_id)
-                await asyncio.sleep(0.05)  # Sleep to allow UI to update
+
+                # Check if generation is complete
+                if generator.is_done():
+                    self.logger.debug("Generation completed")
+                    break
+
+                # Small sleep to allow UI updates (timer-based animations, repaints)
+                await asyncio.sleep(0.01)
+
         except asyncio.CancelledError:
-            self.logger.info("Generation cancelled")
+            self.logger.info("Generation cancelled by user")
+            raise  # Re-raise to properly handle cancellation
         except RecursionError as e:
-            self.logger.error(f"Error occurred: {e}")
-            # raise
+            self.logger.error(f"Recursion error occurred: {e}")
+            raise
         except (SystemExit, Exception) as e:
-            self.logger.error(f"Exception raised: {e}")
-            # raise
-        finally:  # Generation ended
+            self.logger.error(f"Exception during generation: {e}", exc_info=True)
+            raise
+        finally:
+            # Generation ended - ensure cleanup
             await self.stop_generator()
 
     async def async_generator(self, request_msg_id, response_msg_id):
-        # Get outputs for this iteration
+        """
+        Process one iteration of the generator and emit output signals.
+
+        Note: Following onnxruntime-genai v0.11.0+ API, generate_output() now
+        returns None when generation is complete, so we check for that.
+        """
+        # Get outputs for this iteration (None if generation is done)
         outputs = self.model_helper.generate_output()
         if outputs:
             # Emit update message signal
             self.update_signal.emit(outputs, request_msg_id, response_msg_id,
                                     EnumMessageType.RESPONSE, EnumMessageStyle.DEFAULT)
-            # Emit update usage signal
-            self.update_usage_signal.emit(self.get_model_name(), 0, 1, 1, True)  # One token at the moment
+            # Emit update usage signal (one token at a time)
+            self.update_usage_signal.emit(self.get_model_name(), 0, 1, 1, True)
 
     async def stop_generator(self):
         # Cancel async task(s)
@@ -389,6 +431,30 @@ class ModuleCore(BaseAiCore):
                  self.lexemes.get('module_ondevice_llm_config_response_max_tokens_input_accessible_description')},
             # Horizontal line spacer
             {"type": HorizontalLineSpacer, "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj)},
+            # Label for hardware acceleration (execution provider) dropdown
+            {"type": LabelWithHint, "kwargs": {
+                "tooltip": ('module_ondevice_llm_config_execution_provider_accessible_description',
+                            self.lexemes.get('module_ondevice_llm_config_execution_provider_accessible_description',
+                                             default="Select hardware acceleration provider: CPU, CUDA (NVIDIA), "
+                                                     "DirectML (Windows), TensorRT, OpenVINO (Intel), QNN (Qualcomm), "
+                                                     "CoreML (Apple)"))},
+             "name": "settings_dialog_module_ondevice_llm_config_execution_provider_label",
+             "alignment": Qt.AlignmentFlag.AlignLeft,
+             "text": self.lexemes.get('module_ondevice_llm_config_execution_provider_label',
+                                      default="Hardware Acceleration"),
+             "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj)},
+            # Dropdown for selecting execution provider
+            {"type": EnumComboBox, "args": [ExecutionProvider.get_available_providers()],
+             "name": "settings_dialog_module_ondevice_llm_config_execution_provider_combo:"
+                     "module_ondevice_llm_execution_provider",
+             "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj),
+             "placeholder_text": self.lexemes.get('module_ondevice_llm_config_execution_provider_placeholder',
+                                                  default="Select provider"),
+             "accessible_description":
+                 self.lexemes.get('module_ondevice_llm_config_execution_provider_accessible_description',
+                                  default="Hardware acceleration provider")},
+            # Horizontal line spacer
+            {"type": HorizontalLineSpacer, "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj)},
             # Label for the prompt history maximum capacity settings
             {"type": LabelWithHint, "kwargs": {
                 "tooltip": ('module_ondevice_llm_config_prompt_history_size_input_accessible_description',
@@ -421,6 +487,7 @@ class ModuleCore(BaseAiCore):
             extend_func("module_ondevice_llm_response_temperature", int, 20)
             extend_func("module_ondevice_llm_response_max_tokens", int, 0)
             extend_func("module_ondevice_llm_prompt_history_size", int, 0)
+            extend_func("module_ondevice_llm_execution_provider", str, str(ExecutionProvider.default().value))
 
     def settings_update_handler(self, data) -> None:
         """
@@ -442,6 +509,7 @@ class ModuleCore(BaseAiCore):
             'module_ondevice_llm_model_path',
             'module_ondevice_llm_response_temperature',
             'module_ondevice_llm_response_max_tokens',
+            'module_ondevice_llm_execution_provider',
         ]
         if any(option in data for option in options) or 'ai_config_inference_module' in data:
             # Set up updated value or one from settings
@@ -454,9 +522,11 @@ class ModuleCore(BaseAiCore):
                 ModelHelper.reload()
 
                 search_options = self.get_search_options()
+                execution_provider = self.get_execution_provider()
 
-                # The model will be reloaded next time with
-                self.model_helper = ModelHelper(model_path=model_path, search_options=search_options)
+                # The model will be reloaded next time with updated settings
+                self.model_helper = ModelHelper(model_path=model_path, search_options=search_options,
+                                                execution_provider=execution_provider)
 
     def temperature_change_handler(self, source_object, source_widget):
         if source_object.objectName() and source_widget:

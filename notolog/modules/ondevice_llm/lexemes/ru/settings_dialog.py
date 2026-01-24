@@ -20,6 +20,15 @@ lexemes = {
         "Устанавливает максимальное количество токенов, которые можно получить в ответе, включая слова и пунктуацию,\n"
         "контролируя длину вывода.",
 
+    "module_ondevice_llm_config_execution_provider_label": "Аппаратное ускорение",
+    "module_ondevice_llm_config_execution_provider_placeholder": "Выберите провайдера",
+    "module_ondevice_llm_config_execution_provider_accessible_description":
+        "Выберите провайдера аппаратного ускорения для инференса модели. Варианты включают:\n"
+        "CPU (по умолчанию), CUDA (NVIDIA GPU), DirectML (Windows), TensorRT, OpenVINO (Intel), "
+        "QNN (Qualcomm), CoreML (Apple).\n"
+        "Примечание: Провайдеры, отличные от CPU, требуют специальных пакетов ONNX Runtime "
+        "(например, onnxruntime-genai-cuda).",
+
     "module_ondevice_llm_config_prompt_history_size_label": "Размер истории команд",
     "module_ondevice_llm_config_prompt_history_size_input_accessible_description":
         "Контролирует количество записей в истории команд, которые система сохраняет для справки.\n"

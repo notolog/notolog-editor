@@ -5,6 +5,8 @@ lexemes = {
 
     "tree_filter_input_placeholder_text": "クイックフィルター",
     "tree_filter_input_accessible_desc": "ファイルとディレクトリを名前でフィルター",
+    "tree_filter_clear_button_tooltip": "フィルターをクリア",
+    "tree_filter_clear_button_accessible_name": "フィルター入力フィールドをクリア",
 
     "menu_action_copy_file_path": "ファイルパスをコピー",
     "menu_action_rename": "名前を変更",

@@ -1,15 +1,15 @@
-<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-18 13:57:00.794379"}} -->
+<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-24 00:00:00.000000"}} -->
 # FAQ & Troubleshooting
 
 Common questions and solutions for Notolog users.
 
 ## Table of Contents
 
-- [Installation Issues](#installation-issues)
-- [General Usage](#general-usage)
-- [AI Assistant Issues](#ai-assistant-issues)
-- [File & Encryption Issues](#file--encryption-issues)
-- [Getting Help](#getting-help)
+* [Installation Issues](#installation-issues)
+* [General Usage](#general-usage)
+* [AI Assistant Issues](#ai-assistant-issues)
+* [File & Encryption Issues](#file-encryption-issues)
+* [Getting Help](#getting-help)
 
 ---
 
@@ -108,9 +108,9 @@ First-time ONNX model loading can take **up to 60 seconds**. Subsequent loads ar
 ### Q: "Model not found" error
 
 **Causes**:
-- Incorrect model path in settings
-- Model files are corrupted or incomplete
-- Insufficient file permissions
+* Incorrect model path in settings
+* Model files are corrupted or incomplete
+* Insufficient file permissions
 
 **Solution**: Verify the model path in Settings and ensure all required model files are present.
 
@@ -119,9 +119,9 @@ First-time ONNX model loading can take **up to 60 seconds**. Subsequent loads ar
 ### Q: OpenAI API returns errors
 
 **Common causes**:
-- Invalid API key
-- Exceeded rate limits or quota
-- Network connectivity issues
+* Invalid API key
+* Exceeded rate limits or quota
+* Network connectivity issues
 
 **Solution**: Verify your API key in Settings and check your OpenAI account status.
 
@@ -149,10 +149,11 @@ Encrypted files use the Fernet encryption format. While technically possible to 
 
 ## Getting Help
 
-- **GitHub Issues**: [Report bugs or request features](https://github.com/notolog/notolog-editor/issues)
-- **Documentation**: [notolog.app](https://notolog.app)
-- **Repository**: [github.com/notolog/notolog-editor](https://github.com/notolog/notolog-editor)
+* **Documentation**: [notolog.app](https://notolog.app)
+* **GitHub Issues**: [Report bugs or request features](https://github.com/notolog/notolog-editor/issues){:target="_blank"}
+* **GitHub Discussions**: [Ask questions and discuss](https://github.com/notolog/notolog-editor/discussions){:target="_blank"}
+* **Repository**: [github.com/notolog/notolog-editor](https://github.com/notolog/notolog-editor){:target="_blank"}
 
 ---
 
-*Can't find your answer? [Open an issue](https://github.com/notolog/notolog-editor/issues) on GitHub.*
+*Can't find your answer? [Start a discussion](https://github.com/notolog/notolog-editor/discussions){:target="_blank"} on GitHub.*

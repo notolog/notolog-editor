@@ -1515,21 +1515,47 @@ class NotologEditor(QMainWindow):
             elif result is False:
                 # External URL - open in browser (with optional confirmation)
                 if self.settings.viewer_open_link_confirmation:
+                    # Capture url in closure for the callback
+                    target_url = url
+                    self.logger.debug(f"Link confirmation enabled for: {target_url.toString()}")
+
+                    def open_and_close(dialog_callback):
+                        self.logger.debug(f"Callback executing for URL: {target_url.toString()}")
+                        # Close dialog first
+                        dialog_callback()
+                        self.logger.debug("Dialog closed, opening URL...")
+                        # Defer URL opening to allow dialog to fully close and event loop to process
+                        QTimer.singleShot(100, lambda: self._open_url_deferred(target_url))
+
                     self.common_dialog(
                         self.lexemes.get('dialog_open_link_title'),
                         self.lexemes.get(name='dialog_open_link_text', url=url.toString()),
-                        callback=lambda dialog_callback: (
-                            QDesktopServices.openUrl(url),
-                            dialog_callback()
-                        )
+                        callback=open_and_close
                     )
                 else:
+                    self.logger.debug(f"Opening URL without confirmation: {url.toString()}")
                     QDesktopServices.openUrl(url)
             else:
                 # Unknown or blocked - log and ignore, or show info
                 self.logger.debug(f"Link not handled: {url.toString()}")
 
         return handle_link
+
+    def _open_url_deferred(self, url: QUrl) -> None:
+        """
+        Open URL in browser with error handling.
+        Called via QTimer to ensure it runs after dialog closes.
+
+        Args:
+            url: The QUrl to open
+        """
+        self.logger.debug(f"Attempting to open URL: {url.toString()}")
+        result = QDesktopServices.openUrl(url)
+        if result:
+            self.logger.info(f"Successfully opened URL: {url.toString()}")
+        else:
+            self.logger.error(f"Failed to open URL: {url.toString()}")
+            # Could show error dialog to user here if needed
 
     def check_local_link(self, url: QUrl, execute: bool = False) -> Any:  # noqa: C901
         """
@@ -2284,7 +2310,7 @@ class NotologEditor(QMainWindow):
             self.removeToolBar(self.toolbar)
         """
         Or Toolbar element:
-        toolbar = self.addToolBar("Toolbar")
+        toolbar = this.addToolBar("Toolbar")
         """
         self.toolbar = ToolBar(
             parent=self,
@@ -2937,14 +2963,18 @@ class NotologEditor(QMainWindow):
         self.logger.debug('Sending bug report...')
 
         url = AppConfig().get_repository_github_bug_report_url()
+        url_obj = QUrl(url) if isinstance(url, str) else url
+
+        def open_bug_report(dialog_callback):
+            # Close dialog first
+            dialog_callback()
+            # Defer URL opening to allow dialog to fully close
+            QTimer.singleShot(100, lambda: self._open_url_deferred(url_obj))
 
         self.common_dialog(
             self.lexemes.get('dialog_open_link_title'),
             self.lexemes.get(name='dialog_open_link_text', url=url),
-            # Open url with system browser
-            callback=lambda dialog_callback:
-            # Open link in a system browser and run dialog's callback
-            (QDesktopServices.openUrl(url), dialog_callback()))
+            callback=open_bug_report)
 
     def action_about(self) -> None:
         """

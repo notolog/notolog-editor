@@ -5,6 +5,8 @@ lexemes = {
 
     "tree_filter_input_placeholder_text": "Filtrum celer",
     "tree_filter_input_accessible_desc": "Filtra fasciculos et directorios per nomen",
+    "tree_filter_clear_button_tooltip": "Filtrum purgare",
+    "tree_filter_clear_button_accessible_name": "Campum filtri purgare",
 
     "menu_action_copy_file_path": "Via fasciculi exemplum",
     "menu_action_rename": "Nomen Mutare",

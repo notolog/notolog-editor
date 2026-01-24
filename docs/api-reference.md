@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-18 13:57:00.794379"}} -->
+<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-24 00:00:00.000000"}} -->
 # API Reference
 
 Developer documentation for extending and integrating with Notolog.
@@ -219,8 +219,8 @@ text = lexemes.get('dialog_title')
 ## Contributing
 
 For contribution guidelines, see:
-- [Contributing Guidelines](https://github.com/notolog/notolog-editor/blob/main/CONTRIBUTING.md)
-- [Code of Conduct](https://github.com/notolog/notolog-editor/blob/main/CODE_OF_CONDUCT.md)
+- [Contributing Guidelines](https://github.com/notolog/notolog-editor/blob/main/CONTRIBUTING.md){:target="_blank"}
+- [Code of Conduct](https://github.com/notolog/notolog-editor/blob/main/CODE_OF_CONDUCT.md){:target="_blank"}
 
 ---
 

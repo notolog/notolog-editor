@@ -15,6 +15,9 @@ lexemes = {
     "dialog_usage_tokens_answer": "vastaus: {tokens}",
     "dialog_usage_tokens_total": "yhteensä: {tokens}",
 
+    "dialog_hardware_cpu_tooltip": "CPU-päättely",
+    "dialog_hardware_gpu_tooltip": "GPU-kiihdytys",
+
     "dialog_button_send_request": "Lähetä pyyntö",
     "dialog_button_stop_request": "Pysäytä",
     "dialog_button_save_history": "Tallenna keskusteluhistoria",

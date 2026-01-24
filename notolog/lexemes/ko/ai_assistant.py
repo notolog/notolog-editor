@@ -15,6 +15,9 @@ lexemes = {
     "dialog_usage_tokens_answer": "답변: {tokens}",
     "dialog_usage_tokens_total": "총계: {tokens}",
 
+    "dialog_hardware_cpu_tooltip": "CPU 추론",
+    "dialog_hardware_gpu_tooltip": "GPU 가속",
+
     "dialog_button_send_request": "요청 보내기",
     "dialog_button_stop_request": "중지",
     "dialog_button_save_history": "대화 기록 저장",

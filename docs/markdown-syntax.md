@@ -1,9 +1,22 @@
-<!-- {"notolog.app": {"created": "2024-03-26 00:19:36.466439", "updated": "2024-11-19 19:26:13.521180"}} -->
-# Markdown syntax
+<!-- {"notolog.app": {"created": "2024-03-26 00:19:36.466439", "updated": "2026-01-24 00:00:00.000000"}} -->
+# Markdown Syntax
 
 ## Headings
 
 Keep space between the `#` sign and the heading itself.
+
+**Raw Markdown:**
+
+```markdown
+# Header 1
+## Header 2
+### Header 3
+#### Header 4
+##### Header 5
+###### Header 6
+```
+
+**Rendered result:**
 
 # Header 1
 ## Header 2
@@ -19,6 +32,19 @@ Keep space between the `#` sign and the heading itself.
 Markdown table syntax is supported, complete with column alignment options to enhance readability and presentation.
 
 A Markdown table is composed of rows of data, divided by pipes (`|`). The first row is typically the header, followed by a separator line, and then the data rows.
+
+**Raw Markdown:**
+
+```markdown
+| Item                  | In Stock | Price |
+| :-------------------- | :------: | ----: |
+| Unicorn Bubble Tea    | Yes      | 7.99  |
+| Dragon's Breath Chili | No       | 23.99 |
+| Fairy Dust Tiramisu   | Yes      | 17.99 |
+| Wizard's Cloak Hoodie | No       | 42.99 |
+```
+
+**Rendered result:**
 
 | Item                  | In Stock | Price |
 | :-------------------- | :------: | ----: |
@@ -40,28 +66,50 @@ To align the content within your table cells, you can use colons (`:`) in the se
 
 ### Image with path
 
-![Notolog](../notolog/assets/notolog-example-image.png)
+**Raw Markdown:**
 
-Code looks like: `![Alt text](notolog/assets/notolog-example-image.png)`.
+```markdown
+![Notolog](assets/notolog-example-image.png)
+```
+
+**Rendered result:**
+
+![Notolog](assets/notolog-example-image.png)
+
+The syntax follows the pattern: `![Alt text](assets/notolog-example-image.png)` where the path can be relative to the current file or an absolute URL.
 
 ### Image with base64 data
 
-![Notolog inline logo](data:image/png;base64,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)
+For embedding images directly in Markdown without external files:
 
-To get base64 image code from the real image use this example in Python (*Learn more about code blocks below*):
+**Raw Markdown:**
 
-```py
-file_path = 'example.png';
-with open(file_path, 'rb', encoding='utf-8') as image_file:
+```markdown
+![Notolog inline logo](data:image/png;base64,iVBORw0KGgo...)
+```
+
+**Rendered result:**
+
+![Notolog inline logo](data:image/png;base64,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)
+
+To get base64 image code from the real image use this Python example:
+
+```python
+import base64
+
+file_path = 'example.png'
+with open(file_path, 'rb') as image_file:
     image_data = image_file.read()
     base64_encoded_data = base64.b64encode(image_data)
     base64_decoded_data = base64_encoded_data.decode('utf-8')
     print(base64_decoded_data)
 ```
 
-Then you can place the printed code to this template, put it instead of `CODE` below:
+Then place the printed code into this template (replace `CODE` with the output):
 
-`![Alt text](data:image/png;base64,CODE)`
+```markdown
+![Alt text](data:image/png;base64,CODE)
+```
 
 
 ## B-I-U-S
@@ -70,6 +118,15 @@ Then you can place the printed code to this template, put it instead of `CODE` b
 
 ### Bold
 
+**Raw Markdown:**
+
+```markdown
+Some **bold** text here A
+Some __bold__ text here B
+```
+
+**Rendered result:**
+
 Some **bold** text here A
 Some __bold__ text here B
 
@@ -77,10 +134,19 @@ When using bold text markdown avoid an __underscores__ which are not surrounded 
 use a**n asterix syntax ins**tead.
 
 Also, the multiline syntax is supported, __so please
-fell free__ to use it whenever you may **find it helpful,
+feel free__ to use it whenever you may **find it helpful,
 or whenever it gets you** in other ways.
 
 ### Italic
+
+**Raw Markdown:**
+
+```markdown
+Some *lorem ipsum* text here A
+Some _lorem ipsum_ text here B
+```
+
+**Rendered result:**
 
 Some *lorem ipsum* text here A
 Some _lorem ipsum_ text here B
@@ -91,21 +157,46 @@ or whenever it benefits you* in other ways.
 
 ### Bold `+` Italic
 
+**Raw Markdown:**
+
+```markdown
+Some ***lorem ipsum*** text here A
+Some ___lorem ipsum___ text here B
+```
+
+**Rendered result:**
+
 Some ***lorem ipsum*** text here A
 Some ___lorem ipsum___ text here B
 
 Also, multiline syntax is supported, ___so please
-fell free___ to use it whenever ***you find it helpful
+feel free___ to use it whenever ***you find it helpful
 or whenever it benefits you*** in other ways.
 
 ### Underline
 
+**Raw Markdown:**
+
+```markdown
+Some <u>lorem ipsum</u> text here.
+```
+
+**Rendered result:**
+
 Some <u>lorem ipsum</u> text here.
 
 Also, multiline syntax is supported, <u>so please
-fell free to use it</u> whenever you find it helpful.
+feel free to use it</u> whenever you find it helpful.
 
 ### Strikethrough
+
+**Raw Markdown:**
+
+```markdown
+Some ~~lorem ipsum~~ text here.
+```
+
+**Rendered result:**
 
 Some ~~lorem ipsum~~ text here.
 
@@ -115,6 +206,9 @@ feel free to use it~~ whenever you find it helpful.
 
 ## Lists
 
+**Raw Markdown (unordered lists):**
+
+```markdown
 * Some
     * Random
         * Text
@@ -122,6 +216,27 @@ feel free to use it~~ whenever you find it helpful.
 - List1
 - List2
 - List3
+```
+
+**Rendered result:**
+
+* Some
+    * Random
+        * Text
+
+- List1
+- List2
+- List3
+
+**Raw Markdown (ordered list):**
+
+```markdown
+1. One
+	2. Two
+		3. Three
+```
+
+**Rendered result:**
 
 1. One
 	2. Two
@@ -132,6 +247,17 @@ feel free to use it~~ whenever you find it helpful.
 
 This is a part of the extended Markdown syntax. Handful for creating footnotes at the bottom of the pages.
 
+**Raw Markdown:**
+
+```markdown
+Footnotes[^1] have a label[^somenote-id] which is an id and the footnote's content can be seen by following the footnote's link.
+
+[^1]: This is a footnote number **1**, do not forget to click a link to return →
+[^somenote-id]: A footnote with the label **somenote-id** is also here.
+```
+
+**Rendered result:**
+
 Footnotes[^1] have a label[^somenote-id] which is an id and the footnote's content can be seen by following the footnote's link.
 
 *Footnote notations themselves are not visible if rendered correctly.*
@@ -139,21 +265,53 @@ Footnotes[^1] have a label[^somenote-id] which is an id and the footnote's conte
 [^1]: This is a footnote number **1**, do not forget to click a link to return →
 [^somenote-id]: A footnote with the label **somenote-id** is also here.
 
-Double check a footnote label (id) is corresponding with the footnote's notation written in a square brakets, like in example above.
+Double check a footnote label (id) is corresponding with the footnote's notation written in a square brackets, like in example above.
 
 
 ## Blockquote
+
+**Raw Markdown:**
+
+```markdown
+> Also, multiline syntax is supported, so please
+feel free to use it whenever you find it helpful.
+```
+
+**Rendered result:**
 
 > Also, multiline syntax is supported, so please
 feel free to use it whenever you find it helpful.
 
 ### Nested blockquote
 
+**Raw Markdown:**
+
+```markdown
+> Also, multiline syntax is supported, so please
+>> feel free to use it whenever you find it helpful
+>>> or whenever it benefits you in other ways.
+```
+
+**Rendered result:**
+
 > Also, multiline syntax is supported, so please
 >> feel free to use it whenever you find it helpful
 >>> or whenever it benefits you in other ways.
 
 ### More elements within blockquote
+
+**Raw Markdown:**
+
+```markdown
+> #### Also, multiline syntax is supported
+>
+> * So please feel free to use it whenever you find it helpful.
+> * Or whenever it benefits you in other ways.
+>
+* Any other `inline` *elements* are also **supported** here as well.
+```
+
+**Rendered result:**
 
 > #### Also, multiline syntax is supported
 >

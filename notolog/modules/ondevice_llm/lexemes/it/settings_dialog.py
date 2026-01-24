@@ -20,6 +20,16 @@ lexemes = {
         "Imposta il numero massimo di token da ricevere in una risposta, come parole e punteggiatura,\n"
         "controllando la lunghezza dell'output.",
 
+    "module_ondevice_llm_config_execution_provider_label": "Accelerazione Hardware",
+    "module_ondevice_llm_config_execution_provider_placeholder": "Seleziona provider",
+    "module_ondevice_llm_config_execution_provider_accessible_description":
+        "Seleziona il provider di accelerazione hardware per l'inferenza del modello. "
+        "Le opzioni includono:\n"
+        "CPU (predefinito), CUDA (GPU NVIDIA), DirectML (Windows), TensorRT, OpenVINO (Intel), "
+        "QNN (Qualcomm), CoreML (Apple).\n"
+        "Nota: I provider non-CPU richiedono pacchetti ONNX Runtime specifici "
+        "(es: onnxruntime-genai-cuda).",
+
     "module_ondevice_llm_config_prompt_history_size_label": "Dimensione della Cronologia dei Prompt",
     "module_ondevice_llm_config_prompt_history_size_input_accessible_description":
         "Controlla il numero di voci nella cronologia dei prompt che il sistema conserva per riferimento.\n"

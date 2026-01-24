@@ -5,6 +5,8 @@ lexemes = {
 
     "tree_filter_input_placeholder_text": "Snelfilter",
     "tree_filter_input_accessible_desc": "Bestanden en mappen filteren op naam",
+    "tree_filter_clear_button_tooltip": "Filter wissen",
+    "tree_filter_clear_button_accessible_name": "Filterveld wissen",
 
     "menu_action_copy_file_path": "Kopieer bestandspad",
     "menu_action_rename": "Hernoemen",

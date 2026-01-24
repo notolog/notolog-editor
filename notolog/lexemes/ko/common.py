@@ -5,6 +5,8 @@ lexemes = {
 
     "tree_filter_input_placeholder_text": "빠른 필터",
     "tree_filter_input_accessible_desc": "파일 및 디렉터리를 이름으로 필터링",
+    "tree_filter_clear_button_tooltip": "필터 지우기",
+    "tree_filter_clear_button_accessible_name": "필터 입력 필드 지우기",
 
     "menu_action_copy_file_path": "파일 경로 복사",
     "menu_action_rename": "이름 바꾸기",

@@ -1,6 +1,30 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.1.8] - 2026-01-24
+
+### Added
+- Added Indonesian language support.
+- Added hardware acceleration support for On Device LLM module (CPU, CUDA, DirectML, OpenVINO, CoreML, TensorRT RTX, QNN, MIGraphX).
+- Added CPU/GPU inference mode icon indicator in AI Assistant status bar.
+- Added file-tree quick filter clear button with Esc key support.
+- Added comprehensive `docs/ai-modules.md` documentation covering all three AI modules with hardware acceleration details.
+
+### Changed
+- Updated EnumBase to return default on invalid key, improving robustness for invalid enum access.
+- Updated OpenAI model list with recent models (gpt-5, gpt-5.1, gpt-5.2, etc.) for chat completions.
+- Improved Module llama.cpp with enhanced async patterns and multiprocessing for optimal thread count detection.
+- Improved `async_wrap_iterator` with proper event loop yielding and `StopAsyncIteration` handling.
+- Improved error handling for GPU memory allocation failures in On Device LLM module.
+- Renamed `docs/examples.md` to `docs/markdown-syntax.md` to better reflect the file's purpose.
+
+### Updated
+- Bumped package versions: onnxruntime-genai (>=0.11.0), pytest, pytest-asyncio, pycparser.
+- Updated documentation with GitHub Discussions links and improved installation instructions.
+
+### Fixed
+- Fixed open link confirmation dialog functionality when link might not be opened upon dialog confirmation.
+
 ## [1.1.7] - 2026-01-18
 
 ### Added

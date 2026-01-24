@@ -15,6 +15,9 @@ lexemes = {
     "dialog_usage_tokens_answer": "回答: {tokens}",
     "dialog_usage_tokens_total": "合計: {tokens}",
 
+    "dialog_hardware_cpu_tooltip": "CPU推論",
+    "dialog_hardware_gpu_tooltip": "GPUアクセラレーション",
+
     "dialog_button_send_request": "リクエストを送信",
     "dialog_button_stop_request": "停止",
     "dialog_button_save_history": "対話履歴を保存する",

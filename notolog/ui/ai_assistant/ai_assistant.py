@@ -145,6 +145,7 @@ class AIAssistant(QDialog):
         self.messages_scroll = None  # type: Union[QScrollBar, None]
         self.messages_layout = None  # type: Union[QVBoxLayout, None]
         self.background_label = None  # type: Union[QLabel, None]
+        self.hardware_icon_label = None  # type: Union[QLabel, None]
         self.module_name_label = None  # type: Union[QLabel, None]
         self.model_name_label = None  # type: Union[QLabel, None]
         self.tokens_prompt_label = None  # type: Union[QLabel, None]
@@ -242,6 +243,14 @@ class AIAssistant(QDialog):
         status_bar_layout.addWidget(model_label)
 
         status_bar_layout.addWidget(VerticalLineSpacer())
+
+        # Hardware icon (CPU/GPU) - shows inference device type
+        self.hardware_icon_label = QLabel()
+        self.hardware_icon_label.setFixedSize(QSize(16, 16))
+        self.hardware_icon_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        status_bar_layout.addWidget(self.hardware_icon_label)
+        # Update hardware icon based on current module
+        self.update_hardware_icon()
 
         self.module_name_label = QLabel(self.inference_module_name)
         self.module_name_label.setFont(self.font())
@@ -468,6 +477,68 @@ class AIAssistant(QDialog):
         if hasattr(self, 'tokens_total_label'):
             self.tokens_total_label.setText(self.lexemes.get('dialog_usage_tokens_total',
                                                              tokens=total_tokens_cnt))
+
+    def update_hardware_icon(self):
+        """
+        Update the hardware icon (CPU/GPU) based on the current inference module's execution provider.
+
+        For On Device LLM (ONNX): Shows GPU icon for CUDA, DirectML, TensorRT, etc. or CPU icon otherwise.
+        For Module llama.cpp: Currently CPU-only, shows CPU icon.
+        For OpenAI API: Shows no icon (cloud-based, not hardware-specific).
+        """
+        if not hasattr(self, 'hardware_icon_label') or self.hardware_icon_label is None:
+            return
+
+        icon_name, tooltip = self.get_hardware_icon_info()
+
+        if icon_name:
+            icon_size = QSize(16, 16)
+            icon_color = QColor(self.theme_helper.get_color('ai_assistant_status_icon_color', css_format=True))
+            pixmap = self.theme_helper.get_icon(theme_icon=icon_name, color=icon_color).pixmap(icon_size)
+            self.hardware_icon_label.setPixmap(pixmap)
+            self.hardware_icon_label.setToolTip(tooltip)
+            self.hardware_icon_label.show()
+        else:
+            self.hardware_icon_label.clear()
+            self.hardware_icon_label.setToolTip('')
+            self.hardware_icon_label.hide()
+
+    def get_hardware_icon_info(self) -> tuple:
+        """
+        Determine the hardware icon and tooltip based on the current inference module
+        and its configured execution provider.
+
+        Note: This method shows the icon based on the configured setting, not actual
+        hardware availability. The actual fallback to CPU (if GPU fails) happens
+        at model initialization time and is logged there.
+
+        Returns:
+            tuple: (icon_name, tooltip) or (None, None) if no icon should be shown.
+        """
+        # Module-specific icon determination based on configured settings
+        if self.inference_module == 'ondevice_llm':
+            # Check execution provider setting
+            provider = getattr(self.settings, 'module_ondevice_llm_execution_provider', 'cpu')
+
+            # GPU providers
+            gpu_providers = ['cuda', 'dml', 'tensorrt', 'nvtensorrtrtx', 'coreml', 'migraphx']
+            # OpenVINO can use CPU or GPU, treat as CPU-accelerated for icon purposes
+            if provider.lower() in gpu_providers:
+                return ('gpu-card.svg', self.lexemes.get('dialog_hardware_gpu_tooltip', default='GPU Acceleration'))
+            else:
+                return ('cpu.svg', self.lexemes.get('dialog_hardware_cpu_tooltip', default='CPU Inference'))
+
+        elif self.inference_module == 'llama_cpp':
+            # llama.cpp currently uses CPU only in this integration
+            return ('cpu.svg', self.lexemes.get('dialog_hardware_cpu_tooltip', default='CPU Inference'))
+
+        elif self.inference_module == 'openai_api':
+            # Cloud-based, no hardware icon
+            return (None, None)
+
+        else:
+            # Unknown module, show CPU as fallback
+            return ('cpu.svg', self.lexemes.get('dialog_hardware_cpu_tooltip', default='CPU Inference'))
 
     def init_module(self) -> Union[BaseAiCore, None]:
         self.module = Modules().import_module(self.inference_module)
@@ -705,10 +776,21 @@ class AIAssistant(QDialog):
                 # The object may have already been deleted
                 pass
 
+        # Update hardware icon when inference module or execution provider changes
+        if ('ai_config_inference_module' in data
+                or 'module_ondevice_llm_execution_provider' in data):
+            try:
+                self.update_hardware_icon()
+            except RuntimeError:
+                # The object may have already been deleted
+                pass
+
         if 'app_theme' in data:
             try:
                 # Apply the selected theme to the widget's stylesheet
                 self.setStyleSheet(self.theme_helper.get_css('ai_assistant'))
+                # Also update the hardware icon with new theme colors
+                self.update_hardware_icon()
             except RuntimeError:
                 # The object may have already been deleted
                 pass

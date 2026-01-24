@@ -14,6 +14,9 @@ lexemes = {
     "dialog_usage_tokens_answer": "उत्तर: {tokens}",
     "dialog_usage_tokens_total": "कुल: {tokens}",
 
+    "dialog_hardware_cpu_tooltip": "CPU अनुमान",
+    "dialog_hardware_gpu_tooltip": "GPU त्वरण",
+
     "dialog_button_send_request": "अनुरोध भेजें",
     "dialog_button_stop_request": "रोकें",
     "dialog_button_save_history": "डायलॉग इतिहास सहेजें",

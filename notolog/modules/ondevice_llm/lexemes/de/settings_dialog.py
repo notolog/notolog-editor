@@ -20,6 +20,13 @@ lexemes = {
         "Legt die maximale Anzahl von Tokens fest, die in einer Antwort erhalten werden können,\n"
         "einschließlich Wörter und Zeichensetzung, und steuert die Länge der Ausgabe.",
 
+    "module_ondevice_llm_config_execution_provider_label": "Hardwarebeschleunigung",
+    "module_ondevice_llm_config_execution_provider_placeholder": "Anbieter auswählen",
+    "module_ondevice_llm_config_execution_provider_accessible_description":
+        "Wählen Sie den Hardwarebeschleunigungsanbieter für die Modellinferenz. Optionen umfassen:\n"
+        "CPU (Standard), CUDA (NVIDIA GPUs), DirectML (Windows), TensorRT, OpenVINO (Intel), QNN (Qualcomm), CoreML (Apple).\n"
+        "Hinweis: Nicht-CPU-Anbieter erfordern spezifische ONNX Runtime-Pakete (z.B. onnxruntime-genai-cuda).",
+
     "module_ondevice_llm_config_prompt_history_size_label": "Größe des Prompt-Verlaufs",
     "module_ondevice_llm_config_prompt_history_size_input_accessible_description":
         "Regelt die Anzahl der Einträge im Prompt-Verlauf, die das System zur Referenz behält.\n"

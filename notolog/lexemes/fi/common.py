@@ -5,6 +5,8 @@ lexemes = {
 
     "tree_filter_input_placeholder_text": "Pikasuodatin",
     "tree_filter_input_accessible_desc": "Suodata tiedostot ja hakemistot nimen mukaan",
+    "tree_filter_clear_button_tooltip": "Tyhjennä suodatin",
+    "tree_filter_clear_button_accessible_name": "Tyhjennä suodatinkenttä",
 
     "menu_action_copy_file_path": "Kopioi tiedostopolku",
     "menu_action_rename": "Nimeä uudelleen",

@@ -20,6 +20,16 @@ lexemes = {
         "Ορίζει τον μέγιστο αριθμό των tokens που μπορούν να ληφθούν σε μία απάντηση, όπως λέξεις και σημεία στίξης,\n"
         "ελέγχοντας το μήκος της απόκρισης.",
 
+    "module_ondevice_llm_config_execution_provider_label": "Επιτάχυνση Υλικού",
+    "module_ondevice_llm_config_execution_provider_placeholder": "Επιλέξτε πάροχο",
+    "module_ondevice_llm_config_execution_provider_accessible_description":
+        "Επιλέξτε πάροχο επιτάχυνσης υλικού για την εκτέλεση του μοντέλου. "
+        "Οι επιλογές περιλαμβάνουν:\n"
+        "CPU (προεπιλογή), CUDA (NVIDIA GPU), DirectML (Windows), TensorRT, OpenVINO (Intel), "
+        "QNN (Qualcomm), CoreML (Apple).\n"
+        "Σημείωση: Οι πάροχοι εκτός CPU απαιτούν ειδικά πακέτα ONNX Runtime "
+        "(π.χ. onnxruntime-genai-cuda).",
+
     "module_ondevice_llm_config_prompt_history_size_label": "Μέγεθος Ιστορικού Προτροπών",
     "module_ondevice_llm_config_prompt_history_size_input_accessible_description":
         "Ελέγχει τον αριθμό των καταχωρήσεων στο ιστορικό προτροπών που διατηρεί το σύστημα για αναφορά.\n"

@@ -15,6 +15,9 @@ lexemes = {
     "dialog_usage_tokens_answer": "risposta: {tokens}",
     "dialog_usage_tokens_total": "totale: {tokens}",
 
+    "dialog_hardware_cpu_tooltip": "Inferenza CPU",
+    "dialog_hardware_gpu_tooltip": "Accelerazione GPU",
+
     "dialog_button_send_request": "Invia richiesta",
     "dialog_button_stop_request": "Stop",
     "dialog_button_save_history": "Salva la cronologia della conversazione",

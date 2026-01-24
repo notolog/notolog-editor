@@ -14,6 +14,9 @@ lexemes = {
     "dialog_usage_tokens_answer": "cevap: {tokens}",
     "dialog_usage_tokens_total": "toplam: {tokens}",
 
+    "dialog_hardware_cpu_tooltip": "CPU Çıkarımı",
+    "dialog_hardware_gpu_tooltip": "GPU Hızlandırma",
+
     "dialog_button_send_request": "İstek Gönder",
     "dialog_button_stop_request": "Durdur",
     "dialog_button_save_history": "Sohbet geçmişini kaydet",

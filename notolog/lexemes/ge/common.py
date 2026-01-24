@@ -5,6 +5,8 @@ lexemes = {
 
     "tree_filter_input_placeholder_text": "სწრაფი ფილტრი",
     "tree_filter_input_accessible_desc": "გაფილტვრა ფაილებისა და დირექტორიების სახელის მიხედვით",
+    "tree_filter_clear_button_tooltip": "ფილტრის გასუფთავება",
+    "tree_filter_clear_button_accessible_name": "ფილტრის ველის გასუფთავება",
 
     "menu_action_copy_file_path": "ფაილის გზის კოპირება",
     "menu_action_rename": "გადარქმევა",

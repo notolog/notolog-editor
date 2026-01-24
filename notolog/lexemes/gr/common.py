@@ -5,6 +5,8 @@ lexemes = {
 
     "tree_filter_input_placeholder_text": "Γρήγορο φίλτρο",
     "tree_filter_input_accessible_desc": "Φιλτράρισμα αρχείων και καταλόγων ανά όνομα",
+    "tree_filter_clear_button_tooltip": "Εκκαθάριση φίλτρου",
+    "tree_filter_clear_button_accessible_name": "Εκκαθάριση πεδίου φίλτρου",
 
     "menu_action_copy_file_path": "Αντιγραφή διαδρομής αρχείου",
     "menu_action_rename": "Μετονομασία",

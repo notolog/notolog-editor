@@ -20,6 +20,16 @@ lexemes = {
         "Définit le nombre maximum de tokens à recevoir en réponse, tels que les mots et la ponctuation,\n"
         "contrôlant la longueur de la sortie.",
 
+    "module_ondevice_llm_config_execution_provider_label": "Accélération Matérielle",
+    "module_ondevice_llm_config_execution_provider_placeholder": "Sélectionner le fournisseur",
+    "module_ondevice_llm_config_execution_provider_accessible_description":
+        "Sélectionnez le fournisseur d'accélération matérielle pour l'inférence du modèle. "
+        "Les options incluent :\n"
+        "CPU (par défaut), CUDA (GPUs NVIDIA), DirectML (Windows), TensorRT, OpenVINO (Intel), "
+        "QNN (Qualcomm), CoreML (Apple).\n"
+        "Remarque : Les fournisseurs non-CPU nécessitent des packages ONNX Runtime spécifiques "
+        "(ex: onnxruntime-genai-cuda).",
+
     "module_ondevice_llm_config_prompt_history_size_label": "Taille de l'historique des prompts",
     "module_ondevice_llm_config_prompt_history_size_input_accessible_description":
         "Contrôle le nombre d'entrées dans l'historique des prompts que le système conserve pour référence.\n"

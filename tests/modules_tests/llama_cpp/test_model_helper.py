@@ -30,6 +30,7 @@ else:
 import os
 import pytest
 import logging
+import multiprocessing
 
 from unittest.mock import MagicMock
 
@@ -113,11 +114,16 @@ class TestModelHelper:
             assert str(exp_exception) in str(e)
 
         if exp_call:
-            # Verify the method called with the expected params
+            # Verify the method called with the expected params (including new optimal parameters)
+            expected_threads = multiprocessing.cpu_count()
             test_model.assert_called_once_with(
                 model_path=test_model_helper.model_path,
                 chat_format=test_model_helper.chat_format,
                 n_ctx=test_model_helper.n_ctx,
+                n_batch=512,  # Optimal batch size from llama-cpp-python
+                n_ubatch=512,  # Physical batch size
+                n_threads=expected_threads,  # Use all CPU cores
+                n_threads_batch=expected_threads,  # Use all cores for batch processing
                 verbose=False
             )
         else:

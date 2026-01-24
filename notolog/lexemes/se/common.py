@@ -5,6 +5,8 @@ lexemes = {
 
     "tree_filter_input_placeholder_text": "Snabbfilter",
     "tree_filter_input_accessible_desc": "Filtrera filer och kataloger efter namn",
+    "tree_filter_clear_button_tooltip": "Rensa filter",
+    "tree_filter_clear_button_accessible_name": "Rensa filterfält",
 
     "menu_action_copy_file_path": "Kopiera filsökväg",
     "menu_action_rename": "Byt namn",

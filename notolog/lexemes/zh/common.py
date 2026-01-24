@@ -5,6 +5,8 @@ lexemes = {
 
     "tree_filter_input_placeholder_text": "快速筛选",
     "tree_filter_input_accessible_desc": "按名称筛选文件和目录",
+    "tree_filter_clear_button_tooltip": "清除筛选",
+    "tree_filter_clear_button_accessible_name": "清除筛选输入字段",
 
     "menu_action_copy_file_path": "复制文件路径",
     "menu_action_rename": "重命名",
