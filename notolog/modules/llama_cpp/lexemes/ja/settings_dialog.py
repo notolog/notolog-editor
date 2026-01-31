@@ -19,6 +19,14 @@ lexemes = {
     "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "モデル会話に使用される形式を選択するためのドロップダウンメニューです。",
 
+    "module_llama_cpp_config_gpu_layers_label": "GPUレイヤー",
+    "module_llama_cpp_config_gpu_layers_input_accessible_description":
+        "GPUにオフロードするモデルレイヤーの数。\n"
+        "Auto: 自動検出（Apple SiliconではGPU、その他はCPU）。\n"
+        "-1: すべてのレイヤーをGPUにオフロード。\n"
+        "0: CPUのみモード（Intel Macに推奨）。\n"
+        "1-999: 部分的なGPUオフロード（上級者向け）。",
+
     "module_llama_cpp_config_system_prompt_label": "システムプロンプト",
     "module_llama_cpp_config_system_prompt_edit_placeholder_text": "システムプロンプトのテキストを入力してください",
     "module_llama_cpp_config_system_prompt_edit_accessible_description":

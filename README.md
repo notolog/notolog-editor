@@ -1,22 +1,39 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2026-01-24 00:00:00.000000"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2026-01-31 00:00:00.000000"}} -->
 # Notolog
 
-[![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/) [![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor)](https://github.com/notolog/notolog-editor/blob/master/LICENSE) [![PyPI - Python Version](https://img.shields.io/badge/python-3.10+-blue.svg)](https://pypi.org/project/notolog/) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/notolog/notolog-editor/tests.yaml)](https://github.com/notolog/notolog-editor/actions/workflows/tests.yaml) [![PyPI - Downloads](https://img.shields.io/pypi/dm/notolog)](https://pypistats.org/packages/notolog) [![Conda Version](https://img.shields.io/conda/vn/conda-forge/notolog)](https://anaconda.org/conda-forge/notolog) [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/notolog)](https://anaconda.org/conda-forge/notolog)
+<div align="center">
 
-Notolog is an open-source Markdown editor licensed under the MIT License. Combining simplicity with powerful tools and an AI Assistant, it's built with Python and PySide6 to prioritize user privacy through local-first design while helping you sharpen your Markdown skills in a cozy, efficient way.
+<img src="https://raw.githubusercontent.com/notolog/notolog-editor/main/docs/assets/notolog-logo-blue.png" alt="Notolog Markdown Editor" width="72" height="72" /><br/>
 
-📖 **[Documentation](https://github.com/notolog/notolog-editor/blob/main/docs/index.md)** | 🪲 **[Report Issues](https://github.com/notolog/notolog-editor/issues)** | 💡 **[Request Features](https://github.com/notolog/notolog-editor/issues)** | 💬 **[Discussions](https://github.com/notolog/notolog-editor/discussions)**
+[![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/)
+[![Conda Version](https://img.shields.io/conda/vn/conda-forge/notolog)](https://anaconda.org/conda-forge/notolog)
+[![Conda Recipe](https://img.shields.io/badge/recipe-notolog-green.svg)](https://anaconda.org/conda-forge/notolog)
+[![PyPI - Python Version](https://img.shields.io/badge/python-3.10+-blue.svg)](https://pypi.org/project/notolog/)<br/>
+[![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor)](https://github.com/notolog/notolog-editor/blob/master/LICENSE)
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/notolog/notolog-editor/tests.yaml)](https://github.com/notolog/notolog-editor/actions/workflows/tests.yaml)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/notolog)](https://pypistats.org/packages/notolog)
+[![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/notolog)](https://anaconda.org/conda-forge/notolog)
+</div>
 
+Notolog is an open-source Markdown editor built with Python and PySide6, featuring AI-powered assistance and local-first privacy.
 
-## Instant Setup
+📖 **[Documentation](https://notolog.app)** | 🪲 **[Report Issues](https://github.com/notolog/notolog-editor/issues)** | 💡 **[Request Features](https://github.com/notolog/notolog-editor/discussions)** | 💬 **[Discussions](https://github.com/notolog/notolog-editor/discussions)**
 
-**Using pip:**
+---
+
+## Quick Install
+
 ```sh
 pip install notolog
+notolog  # Launch the app
 ```
-Or with llama.cpp support:
+
+<details>
+<summary>Other installation methods</summary>
+
+**With llama.cpp support:**
 ```sh
-pip install notolog[llama]
+pip install "notolog[llama]"
 ```
 
 **Via conda:**
@@ -24,350 +41,122 @@ pip install notolog[llama]
 conda install notolog -c conda-forge
 ```
 
-**Ubuntu/Debian `.deb` package:**
+**Ubuntu/Debian:** Download from [notolog-debian releases](https://github.com/notolog/notolog-debian/releases/latest)
 
-Download and install [the latest .deb release](https://github.com/notolog/notolog-debian/releases/latest) from the [Notolog Debian Package Builder](https://github.com/notolog/notolog-debian) repository.
-
-**To start 🚀 the app, simply run:**
+**From source:**
+```sh
+git clone https://github.com/notolog/notolog-editor.git
+cd notolog-editor
+python3 -m venv notolog_env && source notolog_env/bin/activate
+pip install .
+python -m notolog.app
 ```
-notolog
-```
+</details>
 
 ---
 
-![Notolog - Python Markdown Editor - UI Example](https://raw.githubusercontent.com/notolog/notolog-editor/main/docs/notolog-ui-examples.png)
+![Notolog - Python Markdown Editor - UI Example](https://raw.githubusercontent.com/notolog/notolog-editor/main/docs/assets/images/ui/notolog-ui-example.png)
 
 ## Features
 
-- **Markdown Support**:
-    - Text editor equipped with exclusive Markdown syntax highlighting and extended syntax support.
-    - Line numbers adapt to each line's height, enhancing readability.
-    - Viewer for precise text rendering, utilizing the integrated Python Markdown library.
-    - Processes both multi-line and single-line code blocks, along with custom parsing for `details` and `summary` blocks.
-- **AI Assistant**: Provides a chat-style dialogue, supporting both the OpenAI API and on-device local LLM options.
-- **Accessibility**: Features adjustable font sizes and descriptive elements to enhance usability.
-- **Auto-Save**: Automatically saves changes to prevent data loss.
-- **Enhanced Search**:
-    - Offers in-file content search with optional case sensitivity.
-    - Quick file search within the file tree to efficiently filter results.
-- **Encryption**: Provides secure AES-128 encryption with Fernet for files (optional).
-- **Meta-Headers**: Securely stores essential file information within HTML-comment-formatted meta-headers.
-- **Multi-Language**: Supports multiple languages out of the box.
-- **Customizable UI**: Includes a variety of color themes to keep the UI fancy.
-- **TODO Highlighting**: Marks @todo statements for efficient task management.
+- **Markdown Editor** - Real-time syntax highlighting in edit mode (implemented specifically for Notolog), live preview, adaptive line numbers, code blocks
+- **AI Assistant** - Supports: OpenAI API, ONNX Runtime GenAI (local), and llama.cpp (local, GGUF models)
+- **File Encryption** - PBKDF2HMAC key derivation with Fernet (AES-128 CBC mode) for optional file encryption
+- **Multi-Language** - 19 languages supported
+- **Customizable** - 6 built-in themes
+- **Cross-Platform** - Windows, macOS, Linux
+
+See the [User Guide](https://notolog.app/user-guide/) for complete feature documentation.
 
 
-## Translations
+## Requirements
 
-Notolog supports multiple languages out of the box, enhancing its accessibility globally. In addition to English, here are the currently supported languages:
+- **Python 3.10+** ([python.org](https://python.org))
+- 4 GB RAM minimum (8+ GB for local AI models)
 
-- 简体中文 (Chinese Simplified)
-- Nederlands (Dutch)
-- Suomi (Finnish)
-- Français (French)
-- ქართული (Georgian)
-- Deutsch (German)
-- Ελληνικά (Greek)
-- हिन्दी (Hindi)
-- Bahasa Indonesia (Indonesian)
-- Italiano (Italian)
-- 日本語 (Japanese)
-- 한국어 (Korean)
-- Latina (Latin)
-- Português (Portuguese)
-- Русский (Russian)
-- Español (Spanish)
-- Svenska (Swedish)
-- Türkçe (Turkish)
-
-
-## Themes
-
-Notolog offers several themes to customize the UI:
-
-* **Default**: Every app should have a default theme.
-* **Calligraphy**: Inspired by the art of calligraphy, this theme resembles a rice paper sheet marked with black ink.
-* **Nocturne**: A dark-themed UI that plays a jazz nocturne at night.
-* **Noir Dark**: This theme's name says it all - mystery and style in every pixel.
-* **Spooky**: Embrace the spooky season with vivid Halloween-themed colors.
-* **Strawberry**: The most playful theme, reminiscent of strawberry jam.
-
-Below is a glimpse of the UI, featuring the settings window:
-
-![Notolog - Python Markdown Editor - UI Example](https://raw.githubusercontent.com/notolog/notolog-editor/main/docs/notolog-ui-settings.png)
 
 ## Installation
 
-Ensure **Python 3.10 or higher** is installed. For more details, visit [python.org](https://python.org).
+Using a virtual environment is recommended:
 
-Using a virtual environment is recommended to avoid version conflicts. From Python 3.6, venv is the recommended method to create virtual environments. For more information check [Creation of virtual environments](https://docs.python.org/3/library/venv.html). Alternatively, you can execute the Notolog source code and set up virtual environment with your favorite Python code editor.
-
-### Install with pip
-
-Create and activate a virtual environment:
 ```sh
 python3 -m venv notolog_env
-source notolog_env/bin/activate  # macOS and Linux systems
-notolog_env\Scripts\activate  # Windows
-```
-
-Install Notolog using pip:
-```sh
+source notolog_env/bin/activate  # Linux/macOS
+notolog_env\Scripts\activate     # Windows
 pip install notolog
 ```
 
-Starting the app is as simple as running:
-```sh
-notolog
-```
+For detailed instructions including conda and Debian packages, see [Getting Started](https://notolog.app/getting-started/).
 
-The app includes a 'Check for Updates' option accessible through the main menu under 'Help'. Where applicable, run the following command to update Notolog to the latest version: `pip install notolog --upgrade`
 
-<details>
-<summary>How to install venv on Linux systems 🔧 </summary>
+## AI Assistant
 
-While Python itself usually comes pre-installed on many Linux distributions, including Ubuntu, some distributions may not include the venv module by default. Therefore, you need to install it separately using the package manager before you can use it to create virtual environments.
+Notolog supports three AI backends:
 
-**Ubuntu/Debian**
-```sh
-sudo apt-get update
-sudo apt-get install python3-venv
-```
+- **OpenAI API** - Cloud-based inference via OpenAI-compatible endpoints
+- **On-Device LLM** - Local inference using ONNX Runtime GenAI (e.g. Phi-3, Llama)
+- **Module llama.cpp** - Local inference with GGUF quantized models (e.g. Llama, Mistral, Qwen)
 
-**Fedora**
-```sh
-sudo dnf install python3-venv
-```
+See the [AI Assistant Guide](https://notolog.app/ai-assistant/) for setup instructions.
 
-**CentOS/RHEL**
-```sh
-sudo yum install python3-venv
-```
-</details>
 
-### Install via conda-forge
+## Development
 
-Create and activate a new environment:
-```sh
-conda create -n notolog_env python=3.11
-conda activate notolog_env
-```
-
-Then, execute the installation command:
-```sh
-conda install notolog -c conda-forge
-```
-
-This will fetch and install the latest version of Notolog compatible with Python 3.10 or newer from the [conda-forge packages](https://anaconda.org/conda-forge/notolog).
-
-Run Notolog:
-```sh
-notolog
-```
-
-Just activate the environment and run the app next time.
-
-### Install Debian Package
-
-Download [the latest release](https://github.com/notolog/notolog-debian/releases/latest) from the [Notolog Debian Package Builder](https://github.com/notolog/notolog-debian) repository.
-
-Install the package with:
-```sh
-sudo dpkg -i notolog_X.Y.Z_amd64.deb
-```
-
-*This is an early build for the x86_64 architecture. Future releases may include additional architectures and improvements.*
-
-The builder repository contains the open-source packaging scripts, along with automated linting and build pipelines via GitHub Actions.
-
-### Install from Source
-
-1. Clone the GitHub repository:
 ```sh
 git clone https://github.com/notolog/notolog-editor.git
-```
-
-2. Navigate to the project directory:
-```sh
 cd notolog-editor
-```
-
-3. Create and activate a virtual environment:
-```sh
-python3 -m venv notolog_env
-source notolog_env/bin/activate  # macOS and Linux systems
-notolog_env\Scripts\activate  # Windows
-```
-
-4. Install dependencies:
-```sh
-pip install .
-```
-
-5. Start Notolog using:
-```sh
+pip install -e .
 python -m notolog.app
 ```
 
-
-## Extensions
-
-### Module llama.cpp
-
-The `llama-cpp-python` package is an optional dependency that enables GGUF model support. It is not included in the base installation because it requires a C++ compiler to build.
-
-**Installation options:**
-
+**Run tests:**
 ```sh
-# Option 1: Install with extras (recommended)
-pip install notolog[llama]
-
-# Option 2: Install separately
-pip install llama-cpp-python
-```
-
-The package requires a C++ compiler to be installed. If a compiler is not available, you may encounter an error such as:
-*CMake Error: CMAKE_CXX_COMPILER not set*
-
-This error indicates that the system cannot find a suitable C++ compiler to build the necessary components. Installing a compatible compiler, such as GCC or Clang, should resolve the issue.
-
-For Linux systems, installing the `build-essential` package is often sufficient to resolve this. For example, on Ubuntu, run:
-
-```sh
-sudo apt-get install build-essential
-```
-
-For platform-specific or more detailed instructions, refer to the [official documentation](https://github.com/abetlen/llama-cpp-python#installation) provided with the `llama-cpp-python` package.
-
-After successful installation, the **Module llama.cpp** will be available in the application settings and ready to use.
-
-
-## Tests and Test Coverage
-
-To minimize installation overhead and streamline dependency management, dependencies required solely for testing are isolated in test-specific requirements.
-
-To install these dependencies, run: `python dev_install.py test`. The `tomli` package is required to execute this script; you can install it using `pip install tomli`.
-
-This approach helps manage test dependencies independently of the main application dependencies, ensuring a cleaner and more manageable setup.
-
-<details>
-<summary>Run Tests</summary>
-
-To execute all available tests:
-```sh
+python dev_install.py test
 pytest
 ```
 
-To run tests from a specific file:
-```sh
-pytest tests/test_pkg_integration.py
-```
-</details>
-
-<details>
-<summary>Run Tests with Coverage Reports</summary>
-
-To run all tests with a coverage report:
-```sh
-pytest tests/ --cov=notolog --cov-report=term
-```
-
-Alternatively, to exclude UI tests from execution:
-```sh
-pytest tests/ --cov=notolog --cov-report=term --ignore=tests/ui_tests/
-```
-</details>
-
-
-## Dev Tools
-
-To maintain high standards of code quality and ensure comprehensive test coverage, we utilize several development tools. Flake8, which combines PyFlakes, pycodestyle, and McCabe's complexity checker, is employed to enforce code quality, manage code complexity, and ensure adherence to PEP 8 style conventions.
-
-To install these dependencies, run: `python dev_install.py dev`. The `tomli` package is required to execute this script; you can install it using `pip install tomli`.
-
-
-## Build Tools
-
-Make sure `poetry-core` and `build` are installed:
-```
-pip install poetry-core build
-```
-
-The following command generates distribution packages. Specifically, it creates both a source distribution and a wheel distribution:
-```
-python -m build
-```
-
-
-## Contributing
-
-If you encounter bugs or would like to request features, please [open an issue](https://github.com/notolog/notolog-editor/issues). For questions and general discussions, visit our [GitHub Discussions](https://github.com/notolog/notolog-editor/discussions). Pull requests are always welcome! See [CONTRIBUTING.md](https://github.com/notolog/notolog-editor/blob/main/CONTRIBUTING.md) for guidelines.
+See [CONTRIBUTING.md](https://github.com/notolog/notolog-editor/blob/main/CONTRIBUTING.md) for guidelines.
 
 
 ## License
 
-Notolog is open-source software licensed under the MIT License, which provides flexibility and freedom to use, modify, and distribute the software. To comply with the license when redistributing this software or derivative works, you must include a copy of the original MIT License, found in the [LICENSE](https://github.com/notolog/notolog-editor/blob/main/LICENSE) file.
+Notolog is open-source software licensed under the [MIT License](https://github.com/notolog/notolog-editor/blob/main/LICENSE).
+
+This project uses third-party libraries, each subject to its own license. See [ThirdPartyNotices.md](https://github.com/notolog/notolog-editor/blob/main/ThirdPartyNotices.md) for details.
 
 
-## Third-Party Acknowledgements
+## Security
 
-This project uses third-party libraries and components, each subject to its own license. Additional dependencies may be installed as necessary. For details on licensing, see [ThirdPartyNotices.md](https://github.com/notolog/notolog-editor/blob/main/ThirdPartyNotices.md).
+Notolog prioritizes data protection and user privacy:
 
+- **Encryption**: File encryption (optional) uses PBKDF2HMAC key derivation with Fernet (AES-128 CBC mode).
+- **Auto-Save**: Changes are saved automatically to prevent data loss.
+- **Privacy**: No telemetry or tracking. Local-only AI inference options available.
 
-## AI Integration Disclaimers
-
-### OpenAI API
-
-**Disclaimer**: This project integrates the OpenAI API 'as is' and is independent, not affiliated with OpenAI. The creators disclaim any liability for misuse or resulting consequences.
-
-**Usage**: Users are required to supply their own API keys and adhere to the [OpenAI API reference](https://platform.openai.com/docs/api-reference) guidelines.
-
-**Security**: Proper management of API keys is essential for maintaining the security of your data. Ensure that API keys are stored and handled securely to prevent unauthorized access.
-
-### ONNX Runtime GenAI
-
-**Disclaimer**: The 'On Device LLM' module uses ONNX Runtime to enable generative AI features and is not associated with Microsoft or ONNX Runtime.
-
-**GPU Acceleration**: CUDA and DirectML variants are separate packages that replace the base package:
-- CUDA (Linux/Windows with NVIDIA GPU): `pip install onnxruntime-genai-cuda`
-- DirectML (Windows): `pip install onnxruntime-genai-directml`
-
-**Note**: These packages cannot coexist. If you uninstall the GPU package, reinstall the base package (`pip install --force-reinstall onnxruntime-genai`) or the module won't work.
-
-### Python Bindings for llama.cpp
-
-**Disclaimer**: The 'Module llama.cpp' in this application utilizes the Python bindings for llama.cpp to facilitate LLM inference with models in GGUF format. This module is independently developed and is not officially affiliated with either the llama-cpp-python or the llama.cpp projects.
+For vulnerability reporting, see [SECURITY.md](https://github.com/notolog/notolog-editor/blob/main/SECURITY.md).
 
 
-## Security Disclaimer
+## Disclaimers
 
-### File Encryption
+### Third-Party AI Services and Libraries
 
-- **Details**: Notolog uses PBKDF2HMAC for key derivation and Fernet (AES-128 CBC mode) for encryption. Future updates may enhance encryption strength.
+This project integrates third-party AI services and libraries:
 
-### File Meta-Headers
+- **OpenAI API**: Users are required to supply their own API keys and adhere to OpenAI's applicable terms, policies, and [API documentation](https://platform.openai.com/docs/api-reference).
+- **ONNX Runtime GenAI**: Used for local ONNX model inference. More info: [onnxruntime-genai](https://github.com/microsoft/onnxruntime-genai)
+- **llama.cpp**: Used for local GGUF model inference via [llama-cpp-python](https://github.com/abetlen/llama-cpp-python).
 
-- **Privacy by Design**: Essential information is stored in HTML-comment-formatted meta-headers to preserve essential data.
+*Notolog is developed independently and is not affiliated with these organizations or projects.*
 
-### Data Integrity and Security
+### Legal
 
-- **Auto-Save Feature**: Automatically saves changes to minimize data loss.
-- **Password Protection**: Strong password practices are recommended to protect access to encrypted files.
-
-### Legal and Compliance
-
-- **Open Source Compliance**: Licensed under the MIT License. Users are responsible for ensuring that their use of the software complies with applicable local laws and regulations.
-- **Liability**: Developers disclaim liability for misuse or non-compliance with legal and regulatory standards.
-
-
-## Trademark Disclaimer
-
-All trademarks, registered trademarks, product names, and company names or logos mentioned herein are the property of their respective owners. References to these trademarks in any documentation, code, or API communications are for identification purposes only and do not imply endorsement or affiliation.
-
-
-## Support Us
-
-If you find Notolog useful, please consider giving it a star 🌟 on [GitHub](https://github.com/notolog/notolog-editor). Your support helps others discover the project and contributes to its continued development. Thank you!
+- **Compliance**: Users are responsible for ensuring their use complies with applicable laws and regulations.
+- **Liability**: The developers disclaim liability for misuse or non-compliance with legal or regulatory requirements.
+- **Trademarks**: All trademarks and brand names are the property of their respective owners and are used for identification purposes only.
 
 ---
-_This README.md file has been carefully crafted and edited using the Notolog Editor itself._
+
+⭐ If you find Notolog useful, please consider giving it a star on [GitHub](https://github.com/notolog/notolog-editor)!
+
+---
+_This README.md file has been crafted and edited using Notolog Editor._

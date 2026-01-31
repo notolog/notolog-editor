@@ -19,6 +19,14 @@ lexemes = {
     "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "用于选择模型对话格式的下拉菜单。",
 
+    "module_llama_cpp_config_gpu_layers_label": "GPU层数",
+    "module_llama_cpp_config_gpu_layers_input_accessible_description":
+        "要卸载到GPU的模型层数。\n"
+        "Auto：自动检测（Apple Silicon使用GPU，其他使用CPU）。\n"
+        "-1：将所有层卸载到GPU。\n"
+        "0：仅CPU模式（推荐用于Intel Mac）。\n"
+        "1-999：部分GPU卸载（高级）。",
+
     "module_llama_cpp_config_system_prompt_label": "系统提示",
     "module_llama_cpp_config_system_prompt_edit_placeholder_text": "输入系统提示文本",
     "module_llama_cpp_config_system_prompt_edit_accessible_description":

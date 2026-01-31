@@ -179,11 +179,26 @@ class ModelHelper:
 
             # Check model path is correct
             self.model_path = model_path
-            if (not os.path.isdir(self.model_path)
-                    or not any(f.endswith('.onnx') for f in os.listdir(self.model_path) if
-                               os.path.isfile(os.path.join(self.model_path, f)))):
-                self.logger.warning(f'Model not found in {self.model_path}')
+            if not os.path.isdir(self.model_path):
+                self.logger.warning(f'Model directory not found: {self.model_path}')
                 self.model_path = None
+            elif not self._has_model_files(self.model_path):
+                # Check for onnx/ subdirectory (transformers.js-style structure)
+                onnx_subdir = os.path.join(self.model_path, 'onnx')
+                if os.path.isdir(onnx_subdir) and self._has_model_files(onnx_subdir):
+                    # Check if genai_config.json exists - required for onnxruntime-genai
+                    if not os.path.isfile(os.path.join(onnx_subdir, 'genai_config.json')):
+                        self.logger.warning(
+                            'Model onnx/ subdirectory missing genai_config.json. '
+                            'This model appears to be optimized for transformers.js, not onnxruntime-genai. '
+                            'Use models from microsoft/ or those with genai_config.json.')
+                        self.model_path = None
+                    else:
+                        self.logger.info(f'Using onnx/ subdirectory: {onnx_subdir}')
+                        self.model_path = onnx_subdir
+                else:
+                    self.logger.warning(f'Model not found in {self.model_path}')
+                    self.model_path = None
 
             # Execution provider for hardware acceleration
             self.execution_provider = execution_provider or ExecutionProvider.default()
@@ -200,6 +215,22 @@ class ModelHelper:
                 # Add or rewrite params if passed
                 self.search_options.update(search_options)
 
+    def _has_model_files(self, directory: str) -> bool:
+        """
+        Check if directory contains ONNX model files.
+
+        Checks for .onnx files (standard ONNX models).
+        Note: .onnx.data files are external data files referenced by .onnx files.
+        """
+        try:
+            return any(
+                f.endswith('.onnx')
+                for f in os.listdir(directory)
+                if os.path.isfile(os.path.join(directory, f))
+            )
+        except OSError:
+            return False
+
     def init_model(self):
         """
         Lazily initialize the ONNX Runtime GenAI model with configuration.
@@ -207,9 +238,11 @@ class ModelHelper:
         If the model is already initialized, this method exits early. The model is
         loaded with the configuration from the model directory.
 
+        When GPU provider fails (e.g., insufficient VRAM), automatically falls back to CPU.
+
         Raises:
             AttributeError: If model_path is not set or is None
-            RuntimeError: If model initialization fails due to missing files or invalid config
+            RuntimeError: If model initialization fails on both GPU and CPU
             Exception: For any unexpected errors during initialization
         """
         if hasattr(self, 'model') and self.model:
@@ -220,47 +253,88 @@ class ModelHelper:
         # Log event
         self.logger.info(f'Initializing ONNX model: {self.model_path}')
 
+        # Try initialization with requested provider, fall back to CPU if needed
+        use_gpu = self.execution_provider != ExecutionProvider.CPU
+
+        if use_gpu:
+            try:
+                self._init_model_with_provider(self.execution_provider)
+                return  # Success with GPU
+            except (RuntimeError, ValueError, Exception) as e:
+                error_msg = str(e).lower()
+                # Check for GPU memory allocation errors or other GPU failures
+                is_memory_error = (
+                    'allocate' in error_msg or
+                    'memory' in error_msg or
+                    'key-value cache' in error_msg or
+                    'bfcarena' in error_msg or
+                    'cublas' in error_msg or
+                    'alloc_failed' in error_msg or
+                    'out of memory' in error_msg
+                )
+                if is_memory_error:
+                    self.logger.warning(
+                        f"GPU initialization failed (likely insufficient VRAM): {e}. "
+                        f"Falling back to CPU.")
+                else:
+                    self.logger.warning(
+                        f"GPU provider '{self.execution_provider.provider_name}' failed: {e}. "
+                        f"Falling back to CPU.")
+                # Update execution_provider so generator also uses CPU
+                self.execution_provider = ExecutionProvider.CPU
+                # Continue to CPU fallback below
+
+        # Use CPU (either as primary choice or fallback)
+        try:
+            self._init_model_with_provider(ExecutionProvider.CPU)
+        except Exception as e:
+            self.logger.error(f"Model initialization failed on CPU: {e}")
+            raise
+
+    def _init_model_with_provider(self, provider: 'ExecutionProvider'):
+        """
+        Initialize model with a specific execution provider.
+
+        Args:
+            provider: The execution provider to use
+
+        Raises:
+            RuntimeError: If model initialization fails
+            Exception: For any unexpected errors
+        """
         try:
             # Configure the model settings
             config = Config(self.model_path)
             config.clear_providers()
 
             # Set execution provider for hardware acceleration
-            provider_name = self.execution_provider.provider_name
+            provider_name = provider.provider_name
             provider_added = False
 
-            if self.execution_provider != ExecutionProvider.CPU:
+            if provider != ExecutionProvider.CPU:
                 try:
                     config.append_provider(provider_name)
                     provider_added = True
-                    self.logger.info(f"Using execution provider: {provider_name} ({self.execution_provider.display_name})")
+                    self.logger.info(f"Using execution provider: {provider_name} ({provider.display_name})")
                 except Exception as ep_error:
                     error_msg = str(ep_error)
                     # Provide specific guidance based on error type
                     if 'cuda' in provider_name.lower():
                         if 'libcublasLt' in error_msg or 'libcudnn' in error_msg or 'libcublas' in error_msg:
-                            self.logger.warning(
+                            raise RuntimeError(
                                 f"CUDA runtime libraries missing: {ep_error}. "
-                                f"Install CUDA Toolkit and cuDNN: "
-                                f"Falling back to CPU.")
+                                f"Install CUDA Toolkit and cuDNN.")
                         elif 'not enabled' in error_msg.lower():
-                            self.logger.warning(
-                                f"CUDA provider requires onnxruntime-genai-cuda package: {ep_error}. "
-                                f"Falling back to CPU.")
+                            raise RuntimeError(
+                                f"CUDA provider requires onnxruntime-genai-cuda package: {ep_error}.")
                         else:
-                            self.logger.warning(
-                                f"Failed to initialize CUDA provider: {ep_error}. "
-                                f"Falling back to CPU.")
+                            raise RuntimeError(f"Failed to initialize CUDA provider: {ep_error}.")
                     elif provider_name == 'DML':
-                        self.logger.warning(
-                            f"DirectML provider requires onnxruntime-genai-directml package: {ep_error}. "
-                            f"Falling back to CPU.")
+                        raise RuntimeError(
+                            f"DirectML provider requires onnxruntime-genai-directml package: {ep_error}.")
                     else:
-                        self.logger.warning(
-                            f"Failed to add provider '{provider_name}': {ep_error}. "
-                            f"Ensure the provider is supported and required packages are installed. "
-                            f"Falling back to CPU.")
-                    # Will use CPU as fallback (no provider = CPU)
+                        raise RuntimeError(
+                            f"Failed to add provider '{provider_name}': {ep_error}.")
 
             if not provider_added:
                 self.logger.info("Using CPU execution provider")
@@ -272,12 +346,21 @@ class ModelHelper:
 
             self.logger.info(f"Model initialized successfully: {self.model_path}")
         except (RuntimeError, ValueError) as e:
-            error_msg = str(e)
-            # Check for GPU memory allocation errors
-            if 'Failed to allocate memory' in error_msg or 'BFCArena' in error_msg:
+            error_msg = str(e).lower()
+            # Check for memory allocation errors (GPU or CPU)
+            is_memory_error = (
+                'allocate' in error_msg or
+                'memory' in error_msg or
+                'key-value cache' in error_msg or
+                'bfcarena' in error_msg or
+                'cublas' in error_msg or
+                'alloc_failed' in error_msg or
+                'out of memory' in error_msg
+            )
+            if is_memory_error:
                 self.logger.error(
-                    f"GPU memory allocation failed: {e}. "
-                    f"Model may be too large for available GPU memory.")
+                    f"Memory allocation failed: {e}. "
+                    f"Model may be too large for available memory.")
             else:
                 self.logger.error(f"Model initialization failed for path '{self.model_path}': {e}")
             raise
@@ -306,12 +389,78 @@ class ModelHelper:
         """
         Initialize the ONNX generator with tokens and search options.
 
+        If memory allocation fails (e.g., key-value cache too large), automatically
+        retries with progressively smaller max_length values.
+
         Args:
             input_tokens (list): Encoded token IDs to start generation from
             search_options (dict): Search parameters (max_length, temperature, top_p, etc.)
 
         Returns:
             Generator: The initialized ONNX Runtime GenAI generator
+
+        Raises:
+            RuntimeError: If generator cannot be initialized even with minimum max_length
+        """
+        # Make a copy to avoid modifying the original
+        options = dict(search_options)
+        original_max_length = options.get('max_length', 4096)
+
+        # Try progressively smaller max_length values if allocation fails
+        # Start with requested value, then try 2048, 1024, 512
+        max_length_attempts = [original_max_length]
+        for fallback in [2048, 1024, 512]:
+            if fallback < original_max_length and fallback not in max_length_attempts:
+                max_length_attempts.append(fallback)
+
+        last_error = None
+        for max_length in max_length_attempts:
+            try:
+                options['max_length'] = max_length
+                generator = self._create_generator(input_tokens, options)
+
+                if max_length < original_max_length:
+                    self.logger.warning(
+                        f"Generator initialized with reduced max_length={max_length} "
+                        f"(requested: {original_max_length}) due to memory constraints.")
+                return generator
+
+            except (RuntimeError, Exception) as e:
+                error_msg = str(e).lower()
+                is_memory_error = (
+                    'allocate' in error_msg or
+                    'memory' in error_msg or
+                    'key-value cache' in error_msg or
+                    'out of memory' in error_msg or
+                    'cublas' in error_msg or
+                    'alloc_failed' in error_msg
+                )
+                if is_memory_error and max_length > 512:
+                    self.logger.warning(
+                        f"Failed to allocate generator with max_length={max_length}: {e}. "
+                        f"Retrying with smaller value...")
+                    last_error = e
+                    continue
+                else:
+                    # Non-memory error or already at minimum - re-raise
+                    raise
+
+        # All attempts failed
+        raise RuntimeError(
+            f"Cannot allocate generator even with max_length=512. "
+            f"Model may be too large for available memory. Last error: {last_error}"
+        )
+
+    def _create_generator(self, input_tokens, search_options):
+        """
+        Create the ONNX generator with given options.
+
+        Args:
+            input_tokens (list): Encoded token IDs
+            search_options (dict): Search parameters
+
+        Returns:
+            Generator: The initialized generator
         """
         # Configure generator with necessary parameters
         params = GeneratorParams(self.model)

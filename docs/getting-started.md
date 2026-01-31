@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-24 00:00:00.000000"}} -->
+<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-31 00:00:00.000000"}} -->
 # Getting Started with Notolog
 
 This guide will help you install Notolog and get up and running quickly.
@@ -31,7 +31,13 @@ notolog_env\Scripts\activate     # Windows
 pip install notolog
 
 # Or with llama.cpp support for GGUF models
-pip install notolog[llama]
+pip install "notolog[llama]"
+
+# Upgrade to latest version
+pip install --upgrade notolog
+
+# Uninstall
+pip uninstall notolog
 ```
 
 ### Method 2: Conda

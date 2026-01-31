@@ -18,29 +18,43 @@ For detailed instructions and project information, please see the repository's R
 """
 
 import os
+import sys
+
 import logging
 import asyncio
 import multiprocessing
 
-from threading import Lock
+from threading import Lock, Event
 
-from typing import Union, Iterator
+from typing import Union, Iterator, Optional
 
 from llama_cpp import Llama, CreateChatCompletionResponse, CreateChatCompletionStreamResponse
 
 
 class ModelHelper:
 
-    model: Llama
-    generator: Union[
+    model: Optional[Llama]
+    generator: Optional[Union[
         CreateChatCompletionResponse, Iterator[CreateChatCompletionStreamResponse]
-    ]
+    ]]
     tokenizer: None  # LlamaTokenizer
 
     _instance = None  # Singleton instance
     _lock = Lock()
+    _cancel_event: Optional[Event] = None  # For cancelling model loading
 
     search_options = {}
+
+    @staticmethod
+    def is_macos() -> bool:
+        """Check if running on macOS."""
+        return sys.platform == 'darwin'
+
+    @staticmethod
+    def is_apple_silicon() -> bool:
+        """Check if running on Apple Silicon (M1/M2/M3/M4)."""
+        import platform
+        return sys.platform == 'darwin' and platform.machine() == 'arm64'
 
     def __new__(cls, *args, **kwargs):
         # Implement singleton pattern to ensure only one instance exists.
@@ -60,7 +74,8 @@ class ModelHelper:
             # Create a new instance
             cls._instance = super().__new__(cls, *args, **kwargs)
 
-    def __init__(self, model_path: str, n_ctx: int = None, chat_format: str = None, search_options: dict = None):
+    def __init__(self, model_path: str, n_ctx: int = None, chat_format: str = None,
+                 n_gpu_layers: int = None, search_options: dict = None):
         # Prevent reinitialization if the instance is already configured
         if hasattr(self, 'logger'):
             return
@@ -88,6 +103,10 @@ class ModelHelper:
 
             # Chat format specification
             self.chat_format = chat_format
+
+            # GPU layers configuration (stored for use in init_model)
+            # None = auto-detect based on platform, 0 = CPU only, -1 = all layers on GPU
+            self.n_gpu_layers_setting = n_gpu_layers
 
             # Validate and set search options
             if search_options:
@@ -123,11 +142,22 @@ class ModelHelper:
         if not self.model_path:
             raise ValueError(f"Model path is not set in '{type(self).__name__}'")
 
+        # Initialize cancellation event for this loading operation
+        self._cancel_event = Event()
+
         self.logger.info(f"Initializing model: {self.model_path}")
 
         try:
             # Determine optimal thread count
             n_threads = multiprocessing.cpu_count()
+
+            # Determine GPU layers configuration
+            # Priority: 1) User setting, 2) Auto-detect based on platform
+            n_gpu_layers = self._resolve_gpu_layers()
+
+            # Check for cancellation before the potentially long model load
+            if self._cancel_event.is_set():
+                raise asyncio.CancelledError("Model loading cancelled before initialization")
 
             # Initialize the model with best practices from llama-cpp-python
             self.model = Llama(
@@ -138,15 +168,79 @@ class ModelHelper:
                 n_ubatch=512,  # Physical batch size for prompt processing
                 n_threads=n_threads,  # Use all available CPU cores
                 n_threads_batch=n_threads,  # Use all cores for batch processing
+                n_gpu_layers=n_gpu_layers,  # GPU layer offloading (Metal on macOS)
                 verbose=False  # Disable verbose output
             )
-            self.logger.info(f"Model initialized successfully with n_ctx={self.n_ctx}, n_threads={n_threads}")
+            self.logger.info(
+                f"Model initialized: n_ctx={self.n_ctx}, "
+                f"n_threads={n_threads}, n_gpu_layers={n_gpu_layers}"
+            )
+        except asyncio.CancelledError:
+            self.logger.info("Model loading was cancelled")
+            raise
         except (RuntimeError, ValueError) as e:
             self.logger.error(f"Model initialization failed for path '{self.model_path}' with error: {e}")
             raise
         except Exception as e:
             self.logger.critical(f"Unexpected error during model initialization: {e}")
             raise
+        finally:
+            # Clear the cancellation event
+            self._cancel_event = None
+
+    def cancel_loading(self):
+        """
+        Signal cancellation of model loading.
+        Call this from the main thread to request cancellation of an ongoing model load.
+        """
+        if self._cancel_event:
+            self._cancel_event.set()
+            self.logger.info("Model loading cancellation requested")
+
+    def _resolve_gpu_layers(self) -> int:
+        """
+        Resolve the number of GPU layers to use based on settings and platform.
+
+        GPU Layers Setting values:
+        - None or not set: Auto-detect based on platform
+        - 0: CPU only (no GPU acceleration)
+        - -1: Offload all layers to GPU
+        - >0: Offload specific number of layers to GPU
+
+        Returns:
+            int: Number of GPU layers to use
+        """
+        # Check if user has explicitly set a value in settings
+        if self.n_gpu_layers_setting is not None:
+            n_gpu_layers = self.n_gpu_layers_setting
+            if n_gpu_layers == 0:
+                self.logger.info("GPU layers set to 0 - using CPU only")
+            elif n_gpu_layers == -1:
+                self.logger.info("GPU layers set to -1 - offloading all layers to GPU")
+            else:
+                self.logger.info(f"GPU layers set to {n_gpu_layers}")
+            return n_gpu_layers
+
+        # Auto-detect based on platform
+        # macOS: Metal backend, Linux/Windows: CPU-only by default
+        if self.is_macos():
+            if self.is_apple_silicon():
+                # Apple Silicon (M1/M2/M3/M4) - use Metal GPU by default
+                self.logger.info(
+                    "Apple Silicon detected - auto-selecting Metal GPU (n_gpu_layers=-1)"
+                )
+                return -1
+            else:
+                # Intel Mac - CPU only by default (Metal can hang)
+                self.logger.info(
+                    "Intel Mac detected - auto-selecting CPU only (n_gpu_layers=0)"
+                )
+                return 0
+        else:
+            # Linux/Windows - CPU only by default
+            # Users with CUDA should explicitly set n_gpu_layers in settings
+            self.logger.info("Non-macOS platform - using CPU only (n_gpu_layers=0)")
+            return 0
 
     def is_model_loaded(self) -> bool:
         """Check if the model is already initialized."""

@@ -21,6 +21,14 @@ lexemes = {
     "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "Выпадающее меню для выбора формата, используемого для разговоров модели.",
 
+    "module_llama_cpp_config_gpu_layers_label": "Слои GPU",
+    "module_llama_cpp_config_gpu_layers_input_accessible_description":
+        "Количество слоёв модели для выгрузки на GPU.\n"
+        "Auto: Автоматическое определение (GPU на Apple Silicon, CPU в остальных случаях).\n"
+        "-1: Выгрузить все слои на GPU.\n"
+        "0: Только CPU (рекомендуется для Intel Mac).\n"
+        "1-999: Частичная выгрузка на GPU (для опытных пользователей).",
+
     "module_llama_cpp_config_system_prompt_label": "Системный промпт",
     "module_llama_cpp_config_system_prompt_edit_placeholder_text": "Введите текст системного промпта",
     "module_llama_cpp_config_system_prompt_edit_accessible_description":

@@ -20,6 +20,14 @@ lexemes = {
     "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "Dropdown menu to select the format used for model conversations.",
 
+    "module_llama_cpp_config_gpu_layers_label": "GPU Layers",
+    "module_llama_cpp_config_gpu_layers_input_accessible_description":
+        "Number of model layers to offload to GPU.\n"
+        "Auto: Automatically detects best setting (GPU on Apple Silicon, CPU elsewhere).\n"
+        "-1: Offload all layers to GPU.\n"
+        "0: CPU-only mode (recommended for Intel Macs).\n"
+        "1-999: Partial GPU offloading (advanced).",
+
     "module_llama_cpp_config_system_prompt_label": "System Prompt",
     "module_llama_cpp_config_system_prompt_edit_placeholder_text": "Enter system prompt text",
     "module_llama_cpp_config_system_prompt_edit_accessible_description":

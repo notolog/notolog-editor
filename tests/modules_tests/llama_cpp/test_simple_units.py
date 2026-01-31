@@ -199,5 +199,378 @@ class TestModelHelperCore:
         assert helper.search_options['temperature'] == 0.80
 
 
+class TestModelHelperPlatformDetection:
+    """Tests for macOS platform detection and GPU layer configuration."""
+
+    def test_is_macos_on_darwin(self):
+        """Test is_macos returns True on darwin platform."""
+        from notolog.modules.llama_cpp.model_helper import ModelHelper
+
+        with patch('notolog.modules.llama_cpp.model_helper.sys.platform', 'darwin'):
+            assert ModelHelper.is_macos() is True
+
+    def test_is_macos_on_linux(self):
+        """Test is_macos returns False on linux platform."""
+        from notolog.modules.llama_cpp.model_helper import ModelHelper
+
+        with patch('notolog.modules.llama_cpp.model_helper.sys.platform', 'linux'):
+            assert ModelHelper.is_macos() is False
+
+    def test_is_macos_on_windows(self):
+        """Test is_macos returns False on Windows platform."""
+        from notolog.modules.llama_cpp.model_helper import ModelHelper
+
+        with patch('notolog.modules.llama_cpp.model_helper.sys.platform', 'win32'):
+            assert ModelHelper.is_macos() is False
+
+    def test_is_apple_silicon_on_arm64_mac(self):
+        """Test is_apple_silicon returns True on ARM64 macOS (M1/M2/M3/M4)."""
+        from notolog.modules.llama_cpp.model_helper import ModelHelper
+
+        with patch('notolog.modules.llama_cpp.model_helper.sys.platform', 'darwin'):
+            with patch('platform.machine', return_value='arm64'):
+                assert ModelHelper.is_apple_silicon() is True
+
+    def test_is_apple_silicon_on_intel_mac(self):
+        """Test is_apple_silicon returns False on Intel macOS (x86_64)."""
+        from notolog.modules.llama_cpp.model_helper import ModelHelper
+
+        with patch('notolog.modules.llama_cpp.model_helper.sys.platform', 'darwin'):
+            with patch('platform.machine', return_value='x86_64'):
+                assert ModelHelper.is_apple_silicon() is False
+
+    def test_is_apple_silicon_on_linux_arm(self):
+        """Test is_apple_silicon returns False on Linux ARM."""
+        from notolog.modules.llama_cpp.model_helper import ModelHelper
+
+        with patch('notolog.modules.llama_cpp.model_helper.sys.platform', 'linux'):
+            with patch('platform.machine', return_value='aarch64'):
+                assert ModelHelper.is_apple_silicon() is False
+
+    def test_cancel_loading_sets_event(self):
+        """Test that cancel_loading sets the cancellation event."""
+        from notolog.modules.llama_cpp.model_helper import ModelHelper
+        from threading import Event
+
+        with patch('os.path.isfile', return_value=True):
+            ModelHelper._instance = None
+            helper = ModelHelper(model_path="/fake/path.gguf", search_options={})
+
+        # Simulate a cancel event being active (as if init_model was called)
+        helper._cancel_event = Event()
+        assert not helper._cancel_event.is_set()
+
+        # Call cancel_loading
+        helper.cancel_loading()
+
+        # Verify the event is set
+        assert helper._cancel_event.is_set()
+
+    def test_cancel_loading_no_event_graceful(self):
+        """Test that cancel_loading handles None event gracefully."""
+        from notolog.modules.llama_cpp.model_helper import ModelHelper
+
+        with patch('os.path.isfile', return_value=True):
+            ModelHelper._instance = None
+            helper = ModelHelper(model_path="/fake/path.gguf", search_options={})
+
+        # Ensure no event is set
+        helper._cancel_event = None
+
+        # Call cancel_loading - should not raise
+        helper.cancel_loading()  # No exception expected
+
+    def test_init_model_gpu_layers_apple_silicon(self):
+        """Test that init_model uses Metal GPU (-1 layers) on Apple Silicon when Auto."""
+        from notolog.modules.llama_cpp.model_helper import ModelHelper
+
+        with patch('os.path.isfile', return_value=True):
+            ModelHelper._instance = None
+            # n_gpu_layers=None means Auto mode
+            helper = ModelHelper(model_path="/fake/path.gguf", n_gpu_layers=None, search_options={})
+
+        with patch.object(ModelHelper, 'is_macos', return_value=True):
+            with patch.object(ModelHelper, 'is_apple_silicon', return_value=True):
+                with patch('notolog.modules.llama_cpp.model_helper.Llama') as mock_llama:
+                    helper.init_model()
+                    mock_llama.assert_called_once()
+                    call_kwargs = mock_llama.call_args[1]
+                    assert call_kwargs['n_gpu_layers'] == -1
+
+    def test_init_model_gpu_layers_intel_mac_default(self):
+        """Test that init_model uses CPU (0 layers) on Intel Mac when Auto."""
+        from notolog.modules.llama_cpp.model_helper import ModelHelper
+
+        with patch('os.path.isfile', return_value=True):
+            ModelHelper._instance = None
+            # n_gpu_layers=None means Auto mode
+            helper = ModelHelper(model_path="/fake/path.gguf", n_gpu_layers=None, search_options={})
+
+        with patch.object(ModelHelper, 'is_macos', return_value=True):
+            with patch.object(ModelHelper, 'is_apple_silicon', return_value=False):
+                with patch('notolog.modules.llama_cpp.model_helper.Llama') as mock_llama:
+                    helper.init_model()
+                    mock_llama.assert_called_once()
+                    call_kwargs = mock_llama.call_args[1]
+                    assert call_kwargs['n_gpu_layers'] == 0
+
+    def test_init_model_gpu_layers_explicit_setting(self):
+        """Test that init_model respects explicit n_gpu_layers setting from UI."""
+        from notolog.modules.llama_cpp.model_helper import ModelHelper
+
+        with patch('os.path.isfile', return_value=True):
+            ModelHelper._instance = None
+            # Explicitly set n_gpu_layers=-1 (all layers on GPU)
+            helper = ModelHelper(model_path="/fake/path.gguf", n_gpu_layers=-1, search_options={})
+
+        # Even on Intel Mac, if user explicitly sets -1, use it
+        with patch.object(ModelHelper, 'is_macos', return_value=True):
+            with patch.object(ModelHelper, 'is_apple_silicon', return_value=False):
+                with patch('notolog.modules.llama_cpp.model_helper.Llama') as mock_llama:
+                    helper.init_model()
+                    mock_llama.assert_called_once()
+                    call_kwargs = mock_llama.call_args[1]
+                    assert call_kwargs['n_gpu_layers'] == -1
+
+    def test_init_model_gpu_layers_cpu_only_setting(self):
+        """Test that n_gpu_layers=0 forces CPU-only mode."""
+        from notolog.modules.llama_cpp.model_helper import ModelHelper
+
+        with patch('os.path.isfile', return_value=True):
+            ModelHelper._instance = None
+            # Explicitly set n_gpu_layers=0 (CPU only)
+            helper = ModelHelper(model_path="/fake/path.gguf", n_gpu_layers=0, search_options={})
+
+        # Even on Apple Silicon, if user explicitly sets 0, use CPU
+        with patch.object(ModelHelper, 'is_macos', return_value=True):
+            with patch.object(ModelHelper, 'is_apple_silicon', return_value=True):
+                with patch('notolog.modules.llama_cpp.model_helper.Llama') as mock_llama:
+                    helper.init_model()
+                    mock_llama.assert_called_once()
+                    call_kwargs = mock_llama.call_args[1]
+                    assert call_kwargs['n_gpu_layers'] == 0
+
+    def test_init_model_gpu_layers_linux(self):
+        """Test that init_model uses CPU (0 layers) on Linux when Auto."""
+        from notolog.modules.llama_cpp.model_helper import ModelHelper
+
+        with patch('os.path.isfile', return_value=True):
+            ModelHelper._instance = None
+            helper = ModelHelper(model_path="/fake/path.gguf", n_gpu_layers=None, search_options={})
+
+        with patch.object(ModelHelper, 'is_macos', return_value=False):
+            with patch('notolog.modules.llama_cpp.model_helper.Llama') as mock_llama:
+                helper.init_model()
+                mock_llama.assert_called_once()
+                call_kwargs = mock_llama.call_args[1]
+                assert call_kwargs['n_gpu_layers'] == 0
+
+    def test_init_model_checks_cancellation(self):
+        """Test that init_model checks for cancellation before loading."""
+        from notolog.modules.llama_cpp.model_helper import ModelHelper
+        from threading import Event
+        import asyncio
+
+        with patch('os.path.isfile', return_value=True):
+            ModelHelper._instance = None
+            helper = ModelHelper(model_path="/fake/path.gguf", search_options={})
+
+        # Mock Llama to check if it gets called
+        with patch('notolog.modules.llama_cpp.model_helper.Llama') as mock_llama:
+            # Patch Event creation to return a pre-set event
+            def create_preset_event():
+                event = Event()
+                event.set()  # Pre-set the cancellation
+                return event
+
+            with patch('notolog.modules.llama_cpp.model_helper.Event', create_preset_event):
+                with pytest.raises(asyncio.CancelledError):
+                    helper.init_model()
+
+            # Llama should NOT have been called since we cancelled first
+            mock_llama.assert_not_called()
+
+
+class TestUpgradeScenarios:
+    """
+    Tests for upgrade scenarios where users upgrade from previous versions
+    that didn't have the gpu_layers configuration option.
+
+    These tests ensure backward compatibility and that Auto mode works correctly
+    when the new config value is missing or None (default for new installs and upgrades).
+    """
+
+    def test_upgrade_scenario_no_gpu_layers_param_apple_silicon(self):
+        """
+        Test upgrade scenario: User upgrades from version without gpu_layers setting.
+        On Apple Silicon, Auto mode should enable Metal GPU (-1 layers).
+        """
+        from notolog.modules.llama_cpp.model_helper import ModelHelper
+
+        with patch('os.path.isfile', return_value=True):
+            ModelHelper._instance = None
+            # Simulate upgrade: n_gpu_layers NOT provided (uses default None)
+            helper = ModelHelper(model_path="/fake/path.gguf", search_options={})
+
+        # Verify setting is None (Auto mode)
+        assert helper.n_gpu_layers_setting is None
+
+        with patch.object(ModelHelper, 'is_macos', return_value=True):
+            with patch.object(ModelHelper, 'is_apple_silicon', return_value=True):
+                with patch('notolog.modules.llama_cpp.model_helper.Llama') as mock_llama:
+                    helper.init_model()
+                    mock_llama.assert_called_once()
+                    call_kwargs = mock_llama.call_args[1]
+                    assert call_kwargs['n_gpu_layers'] == -1, \
+                        "Auto mode should use Metal GPU (-1) on Apple Silicon"
+
+    def test_upgrade_scenario_no_gpu_layers_param_intel_mac(self):
+        """
+        Test upgrade scenario: On Intel Mac, Auto mode should use CPU-only (0).
+        """
+        from notolog.modules.llama_cpp.model_helper import ModelHelper
+
+        with patch('os.path.isfile', return_value=True):
+            ModelHelper._instance = None
+            # Simulate upgrade: n_gpu_layers NOT provided
+            helper = ModelHelper(model_path="/fake/path.gguf", search_options={})
+
+        assert helper.n_gpu_layers_setting is None
+
+        with patch.object(ModelHelper, 'is_macos', return_value=True):
+            with patch.object(ModelHelper, 'is_apple_silicon', return_value=False):
+                with patch('notolog.modules.llama_cpp.model_helper.Llama') as mock_llama:
+                    helper.init_model()
+                    mock_llama.assert_called_once()
+                    call_kwargs = mock_llama.call_args[1]
+                    assert call_kwargs['n_gpu_layers'] == 0, \
+                        "Auto mode should use CPU-only (0) on Intel Mac"
+
+    def test_upgrade_scenario_no_gpu_layers_param_linux(self):
+        """
+        Test upgrade scenario: On Linux, Auto mode should use CPU-only (0).
+        """
+        from notolog.modules.llama_cpp.model_helper import ModelHelper
+
+        with patch('os.path.isfile', return_value=True):
+            ModelHelper._instance = None
+            # Simulate upgrade: n_gpu_layers NOT provided
+            helper = ModelHelper(model_path="/fake/path.gguf", search_options={})
+
+        assert helper.n_gpu_layers_setting is None
+
+        with patch.object(ModelHelper, 'is_macos', return_value=False):
+            with patch('notolog.modules.llama_cpp.model_helper.Llama') as mock_llama:
+                helper.init_model()
+                mock_llama.assert_called_once()
+                call_kwargs = mock_llama.call_args[1]
+                assert call_kwargs['n_gpu_layers'] == 0, \
+                    "Auto mode should use CPU-only (0) on Linux"
+
+    def test_upgrade_scenario_explicit_none_works_as_auto(self):
+        """
+        Test that explicitly passing n_gpu_layers=None works the same as not passing it.
+        This is important for the settings system which may pass None for 'Auto'.
+        """
+        from notolog.modules.llama_cpp.model_helper import ModelHelper
+
+        with patch('os.path.isfile', return_value=True):
+            ModelHelper._instance = None
+            # Explicitly pass n_gpu_layers=None (as settings would for "Auto")
+            helper = ModelHelper(model_path="/fake/path.gguf", n_gpu_layers=None, search_options={})
+
+        assert helper.n_gpu_layers_setting is None
+
+        with patch.object(ModelHelper, 'is_macos', return_value=True):
+            with patch.object(ModelHelper, 'is_apple_silicon', return_value=True):
+                with patch('notolog.modules.llama_cpp.model_helper.Llama') as mock_llama:
+                    helper.init_model()
+                    mock_llama.assert_called_once()
+                    call_kwargs = mock_llama.call_args[1]
+                    assert call_kwargs['n_gpu_layers'] == -1, \
+                        "Explicit None should work as Auto mode"
+
+    def test_upgrade_preserves_explicit_cpu_setting(self):
+        """
+        Test that when user explicitly sets CPU-only (0), it's preserved even on Apple Silicon.
+        """
+        from notolog.modules.llama_cpp.model_helper import ModelHelper
+
+        with patch('os.path.isfile', return_value=True):
+            ModelHelper._instance = None
+            # User explicitly wants CPU-only
+            helper = ModelHelper(model_path="/fake/path.gguf", n_gpu_layers=0, search_options={})
+
+        assert helper.n_gpu_layers_setting == 0
+
+        # Even on Apple Silicon, explicit 0 should be respected
+        with patch.object(ModelHelper, 'is_macos', return_value=True):
+            with patch.object(ModelHelper, 'is_apple_silicon', return_value=True):
+                with patch('notolog.modules.llama_cpp.model_helper.Llama') as mock_llama:
+                    helper.init_model()
+                    mock_llama.assert_called_once()
+                    call_kwargs = mock_llama.call_args[1]
+                    assert call_kwargs['n_gpu_layers'] == 0, \
+                        "User's explicit CPU-only (0) setting should be preserved"
+
+    def test_upgrade_preserves_explicit_gpu_setting_on_intel(self):
+        """
+        Test that when user explicitly sets GPU (-1), it's used even on Intel Mac.
+        """
+        from notolog.modules.llama_cpp.model_helper import ModelHelper
+
+        with patch('os.path.isfile', return_value=True):
+            ModelHelper._instance = None
+            # User explicitly wants Metal on Intel Mac
+            helper = ModelHelper(model_path="/fake/path.gguf", n_gpu_layers=-1, search_options={})
+
+        assert helper.n_gpu_layers_setting == -1
+
+        # Even on Intel Mac, explicit -1 should be respected
+        with patch.object(ModelHelper, 'is_macos', return_value=True):
+            with patch.object(ModelHelper, 'is_apple_silicon', return_value=False):
+                with patch('notolog.modules.llama_cpp.model_helper.Llama') as mock_llama:
+                    helper.init_model()
+                    mock_llama.assert_called_once()
+                    call_kwargs = mock_llama.call_args[1]
+                    assert call_kwargs['n_gpu_layers'] == -1, \
+                        "User's explicit GPU (-1) setting should be preserved on Intel Mac"
+
+    def test_resolve_gpu_layers_returns_correct_values(self):
+        """
+        Test _resolve_gpu_layers method directly to verify the resolution logic.
+        """
+        from notolog.modules.llama_cpp.model_helper import ModelHelper
+
+        # Test case 1: Explicit setting takes priority
+        with patch('os.path.isfile', return_value=True):
+            ModelHelper._instance = None
+            helper = ModelHelper(model_path="/fake/path.gguf", n_gpu_layers=5, search_options={})
+        assert helper._resolve_gpu_layers() == 5
+
+        # Test case 2: None on Apple Silicon -> -1
+        with patch('os.path.isfile', return_value=True):
+            ModelHelper._instance = None
+            helper = ModelHelper(model_path="/fake/path.gguf", n_gpu_layers=None, search_options={})
+        with patch.object(ModelHelper, 'is_macos', return_value=True):
+            with patch.object(ModelHelper, 'is_apple_silicon', return_value=True):
+                assert helper._resolve_gpu_layers() == -1
+
+        # Test case 3: None on Intel Mac -> 0
+        with patch('os.path.isfile', return_value=True):
+            ModelHelper._instance = None
+            helper = ModelHelper(model_path="/fake/path.gguf", n_gpu_layers=None, search_options={})
+        with patch.object(ModelHelper, 'is_macos', return_value=True):
+            with patch.object(ModelHelper, 'is_apple_silicon', return_value=False):
+                assert helper._resolve_gpu_layers() == 0
+
+        # Test case 4: None on Linux -> 0
+        with patch('os.path.isfile', return_value=True):
+            ModelHelper._instance = None
+            helper = ModelHelper(model_path="/fake/path.gguf", n_gpu_layers=None, search_options={})
+        with patch.object(ModelHelper, 'is_macos', return_value=False):
+            assert helper._resolve_gpu_layers() == 0
+
+
 if __name__ == '__main__':
     pytest.main([__file__, '-v'])

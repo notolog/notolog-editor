@@ -101,6 +101,28 @@ pytest tests/test_app.py -v
 
 ### Code Quality Tools
 
+#### Pre-commit Hooks (Recommended)
+
+Install pre-commit hooks to automatically check code quality before commits:
+
+```bash
+# Install pre-commit
+pip install pre-commit
+
+# Install the git hooks
+pre-commit install
+
+# Run all hooks manually (optional)
+pre-commit run --all-files
+```
+
+The pre-commit configuration includes:
+- **Flake8**: Linting for critical errors
+- **Bandit**: Security vulnerability scanning
+- **pytest**: Quick test validation
+
+#### Manual Linting
+
 ```bash
 # Run flake8 for linting
 flake8 . --count --exit-zero --max-complexity=15 --max-line-length=127 --per-file-ignores="__init__.py:F401" --statistics

@@ -20,6 +20,14 @@ lexemes = {
     "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "Menú desplegable para seleccionar el formato utilizado para las conversaciones del modelo.",
 
+    "module_llama_cpp_config_gpu_layers_label": "Capas GPU",
+    "module_llama_cpp_config_gpu_layers_input_accessible_description":
+        "Número de capas del modelo a descargar en GPU.\n"
+        "Auto: Detección automática (GPU en Apple Silicon, CPU en otros).\n"
+        "-1: Descargar todas las capas a GPU.\n"
+        "0: Modo solo CPU (recomendado para Intel Macs).\n"
+        "1-999: Descarga parcial a GPU (avanzado).",
+
     "module_llama_cpp_config_system_prompt_label": "Prompt del sistema",
     "module_llama_cpp_config_system_prompt_edit_placeholder_text": "Ingrese el texto del prompt del sistema",
     "module_llama_cpp_config_system_prompt_edit_accessible_description":

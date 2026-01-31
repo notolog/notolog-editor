@@ -349,7 +349,7 @@ class TestFileTree:
         mocker.patch.object(file_tree.theme_helper, 'get_color', return_value=None)
 
         color = file_tree._get_theme_color()
-        assert color == '#888888'  # Fallback gray
+        assert color is None
 
     def test_mouse_press_outside_button(self, file_tree):
         """Test mouse press outside button doesn't clear filter."""

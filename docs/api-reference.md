@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-24 00:00:00.000000"}} -->
+<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-31 00:00:00.000000"}} -->
 # API Reference
 
 Developer documentation for extending and integrating with Notolog.
@@ -31,7 +31,7 @@ notolog/modules/
 │   ├── module_core.py
 │   ├── model_helper.py  # Model loading and inference
 │   └── prompt_manager.py
-└── llama_cpp/           # llama.cpp module
+└── llama_cpp/           # Module llama.cpp
     ├── module_core.py
     ├── model_helper.py
     └── prompt_manager.py

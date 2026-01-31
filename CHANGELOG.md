@@ -1,6 +1,33 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.1.9] - 2026-01-31
+
+### Added
+- Added automatic GPU to CPU fallback for ONNX models when VRAM is insufficient.
+- Added automatic `max_length` reduction when generator memory allocation fails.
+- Added clear validation and error messages for incompatible ONNX models (e.g., transformers.js models missing `genai_config.json`).
+- Added graceful handling of user cancellation during model loading in Module llama.cpp.
+- Added macOS platform detection (`is_macos()`, `is_apple_silicon()`) to Module llama.cpp for optimal GPU configuration.
+- Added `cancel_loading()` method to Module llama.cpp ModelHelper to support cancellation during model loading.
+- Added `GPU Layers` setting to Module llama.cpp UI for configuring Metal GPU acceleration on macOS.
+- Added pre-commit hooks configuration for linting, testing, and code validation.
+
+### Changed
+- Refactored `init_generator()` to use `_create_generator()` helper for cleaner retry logic.
+- Installation commands now use quoted syntax (`pip install "notolog[llama]"`) for cross-platform shell compatibility.
+- Module llama.cpp now automatically configures Metal GPU acceleration on Apple Silicon Macs (M1/M2/M3/M4).
+
+### Updated
+- Updated FAQ with ONNX model compatibility and memory troubleshooting guidance.
+- Improved the `README.md` with clearer installation and usage instructions.
+
+### Fixed
+- Fixed ONNX module crash when GPU provider fails - now automatically falls back to CPU.
+- Fixed ONNX generator memory allocation failures - now automatically retries with smaller `max_length`.
+- Fixed Module llama.cpp logging errors when user closes dialog during model loading.
+- Fixed inability to close app when Module llama.cpp model loading hangs - cancellation now properly signals the loading thread.
+
 ## [1.1.8] - 2026-01-24
 
 ### Added

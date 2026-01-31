@@ -21,6 +21,14 @@ lexemes = {
     "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "Μενού dropdown για την επιλογή της μορφής που χρησιμοποιείται για τις συνομιλίες μοντέλων.",
 
+    "module_llama_cpp_config_gpu_layers_label": "Επίπεδα GPU",
+    "module_llama_cpp_config_gpu_layers_input_accessible_description":
+        "Αριθμός επιπέδων μοντέλου για μεταφόρτωση στη GPU.\n"
+        "Auto: Αυτόματη ανίχνευση (GPU σε Apple Silicon, CPU αλλού).\n"
+        "-1: Μεταφόρτωση όλων των επιπέδων στη GPU.\n"
+        "0: Μόνο CPU (συνιστάται για Intel Mac).\n"
+        "1-999: Μερική μεταφόρτωση GPU (προχωρημένο).",
+
     "module_llama_cpp_config_system_prompt_label": "Προτροπή Συστήματος",
     "module_llama_cpp_config_system_prompt_edit_placeholder_text": "Εισάγετε κείμενο προτροπής συστήματος",
     "module_llama_cpp_config_system_prompt_edit_accessible_description":

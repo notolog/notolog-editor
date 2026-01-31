@@ -5,7 +5,7 @@
 ## Project Overview
 
 **Name:** Notolog
-**Version:** 1.1.8
+**Version:** 1.1.9
 **License:** MIT
 **Language:** Python 3.10+
 **Author:** Vadim Bakhrenkov
@@ -67,7 +67,7 @@
 pip install notolog
 
 # With llama.cpp support
-pip install notolog[llama]
+pip install "notolog[llama]"
 
 # Using conda
 conda install notolog -c conda-forge
@@ -110,16 +110,50 @@ pytest tests/ --cov=notolog --cov-report=term
 - Providers: CPU (default), CUDA, DirectML, OpenVINO, CoreML, TensorRT RTX, QNN, MIGraphX
 - CUDA/DirectML packages replace base package (cannot coexist)
 - Model helper with automatic fallback to CPU on provider errors
+- Auto-reduces max_length on memory allocation failures
 
 ### Module llama.cpp
 - Uses llama-cpp-python for GGUF model inference
 - Automatic optimal thread count detection
 - Batch processing: n_batch=512, n_ubatch=512
-- CPU-only in current integration
+- **macOS**: Apple Silicon (M1-M4) uses Metal GPU acceleration automatically
 
 ### OpenAI API
 - Cloud-based inference via OpenAI-compatible endpoints
 - Supports custom API URLs for compatible services
+
+## Quick Configs (Copy-Paste Ready)
+
+### GPU Setup (NVIDIA CUDA)
+```bash
+pip uninstall onnxruntime-genai -y
+pip install onnxruntime-genai-cuda
+```
+
+### GPU Setup (Windows DirectML)
+```bash
+pip uninstall onnxruntime-genai -y
+pip install onnxruntime-genai-directml
+```
+
+### Revert to CPU
+```bash
+pip uninstall onnxruntime-genai-cuda onnxruntime-genai-directml -y
+pip install --force-reinstall onnxruntime-genai
+```
+
+### Recommended ONNX Model
+```
+Model: microsoft/Phi-3-mini-4k-instruct-onnx
+Path: cpu_and_mobile/cpu-int4-rtn-block-32/
+```
+
+### Recommended GGUF Model
+```
+Model: Qwen/Qwen2-7B-Instruct-GGUF
+File: qwen2-7b-instruct-q5_k_m.gguf
+Size: ~6GB RAM required
+```
 
 ## AI Module Development
 

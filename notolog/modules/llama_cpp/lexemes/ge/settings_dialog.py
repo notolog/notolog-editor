@@ -20,6 +20,14 @@ lexemes = {
     "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "ჩამოშლილი მენიუ მოდელის საუბარების ფორმატის არჩევისთვის.",
 
+    "module_llama_cpp_config_gpu_layers_label": "GPU ფენები",
+    "module_llama_cpp_config_gpu_layers_input_accessible_description":
+        "მოდელის ფენების რაოდენობა GPU-ზე გადასატანად.\n"
+        "Auto: ავტომატური განსაზღვრა (GPU Apple Silicon-ზე, CPU სხვაგან).\n"
+        "-1: ყველა ფენის გადატანა GPU-ზე.\n"
+        "0: მხოლოდ CPU რეჟიმი (რეკომენდებულია Intel Mac-ისთვის).\n"
+        "1-999: ნაწილობრივი GPU გადატანა (მოწინავე).",
+
     "module_llama_cpp_config_system_prompt_label": "სისტემის პრომპტი",
     "module_llama_cpp_config_system_prompt_edit_placeholder_text": "შეიყვანეთ სისტემის პრომპტის ტექსტი",
     "module_llama_cpp_config_system_prompt_edit_accessible_description":

@@ -529,7 +529,7 @@ class AIAssistant(QDialog):
                 return ('cpu.svg', self.lexemes.get('dialog_hardware_cpu_tooltip', default='CPU Inference'))
 
         elif self.inference_module == 'llama_cpp':
-            # llama.cpp currently uses CPU only in this integration
+            # Module llama.cpp currently uses CPU only in this integration
             return ('cpu.svg', self.lexemes.get('dialog_hardware_cpu_tooltip', default='CPU Inference'))
 
         elif self.inference_module == 'openai_api':

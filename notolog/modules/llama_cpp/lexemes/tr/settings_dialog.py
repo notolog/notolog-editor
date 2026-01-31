@@ -20,6 +20,14 @@ lexemes = {
     "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "Model konuşmaları için kullanılan formatı seçmek için açılır menü.",
 
+    "module_llama_cpp_config_gpu_layers_label": "GPU Katmanları",
+    "module_llama_cpp_config_gpu_layers_input_accessible_description":
+        "GPU'ya aktarılacak model katmanı sayısı.\n"
+        "Auto: Otomatik algılama (Apple Silicon'da GPU, diğerlerinde CPU).\n"
+        "-1: Tüm katmanları GPU'ya aktar.\n"
+        "0: Yalnızca CPU modu (Intel Mac'ler için önerilir).\n"
+        "1-999: Kısmi GPU aktarımı (gelişmiş).",
+
     "module_llama_cpp_config_system_prompt_label": "Sistem İstem",
     "module_llama_cpp_config_system_prompt_edit_placeholder_text": "Sistem istem metnini girin",
     "module_llama_cpp_config_system_prompt_edit_accessible_description":

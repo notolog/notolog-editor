@@ -13,7 +13,7 @@ body:
     attributes:
       label: Notolog Version
       description: Run `notolog --version` to get this
-      placeholder: "1.1.8"
+      placeholder: "1.1.9"
     validations:
       required: true
 

@@ -282,7 +282,7 @@ class FileTree(QWidget):
         color = self.theme_helper.get_color('main_menu_icon_color')
         if not color:
             color = self.theme_helper.get_color('color_default')
-        return color or '#888888'  # Fallback to gray
+        return color
 
     def _update_filter_padding(self) -> None:
         """

@@ -20,6 +20,14 @@ lexemes = {
     "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "Pudotusvalikko mallikeskustelujen muodon valitsemiseksi.",
 
+    "module_llama_cpp_config_gpu_layers_label": "GPU-kerrokset",
+    "module_llama_cpp_config_gpu_layers_input_accessible_description":
+        "GPU:lle siirrettävien mallikerrosten määrä.\n"
+        "Auto: Automaattinen tunnistus (GPU Apple Siliconilla, CPU muualla).\n"
+        "-1: Siirrä kaikki kerrokset GPU:lle.\n"
+        "0: Vain CPU-tila (suositellaan Intel Maceille).\n"
+        "1-999: Osittainen GPU-siirto (edistynyt).",
+
     "module_llama_cpp_config_system_prompt_label": "Järjestelmäkehotus",
     "module_llama_cpp_config_system_prompt_edit_placeholder_text": "Syötä järjestelmäkehotuksen teksti",
     "module_llama_cpp_config_system_prompt_edit_accessible_description":

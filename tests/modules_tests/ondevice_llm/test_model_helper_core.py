@@ -212,6 +212,98 @@ class TestModelHelperCore:
                     helper = ModelHelper(model_path="/fake/path", search_options={})
                     assert helper.model_path == "/fake/path"
 
+    def test_has_model_files_with_onnx(self):
+        """Test _has_model_files returns True when .onnx files exist."""
+        from notolog.modules.ondevice_llm.model_helper import ModelHelper
+
+        with patch('os.path.isdir', return_value=True):
+            with patch('os.listdir', return_value=['model.onnx']):
+                with patch('os.path.isfile', return_value=True):
+                    ModelHelper._instance = None
+                    helper = ModelHelper(model_path="/fake/path", search_options={})
+                    assert helper._has_model_files("/fake/path") is True
+
+    def test_has_model_files_without_onnx(self):
+        """Test _has_model_files returns False when no .onnx files exist."""
+        from notolog.modules.ondevice_llm.model_helper import ModelHelper
+
+        with patch('os.path.isdir', return_value=True):
+            with patch('os.listdir', return_value=['model.onnx']):
+                with patch('os.path.isfile', return_value=True):
+                    ModelHelper._instance = None
+                    helper = ModelHelper(model_path="/fake/path", search_options={})
+
+        # Now test with no onnx files
+        with patch('os.listdir', return_value=['config.json', 'tokenizer.json']):
+            with patch('os.path.isfile', return_value=True):
+                assert helper._has_model_files("/another/path") is False
+
+    def test_onnx_subdirectory_with_genai_config(self):
+        """Test onnx/ subdirectory is used when it has genai_config.json."""
+        from notolog.modules.ondevice_llm.model_helper import ModelHelper
+        import os
+
+        fake_path = "/fake/path"
+        onnx_subdir = os.path.join(fake_path, "onnx")
+
+        def mock_isdir(path):
+            # Normalize for cross-platform comparison
+            norm_path = os.path.normpath(path)
+            return norm_path in [os.path.normpath(fake_path), os.path.normpath(onnx_subdir)]
+
+        def mock_listdir(path):
+            norm_path = os.path.normpath(path)
+            if norm_path == os.path.normpath(fake_path):
+                return ["config.json", "onnx"]  # No .onnx in root
+            elif norm_path == os.path.normpath(onnx_subdir):
+                return ["model.onnx", "genai_config.json"]
+            return []
+
+        def mock_isfile(path):
+            return path.endswith('.onnx') or path.endswith('.json')
+
+        with patch('os.path.isdir', side_effect=mock_isdir):
+            with patch('os.listdir', side_effect=mock_listdir):
+                with patch('os.path.isfile', side_effect=mock_isfile):
+                    ModelHelper._instance = None
+                    helper = ModelHelper(model_path=fake_path, search_options={})
+                    # Compare normalized paths for cross-platform compatibility
+                    assert os.path.normpath(helper.model_path) == os.path.normpath(onnx_subdir)
+
+    def test_onnx_subdirectory_without_genai_config(self):
+        """Test onnx/ subdirectory is rejected when genai_config.json is missing."""
+        from notolog.modules.ondevice_llm.model_helper import ModelHelper
+        import os
+
+        fake_path = "/fake/path"
+        onnx_subdir = os.path.join(fake_path, "onnx")
+
+        def mock_isdir(path):
+            norm_path = os.path.normpath(path)
+            return norm_path in [os.path.normpath(fake_path), os.path.normpath(onnx_subdir)]
+
+        def mock_listdir(path):
+            norm_path = os.path.normpath(path)
+            if norm_path == os.path.normpath(fake_path):
+                return ["config.json", "onnx"]  # No .onnx in root
+            elif norm_path == os.path.normpath(onnx_subdir):
+                return ["model.onnx"]  # No genai_config.json
+            return []
+
+        def mock_isfile(path):
+            # genai_config.json does not exist
+            if 'genai_config.json' in path:
+                return False
+            return path.endswith('.onnx') or path.endswith('.json')
+
+        with patch('os.path.isdir', side_effect=mock_isdir):
+            with patch('os.listdir', side_effect=mock_listdir):
+                with patch('os.path.isfile', side_effect=mock_isfile):
+                    ModelHelper._instance = None
+                    helper = ModelHelper(model_path=fake_path, search_options={})
+                    # Should reject the model - transformers.js style without genai_config.json
+                    assert helper.model_path is None
+
     def test_generate_output_v011_api(self):
         """Test generate_output follows v0.11.0+ API pattern."""
         from notolog.modules.ondevice_llm.model_helper import ModelHelper
@@ -264,6 +356,86 @@ class TestModelHelperCore:
         mock_generator.is_done.assert_called_once()
         mock_generator.get_next_tokens.assert_called_once()
         mock_tokenizer_stream.decode.assert_called_once_with(123)
+
+    def test_init_generator_retries_with_smaller_max_length(self):
+        """Test init_generator retries with smaller max_length on memory error."""
+        from notolog.modules.ondevice_llm.model_helper import ModelHelper
+
+        with patch('os.path.isdir', return_value=True):
+            with patch('os.listdir', return_value=['model.onnx']):
+                ModelHelper._instance = None
+                helper = ModelHelper(model_path="/fake/path", search_options={})
+
+        # Mock model
+        helper.model = MagicMock()
+
+        # Track max_length values used in calls
+        max_lengths_tried = []
+
+        def mock_create_generator(input_tokens, options):
+            max_lengths_tried.append(options.get('max_length'))
+            if options.get('max_length', 4096) > 1024:
+                raise RuntimeError("Could not allocate the key-value cache buffer")
+            # Success with max_length <= 1024
+            return MagicMock()
+
+        helper._create_generator = mock_create_generator
+
+        # Call with max_length=4096, should retry and succeed with 1024
+        search_options = {'max_length': 4096, 'temperature': 0.7}
+        result = helper.init_generator([1, 2, 3], search_options)
+
+        assert result is not None
+        # Should have tried 4096, 2048, then succeeded with 1024
+        assert 4096 in max_lengths_tried
+        assert 2048 in max_lengths_tried
+        assert 1024 in max_lengths_tried
+
+    def test_init_generator_raises_on_non_memory_error(self):
+        """Test init_generator raises immediately on non-memory errors."""
+        from notolog.modules.ondevice_llm.model_helper import ModelHelper
+
+        with patch('os.path.isdir', return_value=True):
+            with patch('os.listdir', return_value=['model.onnx']):
+                ModelHelper._instance = None
+                helper = ModelHelper(model_path="/fake/path", search_options={})
+
+        helper.model = MagicMock()
+
+        def mock_create_generator(input_tokens, options):
+            raise RuntimeError("Invalid model configuration")
+
+        helper._create_generator = mock_create_generator
+
+        with pytest.raises(RuntimeError, match="Invalid model configuration"):
+            helper.init_generator([1, 2, 3], {'max_length': 4096})
+
+    def test_init_generator_retries_on_cublas_error(self):
+        """Test init_generator retries with smaller max_length on CUBLAS errors."""
+        from notolog.modules.ondevice_llm.model_helper import ModelHelper
+
+        with patch('os.path.isdir', return_value=True):
+            with patch('os.listdir', return_value=['model.onnx']):
+                ModelHelper._instance = None
+                helper = ModelHelper(model_path="/fake/path", search_options={})
+
+        helper.model = MagicMock()
+
+        max_lengths_tried = []
+
+        def mock_create_generator(input_tokens, options):
+            max_lengths_tried.append(options.get('max_length'))
+            if options.get('max_length', 4096) > 1024:
+                raise RuntimeError("CUBLAS failure 3: CUBLAS_STATUS_ALLOC_FAILED")
+            return MagicMock()
+
+        helper._create_generator = mock_create_generator
+
+        result = helper.init_generator([1, 2, 3], {'max_length': 4096})
+
+        assert result is not None
+        assert 4096 in max_lengths_tried
+        assert 1024 in max_lengths_tried
 
 
 if __name__ == '__main__':

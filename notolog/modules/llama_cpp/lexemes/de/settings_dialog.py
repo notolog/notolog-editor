@@ -21,6 +21,14 @@ lexemes = {
     "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "Dropdown-Menü zur Auswahl des Formats, das für Modellgespräche verwendet wird.",
 
+    "module_llama_cpp_config_gpu_layers_label": "GPU-Schichten",
+    "module_llama_cpp_config_gpu_layers_input_accessible_description":
+        "Anzahl der Modellschichten zur GPU-Auslagerung.\n"
+        "Auto: Automatische Erkennung (GPU bei Apple Silicon, CPU sonst).\n"
+        "-1: Alle Schichten auf GPU auslagern.\n"
+        "0: Nur CPU-Modus (empfohlen für Intel Macs).\n"
+        "1-999: Teilweise GPU-Auslagerung (fortgeschritten).",
+
     "module_llama_cpp_config_system_prompt_label": "Systemaufforderung",
     "module_llama_cpp_config_system_prompt_edit_placeholder_text": "Systemaufforderungstext eingeben",
     "module_llama_cpp_config_system_prompt_edit_accessible_description":

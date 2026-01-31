@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-24 00:00:00.000000"}} -->
+<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-31 00:00:00.000000"}} -->
 # Configuration Guide
 
 Detailed reference for all Notolog settings.
@@ -128,7 +128,7 @@ Each AI module has its own settings tab in the Settings dialog.
 |-------------------------|-----|---------|-------------|
 | API URL                 | `module_openai_api_url` | `https://api.openai.com/v1/chat/completions` | API endpoint URL |
 | API Key                 | `module_openai_api_key` | (empty) | API key (stored encrypted) |
-| Supported Models        | `module_openai_api_model` | `gpt-5` | Model name to use |
+| Supported Models        | `module_openai_api_model` | `gpt-5.2` | Model name to use |
 | System Prompt           | `module_openai_api_base_system_prompt` | (empty) | Initial instructions for the model |
 | Temperature             | `module_openai_api_base_response_temperature` | `20` | Response randomness (0-100) |
 | Maximum Response Tokens | `module_openai_api_base_response_max_tokens` | `0` | Maximum response tokens (0 = unlimited) |

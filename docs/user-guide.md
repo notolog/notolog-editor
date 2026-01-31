@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-24 00:00:00.000000"}} -->
+<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-31 00:00:00.000000"}} -->
 # User Guide
 
 Complete guide to all Notolog features and functionality.
@@ -128,7 +128,7 @@ Note: When the Litter bin is inactive, deleted files are hidden from the file tr
 Notolog stores metadata in HTML comment headers:
 
 ```html
-<!-- {"notolog.app": {"created": "2024-01-15 10:30:00", "updated": "2024-01-15 14:45:00"}} -->
+<!-- {"notolog.app": {"created": "2026-01-01 00:00:00", "updated": "2026-01-01 00:00:00", ...}} -->
 # My Note
 ```
 
@@ -214,6 +214,7 @@ Notolog includes 6 built-in themes:
 `Settings` → `General` tab → `Theme`
 
 Changes apply immediately, no app reload needed.
+![Notolog - Python Markdown Editor - UI Example - Calligraphy](assets/images/ui/notolog-ui-example-calligraphy.png)
 
 ---
 

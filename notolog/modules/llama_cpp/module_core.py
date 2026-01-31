@@ -94,9 +94,11 @@ class ModuleCore(BaseAiCore):
         model_path = self.settings.module_llama_cpp_model_path
         context_window = self.settings.module_llama_cpp_context_window
         chat_format = self.settings.module_llama_cpp_chat_format
+        gpu_layers = self.settings.module_llama_cpp_gpu_layers
         search_options = self.get_search_options()
         # Cached helper instance for efficiency
         self.model_helper = ModelHelper(model_path=model_path, n_ctx=context_window, chat_format=chat_format,
+                                        n_gpu_layers=gpu_layers if gpu_layers is not None else None,
                                         search_options=search_options)
 
         # Use for debugging asynchronous events if necessary:
@@ -158,13 +160,56 @@ class ModuleCore(BaseAiCore):
             self.logger.warning(f'Error occurred during the closing process {e}')
         # Clear the prompt history when no longer needed
         PromptManager.reload()
+        # Cancel any ongoing model loading (important for macOS where Metal can hang)
+        self.model_helper.cancel_loading()
         # Stop the generator thread before closing the dialog to avoid crashes
         await self.stop_generator()
 
     @asyncSlot()
     async def request_cancelled(self):
+        # Cancel any ongoing model loading (important for macOS where Metal can hang)
+        self.model_helper.cancel_loading()
         # Stop the generator thread before closing the dialog to avoid crashes
         await self.stop_generator()
+
+    async def _load_model_with_timeout(self) -> bool:
+        """
+        Load the model asynchronously with UI feedback.
+
+        Returns:
+            bool: True if model loaded successfully, False if cancelled.
+
+        Raises:
+            RuntimeError: If model loading fails.
+        """
+        # Show loading message to user before model loading starts
+        self.update_signal.emit(
+            self.lexemes.get("module_llama_cpp_model_loading", scope='common',
+                             default="Loading model, please wait..."),
+            None, None, EnumMessageType.DEFAULT, EnumMessageStyle.INFO)
+
+        # Set busy cursor to indicate activity to the window manager
+        QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
+
+        # Process pending events to ensure UI updates and cursor change are visible
+        QApplication.processEvents()
+
+        # Yield control briefly to allow Qt event loop to fully process
+        await asyncio.sleep(0.05)
+
+        try:
+            # Run model initialization in executor
+            # Note: This matches the working pattern from ondevice_llm module
+            loop = asyncio.get_running_loop()
+            await loop.run_in_executor(None, self.model_helper.init_model)
+            return True
+        except asyncio.CancelledError:
+            # User cancelled during model loading
+            self.logger.info("Model loading was cancelled by user")
+            return False
+        finally:
+            # Always restore cursor
+            QApplication.restoreOverrideCursor()
 
     @asyncSlot()
     async def request(self, user_prompt: list, request_msg_id: int, response_msg_id: int,
@@ -200,28 +245,9 @@ class ModuleCore(BaseAiCore):
             # Only show loading message if model is not yet loaded
             model_needs_loading = not self.model_helper.is_model_loaded()
             if model_needs_loading:
-                # Show loading message to user before model loading starts
-                self.update_signal.emit(
-                    self.lexemes.get("module_llama_cpp_model_loading", scope='common',
-                                     default="Loading model, please wait..."),
-                    None, None, EnumMessageType.DEFAULT, EnumMessageStyle.INFO)
-
-                # Set busy cursor to indicate activity to the window manager
-                QApplication.setOverrideCursor(QCursor(Qt.CursorShape.WaitCursor))
-
-                # Process pending events to ensure UI updates and cursor change are visible
-                QApplication.processEvents()
-
-                # Yield control briefly to allow Qt event loop to fully process
-                await asyncio.sleep(0.05)
-
-                try:
-                    # Run model initialization in executor
-                    loop = asyncio.get_running_loop()
-                    await loop.run_in_executor(None, self.model_helper.init_model)
-                finally:
-                    # Always restore cursor
-                    QApplication.restoreOverrideCursor()
+                if not await self._load_model_with_timeout():
+                    # Model loading was cancelled
+                    return
             else:
                 # Model already loaded, just ensure it's initialized
                 self.model_helper.init_model()
@@ -231,12 +257,19 @@ class ModuleCore(BaseAiCore):
             if self.init_callback and callable(self.init_callback):
                 self.init_callback()
             # Prepare error messages for display in the UI
-            outputs = self.lexemes.get("module_llama_cpp_model_exception", scope='common', error_msg=str(e))
+            outputs = self.lexemes.get(
+                "module_llama_cpp_model_exception", scope='common', error_msg=str(e)
+            )
             # Emit update message signal
-            self.update_signal.emit(outputs, None, None, EnumMessageType.DEFAULT, EnumMessageStyle.ERROR)
+            self.update_signal.emit(
+                outputs, None, None, EnumMessageType.DEFAULT, EnumMessageStyle.ERROR
+            )
             # Emit finished signal
-            self.finished_callback(request_msg_id=request_msg_id, response_msg_id=response_msg_id,
-                                   message_type=EnumMessageType.RESPONSE)
+            self.finished_callback(
+                request_msg_id=request_msg_id,
+                response_msg_id=response_msg_id,
+                message_type=EnumMessageType.RESPONSE
+            )
             return
 
         user_prompt_str = self.prompt_manager.get_history()
@@ -455,6 +488,26 @@ class ModuleCore(BaseAiCore):
              "placeholder_text": self.lexemes.get('module_llama_cpp_config_chat_formats_combo_placeholder_text'),
              "accessible_description":
                  self.lexemes.get('module_llama_cpp_config_chat_formats_combo_accessible_description')},
+            # Vertical spacer
+            {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum),
+             "callback": lambda obj: tab_module_llama_cpp_config_layout.addWidget(obj)},
+            # Label for GPU layers setting
+            {"type": LabelWithHint, "kwargs": {
+                "tooltip": ('module_llama_cpp_config_gpu_layers_input_accessible_description',
+                            self.lexemes.get('module_llama_cpp_config_gpu_layers_input_accessible_description'))},
+             "name": "settings_dialog_module_llama_cpp_config_gpu_layers_label",
+             "alignment": Qt.AlignmentFlag.AlignLeft,
+             "text": self.lexemes.get('module_llama_cpp_config_gpu_layers_label'),
+             "callback": lambda obj: tab_module_llama_cpp_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
+            # Input field for GPU layers setting (-2 = Auto, -1 = all GPU, 0 = CPU only, >0 = specific layers)
+            # Note: -2 is displayed as "Auto" and converted to None when saving to settings
+            {"type": QSpinBox, "props": {'setMinimum': -2, 'setMaximum': 999, 'setSpecialValueText': 'Auto'},
+             "size_policy": (QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred),
+             "name": "settings_dialog_module_llama_cpp_config_gpu_layers:"
+                     "module_llama_cpp_gpu_layers",
+             "callback": lambda obj: tab_module_llama_cpp_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
+             "accessible_description":
+                 self.lexemes.get('module_llama_cpp_config_gpu_layers_input_accessible_description')},
             # Horizontal line spacer
             {"type": HorizontalLineSpacer, "callback": lambda obj: tab_module_llama_cpp_config_layout.addWidget(obj)},
             # Label for the system prompt text editor
@@ -548,6 +601,8 @@ class ModuleCore(BaseAiCore):
             extend_func("module_llama_cpp_model_path", str, "")
             extend_func("module_llama_cpp_context_window", int, 2048)
             extend_func("module_llama_cpp_chat_format", str, str(LlmChatFormats.default()))
+            # GPU layers: None = auto-detect, 0 = CPU only, -1 = all layers on GPU
+            extend_func("module_llama_cpp_gpu_layers", int, None)
             extend_func("module_llama_cpp_system_prompt", str, "")
             extend_func("module_llama_cpp_response_temperature", int, 20)
             extend_func("module_llama_cpp_response_max_tokens", int, 0)
@@ -573,6 +628,7 @@ class ModuleCore(BaseAiCore):
             'module_llama_cpp_model_path',
             'module_llama_cpp_context_window',
             'module_llama_cpp_chat_format',
+            'module_llama_cpp_gpu_layers',
             'module_llama_cpp_response_temperature',
             'module_llama_cpp_response_max_tokens',
             # 'module_llama_cpp_system_prompt',
@@ -592,14 +648,24 @@ class ModuleCore(BaseAiCore):
             if 'module_llama_cpp_chat_format' in data:
                 chat_format = data['module_llama_cpp_chat_format']
 
+            gpu_layers = self.settings.module_llama_cpp_gpu_layers
+            if 'module_llama_cpp_gpu_layers' in data:
+                gpu_layers = data['module_llama_cpp_gpu_layers']
+                # Convert UI sentinel value (-2 = "Auto") to None for internal use
+                if gpu_layers == -2:
+                    gpu_layers = None
+
             # Reload the model helper
             ModelHelper.reload()
 
             search_options = self.get_search_options()
 
             # The model will be reloaded for the next session
-            self.model_helper = ModelHelper(model_path=model_path, n_ctx=context_window, chat_format=chat_format,
-                                            search_options=search_options)
+            self.model_helper = ModelHelper(
+                model_path=model_path, n_ctx=context_window, chat_format=chat_format,
+                n_gpu_layers=gpu_layers if gpu_layers is not None else None,
+                search_options=search_options
+            )
 
     def temperature_change_handler(self, source_object, source_widget):
         if source_object.objectName() and source_widget:

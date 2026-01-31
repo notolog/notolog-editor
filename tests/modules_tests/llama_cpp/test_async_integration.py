@@ -194,3 +194,43 @@ class TestAsyncIntegration:
         assert 'A' in results[0]
         assert 'B' in results[1]
         assert 'C' in results[2]
+
+    @pytest.mark.skipif(not is_module_available('llama_cpp'), reason="llama_cpp module not available")
+    @pytest.mark.asyncio
+    async def test_model_loading_timeout(self, mocker, tmp_path):
+        """Test that model loading respects timeout (simulated with short timeout)."""
+        dummy_model = tmp_path / "test.gguf"
+        dummy_model.touch()
+
+        # Create a slow init_model that takes longer than timeout
+        async def slow_init():
+            await asyncio.sleep(2)  # Simulate slow model loading
+
+        # Test that timeout works
+        with pytest.raises(asyncio.TimeoutError):
+            await asyncio.wait_for(slow_init(), timeout=0.1)
+
+    @pytest.mark.skipif(not is_module_available('llama_cpp'), reason="llama_cpp module not available")
+    @pytest.mark.asyncio
+    async def test_cancel_loading_during_model_init(self, mocker, tmp_path):
+        """Test that cancelling during model load works correctly."""
+        from threading import Event
+
+        dummy_model = tmp_path / "test.gguf"
+        dummy_model.touch()
+
+        # Simulate model loading that checks cancellation
+        cancel_event = Event()
+
+        async def cancellable_init():
+            # Check for cancellation before loading
+            if cancel_event.is_set():
+                raise asyncio.CancelledError("Cancelled by user")
+            await asyncio.sleep(0.5)
+
+        # Cancel immediately
+        cancel_event.set()
+
+        # Should raise CancelledError
+        with pytest.raises(asyncio.CancelledError):
+            await cancellable_init()

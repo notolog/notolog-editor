@@ -20,6 +20,14 @@ lexemes = {
     "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "Menu dropdown untuk memilih format yang digunakan untuk percakapan model.",
 
+    "module_llama_cpp_config_gpu_layers_label": "Lapisan GPU",
+    "module_llama_cpp_config_gpu_layers_input_accessible_description":
+        "Jumlah lapisan model untuk dipindahkan ke GPU.\n"
+        "Auto: Deteksi otomatis (GPU di Apple Silicon, CPU di tempat lain).\n"
+        "-1: Pindahkan semua lapisan ke GPU.\n"
+        "0: Mode CPU saja (disarankan untuk Intel Mac).\n"
+        "1-999: Pemindahan GPU sebagian (lanjutan).",
+
     "module_llama_cpp_config_system_prompt_label": "Perintah Sistem",
     "module_llama_cpp_config_system_prompt_edit_placeholder_text": "Masukkan teks perintah sistem",
     "module_llama_cpp_config_system_prompt_edit_accessible_description":

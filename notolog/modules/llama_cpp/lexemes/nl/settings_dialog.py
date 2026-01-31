@@ -21,6 +21,14 @@ lexemes = {
     "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "Dropdownmenu om het formaat te selecteren dat gebruikt wordt voor modelgesprekken.",
 
+    "module_llama_cpp_config_gpu_layers_label": "GPU-lagen",
+    "module_llama_cpp_config_gpu_layers_input_accessible_description":
+        "Aantal modellagen om naar de GPU te offloaden.\n"
+        "Auto: Automatische detectie (GPU op Apple Silicon, CPU elders).\n"
+        "-1: Alle lagen naar GPU offloaden.\n"
+        "0: Alleen CPU-modus (aanbevolen voor Intel Macs).\n"
+        "1-999: Gedeeltelijke GPU-offloading (geavanceerd).",
+
     "module_llama_cpp_config_system_prompt_label": "Systeemprompt",
     "module_llama_cpp_config_system_prompt_edit_placeholder_text": "Voer de tekst voor de systeemprompt in",
     "module_llama_cpp_config_system_prompt_edit_accessible_description":

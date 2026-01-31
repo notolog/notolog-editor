@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-24 00:00:00.000000"}} -->
+<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-31 00:00:00.000000"}} -->
 # FAQ & Troubleshooting
 
 Common questions and solutions for Notolog users.
@@ -40,6 +40,23 @@ sudo dnf install gcc-c++
 
 # macOS
 xcode-select --install
+```
+
+---
+
+### Q: "zsh: no matches found" when installing extras on macOS
+
+**Error**: `zsh: no matches found: notolog[llama]`
+
+**Cause**: zsh (the default macOS shell) interprets square brackets as glob patterns.
+
+**Solution**:
+```bash
+# Quote the package specification
+pip install "notolog[llama]"
+
+# Or install llama-cpp-python separately
+pip install llama-cpp-python
 ```
 
 ---
@@ -95,13 +112,44 @@ First-time ONNX model loading can take **up to 60 seconds**. Subsequent loads ar
 
 ---
 
+### Q: Module llama.cpp model loading hangs on macOS
+
+**Apple Silicon (M1/M2/M3/M4)**: Works automatically with Metal GPU acceleration. Set GPU Layers to "Auto" or "-1" in settings.
+
+**Intel Mac**: If you experience hangs or crashes, try:
+1. Set GPU Layers to "0" (CPU-only mode) in Settings → Module llama.cpp
+2. If issues persist, downgrade llama-cpp-python:
+   ```bash
+   pip install llama-cpp-python==0.2.90 --force-reinstall
+   ```
+
+---
+
 ### Q: Out of memory with local LLMs
 
-**Solutions**:
+**For ONNX models**: Notolog automatically handles memory issues:
+1. Falls back from GPU to CPU when model loading fails
+2. Reduces response token limit when generator allocation fails
+
+**If issues persist**:
 1. Use smaller quantized models (e.g., `Q4_K_M` instead of `Q8_0`)
-2. Close other applications to free RAM
-3. Reduce context window size in settings
-4. Consider using the OpenAI API instead
+2. Reduce "Maximum Response Tokens" in AI module settings
+3. Close other applications to free RAM/VRAM
+4. Manually select CPU provider in ONNX settings
+
+---
+
+### Q: ONNX model won't load (transformers.js models)
+
+**Error**: `Model not found` or `error opening genai_config.json`
+
+**Cause**: Models optimized for transformers.js have a different directory structure than what onnxruntime-genai expects.
+
+**Solution**: Use models specifically built for onnxruntime-genai that include `genai_config.json`:
+
+* [Microsoft official models](https://huggingface.co/microsoft){:target="_blank"} (Phi-3, etc.)
+* Models with "onnx-genai" or "onnxruntime-genai" in the name
+* Example: Download `microsoft/Phi-3-mini-4k-instruct-onnx`, then set path to the `cpu_and_mobile/cpu-int4-rtn-block-32` subdirectory
 
 ---
 

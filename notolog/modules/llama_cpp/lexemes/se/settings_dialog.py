@@ -21,6 +21,14 @@ lexemes = {
     "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "Dropdown-menyn för att välja formatet som används för modellsamtal.",
 
+    "module_llama_cpp_config_gpu_layers_label": "GPU-lager",
+    "module_llama_cpp_config_gpu_layers_input_accessible_description":
+        "Antal modelllager att avlasta till GPU.\n"
+        "Auto: Automatisk detektering (GPU på Apple Silicon, CPU annars).\n"
+        "-1: Avlasta alla lager till GPU.\n"
+        "0: Endast CPU-läge (rekommenderas för Intel Macs).\n"
+        "1-999: Delvis GPU-avlastning (avancerat).",
+
     "module_llama_cpp_config_system_prompt_label": "Systemprompt",
     "module_llama_cpp_config_system_prompt_edit_placeholder_text": "Ange text för systemprompten",
     "module_llama_cpp_config_system_prompt_edit_accessible_description":

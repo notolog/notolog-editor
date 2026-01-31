@@ -21,6 +21,14 @@ lexemes = {
     "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "Menu déroulant pour sélectionner le format utilisé pour les conversations modèles.",
 
+    "module_llama_cpp_config_gpu_layers_label": "Couches GPU",
+    "module_llama_cpp_config_gpu_layers_input_accessible_description":
+        "Nombre de couches du modèle à décharger sur le GPU.\n"
+        "Auto : Détection automatique (GPU sur Apple Silicon, CPU ailleurs).\n"
+        "-1 : Décharger toutes les couches sur le GPU.\n"
+        "0 : Mode CPU uniquement (recommandé pour Mac Intel).\n"
+        "1-999 : Déchargement GPU partiel (avancé).",
+
     "module_llama_cpp_config_system_prompt_label": "Invite de système",
     "module_llama_cpp_config_system_prompt_edit_placeholder_text": "Entrez le texte de l'invite système",
     "module_llama_cpp_config_system_prompt_edit_accessible_description":

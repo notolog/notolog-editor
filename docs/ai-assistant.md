@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-24 00:00:00.000000"}} -->
+<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-31 00:00:00.000000"}} -->
 # AI Assistant Guide
 
 Notolog includes an AI-powered assistant that supports multiple backends for text generation and assistance.
@@ -15,6 +15,8 @@ Notolog includes an AI-powered assistant that supports multiple backends for tex
 - [Troubleshooting](#troubleshooting)
 
 ---
+
+![AI Assistant Local Inference](assets/images/ui/notolog-ai-assistant-local-inference.gif)
 
 ## Overview
 
@@ -58,7 +60,7 @@ Access via: `Tools` → `AI Assistant`
 |---------|-------------|-------|
 | API URL | API endpoint URL | `https://api.openai.com/v1/chat/completions` |
 | API Key | Your OpenAI API key (stored encrypted) | (required) |
-| Supported Models | GPT model to use | gpt-5 |
+| Supported Models | GPT model to use | gpt-5.2 |
 | System Prompt | Initial context/instructions | (empty) |
 | Temperature | Response creativity (0-100 → 0.0-1.0) | 20 (0.2) |
 | Maximum Response Tokens | Maximum response length (0 = unlimited) | 0 |
@@ -133,7 +135,7 @@ Run GGUF-format models using llama.cpp bindings.
 
 ```bash
 # Option 1: Install with Notolog extras
-pip install notolog[llama]
+pip install "notolog[llama]"
 
 # Option 2: Install separately
 pip install llama-cpp-python

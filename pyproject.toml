@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "notolog"
-version = "1.1.8"
+version = "1.1.9"
 description = "Notolog - Python Markdown Editor"
 authors = ["Vadim Bakhrenkov"]
 license = "MIT"
@@ -41,6 +41,16 @@ keywords = [
     "encryption",
     "note-taking",
     "syntax-highlighting",
+    "ai-assistant",
+    "on-device-llm",
+    "offline-ai",
+    "phi-4",
+    "mistral",
+    "qwen",
+    "writing-assistant",
+    "markdown-editor",
+    "cross-platform",
+    "open-source",
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -76,6 +86,7 @@ classifiers = [
     "Natural Language :: German",
     "Natural Language :: Greek",
     "Natural Language :: Hindi",
+    "Natural Language :: Indonesian",
     "Natural Language :: Italian",
     "Natural Language :: Japanese",
     "Natural Language :: Korean",
@@ -91,7 +102,7 @@ classifiers = [
 notolog = "notolog.app:main"
 
 [tool.poetry.urls]
-Documentation = "https://github.com/notolog/notolog-editor/docs/index.md"
+Documentation = "https://notolog.app"
 Changelog = "https://github.com/notolog/notolog-editor/blob/main/CHANGELOG.md"
 IssueTracker = "https://github.com/notolog/notolog-editor/issues"
 
@@ -110,7 +121,7 @@ Pygments = "^2.18.0"
 PySide6_Essentials = ">=6.8.0.2"
 qasync = ">=0.27.1"
 shiboken6 = ">=6.8.0.2"
-tomli = "^2.0.1,<=2.0.1"
+tomli = "^2.0.1"
 tomli_w = "^1.0.0"
 typing_extensions = "^4.12.0"
 numpy = "^2.1.0"
@@ -144,6 +155,17 @@ asyncio_default_fixture_loop_scope = "function"
 filterwarnings = [
     "ignore::pytest.PytestConfigWarning",
     "ignore::pytest.PytestUnraisableExceptionWarning",
+]
+
+[tool.bandit]
+exclude_dirs = ["tests", "htmlcov", "site", "docs"]
+skips = [
+    "B101",  # Skip assert_used (common in tests and validation)
+    "B105",  # Skip hardcoded_password_string (false positives: env var names, LLM tokens, empty init)
+    "B314",  # Skip xml.etree.ElementTree.fromstring (safe internal use with trusted XML)
+    "B405",  # Skip xml.etree import (safe internal use)
+    "B404",  # Skip subprocess import (used in dev_install.py dev tool)
+    "B603",  # Skip subprocess_without_shell_equals_true (controlled input in dev tool)
 ]
 
 [build-system]

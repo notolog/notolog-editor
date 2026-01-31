@@ -576,7 +576,12 @@ class SettingsDialog(QDialog):
                 # Parse the object name in case it contains a combination of lexeme and setting keys
                 _lexeme_key, setting_name = self.parse_object_name(spin_box.objectName())
                 if hasattr(self.settings, setting_name):
-                    spin_box.setValue(getattr(self.settings, setting_name, 0))
+                    value = getattr(self.settings, setting_name, 0)
+                    # Special handling for GPU layers: None (auto) is represented as -2 in the UI
+                    # (minimum value shows "Auto" via setSpecialValueText)
+                    if value is None and setting_name == 'module_llama_cpp_gpu_layers':
+                        value = -2  # UI sentinel value for "Auto"
+                    spin_box.setValue(value if value is not None else 0)
                 spin_box.valueChanged.connect(self.save_settings)
 
         # Find children of type QDoubleSpinBox
@@ -658,6 +663,9 @@ class SettingsDialog(QDialog):
         elif isinstance(sender_widget, QSpinBox):
             setting_value = sender_widget.value()
             setting_text = sender_widget.text()
+            # Special handling for GPU layers: -2 (UI "Auto") should be stored as None
+            if setting_name == 'module_llama_cpp_gpu_layers' and setting_value == -2:
+                setting_value = None
         elif isinstance(sender_widget, QDoubleSpinBox):
             setting_value = sender_widget.value()
             setting_text = sender_widget.text()

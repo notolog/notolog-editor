@@ -128,8 +128,8 @@ class TestThemeHelper:
         [
             (None, None, (None, None)),
             ('default', None, ('test_smth', None)),
-            ('default', None, ('test_styles', 'QTextEdit {}')),
-            ('noir_dark', None, ('test_smth', 'QTextEdit {}')),
+            ('default', None, ('test_styles', 'QTextEdit {}\n')),
+            ('noir_dark', None, ('test_smth', 'QTextEdit {}\n')),
         ],
         indirect=True
     )

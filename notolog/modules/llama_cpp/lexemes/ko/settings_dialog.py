@@ -19,6 +19,14 @@ lexemes = {
     "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "모델 대화에 사용되는 형식을 선택하기 위한 드롭다운 메뉴입니다.",
 
+    "module_llama_cpp_config_gpu_layers_label": "GPU 레이어",
+    "module_llama_cpp_config_gpu_layers_input_accessible_description":
+        "GPU로 오프로드할 모델 레이어 수입니다.\n"
+        "Auto: 자동 감지(Apple Silicon에서는 GPU, 그 외에는 CPU).\n"
+        "-1: 모든 레이어를 GPU로 오프로드.\n"
+        "0: CPU 전용 모드(Intel Mac에 권장).\n"
+        "1-999: 부분 GPU 오프로드(고급).",
+
     "module_llama_cpp_config_system_prompt_label": "시스템 프롬프트",
     "module_llama_cpp_config_system_prompt_edit_placeholder_text": "시스템 프롬프트 텍스트를 입력하세요",
     "module_llama_cpp_config_system_prompt_edit_accessible_description":

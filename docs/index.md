@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-24 00:00:00.000000"}} -->
+<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-31 00:00:00.000000"}} -->
 # Notolog Documentation
 
 [![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/)
@@ -34,10 +34,10 @@ Notolog is a privacy-focused Markdown editor that combines:
 
 | Requirement | Minimum | Recommended |
 |-------------|---------|-------------|
-| Python | 3.10 | 3.11–3.12 (3.13 for ONNX GenAI) |
+| Python | 3.10 | 3.11-3.12 (3.13 for ONNX GenAI) |
 | OS | Windows 10, macOS 10.14, Ubuntu 20.04 | Latest stable versions |
 | RAM | 4 GB (base editor) | 8 GB (16+ GB for local 7B+ parameter LLMs) |
-| Storage | 100 MB (base) | 500 MB–4 GB (depends on local model files) |
+| Storage | 100 MB (base) | 500 MB-4 GB (depends on local model files) |
 
 !!! note "Local LLM Memory Requirements"
     - **Phi-3-mini (3.8B)**: ~4 GB VRAM or 8 GB RAM
@@ -54,7 +54,7 @@ pip install notolog
 conda install notolog -c conda-forge
 
 # With llama.cpp support
-pip install notolog[llama]
+pip install "notolog[llama]"
 ```
 
 See [Getting Started](getting-started.md) for detailed installation instructions.
@@ -72,4 +72,4 @@ Notolog is released under the [MIT License](https://github.com/notolog/notolog-e
 
 ---
 
-*Documentation version: 1.1.8*
+*Documentation version: 1.1.9*

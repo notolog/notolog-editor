@@ -19,6 +19,14 @@ lexemes = {
     "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "Menu dropdown ad formam eligendam quae ad colloquia modeli utitur.",
 
+    "module_llama_cpp_config_gpu_layers_label": "Strata GPU",
+    "module_llama_cpp_config_gpu_layers_input_accessible_description":
+        "Numerus stratorum modeli ad GPU transferendorum.\n"
+        "Auto: Detectio automatica (GPU in Apple Silicon, CPU alibi).\n"
+        "-1: Transfer omnia strata ad GPU.\n"
+        "0: Modus CPU solum (commendatur pro Intel Mac).\n"
+        "1-999: Partialis translatio GPU (provectus).",
+
     "module_llama_cpp_config_system_prompt_label": "Promptum Systematis",
     "module_llama_cpp_config_system_prompt_edit_placeholder_text": "Inscribe textum prompti systematis",
     "module_llama_cpp_config_system_prompt_edit_accessible_description":

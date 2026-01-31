@@ -22,6 +22,14 @@ lexemes = {
     "module_llama_cpp_config_chat_formats_combo_accessible_description":
         "मॉडल वार्तालापों के लिए प्रयुक्त प्रारूप का चयन करने के लिए ड्रॉपडाउन मेनू।",
 
+    "module_llama_cpp_config_gpu_layers_label": "GPU परतें",
+    "module_llama_cpp_config_gpu_layers_input_accessible_description":
+        "GPU पर ऑफलोड करने के लिए मॉडल परतों की संख्या।\n"
+        "Auto: स्वचालित पहचान (Apple Silicon पर GPU, अन्यत्र CPU)।\n"
+        "-1: सभी परतों को GPU पर ऑफलोड करें।\n"
+        "0: केवल CPU मोड (Intel Mac के लिए अनुशंसित)।\n"
+        "1-999: आंशिक GPU ऑफलोडिंग (उन्नत)।",
+
     "module_llama_cpp_config_system_prompt_label": "सिस्टम प्रॉम्प्ट",
     "module_llama_cpp_config_system_prompt_edit_placeholder_text": "सिस्टम प्रॉम्प्ट टेक्स्ट दर्ज करें",
     "module_llama_cpp_config_system_prompt_edit_accessible_description":
