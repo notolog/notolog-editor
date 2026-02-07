@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2024-03-26 00:19:36.466439", "updated": "2026-01-24 00:00:00.000000"}} -->
+<!-- {"notolog.app": {"created": "2024-03-26 00:19:36.466439", "updated": "2026-02-07 00:00:00.000000"}} -->
 # Markdown Syntax
 
 ## Headings
@@ -400,6 +400,64 @@ The text contains abbreviation (hover mouse on it):
 
 *[HTML]: Hyper Text Markup Language
 *[WWW]:  World Wide Web
+
+
+## Admonitions
+
+Admonitions are special callout blocks that highlight important information. They support various types for different purposes.
+
+**Raw Markdown:**
+
+```markdown
+!!! note "Optional Title"
+    This is a note admonition.
+    Content must be indented.
+
+!!! warning
+    This is a warning without a custom title.
+
+!!! tip "Pro Tip"
+    Helpful tips go here.
+```
+
+**Rendered result:**
+
+!!! note "Important Note"
+    This is a note admonition. Use it to highlight additional information that readers should be aware of.
+
+!!! warning "Caution"
+    This is a warning admonition. Use it to alert readers about potential issues or important considerations.
+
+!!! tip "Pro Tip"
+    This is a tip admonition. Use it to share helpful suggestions and best practices.
+
+### Supported Admonition Types
+
+| Type | Use Case |
+| :--- | :--- |
+| `note` | General information and remarks |
+| `info` | Informational content |
+| `tip` | Helpful suggestions |
+| `hint` | Subtle guidance (alias for tip) |
+| `warning` | Important cautions |
+| `caution` | Potential issues (alias for warning) |
+| `danger` | Critical warnings |
+| `error` | Error-related information |
+| `success` | Positive outcomes |
+| `question` | Questions or FAQs |
+| `abstract` | Summary content |
+| `summary` | Brief overviews (alias for abstract) |
+| `example` | Code or usage examples |
+| `bug` | Known issues |
+| `quote` | Quotations |
+| `failure` | Failure scenarios |
+
+### Admonition Syntax Rules
+
+1. Start with `!!!` followed by the type
+2. Optional title in quotes after the type
+3. Content must be indented (4 spaces or 1 tab)
+4. Empty lines are allowed within the content
 
 
 ## Details and Summary

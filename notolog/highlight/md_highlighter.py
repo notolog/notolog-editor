@@ -28,7 +28,7 @@ from PySide6.QtCore import Qt
 from .main_highlighter import MainHighlighter
 from . import TextBlockData
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Pattern
 
 import re
 
@@ -265,12 +265,12 @@ class MdHighlighter(MainHighlighter):
         # lambda s: s.is_in_code() and not s.is_in_code_comment()),
     ]
 
-    def get_regex(self, pattern: re) -> re:
+    def get_regex(self, pattern: str) -> Pattern[str]:
         """
         Get either QRegularExpression or raw Python regex
         re = QRegularExpression(pattern)
         """
-        return pattern
+        return re.compile(pattern)
 
     def get_open_close_token_map(self):
         return [
@@ -303,6 +303,25 @@ class MdHighlighter(MainHighlighter):
         The order in the row is matter because of processing one-by-one.
         """
         return ['rn', 'codec', 'blockquote', 'list']
+
+    def cleanup_line_tokens(self):
+        """
+        Clean up old line_tokens to prevent memory leaks.
+        Keep only a reasonable window of lines around the current position.
+        """
+        # Only cleanup when we have accumulated a significant number of entries
+        token_count = len(self.line_tokens)
+        if token_count > 1500:
+            # Keep a window of 1000 lines centered around current position
+            min_line_to_keep = max(0, self.line_number - 500)
+            max_line_to_keep = self.line_number + 500
+            # Collect keys to remove (avoid modifying dict during iteration)
+            lines_to_remove = [
+                line_num for line_num in self.line_tokens
+                if line_num < min_line_to_keep or line_num > max_line_to_keep
+            ]
+            for line_num in lines_to_remove:
+                del self.line_tokens[line_num]
 
     def highlightBlock(self, text_str):  # noqa: C901 - consider simplifying this method
         """
@@ -339,13 +358,19 @@ class MdHighlighter(MainHighlighter):
         if self.line_number not in self.line_tokens:
             self.line_tokens[self.line_number] = {}
 
+        # Periodically clean up old line tokens to prevent memory leaks
+        if self.line_number % 100 == 0:  # Check every 100 lines
+            self.cleanup_line_tokens()
+
         # Each line is not formatted initially
         self.clear_formatted()
 
-        # Groups of tokens for correction (they have similar approach in rules)
-        oct_groups = [r.get('group') for r in self.get_open_close_token_map()]
-        open_tokens = [r.get('open') for r in self.get_open_close_token_map()]
-        close_tokens = [r.get('close') for r in self.get_open_close_token_map()]
+        # Groups of tokens for correction
+        oct_map = self.get_open_close_token_map()
+        oct_groups = {r.get('group') for r in oct_map}
+        open_tokens = {r.get('open') for r in oct_map}
+        close_tokens = {r.get('close') for r in oct_map}
+        nl_closing_tokens = set(self.get_nl_closing_tokens())
 
         pattern, nth, tag, group, duple, cf_data, reckon = (None,) * 7
         for pattern, nth, tag, group, duple, cf_data, reckon in self.rules:
@@ -483,7 +508,7 @@ class MdHighlighter(MainHighlighter):
             Causing a "jumping" syntax, so better to leave the blocks within the code block
             but re-write their style accordingly.
             """
-            if tag not in self.get_nl_closing_tokens():
+            if tag not in nl_closing_tokens:
                 continue
 
             if tag not in self.tokens:
@@ -635,7 +660,7 @@ class MdHighlighter(MainHighlighter):
                 # Collect line tokens only when any of them matched
                 if tag not in self.line_tokens[self.line_number]:
                     self.line_tokens[self.line_number][tag] = []
-                if tag != 'code' or tag not in self.get_nl_closing_tokens():
+                if tag != 'code' or tag not in nl_closing_tokens:
                     # The line tokens data will be reset after re-highlighting, no need to check for duplicates
                     line_token_data = {'start': start, 'end': end, 'length': length}
                     if line_token_data not in self.line_tokens[self.line_number][tag]:
@@ -687,8 +712,7 @@ class MdHighlighter(MainHighlighter):
                 if (tag == 'table_h'
                     and (self.line_number - 1 in self.line_tokens
                          # Previous token is a table header
-                         and (self.line_number - 1 in self.line_tokens
-                              and 'table_d' in self.line_tokens[self.line_number - 1])
+                         and 'table_d' in self.line_tokens[self.line_number - 1]
                          # The token before the table header either a new line or file's first line
                          and ((self.line_number - 2 in self.line_tokens
                               and 'rn' in self.line_tokens[self.line_number - 2])
@@ -770,20 +794,16 @@ class MdHighlighter(MainHighlighter):
                     """
                     if start != 0 and (group in oct_groups or group == 'code'):
                         # Regex's result from 2nd nth
-                        if (tag == 'iu'
-                                or tag == 'boo'
-                                or tag == 'biu'):
+                        if tag in {'iu', 'boo', 'biu'}:
                             # If the end of the line than add extra one
                             if end == len(text_str):
                                 length += 1
-                        elif (tag == 'code_lang' or tag == 'codel' or tag == 'codec'
-                              or tag == 'i' or tag == 'i_open' or tag == 'iu_open'
-                              or tag == 'b' or tag == 'b_open' or tag == 'boo_open'
-                              or tag == 'bi' or tag == 'bi_open' or tag == 'biu_open'
-                              or tag == 's' or tag == 's_open'
-                              or tag == 'u' or tag == 'u_open'):
-                            start = start
-                        else:
+                        elif tag not in {'code_lang', 'codel', 'codec',
+                                         'i', 'i_open', 'iu_open',
+                                         'b', 'b_open', 'boo_open',
+                                         'bi', 'bi_open', 'biu_open',
+                                         's', 's_open',
+                                         'u', 'u_open'}:
                             start += 1
 
                 """
@@ -837,7 +857,7 @@ class MdHighlighter(MainHighlighter):
         #    self.setFormat(0, len(text_str), self.cf(**self.theme['comment']))
         #    self.set_formatted('comment')
 
-        for token_data in self.get_open_close_token_map():
+        for token_data in oct_map:
             """
             Process the lines located between the tags
             """
@@ -883,12 +903,18 @@ class MdHighlighter(MainHighlighter):
                 if self.pos_within_inline_code(_data['start'], _data['end'], _data['length']):
                     data_to_del[_tag].append(_data)
                     processed_res = True
+        # Remove entries in-place to avoid creating new lists
+        tags_to_remove = []
         for _tag, _tag_data in data_to_del.items():
-            for _data in _tag_data:
-                self.line_tokens[self.line_number][_tag] = \
-                    [d for d in self.line_tokens[self.line_number][_tag] if d != _data]
+            if _tag_data:
+                for _data in _tag_data:
+                    self.line_tokens[self.line_number][_tag].remove(_data)
+                # Mark empty tags for removal
                 if not self.line_tokens[self.line_number][_tag]:
-                    del self.line_tokens[self.line_number][_tag]
+                    tags_to_remove.append(_tag)
+        # Clean up empty tag entries
+        for _tag in tags_to_remove:
+            del self.line_tokens[self.line_number][_tag]
         # self.logger.debug('Adjusted line tokens:', self.line_tokens[self.line_number])
         return processed_res
 

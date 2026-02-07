@@ -68,7 +68,7 @@ class ViewHighlighter(MainHighlighter):
         (r'(​)', 0, 'inv_sep', 'inv_sep', False, theme['inv_sep'], None),
     ]
 
-    def get_regex(self, pattern: re) -> re:
+    def get_regex(self, pattern: str):
         """
         Get either QRegularExpression or raw Python regex
         """

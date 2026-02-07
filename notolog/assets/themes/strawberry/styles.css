@@ -1,39 +1,97 @@
+/*
+ * Strawberry Theme - Document Content Styling
+ * CSS 2.1 compatible for Qt6/PySide6 QTextBrowser
+ * https://doc.qt.io/qt-6/richtext-html-subset.html#css-properties
+ */
+
 body {
     max-width: 100%; /* Page not stretching upon resize without it */
     font-family: 'Noto Sans', 'Liberation Sans', '.AppleSystemUIFont', 'DejaVu Sans', sans-serif;
+    color: #333333;
+    background-color: #fff7f7;
+    margin: 0;
+    padding: 0;
 }
 a {
     display: inline-block;
     color: deeppink;
+    text-decoration: underline;
 }
 /* Fix new line issue within the p block */
-p { white-space: pre-line; }
-pre { /*display: block; white-space: pre; max-width: 100%; text-indent: 20px; margin: 10px;*/ }
+p {
+    white-space: pre-line;
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+pre {
+    margin: 10px 0;
+    padding: 0;
+}
 img { max-width: 100%; }
 
-/* Somehow h5 and h6 are not balanced. Hence h6 adjusted in pt */
-h1 { font-size: xx-large; }
-h2 { font-size: x-large; }
-h3 { font-size: large; }
-h4 { font-size: medium; }
-h5 { font-size: small; }
-h6 { font-size: 8pt; font-weight: bold; }
+/* Headers */
+h1 {
+    font-size: xx-large;
+    color: #f92672;
+    margin-top: 18px;
+    margin-bottom: 10px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #f9267255;
+}
+h2 {
+    font-size: x-large;
+    color: darkred;
+    margin-top: 16px;
+    margin-bottom: 8px;
+    padding-bottom: 3px;
+    border-bottom: 1px solid #e0b0b0;
+}
+h3 {
+    font-size: large;
+    color: darkred;
+    margin-top: 14px;
+    margin-bottom: 6px;
+}
+h4 {
+    font-size: medium;
+    color: darkred;
+    margin-top: 12px;
+    margin-bottom: 5px;
+}
+h5 {
+    font-size: small;
+    color: darkred;
+    margin-top: 10px;
+    margin-bottom: 4px;
+}
+h6 {
+    font-size: 8pt;
+    color: darkred;
+    font-weight: bold;
+    margin-top: 8px;
+    margin-bottom: 4px;
+}
 
 /* Markdown table */
 table._nl_tbl {
     margin-top: 10px;
+    margin-bottom: 10px;
     border-collapse: collapse;
+    border: 1px solid mediumvioletred;
+    background-color: #fff7f7;
 }
 table._nl_tbl td {
     border: 1px solid mediumvioletred;
-    padding: 5px;
+    padding: 6px 10px;
+    color: #333333;
+    background-color: #fff7f7;
 }
 table._nl_tbl th {
     border: 1px solid mediumvioletred;
     background: lightpink;
     color: mediumvioletred;
     font-weight: bold;
-    padding: 5px;
+    padding: 6px 10px;
 }
 /* Style substitution for tree-processor */
 ._nl_tbl .left { text-align: left; }
@@ -54,6 +112,7 @@ table._nl_tbl th {
 /* anchor details-summary expandable */
 ._ds_expand {
     background: transparent;
+    margin: 6px 0;
 }
 /* anchor details-summary expandable */
 ._ds_expand > a {
@@ -77,58 +136,102 @@ a._ds_collapse_summary {
 ._n_details {
     padding: 0;
     border-collapse: collapse;
+    margin: 6px 0;
 }
 /* element which is contain a _ds (expandable or collapsible link) */
 ._n_details_summary {
     text-align: left;
     font-weight: bold;
-    cursor: pointer;
     color: white;
-    border-left: 1px solid hotpink;
+    border-left: 3px solid hotpink;
     background-color: hotpink;
     margin: 0;
-    padding: 3px 0 3px 7px;
+    padding: 5px 8px 6px 10px;
 }
 /* main content of the expandable block */
 ._n_details_content {
-    border-left: 1px solid hotpink;
+    border-left: 3px solid hotpink;
     background-color: #ffeaec;
-    padding: 0 10px;
+    padding: 8px 12px 10px 12px;
 }
 
-abbr { text-decoration: underline; text-decoration-color: hotpink; }
+abbr {
+    text-decoration: underline;
+    color: hotpink;
+}
+/* Admonition blocks - colors from theme (viewer.ini) */
+._n_admonition {
+    width: 100%;
+    margin: 12px 0;
+    padding: 0;
+    border-collapse: collapse;
+    border: 1px solid #ffb6c1;
+    background-color: #fff5f6;
+}
+._n_admonition_title {
+    text-align: left;
+    font-weight: bold;
+    border-bottom: 1px solid #ffb6c1;
+    padding: 6px 12px;
+}
+._n_admonition_content {
+    color: #333333;
+    background-color: #fff5f6;
+    padding: 10px 12px;
+}
 /*
  * Supported CSS Selectors
  * All CSS 2.1 selector classes are supported except pseudo-class selectors such as :first-child, :visited and :hover.
  *
  * Use `px` instead of `em`
  * https://doc.qt.io/qt-6/richtext-html-subset.html#css-properties
+ *
+ * Long string in code block may affect page horizontal scrolling
+ * - white-space: pre-wrap;      Since CSS 2.1
+ * - white-space: -moz-pre-wrap; Mozilla, since 1999
+ * - white-space: -pre-wrap;     Opera 4-6
+ * - white-space: -o-pre-wrap;   Opera 7
+ * - word-wrap: break-word;      Internet Explorer 5.5+
  */
 .codehilite pre {
     white-space: unset;
-    /* Long string in code block may affect page horizontal scrolling */
-    /*white-space: pre-wrap;      Since CSS 2.1 */
-    /*white-space: -moz-pre-wrap; Mozilla, since 1999 */
-    /*white-space: -pre-wrap;     Opera 4-6 */
-    /*white-space: -o-pre-wrap;   Opera 7 */
-    /*word-wrap: break-word;      Internet Explorer 5.5+ */
+    margin: 0;
+    padding: 0;
 }
-.codehilitetable { width: 100%; border: none; border-spacing: unset; border-collapse: collapse;
-    margin-top: 3px; }
-td.linenos { padding: 10px 7px 0; border-left: 3px solid salmon; background: #373737; color: #eeeeee;
-    /* The line-height should be equal to that of td.code, ensuring the code's line height matches. */
-    font-family: 'IBM Plex Mono', 'Liberation Mono', 'DejaVu Sans Mono', monospace; }
-td.code, code { padding: 10px 10px 0; background: #a1426d; color: #f8f8f2;
-    font-family: 'IBM Plex Mono', 'Liberation Mono', 'DejaVu Sans Mono', monospace; }
+.codehilitetable {
+    width: 100%;
+    border: none;
+    border-spacing: unset;
+    border-collapse: collapse;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+/* The line-height should be equal to that of td.code, ensuring the code's line height matches. */
+td.linenos {
+    padding: 10px 8px 10px 6px;
+    border-left: 3px solid salmon;
+    background: #373737;
+    color: #eeeeee;
+    vertical-align: top;
+    font-family: 'IBM Plex Mono', 'Liberation Mono', 'DejaVu Sans Mono', monospace;
+}
+td.code, code {
+    padding: 10px 12px 10px 12px;
+    background: #a1426d;
+    color: #f8f8f2;
+    font-family: 'IBM Plex Mono', 'Liberation Mono', 'DejaVu Sans Mono', monospace;
+}
 td.linenos .normal { color: grey; background-color: transparent; padding-left: 5px; padding-right: 5px; }
 div.linenodiv { padding: 0; margin: 0; }
 span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
 td.linenos .special { color: inherit; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
 span.linenos.special { color: inherit; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
 
-.codehilite { overflow-x: auto; line-height: 21px; /* 21px is a min value atm */
-    font-family: 'IBM Plex Mono', 'Liberation Mono', 'DejaVu Sans Mono', monospace; }
-.codehilite .hll { background-color: #49483e; }
+.codehilite {
+    line-height: 21px;
+    font-family: 'IBM Plex Mono', 'Liberation Mono', 'DejaVu Sans Mono', monospace;
+}
+.codehilite .hll { background: #49483e; }
 .codehilite .c { color: lightpink } /* Comment */
 .codehilite .err { color: darkred; background-color: palevioletred; } /* Error */
 .codehilite .k { color: #66d9ef } /* Keyword */
@@ -143,15 +246,16 @@ span.linenos.special { color: inherit; background-color: #ffffc0; padding-left: 
 .codehilite .cp { color: lightpink } /* Comment.Preproc */
 .codehilite .cpf { color: lightpink } /* Comment.PreprocFile */
 .codehilite .c1 { color: lightpink } /* Comment.Single */
-.codehilite .cs { color: lightpink } /* Comment.Special */
+.codehilite .cs { color: lightpink; font-weight: bold; } /* Comment.Special */
 .codehilite .gd { color: #f92672 } /* Generic.Deleted */
 .codehilite .ge { font-style: italic } /* Generic.Emph */
 .codehilite .gi { color: #a6e22e } /* Generic.Inserted */
 .codehilite .gs { font-weight: bold } /* Generic.Strong */
-.codehilite .gu { color: #85816e } /* Generic.Subheading */
+.codehilite .gh { color: lightpink } /* Generic.Heading */
+.codehilite .gu { color: lightpink } /* Generic.Subheading */
 .codehilite .kc { color: #66d9ef } /* Keyword.Constant */
 .codehilite .kd { color: #66d9ef } /* Keyword.Declaration */
-.codehilite .kn { color: #f92672 } /* Keyword.Namespace */
+.codehilite .kn { color: pink } /* Keyword.Namespace */
 .codehilite .kp { color: #66d9ef } /* Keyword.Pseudo */
 .codehilite .kr { color: #66d9ef } /* Keyword.Reserved */
 .codehilite .kt { color: #66d9ef } /* Keyword.Type */
@@ -170,7 +274,7 @@ span.linenos.special { color: inherit; background-color: #ffffc0; padding-left: 
 .codehilite .nn { color: #f8f8f2 } /* Name.Namespace */
 .codehilite .nx { color: #a6e22e } /* Name.Other */
 .codehilite .py { color: #f8f8f2 } /* Name.Property */
-.codehilite .nt { color: #f92672 } /* Name.Tag */
+.codehilite .nt { color: pink } /* Name.Tag */
 .codehilite .nv { color: #f8f8f2 } /* Name.Variable */
 .codehilite .ow { color: #f92672 } /* Operator.Word */
 .codehilite .w { color: #f8f8f2 } /* Text.Whitespace */

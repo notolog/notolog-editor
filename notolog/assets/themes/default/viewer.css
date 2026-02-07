@@ -1,2 +1,13 @@
-QTextEdit {}
-QTextBrowser {}
+/*
+ * Default Theme - Viewer Widget Styling (QTextBrowser/QTextEdit)
+ * CSS 2.1 compatible for Qt6/PySide6 QTextBrowser
+ * https://doc.qt.io/qt-6/richtext-html-subset.html
+ */
+
+QTextEdit, QTextBrowser {
+    background-color: #FFFFFF;
+    color: #333333;
+    border: none;
+    selection-background-color: #7777EE;
+    selection-color: #FFFFFF;
+}

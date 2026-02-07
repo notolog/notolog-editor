@@ -1,40 +1,97 @@
+/*
+ * Default Theme - Document Content Styling
+ * CSS 2.1 compatible for Qt6/PySide6 QTextBrowser
+ * https://doc.qt.io/qt-6/richtext-html-subset.html#css-properties
+ */
+
 body {
     max-width: 100%; /* Page not stretching upon resize without it */
     font-family: 'Noto Sans', 'Liberation Sans', '.AppleSystemUIFont', 'DejaVu Sans', sans-serif;
+    color: #333333;
+    background-color: #FFFFFF;
+    margin: 0;
+    padding: 0;
 }
 a {
     display: inline-block;
     color: royalblue;
+    text-decoration: underline;
 }
 /* Fix new line issue within the p block */
-p { white-space: pre-line; }
-pre { /*display: block; white-space: pre; max-width: 100%; text-indent: 20px; margin: 10px;*/ }
+p {
+    white-space: pre-line;
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+pre {
+    margin: 10px 0;
+    padding: 0;
+}
 img { max-width: 100%; }
 
-/* Somehow h5 and h6 are not balanced. Hence h6 adjusted in pt */
-h1 { font-size: xx-large; }
-h2 { font-size: x-large; }
-h3 { font-size: large; }
-h4 { font-size: medium; }
-h5 { font-size: small; }
-h6 { font-size: 8pt; font-weight: bold; }
+/* Headers */
+h1 {
+    font-size: xx-large;
+    color: #333333;
+    margin-top: 18px;
+    margin-bottom: 10px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #cccccc;
+}
+h2 {
+    font-size: x-large;
+    color: #333333;
+    margin-top: 16px;
+    margin-bottom: 8px;
+    padding-bottom: 3px;
+    border-bottom: 1px solid #dddddd;
+}
+h3 {
+    font-size: large;
+    color: #333333;
+    margin-top: 14px;
+    margin-bottom: 6px;
+}
+h4 {
+    font-size: medium;
+    color: #333333;
+    margin-top: 12px;
+    margin-bottom: 5px;
+}
+h5 {
+    font-size: small;
+    color: #333333;
+    margin-top: 10px;
+    margin-bottom: 4px;
+}
+h6 {
+    font-size: 8pt;
+    font-weight: bold;
+    color: #333333;
+    margin-top: 8px;
+    margin-bottom: 4px;
+}
 
 /* Markdown table */
 table._nl_tbl {
     margin-top: 10px;
+    margin-bottom: 10px;
     border-collapse: collapse;
     border: 1px solid grey;
+    background-color: #FFFFFF;
 }
 table._nl_tbl td {
     border: 1px solid grey;
-    padding: 5px;
+    padding: 6px 10px;
+    color: #333333;
+    background-color: #FFFFFF;
 }
 table._nl_tbl th {
     border: 1px solid grey;
     background: lightgrey;
     color: darkSlateGrey;
     font-weight: bold;
-    padding: 5px;
+    padding: 6px 10px;
 }
 /* Style substitution for tree-processor */
 ._nl_tbl .left { text-align: left; }
@@ -55,6 +112,7 @@ table._nl_tbl th {
 /* anchor details-summary expandable */
 ._ds_expand {
     background: transparent;
+    margin: 6px 0;
 }
 /* anchor details-summary expandable */
 ._ds_expand > a {
@@ -78,58 +136,102 @@ a._ds_collapse_summary {
 ._n_details {
     padding: 0;
     border-collapse: collapse;
+    margin: 6px 0;
 }
 /* element which is contain a _ds (expandable or collapsible link) */
 ._n_details_summary {
     text-align: left;
     font-weight: bold;
-    cursor: pointer;
     color: white;
-    border-left: 1px solid steelblue;
+    border-left: 3px solid steelblue;
     background-color: steelblue;
     margin: 0;
-    padding: 3px 0 5px 7px;
+    padding: 5px 8px 6px 10px;
 }
 /* main content of the expandable block */
 ._n_details_content {
-    border-left: 1px solid steelblue;
+    border-left: 3px solid steelblue;
     background-color: #f5f5f5;
-    padding: 5px 10px 10px 10px;
+    padding: 8px 12px 10px 12px;
 }
 
-abbr { text-decoration: underline; text-decoration-color: dodgerblue; }
+abbr {
+    text-decoration: underline;
+    color: dodgerblue;
+}
+/* Admonition blocks - colors from theme (viewer.ini) */
+._n_admonition {
+    width: 100%;
+    margin: 12px 0;
+    padding: 0;
+    border-collapse: collapse;
+    border: 1px solid #b0bec5;
+    background-color: #fafafa;
+}
+._n_admonition_title {
+    text-align: left;
+    font-weight: bold;
+    border-bottom: 1px solid #b0bec5;
+    padding: 6px 12px;
+}
+._n_admonition_content {
+    color: #333333;
+    background-color: #fafafa;
+    padding: 10px 12px;
+}
 /*
  * Supported CSS Selectors
  * All CSS 2.1 selector classes are supported except pseudo-class selectors such as :first-child, :visited and :hover.
  *
  * Use `px` instead of `em`
  * https://doc.qt.io/qt-6/richtext-html-subset.html#css-properties
+ *
+ * Long string in code block may affect page horizontal scrolling
+ * - white-space: pre-wrap;      Since CSS 2.1
+ * - white-space: -moz-pre-wrap; Mozilla, since 1999
+ * - white-space: -pre-wrap;     Opera 4-6
+ * - white-space: -o-pre-wrap;   Opera 7
+ * - word-wrap: break-word;      Internet Explorer 5.5+
  */
 .codehilite pre {
     white-space: unset;
-    /* Long string in code block may affect page horizontal scrolling */
-    /*white-space: pre-wrap;      Since CSS 2.1 */
-    /*white-space: -moz-pre-wrap; Mozilla, since 1999 */
-    /*white-space: -pre-wrap;     Opera 4-6 */
-    /*white-space: -o-pre-wrap;   Opera 7 */
-    /*word-wrap: break-word;      Internet Explorer 5.5+ */
+    margin: 0;
+    padding: 0;
 }
-.codehilitetable { width: 100%; table-layout: fixed; border: none; border-spacing: unset; border-collapse: collapse;
-    margin-top: 3px; }
-td.linenos { padding: 10px 7px 0; border-left: 3px solid #eec357; background: #373737; color: #eeeeee;
-    /* The line-height should be equal to that of td.code, ensuring the code's line height matches. */
-    font-family: 'IBM Plex Mono', 'Liberation Mono', 'DejaVu Sans Mono', monospace; }
-td.code, code { padding: 10px 10px 0; background: #55595f; color: #f8f8f2;
-    font-family: 'IBM Plex Mono', 'Liberation Mono', 'DejaVu Sans Mono', monospace; }
+.codehilitetable {
+    width: 100%;
+    border: none;
+    border-spacing: unset;
+    border-collapse: collapse;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+/* The line-height should be equal to that of td.code, ensuring the code's line height matches. */
+td.linenos {
+    padding: 10px 8px 10px 6px;
+    border-left: 3px solid #eec357;
+    background: #373737;
+    color: #eeeeee;
+    vertical-align: top;
+    font-family: 'IBM Plex Mono', 'Liberation Mono', 'DejaVu Sans Mono', monospace;
+}
+td.code, code {
+    padding: 10px 12px 10px 12px;
+    background: #55595f;
+    color: #f8f8f2;
+    font-family: 'IBM Plex Mono', 'Liberation Mono', 'DejaVu Sans Mono', monospace;
+}
 td.linenos .normal { color: grey; background-color: transparent; padding-left: 5px; padding-right: 5px; }
 div.linenodiv { padding: 0; margin: 0; }
 span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
 td.linenos .special { color: inherit; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
 span.linenos.special { color: inherit; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
 
-.codehilite { overflow-x: auto; line-height: 21px; /* 21px is a min value atm */
-    font-family: 'IBM Plex Mono', 'Liberation Mono', 'DejaVu Sans Mono', monospace; }
-.codehilite .hll { background-color: transparent; }
+.codehilite {
+    line-height: 21px;
+    font-family: 'IBM Plex Mono', 'Liberation Mono', 'DejaVu Sans Mono', monospace;
+}
+.codehilite .hll { background: transparent; }
 .codehilite .c { color: #d5d1be } /* Comment */
 .codehilite .err { color: whiteSmoke; background-color: paleVioletRed; } /* Error */
 .codehilite .k { color: #66d9ef } /* Keyword */
@@ -142,12 +244,13 @@ span.linenos.special { color: inherit; background-color: #ffffc0; padding-left: 
 .codehilite .cp { color: #85816e } /* Comment.Preproc */
 .codehilite .cpf { color: #85816e } /* Comment.PreprocFile */
 .codehilite .c1 { color: #85816e } /* Comment.Single */
-.codehilite .cs { color: #85816e } /* Comment.Special */
+.codehilite .cs { color: #85816e; font-weight: bold; } /* Comment.Special */
 .codehilite .gd { color: #f92672 } /* Generic.Deleted */
 .codehilite .ge { font-style: italic } /* Generic.Emph */
 .codehilite .gi { color: #a6e22e } /* Generic.Inserted */
 .codehilite .gs { font-weight: bold } /* Generic.Strong */
-.codehilite .gu { color: #85816e } /* Generic.Subheading */
+.codehilite .gh { color: #d5d1be } /* Generic.Heading */
+.codehilite .gu { color: #d5d1be } /* Generic.Subheading */
 .codehilite .kc { color: #66d9ef } /* Keyword.Constant */
 .codehilite .kd { color: #66d9ef } /* Keyword.Declaration */
 .codehilite .kn { color: #f92672 } /* Keyword.Namespace */

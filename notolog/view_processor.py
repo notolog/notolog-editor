@@ -24,10 +24,12 @@ from PySide6.QtGui import QTextCursor, QSyntaxHighlighter, QTextCharFormat
 import logging
 import re
 import base64
+import os
 
 from typing import TYPE_CHECKING, Union
 
 from .settings import Settings
+from .helpers.theme_helper import ThemeHelper
 from .highlight.view_highlighter import ViewHighlighter
 from .lexemes.lexemes import Lexemes
 
@@ -42,6 +44,48 @@ class ViewProcessor:
 
     zero_width_space = '\u200B'  # '&#8203;' or '​'
 
+    # Admonition type to icon SVG file mapping
+    ADMONITION_ICONS = {
+        'note': 'pencil-square.svg',
+        'info': 'info-circle-fill.svg',
+        'tip': 'lightbulb.svg',
+        'hint': 'lightbulb.svg',
+        'warning': 'exclamation-triangle-fill.svg',
+        'caution': 'exclamation-triangle-fill.svg',
+        'danger': 'exclamation-triangle-fill.svg',
+        'error': 'exclamation-triangle-fill.svg',
+        'success': 'check-circle-fill.svg',
+        'question': 'question-circle.svg',
+        'abstract': 'ui-checks.svg',
+        'summary': 'ui-checks.svg',
+        'example': 'paperclip.svg',
+        'bug': 'bandaid-fill.svg',
+        'quote': 'quote.svg',
+        'failure': 'exclamation-triangle-fill.svg',
+    }
+
+    ADMONITION_ICON_DEFAULT = 'info-circle-fill.svg'
+
+    # Map admonition types to theme color keys (from viewer.ini)
+    ADMONITION_COLOR_KEYS = {
+        'note': 'adm_note',
+        'info': 'adm_info',
+        'tip': 'adm_tip',
+        'hint': 'adm_tip',
+        'warning': 'adm_warning',
+        'caution': 'adm_warning',
+        'danger': 'adm_danger',
+        'error': 'adm_danger',
+        'success': 'adm_success',
+        'question': 'adm_question',
+        'abstract': 'adm_abstract',
+        'summary': 'adm_abstract',
+        'example': 'adm_example',
+        'bug': 'adm_bug',
+        'quote': 'adm_quote',
+        'failure': 'adm_failure',
+    }
+
     def __init__(self, highlighter: Union[QSyntaxHighlighter, ViewHighlighter]):
         """
         Args:
@@ -52,6 +96,7 @@ class ViewProcessor:
         self.doc = self.highlighter.document()
 
         self.settings = Settings()
+        self.theme_helper = ThemeHelper()
 
         self.logger = logging.getLogger('view_processor')
 
@@ -68,6 +113,29 @@ class ViewProcessor:
 
         cursor = QTextCursor(self.doc)
         self.cursor_pos_orig = cursor.position()
+
+    def get_valid_font_size(self) -> float:
+        """
+        Get a valid font size from document, with fallback validation.
+        Prevents Qt warnings about invalid font sizes (<= 0).
+
+        Returns:
+            float: Valid font size (minimum 12.0pt)
+        """
+        font = self.doc.defaultFont()
+        font_size = font.pointSizeF()
+
+        # First try pointSizeF()
+        if font_size > 0:
+            return float(font_size)
+
+        # Fallback to pointSize() (integer version)
+        int_size = font.pointSize()
+        if int_size > 0:
+            return float(int_size)
+
+        # Last resort: use a safe default
+        return 12.0
 
     def restore_cursor_pos(self):
         cursor = QTextCursor(self.doc)
@@ -124,8 +192,8 @@ class ViewProcessor:
             str: Post-processed content.
         """
 
-        # Whither to get the content from the doc or not
-        doc_processing = True if content is None else False
+        # Whether to get the content from the doc or not
+        doc_processing = content is None
         if doc_processing:
             content = self.doc.toPlainText()
 
@@ -140,10 +208,153 @@ class ViewProcessor:
         # Perform the replacements
         post_processed_text = self.replace_tags(content, backward_replacements)
 
+        # Process admonition blocks - convert divs to tables for Qt6 compatibility
+        post_processed_text = self.process_admonitions(post_processed_text)
+
         if doc_processing:
             self.doc.setPlainText(post_processed_text)
 
         return post_processed_text
+
+    def get_admonition_color(self, admonition_type: str, suffix: str = '_color') -> str:
+        """
+        Get color for admonition type from theme.
+
+        Args:
+            admonition_type (str): Type of admonition (note, warning, etc.)
+            suffix (str): Color key suffix ('_color' or '_bg')
+
+        Returns:
+            str: CSS hex color string
+        """
+        color_key = self.ADMONITION_COLOR_KEYS.get(admonition_type.lower(), 'adm_note') + suffix
+        color = self.theme_helper.get_color(color_key, css_format=True)
+        if color:
+            return color
+        # Fallback colors matching theme system patterns
+        return 'whiteSmoke' if suffix == '_color' else 'grey'
+
+    def get_admonition_icon_svg(self, admonition_type: str, color: str) -> str:
+        """
+        Get SVG icon for admonition type with specified color as base64 img tag.
+        Icon size scales with document font size.
+
+        Args:
+            admonition_type (str): Type of admonition (note, warning, etc.)
+            color (str): CSS hex color for the icon
+
+        Returns:
+            str: HTML img tag with base64 SVG or empty string
+        """
+        icon_name = self.ADMONITION_ICONS.get(admonition_type.lower(), self.ADMONITION_ICON_DEFAULT)
+
+        # Get icon path from theme icons directory
+        theme_icon_dir = os.path.join(self.theme_helper.theme.get_theme_dir(), 'icons')
+        if not os.path.exists(theme_icon_dir):
+            theme_icon_dir = os.path.join(self.theme_helper.theme.get_default_theme_dir(), 'icons')
+
+        icon_path = os.path.join(theme_icon_dir, icon_name)
+
+        if not os.path.isfile(icon_path):
+            self.logger.debug(f'Admonition icon not found: {icon_path}')
+            return ''
+
+        try:
+            with open(icon_path, 'r', encoding='utf-8') as f:
+                svg_content = f.read()
+
+            # Replace currentColor with the actual color
+            svg_content = svg_content.replace('currentColor', color)
+
+            # Calculate icon size based on document font size for proper scaling
+            font_size = self.get_valid_font_size()
+            icon_size = max(int(font_size * 1.3), 12)  # 1.3x font size, minimum 12px
+
+            # Set size dynamically based on font
+            svg_content = re.sub(r'width="[^"]*"', f'width="{icon_size}"', svg_content)
+            svg_content = re.sub(r'height="[^"]*"', f'height="{icon_size}"', svg_content)
+
+            # Encode as base64 for img tag
+            svg_base64 = base64.b64encode(svg_content.encode('utf-8')).decode('utf-8')
+            return (f'<img src="data:image/svg+xml;base64,{svg_base64}" '
+                    f'width="{icon_size}" height="{icon_size}" style="vertical-align: middle;" />')
+
+        except Exception as e:
+            self.logger.warning(f'Error loading admonition icon {icon_name}: {e}')
+            return ''
+
+    def process_admonitions(self, content: str) -> str:
+        """
+        Convert admonition div blocks to table format for Qt6 QTextBrowser.
+
+        Markdown admonition extension generates:
+        <div class="admonition note">
+        <p class="admonition-title">Title</p>
+        <p>Content paragraph</p>
+        </div>
+
+        This converts to table format (similar to expandable blocks):
+        <table class="_n_admonition _adm_note">
+        <tr><th class="_n_admonition_title">📝 Title</th></tr>
+        <tr><td class="_n_admonition_content">Content</td></tr>
+        </table>
+
+        Args:
+            content (str): HTML content with admonition divs
+
+        Returns:
+            str: Content with admonitions converted to tables
+        """
+        # Pattern to match admonition blocks
+        # Captures: type (note/warning/etc), title, and content
+        pattern = (
+            r'<div\s+class=["\']admonition\s+(\w+)["\']>\s*'  # Opening div with type
+            r'<p\s+class=["\']admonition-title["\']>(.*?)</p>\s*'  # Title paragraph
+            r'(.*?)'  # Content (may contain multiple paragraphs)
+            r'</div>'  # Closing div
+        )
+
+        def replace_admonition(match):
+            admonition_type = match.group(1).strip().lower()
+            title = match.group(2).strip()
+            content_inner = match.group(3).strip()
+
+            # Get colors from theme
+            title_color = self.get_admonition_color(admonition_type, '_color')
+            title_bg = self.get_admonition_color(admonition_type, '_bg')
+
+            # Get SVG icon with title color
+            icon_html = self.get_admonition_icon_svg(admonition_type, title_color)
+            icon_part = f'{icon_html}&nbsp;&nbsp;' if icon_html else ''
+
+            # Build table with inline styles for theme colors
+            table_html = (
+                '<table class="_n_admonition">'
+                '<tr><th class="_n_admonition_title" style="color: {title_color}; background-color: {title_bg};">'
+                '{icon_part}{title}</th></tr>'
+                '<tr><td class="_n_admonition_content">{content}</td></tr>'
+                '</table>'
+            ).format(
+                title_color=title_color,
+                title_bg=title_bg,
+                icon_part=icon_part,
+                title=title,
+                content=content_inner
+            )
+
+            self.logger.debug('Converted admonition [%s]: %s' % (admonition_type, title))
+
+            return table_html
+
+        # Process all admonition blocks
+        processed_content = re.sub(
+            pattern,
+            replace_admonition,
+            content,
+            flags=re.DOTALL | re.MULTILINE | re.UNICODE
+        )
+
+        return processed_content
 
     def process(self):
         self.blocks.clear()
@@ -157,9 +368,10 @@ class ViewProcessor:
             @return: None
             """
             block = cursor_internal.block()
+            content_text = block.text()
             pattern = r"<details.*?>"
             # Find all matches of the pattern in provided string
-            matches = re.finditer(pattern, block.text())
+            matches = re.finditer(pattern, content_text)
             for match in matches:
                 _open_start = match.start()
                 _open_end = match.end()
@@ -167,7 +379,7 @@ class ViewProcessor:
                 self.blocks_start.append((block.position() + _open_start, _open_length))
             pattern = r"</details>"
             # Find all matches of the pattern in provided string
-            matches = re.finditer(pattern, block.text())
+            matches = re.finditer(pattern, content_text)
             for match in matches:
                 _close_start = match.start()
                 _close_end = match.end()
@@ -206,15 +418,14 @@ class ViewProcessor:
         # Enumerate by end token to find the closest start token
         for index, value in enumerate(self.blocks_end):
             close_start, close_length = value
-            if index not in res:
-                """
-                Extra data allows independent processing of tokens and their content:
-                o - open, start position
-                ol - open length, start token length, say <details> length is 9
-                c - close, close position
-                cl - close length, close token length (the same approach as for open length)
-                """
-                res.insert(index, {'o': None, 'ol': None, 'c': close_start, 'cl': close_length, 'g': None, 'l': 0})
+            """
+            Extra data allows independent processing of tokens and their content:
+            o - open, start position
+            ol - open length, start token length, say <details> length is 9
+            c - close, close position
+            cl - close length, close token length (the same approach as for open length)
+            """
+            res.append({'o': None, 'ol': None, 'c': close_start, 'cl': close_length, 'g': None, 'l': 0})
             # Enumerate start token list backward unsetting matched element
             for _index, _value in enumerate(self.blocks_start):
                 open_start, open_length = _value

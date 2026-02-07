@@ -121,7 +121,8 @@ The left panel shows your notes directory:
 - **Restored**: Right-click → Restore
 - **Deleted completely**: Right-click → Delete completely
 
-Note: When the Litter bin is inactive, deleted files are hidden from the file tree but still exist on disk and can be found via your system's file manager.
+!!! note "Important Note"
+    When the Litter bin is inactive, deleted files are hidden from the file tree but still exist on disk and can be found via your system's file manager.
 
 ### File Meta-Headers
 

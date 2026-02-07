@@ -105,6 +105,7 @@ from .etree_extension import ElementTreeExtension
 import emoji
 
 import os
+import re
 import time
 from typing import TYPE_CHECKING, Union, Optional, Callable, List, Dict, Any
 
@@ -159,8 +160,9 @@ class NotologEditor(QMainWindow):
     More info https://python-markdown.github.io/extensions/extra/
     """
     md_extensions = [
-        'markdown.extensions.extra',  # Or 'extra'
-        'markdown.extensions.toc',  # 'toc' stands for 'Table of Contents', provides anchors for header tags
+        'markdown.extensions.extra',  # Or 'extra'; bundles 7 useful extensions
+        'markdown.extensions.toc',  # header anchors for navigation
+        'markdown.extensions.admonition',  # rST-style admonitions
     ]
 
     def __init__(self, parent=None, **kwargs):
@@ -397,10 +399,19 @@ class NotologEditor(QMainWindow):
             # Apply updated font size to syntax highlighting
             self.md_highlighter.font_size = AppConfig().get_font_size()
 
+            # Apply updated font size to view highlighter
+            if hasattr(self, 'view_highlighter') and self.view_highlighter is not None:
+                self.view_highlighter.font_size = AppConfig().get_font_size()
+
             # If in edit mode, refresh syntax highlighting
             if self.get_mode() == Mode.EDIT:
                 self.md_highlighter.rehighlight()  # This may be resource-intensive
                 self.line_numbers.update_numbers()
+            elif self.get_mode() == Mode.VIEW:
+                # Re-render the view mode content to apply updated font size
+                current_file_path = self.get_current_file_path()
+                if current_file_path and file_helper.is_file_openable(current_file_path):
+                    self.load_file(current_file_path)
 
         if 'app_language' in data and hasattr(self, 'lexemes'):
             # Reload lexemes with the updated application language
@@ -625,10 +636,15 @@ class NotologEditor(QMainWindow):
             self.init_md()
         if self.settings.viewer_process_emojis:
             # Convert emojis.
-            # TODO emojis language: language=self.settings.app_language
             md_content = self.convert_emojis(text_content=md_content)
         # Convert markdown to html
         html_content = self.md.convert(md_content)
+
+        # Remove trailing newlines from code blocks
+        # Pygments adds a trailing '\n' before , which causes extra empty lines in Qt's HTML rendering.
+        # Remove this line if Pygments is switched off: CodeHiliteExtension(linenums=True, use_pygments=False)
+        html_content = re.sub(r'\n</code>', r'</code>', html_content)
+
         # Converted html data
         return html_content
 
@@ -1696,6 +1712,8 @@ class NotologEditor(QMainWindow):
 
         # Attach style to the QTextEdit
         view_widget.setStyleSheet(self.theme_helper.get_css('viewer'))
+        # Adjust current left and right margins
+        view_widget.setViewportMargins(6, 0, 6, 0)
 
         # The same handler as for edit field as status bar shared
         view_widget.selectionChanged.connect(self.on_selection_changed)

@@ -1,6 +1,24 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.2.0] - 2026-02-07
+
+### Added
+- Added support for admonition notes (note, info, tip, warning, etc.) with themed styling.
+- Added admonition icons with theme-aware coloring.
+- Added admonition color configuration to all themes via `viewer.ini` files.
+- Added `_n_admonition`, `_n_admonition_title`, `_n_admonition_content` CSS classes for admonition styling.
+- Added `markdown.extensions.admonition` to Markdown extensions.
+- Added memory leak prevention with `cleanup_line_tokens()` method in syntax highlighter.
+
+### Changed
+- Improved view mode styling with updated margins and consistent spacing across all themes.
+- Optimized highlighter performance using sets instead of lists for token lookups.
+
+### Fixed
+- Removed trailing newlines from code blocks that caused extra empty lines in HTML rendering.
+- Fixed font size updates now properly refresh view mode content.
+
 ## [1.1.9] - 2026-01-31
 
 ### Added

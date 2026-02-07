@@ -105,7 +105,8 @@ Download ONNX-optimized models from:
 
 ### First Run Notice
 
-> ⚠️ **Model Loading Time**: On first use, ONNX models may take **up to 60 seconds** to load. The application will display a loading message. Subsequent uses are faster due to caching.
+!!! warning "Model Loading Time"
+    On first use, ONNX models may take **up to 60 seconds** to load. The application will display a loading message. Subsequent uses are faster due to caching.
 
 ### Model Directory Structure
 

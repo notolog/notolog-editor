@@ -1,2 +1,13 @@
-QTextEdit {}
-QTextBrowser {}
+/*
+ * Spooky Theme - Viewer Widget Styling (QTextBrowser/QTextEdit)
+ * CSS 2.1 compatible for Qt6/PySide6 QTextBrowser
+ * https://doc.qt.io/qt-6/richtext-html-subset.html
+ */
+
+QTextEdit, QTextBrowser {
+    background-color: #000000;
+    color: #FBFAF5;
+    border: none;
+    selection-background-color: #660000;
+    selection-color: #FBFAF5;
+}

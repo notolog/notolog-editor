@@ -1,2 +1,13 @@
-QTextEdit {}
-QTextBrowser {}
+/*
+ * Nocturne Theme - Viewer Widget Styling (QTextBrowser/QTextEdit)
+ * CSS 2.1 compatible for Qt6/PySide6 QTextBrowser
+ * https://doc.qt.io/qt-6/richtext-html-subset.html
+ */
+
+QTextEdit, QTextBrowser {
+    background-color: #1f1f1f;
+    color: #EEEEEE;
+    border: none;
+    selection-background-color: #555555;
+    selection-color: #EEEEEE;
+}
