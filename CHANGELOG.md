@@ -1,6 +1,10 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+[Unreleased]
+
+- Fixed Windows cmd.exe color display problem.
+
 ## [1.2.0] - 2026-02-07
 
 ### Added
