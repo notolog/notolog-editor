@@ -34,6 +34,12 @@ import asyncio
 import sys
 import os
 
+try:
+    import colorama
+    colorama.just_fix_windows_console()
+except ImportError:
+    colorama = None
+
 from PySide6.QtCore import QLoggingCategory
 from PySide6.QtWidgets import QStyleFactory
 
