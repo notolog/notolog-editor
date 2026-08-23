@@ -27,6 +27,11 @@ lexemes = {
     "general_app_font_size_label": "Размер шрифта: {size}pt",
     "general_app_font_size_slider_accessible_description": "Настроить глобальный размер шрифта приложения",
 
+    "general_file_deletion_label": "Удаление файлов",
+    "general_reversible_file_deletion_checkbox": "Удалять файлы с возможностью восстановления",
+    "general_reversible_file_deletion_checkbox_accessible_description":
+        "Перемещать удалённые файлы в корзину Notolog, добавляя расширение .del",
+
     "general_statusbar_label": "Строка состояния",
     "general_statusbar_show_global_cursor_position_checkbox": "Показать глобальное положение курсора",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":

@@ -97,6 +97,7 @@ class ModuleCore(BaseAiCore):
         # Cached helper instance
         self.model_helper = ModelHelper(model_path=model_path, search_options=search_options,
                                         execution_provider=execution_provider)
+        self.generator_task = None
 
         # Just in case of debug of async events
         # asyncio.get_event_loop().set_debug(True)
@@ -338,12 +339,13 @@ class ModuleCore(BaseAiCore):
 
     async def stop_generator(self):
         # Cancel async task(s)
-        if self.generator_task and not self.generator_task.done():
+        task = self.generator_task
+        if task and task is not asyncio.current_task() and not task.done():
             # Allow to finish callback, do not remove:
             # > self.generator_task.remove_done_callback(self.finished_callback)
-            self.generator_task.cancel()
+            task.cancel()
             try:
-                await self.generator_task
+                await task
             except asyncio.CancelledError:
                 pass  # Expected when task is cancelled
 
@@ -398,7 +400,8 @@ class ModuleCore(BaseAiCore):
              "name": "settings_dialog_module_ondevice_llm_config_response_temperature_label",
              "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('module_ondevice_llm_config_response_temperature_label',
-                                      temperature=self.settings.module_ondevice_llm_response_temperature),
+                                      temperature=self.model_helper.convert_temperature(
+                                          self.settings.module_ondevice_llm_response_temperature)),
              "callback": lambda obj: tab_ondevice_llm_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # Slider to adjust the temperature setting
             {"type": QSlider, "args": [Qt.Orientation.Horizontal],

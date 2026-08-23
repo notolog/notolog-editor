@@ -49,7 +49,7 @@ The OpenAI API module enables cloud-based inference using OpenAI's language mode
 The On Device LLM module uses [ONNX Runtime GenAI](https://github.com/microsoft/onnxruntime-genai){:target="_blank"} for local inference with hardware acceleration support.
 
 ### Requirements
-- Python 3.10-3.13 (Note: onnxruntime-genai does not yet support Python 3.14)
+- Python 3.10-3.14
 - ONNX model files
 - Package: `onnxruntime-genai` (included with Notolog)
 
@@ -319,7 +319,9 @@ On Apple Silicon Macs (M1/M2/M3/M4), the Module llama.cpp automatically uses Met
 - Solution: Use full path to the `.gguf` file
 
 **Model loading hangs (Intel Macs only)**
-- Set GPU Layers to "0" in Settings, or downgrade: `pip install llama-cpp-python==0.2.90 --force-reinstall`
+- Set GPU Layers to "0" in Settings and restart Notolog.
+- Version 0.2.90 was a validated workaround for older Notolog releases, but it is not compatible with the current
+  integration. If CPU-only mode still hangs, report the macOS, Python, model, and llama-cpp-python versions.
 
 **Slow performance**
 - Context window too large
@@ -393,4 +395,3 @@ pip install --force-reinstall onnxruntime-genai
 - They **cannot** be installed together - the last installed package wins
 - If you uninstall the GPU package, use `--force-reinstall` when reinstalling the base package
 - After changing packages, restart the application
-

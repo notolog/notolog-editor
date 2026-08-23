@@ -5,7 +5,7 @@
 ## Project Overview
 
 **Name:** Notolog
-**Version:** 1.2.0
+**Version:** 1.2.1
 **License:** MIT
 **Language:** Python 3.10+
 **Author:** Vadim Bakhrenkov
@@ -178,18 +178,19 @@ class ModuleCore(BaseAiCore):
 ## Dependencies
 
 ### Core
-- PySide6 (>=6.8.0) - Qt6 bindings
-- cryptography (>=43.0.1) - File encryption
-- Markdown (^3.7) - Markdown processing
-- qasync (>=0.27.1) - Async Qt integration
-- Pygments (^2.18.0) - Code syntax highlighting
+- PySide6 Essentials (>=6.11.2,<6.12.0) - Qt6 bindings
+- cryptography (>=50.0.0,<51.0.0) - File encryption
+- Markdown (>=3.10.3,<4.0.0) - Markdown processing
+- qasync (>=0.28.0,<0.29.0) - Async Qt integration
+- Pygments (>=2.21.0,<3.0.0) - Code syntax highlighting
 
 ### Optional
-- llama-cpp-python (^0.3.8) - GGUF model support
-- onnxruntime-genai (>=0.11.0,<1.0.0) - ONNX model support (CPU)
+- llama-cpp-python (>=0.3.35,<0.4.0) - GGUF model support
+- onnxruntime-genai (>=0.11.2,<0.12.0 on Python 3.10; >=0.15.2,<1.0.0 on Python 3.11-3.14) - ONNX model support (CPU)
 - onnxruntime-genai-cuda - ONNX with CUDA support (replaces base package)
 - onnxruntime-genai-directml - ONNX with DirectML support (replaces base package)
-- openai - OpenAI API client
+
+OpenAI-compatible API support is built in and does not require the OpenAI Python SDK.
 
 ## Testing
 

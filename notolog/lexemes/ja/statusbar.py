@@ -8,10 +8,7 @@ lexemes = {
     "statusbar_next_path_accessible_name": "履歴内の次のファイルへ移動",
     "statusbar_litter_bin_label": "ごみ箱",
     "statusbar_litter_bin_accessible_name": "ごみ箱の内容を表示",
-
-    "statusbar_save_progress_label": b'\xf0\x9f\x92\xbe',
-    "statusbar_encryption_symbol_encrypted_label": b'\xf0\x9f\x94\x92',
-    "statusbar_encryption_symbol_unencrypted_label": b'\xf0\x9f\x94\x93',
+    "statusbar_file_path_copy_tooltip": "クリックしてコピー: {file_path}",
 
     "statusbar_mode_label_mode_view": "ビューモード",
     "statusbar_mode_label_mode_edit": "編集モード",
@@ -20,7 +17,6 @@ lexemes = {
     "statusbar_source_label_source_markdown": "Markdown",
     "statusbar_source_label_source_html": "HTML",
 
-    "statusbar_encryption_label": "{encryption} {icon}",
     "statusbar_encryption_label_encryption_plain": "プレーン",
     "statusbar_encryption_label_encryption_encrypted": "暗号化",
 

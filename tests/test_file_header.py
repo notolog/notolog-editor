@@ -17,6 +17,7 @@ For detailed instructions and project information, please see the repository's R
 """
 
 from notolog.file_header import FileHeader
+from notolog.encrypt.enc_helper import EncHelper
 
 from notolog.exceptions.file_header_empty_exception import FileHeaderEmptyException
 
@@ -68,6 +69,22 @@ class TestFileHeader:
     def test_file_header_is_valid(self, test_obj_file_header_new):
         # Is valid check works well
         assert test_obj_file_header_new.is_valid()
+
+    @pytest.mark.parametrize(
+        'file_data',
+        [
+            '<!-- ["notolog.app"] -->\nbody',
+            '<!-- {"notolog.app": []} -->\nbody',
+            '<!-- {"notolog.app": "invalid"} -->\nbody',
+            '<!-- {"notolog.app": null} -->\nbody',
+        ],
+    )
+    def test_file_header_rejects_invalid_container_shapes(self, file_data):
+        file_header, file_content = FileHeader().load(file_data)
+
+        assert not file_header.is_valid()
+        assert not file_header.is_file_encrypted()
+        assert file_content == file_data
 
     def test_file_header_get_new(self, test_obj_file_header_new):
         # Check initial params are exist
@@ -270,3 +287,28 @@ class TestFileHeader:
 
         # Is encrypted check works well
         assert _file_header.is_file_encrypted() == test_exp_fixture
+
+    @pytest.mark.parametrize(
+        'metadata',
+        [
+            {'slt': '', 'itr': 1024, 'hint': ''},
+            {'slt': 'salt', 'itr': 0, 'hint': ''},
+            {'slt': 'salt', 'itr': EncHelper.MAX_ITERATIONS + 1, 'hint': ''},
+            {'slt': 'salt', 'itr': 'invalid', 'hint': ''},
+            {'slt': 'salt', 'itr': 1024, 'hint': []},
+        ],
+    )
+    def test_validate_encryption_metadata_rejects_invalid_values(self, metadata):
+        header = FileHeader().get_new(is_enc=True)
+        header.header['notolog.app']['enc'] = metadata
+
+        with pytest.raises(ValueError):
+            header.validate_enc()
+
+    def test_validate_encryption_metadata_normalizes_iterations(self):
+        header = FileHeader().get_new(is_enc=True)
+        header.header['notolog.app']['enc'] = {'slt': 'salt', 'itr': '1024', 'hint': ''}
+
+        header.validate_enc()
+
+        assert header.get_enc_param('itr') == 1024

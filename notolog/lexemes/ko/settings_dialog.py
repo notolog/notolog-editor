@@ -27,6 +27,11 @@ lexemes = {
     "general_app_font_size_label": "글꼴 크기: {size}pt",
     "general_app_font_size_slider_accessible_description": "앱의 전역 글꼴 크기 조정",
 
+    "general_file_deletion_label": "파일 삭제",
+    "general_reversible_file_deletion_checkbox": "파일을 복원 가능하게 삭제",
+    "general_reversible_file_deletion_checkbox_accessible_description":
+        ".del 확장자를 추가하여 삭제된 파일을 Notolog 휴지통으로 이동",
+
     "general_statusbar_label": "상태 바",
     "general_statusbar_show_global_cursor_position_checkbox": "전역 커서 위치 보기",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":

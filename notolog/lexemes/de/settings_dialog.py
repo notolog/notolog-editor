@@ -28,6 +28,11 @@ lexemes = {
     "general_app_font_size_label": "Schriftgröße: {size}pt",
     "general_app_font_size_slider_accessible_description": "Globale Schriftgröße der App anpassen",
 
+    "general_file_deletion_label": "Dateilöschung",
+    "general_reversible_file_deletion_checkbox": "Dateien reversibel löschen",
+    "general_reversible_file_deletion_checkbox_accessible_description":
+        "Gelöschte Dateien durch Anhängen einer .del-Erweiterung in den Notolog-Papierkorb verschieben",
+
     "general_statusbar_label": "Statusleiste",
     "general_statusbar_show_global_cursor_position_checkbox": "Globale Cursorposition anzeigen",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":

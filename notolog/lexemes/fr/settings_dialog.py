@@ -27,6 +27,11 @@ lexemes = {
     "general_app_font_size_label": "Taille de police : {size}pt",
     "general_app_font_size_slider_accessible_description": "Ajuster la taille de la police globale de l'application",
 
+    "general_file_deletion_label": "Suppression des fichiers",
+    "general_reversible_file_deletion_checkbox": "Supprimer les fichiers de façon réversible",
+    "general_reversible_file_deletion_checkbox_accessible_description":
+        "Déplacer les fichiers supprimés vers la corbeille Notolog en ajoutant une extension .del",
+
     "general_statusbar_label": "Barre de statut",
     "general_statusbar_show_global_cursor_position_checkbox": "Afficher la position globale du curseur",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":

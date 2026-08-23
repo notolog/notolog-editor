@@ -5,8 +5,8 @@ This document details the third-party libraries used in the Notolog project, inc
 
 ## Version and Update Information
 
-- **Library Version Management**: The versions of third-party libraries used are synchronized with our application's version. For detailed and up-to-date version information of each library, please consult the build configuration files in the project repository.
-- **Date of Last License Update**: This document was last updated on 16-June-2024. License texts and links are accurate as of this date, reflecting the most current available information. Users are encouraged to verify the license terms and conditions periodically to ensure compliance with the latest versions.
+- **Library Version Management**: For the dependency versions used by this release, consult `pyproject.toml` and the build configuration files in the project repository.
+- **Date of Last License Review**: This document was reviewed for Notolog 1.2.1 on 23-August-2026. License terms should be reviewed again whenever dependencies or bundled assets change.
 
 
 ## Contents

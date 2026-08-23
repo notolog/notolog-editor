@@ -8,10 +8,7 @@ lexemes = {
     "statusbar_next_path_accessible_name": "Zur nächsten Datei in der Historie gehen",
     "statusbar_litter_bin_label": "Papierkorb",
     "statusbar_litter_bin_accessible_name": "Inhalt des Papierkorbs anzeigen",
-
-    "statusbar_save_progress_label": b'\xf0\x9f\x92\xbe',
-    "statusbar_encryption_symbol_encrypted_label": b'\xf0\x9f\x94\x92',
-    "statusbar_encryption_symbol_unencrypted_label": b'\xf0\x9f\x94\x93',
+    "statusbar_file_path_copy_tooltip": "Zum Kopieren klicken: {file_path}",
 
     "statusbar_mode_label_mode_view": "Ansichtsmodus",
     "statusbar_mode_label_mode_edit": "Bearbeitungsmodus",
@@ -20,7 +17,6 @@ lexemes = {
     "statusbar_source_label_source_markdown": "Markdown",
     "statusbar_source_label_source_html": "HTML",
 
-    "statusbar_encryption_label": "{encryption} {icon}",
     "statusbar_encryption_label_encryption_plain": "Klar",
     "statusbar_encryption_label_encryption_encrypted": "Verschlüsselt",
 

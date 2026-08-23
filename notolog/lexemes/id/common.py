@@ -60,6 +60,9 @@ lexemes = {
     "dialog_encrypt_file_rewrite_existing_title": "Timpa berkas yang ada",
     "dialog_encrypt_file_rewrite_existing_text": "Timpa berkas yang ada \"{file_path}\"?",
 
+    "dialog_encrypt_delete_source_title": "Hapus berkas sumber yang tidak terenkripsi",
+    "dialog_encrypt_delete_source_text": "Berkas terenkripsi berhasil dibuat. Hapus berkas sumber yang tidak terenkripsi \"{file_name}\"?",
+
     "dialog_decrypt_file_title": "Dekripsi berkas",
     "dialog_decrypt_file_text": "Dekripsi berkas \"{file_name}\"?",
     "decrypt_file_warning_file_is_not_encrypted": "Berkas tidak dienkripsi!",

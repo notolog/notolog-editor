@@ -62,6 +62,9 @@ lexemes = {
     "dialog_encrypt_file_rewrite_existing_title": "არსებული ფაილის გადაწერა",
     "dialog_encrypt_file_rewrite_existing_text": "გადაწერეთ არსებული ფაილი \"{file_path}\"?",
 
+    "dialog_encrypt_delete_source_title": "დაუშიფრავი საწყისი ფაილის წაშლა",
+    "dialog_encrypt_delete_source_text": "დაშიფრული ფაილი წარმატებით შეიქმნა. წაიშალოს დაუშიფრავი საწყისი ფაილი \"{file_name}\"?",
+
     "dialog_decrypt_file_title": "ფაილის დეშიფვრა",
     "dialog_decrypt_file_text": "დეშიფრეთ ფაილი \"{file_name}\"?",
     "decrypt_file_warning_file_is_not_encrypted": "ფაილი არ არის დაშიფრული!",

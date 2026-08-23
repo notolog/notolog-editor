@@ -8,10 +8,7 @@ lexemes = {
     "statusbar_next_path_accessible_name": "გადასვლა შემდეგ ფაილზე ისტორიაში",
     "statusbar_litter_bin_label": "ნაგავსაყრელი",
     "statusbar_litter_bin_accessible_name": "ნაგავსაყრელის შიგთავსის ჩვენება",
-
-    "statusbar_save_progress_label": b'\xf0\x9f\x92\xbe',
-    "statusbar_encryption_symbol_encrypted_label": b'\xf0\x9f\x94\x92',
-    "statusbar_encryption_symbol_unencrypted_label": b'\xf0\x9f\x94\x93',
+    "statusbar_file_path_copy_tooltip": "დააწკაპუნეთ დასაკოპირებლად: {file_path}",
 
     "statusbar_mode_label_mode_view": "ნახვის რეჟიმი",
     "statusbar_mode_label_mode_edit": "რედაქტირების რეჟიმი",
@@ -20,7 +17,6 @@ lexemes = {
     "statusbar_source_label_source_markdown": "Markdown",
     "statusbar_source_label_source_html": "HTML",
 
-    "statusbar_encryption_label": "{encryption} {icon}",
     "statusbar_encryption_label_encryption_plain": "უშიფრადი",
     "statusbar_encryption_label_encryption_encrypted": "დაშიფრული",
 

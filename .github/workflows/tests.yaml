@@ -14,6 +14,11 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
   build:
@@ -24,12 +29,12 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
-        python-version: [ "3.10", "3.11", "3.12", "3.13", "3.x" ]
+        python-version: [ "3.10", "3.11", "3.12", "3.13", "3.14" ]
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -87,22 +92,28 @@ jobs:
       run: |
         python -c "import os; print('\n'.join(os.listdir('.')))"
 
-    - name: Test with pytest and coverage report
-      if: matrix.os == 'ubuntu-latest'
+    - name: Test with pytest and coverage report (Codecov job)
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
       run: |
-        # Skip testing UI
+        # Skip UI tests on Ubuntu (headless environment limitations)
+        pytest tests/ --ignore=tests/ui_tests/ --cov=notolog --cov-report=term --cov-report=xml
+
+    - name: Test with pytest and coverage report (Ubuntu)
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version != '3.12'
+      run: |
+        # Skip UI tests on Ubuntu (headless environment limitations)
         pytest tests/ --ignore=tests/ui_tests/ --cov=notolog --cov-report=term
 
-    - name: Test with pytest and coverage report
+    - name: Test with pytest and coverage report (Windows/macOS)
       if: matrix.os != 'ubuntu-latest'
       run: |
         pytest tests/ --cov=notolog --cov-report=term
 
-    # pytest tests/ --cov=notolog  --cov-report=term-missing --cov-report=html
-
-    # - name: Run coverage
-    #  # available after pytest --cov=...
-    #  run: |
-    #    coverage run -m pytest tests/
-    #    coverage report -i
-    #    coverage html -i
+    - name: Upload coverage to Codecov
+      if: matrix.python-version == '3.12' && matrix.os == 'ubuntu-latest'
+      uses: codecov/codecov-action@e53489f4d376d79066609109e7a95a29eb3740b1 # v7.0.0
+      with:
+        files: ./coverage.xml
+        disable_search: true
+        fail_ci_if_error: true
+        use_oidc: true

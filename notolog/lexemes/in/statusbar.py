@@ -8,10 +8,7 @@ lexemes = {
     "statusbar_next_path_accessible_name": "इतिहास में अगली फ़ाइल पर जाएं",
     "statusbar_litter_bin_label": "कचरा डिब्बा",
     "statusbar_litter_bin_accessible_name": "कचरा डिब्बे की सामग्री दिखाएं",
-
-    "statusbar_save_progress_label": b'\xf0\x9f\x92\xbe',
-    "statusbar_encryption_symbol_encrypted_label": b'\xf0\x9f\x94\x92',
-    "statusbar_encryption_symbol_unencrypted_label": b'\xf0\x9f\x94\x93',
+    "statusbar_file_path_copy_tooltip": "कॉपी करने के लिए क्लिक करें: {file_path}",
 
     "statusbar_mode_label_mode_view": "देखें मोड",
     "statusbar_mode_label_mode_edit": "संपादन मोड",
@@ -20,7 +17,6 @@ lexemes = {
     "statusbar_source_label_source_markdown": "मार्कडाउन",
     "statusbar_source_label_source_html": "एचटीएमएल",
 
-    "statusbar_encryption_label": "{encryption} {icon}",
     "statusbar_encryption_label_encryption_plain": "सादा",
     "statusbar_encryption_label_encryption_encrypted": "एन्क्रिप्टेड",
 

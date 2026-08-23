@@ -39,6 +39,9 @@ coverage.xml
 .pytest_cache/
 .mypy_cache/
 
+# Local application data
+/images/
+
 # IDE directories
 .idea/
 .vscode/

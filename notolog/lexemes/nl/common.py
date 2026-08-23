@@ -60,6 +60,9 @@ lexemes = {
     "dialog_encrypt_file_rewrite_existing_title": "Bestaand bestand overschrijven",
     "dialog_encrypt_file_rewrite_existing_text": "Bestaand bestand \"{file_path}\" overschrijven?",
 
+    "dialog_encrypt_delete_source_title": "Niet-versleuteld bronbestand verwijderen",
+    "dialog_encrypt_delete_source_text": "Het versleutelde bestand is aangemaakt. Niet-versleuteld bronbestand \"{file_name}\" verwijderen?",
+
     "dialog_decrypt_file_title": "Bestand ontsleutelen",
     "dialog_decrypt_file_text": "Bestand \"{file_name}\" ontsleutelen?",
     "decrypt_file_warning_file_is_not_encrypted": "Het bestand is niet versleuteld!",

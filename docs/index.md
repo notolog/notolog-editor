@@ -34,7 +34,7 @@ Notolog is a privacy-focused Markdown editor that combines:
 
 | Requirement | Minimum | Recommended |
 |-------------|---------|-------------|
-| Python | 3.10 | 3.11-3.12 (3.13 for ONNX GenAI) |
+| Python | 3.10 | 3.14 |
 | OS | Windows 10, macOS 10.14, Ubuntu 20.04 | Latest stable versions |
 | RAM | 4 GB (base editor) | 8 GB (16+ GB for local 7B+ parameter LLMs) |
 | Storage | 100 MB (base) | 500 MB-4 GB (depends on local model files) |
@@ -72,4 +72,4 @@ Notolog is released under the [MIT License](https://github.com/notolog/notolog-e
 
 ---
 
-*Documentation version: 1.2.0*
+*Documentation version: 1.2.1*

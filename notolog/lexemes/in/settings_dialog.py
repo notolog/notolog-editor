@@ -27,6 +27,11 @@ lexemes = {
     "general_app_font_size_label": "फ़ॉन्ट आकार: {size} पीटी",
     "general_app_font_size_slider_accessible_description": "ऐप का वैश्विक फ़ॉन्ट आकार समायोजित करें",
 
+    "general_file_deletion_label": "फ़ाइल हटाना",
+    "general_reversible_file_deletion_checkbox": "फ़ाइलों को पुनर्स्थापित करने योग्य तरीके से हटाएँ",
+    "general_reversible_file_deletion_checkbox_accessible_description":
+        ".del एक्सटेंशन जोड़कर हटाई गई फ़ाइलों को Notolog की टोकरी में ले जाएँ",
+
     "general_statusbar_label": "स्थिति पट्टी",
     "general_statusbar_show_global_cursor_position_checkbox": "ग्लोबल कर्सर स्थिति दिखाएं",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":

@@ -62,6 +62,9 @@ lexemes = {
     "dialog_encrypt_file_rewrite_existing_title": "Fasciculum exsistentem rescribere",
     "dialog_encrypt_file_rewrite_existing_text": "Fasciculum exsistentem \"{file_path}\" rescribere?",
 
+    "dialog_encrypt_delete_source_title": "Fasciculum fontis non cryptatum delere",
+    "dialog_encrypt_delete_source_text": "Fasciculus cryptatus feliciter creatus est. Fasciculum fontis non cryptatum \"{file_name}\" delere?",
+
     "dialog_decrypt_file_title": "Fasciculum decodicare",
     "dialog_decrypt_file_text": "Fasciculum \"{file_name}\" decodicare?",
     "decrypt_file_warning_file_is_not_encrypted": "Fasciculus non est codicatus!",

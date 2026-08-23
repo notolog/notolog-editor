@@ -60,6 +60,9 @@ lexemes = {
     "dialog_encrypt_file_rewrite_existing_title": "Rewrite existing file",
     "dialog_encrypt_file_rewrite_existing_text": "Rewrite existing file \"{file_path}\"?",
 
+    "dialog_encrypt_delete_source_title": "Delete unencrypted source",
+    "dialog_encrypt_delete_source_text": "The encrypted file was created successfully. Delete the unencrypted source file \"{file_name}\"?",
+
     "dialog_decrypt_file_title": "Decrypt file",
     "dialog_decrypt_file_text": "Decrypt file \"{file_name}\"?",
     "decrypt_file_warning_file_is_not_encrypted": "The file is not encrypted!",

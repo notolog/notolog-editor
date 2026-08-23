@@ -47,7 +47,6 @@ from ...modules.modules import Modules
 from ...modules.base_ai_core import BaseAiCore
 from ...enums.enum_base import EnumBase
 
-from qasync import asyncClose
 from datetime import datetime
 
 import markdown
@@ -329,6 +328,9 @@ class AIAssistant(QDialog):
         self.send_button.clicked.connect(self.send_request)
         buttons_layout.addWidget(self.send_button, 1)
 
+        # Icon-only buttons otherwise get a shorter platform-dependent size hint.
+        self.save_history_button.setFixedHeight(self.send_button.sizeHint().height())
+
         self.layout.addWidget(buttons_widget)
 
         # Set the main layout for the dialog
@@ -588,7 +590,7 @@ class AIAssistant(QDialog):
                                                        EnumMessageType.USER_INPUT)
             # Either a multi-turn or stateless prompt
             user_prompt = prompt_manager.get_prompt(multi_turn=self.settings.ai_config_multi_turn_dialogue)
-            self.logger.debug(f'The prompt:\n{user_prompt}\n')
+            self.logger.debug('AI prompt prepared')
             self.set_status_waiting()  # Pending status
             # Obtain new message id
             response_msg_id = self.gen_next_message_id()
@@ -743,8 +745,7 @@ class AIAssistant(QDialog):
         # Scroll to the bottom of the messages area to show the latest content
         self.messages_scroll.setValue(maximum)
 
-    @asyncClose
-    async def closeEvent(self, event):
+    def closeEvent(self, event):
         self.logger.info('Closing AI Assistant')
         self.dialog_closed.emit()
         self.deleteLater()

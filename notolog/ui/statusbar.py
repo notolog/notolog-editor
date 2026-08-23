@@ -21,6 +21,7 @@ from PySide6.QtGui import QColor
 from PySide6.QtWidgets import QStatusBar, QWidget, QHBoxLayout, QLabel, QPushButton, QSizePolicy
 
 import logging
+import os
 from typing import TYPE_CHECKING, Any, Dict, List
 
 from . import AppConfig
@@ -28,8 +29,10 @@ from . import Settings
 from . import Lexemes
 from . import ThemeHelper
 from . import TooltipHelper
+from . import ClipboardHelper
 
 from .sort_filter_proxy_model import SortFilterProxyModel
+from .file_system_model import get_file_type_icon
 from .vertical_line_spacer import VerticalLineSpacer
 
 from ..file_history_manager import FileHistoryManager
@@ -41,6 +44,7 @@ if TYPE_CHECKING:
 class StatusBar(QStatusBar):
 
     BASE_ICON_SIZE = 64  # type: int
+    MAX_FILE_NAME_WIDTH = 180  # pixels
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -69,14 +73,18 @@ class StatusBar(QStatusBar):
         self._elements = {}  # Label storage
 
         self.labels_layout = None  # type: Union[QHBoxLayout, None]
+        self.file_icon_label = None  # type: Union[QPushButton, None]
+        self.file_label = None  # type: Union[QLabel, None]
         self.data_size_label = None  # type: Union[QLabel, None]
         self.mode_label = None  # type: Union[QLabel, None]
         self.save_progress_label = None  # type: Union[QLabel, None]
+        self.encryption_icon_label = None  # type: Union[QLabel, None]
         self.encryption_label = None  # type: Union[QLabel, None]
         self.source_label = None  # type: Union[QLabel, None]
         self.cursor_label = None  # type: Union[QLabel, None]
 
         self.warning_label = None  # type: Union[QPushButton, None]
+        self._encryption_encrypted = False
 
         self.init()
 
@@ -110,6 +118,24 @@ class StatusBar(QStatusBar):
         self.addPermanentWidget(labels_container)
 
     def add_labels(self):
+        # Current file name remains ordinary status text.
+        self.file_label = QLabel(self)
+        self.file_label.setFont(self.font())
+        self.file_label.setObjectName('statusbar_file_label')
+        self.file_label.setMaximumWidth(self.MAX_FILE_NAME_WIDTH)
+        self.labels_layout.addWidget(self.file_label)
+
+        # The adjacent file-type icon copies the full path.
+        self.file_icon_label = QPushButton(self)
+        self.file_icon_label.setFlat(True)
+        self.file_icon_label.setFocusPolicy(Qt.FocusPolicy.TabFocus)
+        self.file_icon_label.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.file_icon_label.setObjectName('statusbar_file_icon_label')
+        self.file_icon_label.clicked.connect(self.copy_file_path)
+        self.file_icon_container = self._add_compact_icon(self.file_icon_label)
+
+        self.labels_layout.addWidget(VerticalLineSpacer())
+
         # File size label
         self.data_size_label = QLabel(self)
         self.data_size_label.setFont(self.font())
@@ -119,8 +145,9 @@ class StatusBar(QStatusBar):
         self.save_progress_label = QLabel(self)
         self.save_progress_label.setFont(self.font())
         self.save_progress_label.setVisible(False)
-        self.save_progress_label.setText(self.lexemes.get('statusbar_save_progress_label'))
-        self.labels_layout.addWidget(self.save_progress_label)
+        self._set_compact_label_icon(self.save_progress_label, 'floppy2.svg')
+        self.save_progress_container = self._add_compact_icon(self.save_progress_label)
+        self.save_progress_container.setVisible(False)
 
         self.labels_layout.addWidget(VerticalLineSpacer())
 
@@ -135,10 +162,14 @@ class StatusBar(QStatusBar):
 
         self.labels_layout.addWidget(VerticalLineSpacer())
 
-        # File encryption label
+        # File encryption label and icon
         self.encryption_label = QLabel(self)
         self.encryption_label.setFont(self.font())
         self.labels_layout.addWidget(self.encryption_label)
+
+        self.encryption_icon_label = QLabel(self)
+        self.encryption_icon_label.setFont(self.font())
+        self.encryption_icon_container = self._add_compact_icon(self.encryption_icon_label)
 
         self.labels_layout.addWidget(VerticalLineSpacer())
 
@@ -163,9 +194,13 @@ class StatusBar(QStatusBar):
         icon = self.theme_helper.get_icon(theme_icon='exclamation-triangle-fill.svg',
                                           color=QColor(self.theme_helper.get_color('statusbar_warning_icon_color')))
         self.warning_label.setIcon(icon)
-        self.labels_layout.addWidget(self.warning_label)
+        self._size_compact_button(self.warning_label)
+        self.warning_container = self._add_compact_icon(self.warning_label)
+        self.warning_container.setVisible(False)
         self.warning_label.clicked.connect(
             lambda: TooltipHelper.show_tooltip(widget=self.warning_label, text=self.warning_label.toolTip()))
+
+        self.set_file_path(self.settings.file_path)
 
     def get_statusbar_icons(self) -> List[Dict[str, Any]]:
         """
@@ -363,11 +398,13 @@ class StatusBar(QStatusBar):
             except RuntimeError as e:
                 # Handle specific errors, e.g., object already deleted
                 self.logger.warning(f"Error occurred {e}")
+            self.set_file_path(getattr(self, '_file_path', ''))
 
         if 'app_font_size' in data:
             try:
                 self.refresh_element_fonts()
                 self.draw_icons()
+                self.refresh_compact_icons()
             except RuntimeError as e:
                 # Handle specific errors, e.g., object already deleted
                 self.logger.warning(f"Error occurred {e}")
@@ -375,6 +412,10 @@ class StatusBar(QStatusBar):
         if 'app_language' in data:
             # Reload lexemes for the selected language and scope
             self.lexemes = Lexemes(self.settings.app_language, default_scope='statusbar')
+            self.set_file_path(getattr(self, '_file_path', ''))
+
+        if 'file_path' in data:
+            self.set_file_path(data['file_path'])
 
         if {'show_navigation_arrows', 'ui_init_ts'} & data.keys():
             # Update the status bar buttons
@@ -383,6 +424,7 @@ class StatusBar(QStatusBar):
 
     def refresh_element_fonts(self, parent=None):
         if parent is None:
+            self.setFont(self.parent.font())
             parent = self
         for widget in parent.children():
             if hasattr(widget, 'setFont'):
@@ -408,6 +450,7 @@ class StatusBar(QStatusBar):
                 self.settings.show_deleted_files = False
 
     def show_warning(self, visible: bool = False, tooltip: str = None):
+        self.warning_container.setVisible(visible)
         if visible:
             self.warning_label.setVisible(True)
             if tooltip:
@@ -415,6 +458,77 @@ class StatusBar(QStatusBar):
         else:
             self.warning_label.setVisible(False)
             self.warning_label.setToolTip('')
+
+    def show_save_progress(self, visible: bool) -> None:
+        """Toggle the save icon and its layout container together."""
+        self.save_progress_label.setVisible(visible)
+        self.save_progress_container.setVisible(visible)
+
+    def set_file_path(self, file_path: str = '') -> None:
+        """Update the compact current-file icon and text."""
+        self._file_path = str(file_path or '')
+        file_name = os.path.basename(self._file_path)
+        metrics = self.file_label.fontMetrics()
+        self.file_label.setText(metrics.elidedText(
+            file_name, Qt.TextElideMode.ElideMiddle, self.MAX_FILE_NAME_WIDTH))
+        self.file_label.setAccessibleName(file_name)
+        self.file_label.setVisible(bool(self._file_path))
+
+        icon_color = QColor(self.theme_helper.get_color('statusbar_icon_color_default'))
+        self.file_icon_label.setIcon(get_file_type_icon(self._file_path, self.theme_helper, color=icon_color))
+        self._size_compact_button(self.file_icon_label)
+        self.file_icon_label.setToolTip(self.lexemes.get(
+            'statusbar_file_path_copy_tooltip', file_path=self._file_path))
+        self.file_icon_label.setAccessibleName(file_name)
+        self.file_icon_label.setVisible(bool(self._file_path))
+        self.file_icon_container.setVisible(bool(self._file_path))
+
+    def set_encryption_icon(self, encrypted: bool) -> None:
+        """Render encryption state without relying on platform emoji glyphs."""
+        self._encryption_encrypted = encrypted
+        self._set_compact_label_icon(
+            self.encryption_icon_label,
+            'shield-lock-fill.svg' if encrypted else 'shield-lock.svg',
+        )
+
+    def refresh_compact_icons(self) -> None:
+        """Resize compact status icons after an application font change."""
+        self.set_file_path(getattr(self, '_file_path', ''))
+        self._set_compact_label_icon(self.save_progress_label, 'floppy2.svg')
+        self.set_encryption_icon(self._encryption_encrypted)
+        self._size_compact_button(self.warning_label)
+
+    def _compact_icon_size(self) -> int:
+        return max(10, int(self.fontMetrics().height() * 0.6))
+
+    def _add_compact_icon(self, widget: QWidget) -> QWidget:
+        """Place a compact right-side icon one pixel below the text baseline."""
+        container = QWidget(self)
+        layout = QHBoxLayout(container)
+        layout.setContentsMargins(0, 1, 0, 0)
+        layout.setSpacing(0)
+        layout.addWidget(widget)
+        self.labels_layout.addWidget(container)
+        return container
+
+    def _size_compact_button(self, button: QPushButton) -> None:
+        icon_size = self._compact_icon_size()
+        button.setIconSize(QSize(icon_size, icon_size))
+        button.setFixedSize(QSize(icon_size, icon_size))
+
+    def _set_compact_label_icon(self, label: QLabel, theme_icon: str) -> None:
+        icon_size = self._compact_icon_size()
+        icon = self.theme_helper.get_icon(
+            theme_icon=theme_icon,
+            color=QColor(self.theme_helper.get_color('statusbar_icon_color_default')),
+        )
+        label.setPixmap(icon.pixmap(QSize(icon_size, icon_size)))
+        label.setFixedSize(QSize(icon_size, icon_size))
+
+    def copy_file_path(self) -> None:
+        """Copy the complete current file path to the system clipboard."""
+        if getattr(self, '_file_path', ''):
+            ClipboardHelper.set_text(self._file_path)
 
     def __getitem__(self, name) -> QLabel:
         """

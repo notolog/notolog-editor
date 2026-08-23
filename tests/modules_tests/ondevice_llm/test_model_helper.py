@@ -37,7 +37,8 @@ class TestModelHelper:
     """Tests for OnDevice LLM ModelHelper class."""
 
     @pytest.fixture(scope="class")
-    def model_helper_class(self):
+    @classmethod
+    def model_helper_class(cls):
         """Import ModelHelper only when tests are not skipped."""
         from notolog.modules.ondevice_llm.model_helper import ModelHelper
         return ModelHelper

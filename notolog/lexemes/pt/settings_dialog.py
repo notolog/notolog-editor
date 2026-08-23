@@ -27,6 +27,11 @@ lexemes = {
     "general_app_font_size_label": "Tamanho da fonte: {size}pt",
     "general_app_font_size_slider_accessible_description": "Ajustar o tamanho da fonte global do aplicativo",
 
+    "general_file_deletion_label": "Exclusão de arquivos",
+    "general_reversible_file_deletion_checkbox": "Excluir arquivos de forma reversível",
+    "general_reversible_file_deletion_checkbox_accessible_description":
+        "Mover arquivos excluídos para a lixeira do Notolog adicionando uma extensão .del",
+
     "general_statusbar_label": "Barra de Status",
     "general_statusbar_show_global_cursor_position_checkbox": "Mostrar Posição Global do Cursor",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":

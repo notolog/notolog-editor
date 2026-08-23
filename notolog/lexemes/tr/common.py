@@ -60,6 +60,9 @@ lexemes = {
     "dialog_encrypt_file_rewrite_existing_title": "Mevcut dosyayı yeniden yaz",
     "dialog_encrypt_file_rewrite_existing_text": "\"{file_path}\" mevcut dosyayı yeniden yaz?",
 
+    "dialog_encrypt_delete_source_title": "Şifrelenmemiş kaynak dosyayı sil",
+    "dialog_encrypt_delete_source_text": "Şifrelenmiş dosya başarıyla oluşturuldu. Şifrelenmemiş \"{file_name}\" kaynak dosyası silinsin mi?",
+
     "dialog_decrypt_file_title": "Dosyanın Şifresini Çöz",
     "dialog_decrypt_file_text": "\"{file_name}\" dosyasının şifresini çöz?",
     "decrypt_file_warning_file_is_not_encrypted": "Dosya şifreli değil!",

@@ -144,19 +144,29 @@ def main():
     loop = QEventLoop(app)
     asyncio.set_event_loop(loop)
 
-    app_close_event = asyncio.Event()
-    app.aboutToQuit.connect(app_close_event.set)
+    editor = None
+    startup_error = None
 
-    # Start up the editor
-    editor = NotologEditor(screen=screen)
-    editor.show()
+    def start_editor():
+        nonlocal editor, startup_error
+        try:
+            # Initialize the editor once qasync is running.
+            editor = NotologEditor(screen=screen)
+            editor.show()
+        except BaseException as exc:
+            startup_error = exc
+            app.quit()
 
-    with loop:
-        """
-        Contains run_forever() which is contain app.exec(),
-        No need to run sys.exit(app.exec()) in this case.
-        """
-        loop.run_until_complete(app_close_event.wait())
+    try:
+        with loop:
+            # Qt owns loop termination; awaiting aboutToQuit races with dispatcher shutdown.
+            loop.call_soon(start_editor)
+            loop.run_forever()
+
+            if startup_error is not None:
+                raise startup_error
+    finally:
+        asyncio.set_event_loop(None)
 
 
 if __name__ == '__main__':

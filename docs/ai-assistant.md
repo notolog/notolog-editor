@@ -80,7 +80,7 @@ Run AI models locally using ONNX Runtime GenAI.
 
 ### Requirements
 
-- Python 3.10-3.13 (ONNX GenAI limitation)
+- Python 3.10-3.14
 - 8GB+ RAM (16GB recommended)
 - ONNX format model files
 

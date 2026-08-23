@@ -37,6 +37,7 @@ from unittest.mock import Mock, MagicMock
 from types import SimpleNamespace
 
 import pytest
+import asyncio
 
 import os
 
@@ -128,6 +129,19 @@ class TestNotologEditor:
         mock_method1.assert_not_called()
         # Assert that the method was called once with the param(s)
         mock_method2.assert_called_once_with(os.path.normpath('%s/README.md') % test_file_parent_dir)
+
+    @pytest.mark.asyncio
+    async def test_finish_shutdown_cancels_and_drains_tasks(self, mocker, test_obj_notolog_editor):
+        blocker = asyncio.create_task(asyncio.Event().wait(), name='test-blocker')
+        current_task = asyncio.current_task()
+        mocker.patch.object(asyncio, 'all_tasks', return_value={current_task, blocker})
+        close = mocker.patch.object(test_obj_notolog_editor, 'close')
+
+        await test_obj_notolog_editor.finish_shutdown()
+
+        assert blocker.cancelled()
+        assert test_obj_notolog_editor._shutdown_complete is True
+        close.assert_called_once_with()
 
     @pytest.mark.parametrize(
         "test_params_fixture, test_exp_params_fixture",
@@ -454,6 +468,116 @@ class TestNotologEditor:
             mock_message_box.assert_called_once()
             # Checks if the method was called with the parameter at least once
             mock_lexemes_get.assert_any_call('save_active_file_error_occurred')
+
+    def test_delete_file_reversibly(self, mocker, test_obj_notolog_editor, tmp_path):
+        source_path = tmp_path / 'private-note.md'
+        source_path.write_text('plaintext', encoding='utf-8')
+        test_obj_notolog_editor.settings = SimpleNamespace(reversible_file_deletion=True)
+        mocker.patch.object(test_obj_notolog_editor, 'get_current_file_path', return_value='another-file.md')
+
+        assert test_obj_notolog_editor.delete_file(str(source_path)) is True
+        assert not source_path.exists()
+        assert (tmp_path / 'private-note.md.del').read_text(encoding='utf-8') == 'plaintext'
+
+    def test_encryption_check_reads_only_file_header(self, mocker, test_obj_notolog_editor):
+        encrypted_header = FileHeader().get_new(is_enc=True)
+        read_header = mocker.patch.object(FileHeader, 'read', return_value=repr(encrypted_header))
+        load_file = mocker.patch.object(FileHeader, 'load_file')
+
+        assert test_obj_notolog_editor.is_file_encrypted('/notes/large.enc') is True
+        read_header.assert_called_once_with('/notes/large.enc')
+        load_file.assert_not_called()
+
+    def test_encrypted_save_never_falls_back_to_plaintext(self, mocker, test_obj_notolog_editor):
+        file_path = '/notes/private.enc'
+        mocker.patch.object(test_obj_notolog_editor, 'get_mode', return_value=Mode.EDIT)
+        mocker.patch.object(test_obj_notolog_editor, 'get_encryption', return_value=Encryption.ENCRYPTED)
+        mocker.patch.object(test_obj_notolog_editor, 'get_current_file_path', return_value=file_path)
+        mocker.patch.object(test_obj_notolog_editor, 'store_doc_cursor_pos')
+        mocker.patch.object(os.path, 'exists', return_value=True)
+        mocker.patch.object(os, 'access', return_value=True)
+        mocker.patch.object(QTimer, 'singleShot')
+        mocker.patch.object(test_obj_notolog_editor, 'toggle_save_timer')
+        MessageBox.__new__ = MagicMock(return_value=None)
+
+        edit_widget = MagicMock(spec=EditWidget)
+        edit_widget.toPlainText.return_value = 'updated plaintext'
+        mocker.patch.object(test_obj_notolog_editor, 'get_edit_widget', return_value=edit_widget)
+        test_obj_notolog_editor.content = 'old plaintext'
+        test_obj_notolog_editor.estate = SimpleNamespace(allow_save_empty=None)
+
+        header = MagicMock(spec=FileHeader)
+        header.is_valid.return_value = True
+        header.get_enc_param.side_effect = lambda key: {'slt': 'salt', 'itr': 1024}[key]
+        test_obj_notolog_editor.header = header
+        encrypt_helper = MagicMock(spec=EncHelper)
+        encrypt_helper.encrypt_data.return_value = None
+        mocker.patch.object(test_obj_notolog_editor, 'get_encrypt_helper', return_value=encrypt_helper)
+        save_file_content = mocker.patch.object(test_obj_notolog_editor, 'save_file_content')
+
+        assert test_obj_notolog_editor.save_active_file() is False
+        save_file_content.assert_not_called()
+        header.pack.assert_not_called()
+
+    def test_delete_file_permanently(self, mocker, test_obj_notolog_editor, tmp_path):
+        source_path = tmp_path / 'private-note.md'
+        source_path.write_text('plaintext', encoding='utf-8')
+        test_obj_notolog_editor.settings = SimpleNamespace(reversible_file_deletion=False)
+        mocker.patch.object(test_obj_notolog_editor, 'get_current_file_path', return_value='another-file.md')
+
+        assert test_obj_notolog_editor.delete_file(str(source_path)) is True
+        assert not source_path.exists()
+        assert not (tmp_path / 'private-note.md.del').exists()
+
+    def test_delete_encrypted_source_uses_global_policy(self, mocker, test_obj_notolog_editor):
+        test_obj_notolog_editor.settings = SimpleNamespace(reversible_file_deletion=True)
+        delete_file = mocker.patch.object(test_obj_notolog_editor, 'delete_file', return_value=True)
+        close_dialog = Mock()
+
+        test_obj_notolog_editor.delete_encrypted_source_dialog_callback(close_dialog, '/notes/private.md')
+
+        delete_file.assert_called_once_with('/notes/private.md')
+        close_dialog.assert_called_once()
+
+    @pytest.mark.parametrize(
+        'encrypted_file_opened, reversible_deletion, expected_text_lexeme',
+        [
+            (True, True, 'dialog_encrypt_delete_source_text'),
+            (True, False, 'dialog_file_delete_completely_text'),
+            (False, True, None),
+        ],
+    )
+    def test_encrypt_offers_source_deletion_only_after_verified_open(
+            self, mocker, test_obj_notolog_editor, encrypted_file_opened,
+            reversible_deletion, expected_text_lexeme):
+        source_path = '/notes/private.md'
+        encrypted_path = f'{source_path}.enc'
+        header = MagicMock(spec=FileHeader)
+        header.is_valid.return_value = True
+        header.is_file_encrypted.return_value = False
+        header.get_enc_param.side_effect = lambda key: {'slt': 'salt', 'itr': 1, 'hint': ''}[key]
+        header.pack.return_value = 'encrypted-content'
+        mocker.patch.object(FileHeader, 'load_file', return_value=(header, 'plaintext'))
+        mocker.patch.object(os.path, 'isfile', side_effect=lambda path: path == source_path)
+        mocker.patch('notolog.helpers.file_helper.is_file_openable', return_value=True)
+        encrypt_helper = MagicMock(spec=EncHelper)
+        encrypt_helper.encrypt_data.return_value = b'encrypted'
+        mocker.patch.object(test_obj_notolog_editor, 'get_encrypt_helper', return_value=encrypt_helper)
+        mocker.patch.object(test_obj_notolog_editor, 'save_file_content', return_value=True)
+        mocker.patch.object(test_obj_notolog_editor, 'load_file', return_value=encrypted_file_opened)
+        common_dialog = mocker.patch.object(test_obj_notolog_editor, 'common_dialog')
+        close_dialog = Mock()
+        test_obj_notolog_editor.enc_password = None
+        test_obj_notolog_editor.settings = SimpleNamespace(reversible_file_deletion=reversible_deletion)
+
+        test_obj_notolog_editor.encrypt_file_dialog_callback(
+            close_dialog, source_path, encrypted_path)
+
+        close_dialog.assert_called_once()
+        assert common_dialog.call_count == int(encrypted_file_opened)
+        if expected_text_lexeme:
+            test_obj_notolog_editor.lexemes.get.assert_any_call(
+                name=expected_text_lexeme, file_name='private.md')
 
     @pytest.mark.parametrize(
         "test_exp_params_fixture",

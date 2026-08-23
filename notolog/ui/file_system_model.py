@@ -29,6 +29,29 @@ from . import ThemeHelper
 from ..helpers import file_helper
 
 
+def get_file_type_icon(file_path: str, theme_helper: ThemeHelper, color: QColor = None):
+    """Return the same themed icon used by the file tree for a file path."""
+    suffix = os.path.splitext(file_path)[1].lstrip('.').lower()
+    icon_name = 'file-earmark.svg'
+    color_name = 'main_tree_file_type_default'
+
+    if suffix == 'md':
+        icon_name, color_name = 'filetype-md.svg', 'main_tree_file_type_md'
+    elif suffix == 'txt':
+        icon_name, color_name = 'filetype-txt.svg', 'main_tree_file_type_txt'
+    elif suffix == 'html':
+        icon_name, color_name = 'filetype-html.svg', 'main_tree_file_type_html'
+    elif suffix == 'enc':
+        icon_name, color_name = 'file-earmark-lock2.svg', 'main_tree_file_type_enc'
+    elif file_helper.remove_trailing_numbers(suffix) == 'del':
+        icon_name, color_name = 'file-earmark-x.svg', 'main_tree_file_type_del'
+
+    return theme_helper.get_icon(
+        theme_icon=icon_name,
+        color=color if color is not None else QColor(theme_helper.get_color(color_name)),
+    )
+
+
 class FileSystemModel(QFileSystemModel):
     def __init__(self, *args, **kwargs):
         super(FileSystemModel, self).__init__(*args, **kwargs)
@@ -109,35 +132,11 @@ class FileSystemModel(QFileSystemModel):
             """
             # TODO more variants
             if os.path.isfile(info.filePath()):
-                """
-                Match case statement works for Python 3.10 upwards
-                match info.suffix():
-                    case 'md':
-                        return ...
-                Most common switch case
-                """
-                if info.suffix() == 'md':
-                    color = self.theme_helper.get_color('main_tree_file_type_md')
-                    return self.theme_helper.get_icon(theme_icon='filetype-md.svg', color=QColor(color))
-                elif info.suffix() == 'txt':
-                    color = self.theme_helper.get_color('main_tree_file_type_txt')
-                    return self.theme_helper.get_icon(theme_icon='filetype-txt.svg', color=QColor(color))
-                elif info.suffix() == 'html':
-                    color = self.theme_helper.get_color('main_tree_file_type_html')
-                    return self.theme_helper.get_icon(theme_icon='filetype-html.svg', color=QColor(color))
-                elif info.suffix() == 'enc':
-                    color = self.theme_helper.get_color('main_tree_file_type_enc')
-                    return self.theme_helper.get_icon(theme_icon='file-earmark-lock2.svg', color=QColor(color))
-                elif file_helper.remove_trailing_numbers(info.suffix()) == 'del':
-                    color = self.theme_helper.get_color('main_tree_file_type_del')
-                    return self.theme_helper.get_icon(theme_icon='file-earmark-x.svg', color=QColor(color))
-                else:
-                    color = self.theme_helper.get_color('main_tree_file_type_default')
-                    return self.theme_helper.get_icon(theme_icon='file-earmark.svg', color=QColor(color))
+                return get_file_type_icon(info.filePath(), self.theme_helper)
             elif os.path.isdir(info.filePath()):
                 if info.fileName() == "..":
                     color = self.theme_helper.get_color('main_tree_folder_dotdot')
-                    return self.theme_helper.get_icon(theme_icon='folder-symlink.svg', color=QColor(color))
+                    return self.theme_helper.get_icon(theme_icon='folder2-open.svg', color=QColor(color))
                 else:
                     color = self.theme_helper.get_color('main_tree_folder')
                     return self.theme_helper.get_icon(theme_icon='folder.svg', color=QColor(color))

@@ -45,6 +45,7 @@ class TestSettings:
         assert test_obj_settings.ui_pos_y == 0
         assert test_obj_settings.file_path == ''
         assert test_obj_settings.toolbar_icons == 0
+        assert test_obj_settings.reversible_file_deletion is True
 
     def test_settings_setter_getter(self, test_obj_settings):
         # Reset settings to test
@@ -57,6 +58,7 @@ class TestSettings:
         test_obj_settings.ui_pos_y = 44
         test_obj_settings.file_path = os.path.normpath('test/path/file.txt')
         test_obj_settings.toolbar_icons = 8
+        test_obj_settings.reversible_file_deletion = False
 
         # Sync changes
         test_obj_settings.sync()
@@ -71,6 +73,7 @@ class TestSettings:
         assert settings.ui_pos_y == 44
         assert settings.file_path == os.path.normpath('test/path/file.txt')
         assert settings.toolbar_icons == 8
+        assert settings.reversible_file_deletion is False
 
         # Linux: /home/runner/.config/Notolog/notolog_editor_tests.conf (notolog_editor_qa.conf)
         # macOS: '/Users/runner/Library/Preferences/com.notolog.notolog_editor_tests.plist'
@@ -91,6 +94,7 @@ class TestSettings:
         assert settings.ui_pos_y == 0
         assert settings.file_path == ''
         assert settings.toolbar_icons == 0
+        assert settings.reversible_file_deletion is True
 
     def test_settings_clear(self, test_obj_settings: Settings):
         # Verify the test file's suffix

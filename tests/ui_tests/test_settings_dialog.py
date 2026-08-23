@@ -128,6 +128,12 @@ class TestSettingsDialog:
         assert ui_obj.tab_widget.currentWidget().objectName() == 'settings_dialog_tab_editor_config'
 
         checkboxes = ui_obj.findChildren(QCheckBox)
+        deletion_checkbox = ui_obj.findChild(
+            QCheckBox,
+            'settings_dialog_general_reversible_file_deletion_checkbox:reversible_file_deletion',
+        )
+        assert deletion_checkbox is not None
+        assert deletion_checkbox.isChecked() is True
         for checkbox in checkboxes:
             if isinstance(checkbox, QCheckBox):
                 # Parse the object name in case it contains a combination of lexeme and setting keys
@@ -163,6 +169,15 @@ class TestSettingsDialog:
         result = ui_obj.parse_object_name(str(test_object_name))
 
         assert result == exp_result
+
+    def test_format_temperature_lexeme(self, ui_obj: SettingsDialog):
+        label = QLabel(ui_obj)
+        label.setObjectName('settings_dialog_module_test_response_temperature_label')
+        slider = QSlider(ui_obj)
+        slider.setObjectName('settings_dialog_module_test_response_temperature:module_test_temperature')
+        slider.setValue(20)
+
+        assert ui_obj.format_widget_lexeme(label, 'Temperature: {temperature}') == 'Temperature: 0.2'
 
     @pytest.mark.parametrize(
         "test_params_fixture, test_exp_params_fixture",

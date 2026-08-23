@@ -38,6 +38,8 @@ class EncHelper:
     Remember to re-encrypt the source.
     """
     DEFAULT_ITERATIONS = 768000
+    MAX_ITERATIONS = 10000000
+    MAX_SALT_LENGTH = 4096
 
     def __init__(self, enc_password: EncPassword = None, salt: str = None, iterations: int = None):
         super().__init__()
@@ -69,6 +71,8 @@ class EncHelper:
             self.logger.warning('No iterations provided! Default value fallback')
             self.iterations = self.__class__.get_default_iterations()
 
+        self.iterations = self.validate_parameters(self.salt, self.iterations)
+
         # Derive key from password
         key = self.generate_key_from_password()
         encoded_key = base64.urlsafe_b64encode(key)
@@ -76,6 +80,21 @@ class EncHelper:
         self.cipher_suite = Fernet(encoded_key)
 
         self.key = None
+
+    @classmethod
+    def validate_parameters(cls, salt: bytes, iterations: int) -> int:
+        """Bound untrusted file-header KDF parameters before expensive work."""
+        if not salt or len(salt) > cls.MAX_SALT_LENGTH:
+            raise ValueError('Invalid encryption salt length')
+        if isinstance(iterations, bool):
+            raise ValueError('Invalid encryption iteration count')
+        try:
+            iterations = int(iterations)
+        except (TypeError, ValueError) as exc:
+            raise ValueError('Invalid encryption iteration count') from exc
+        if not 1 <= iterations <= cls.MAX_ITERATIONS:
+            raise ValueError('Encryption iteration count is outside the supported range')
+        return iterations
 
     def generate_key_from_password(self) -> bytes:
         """

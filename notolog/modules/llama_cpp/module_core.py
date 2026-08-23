@@ -100,6 +100,7 @@ class ModuleCore(BaseAiCore):
         self.model_helper = ModelHelper(model_path=model_path, n_ctx=context_window, chat_format=chat_format,
                                         n_gpu_layers=gpu_layers if gpu_layers is not None else None,
                                         search_options=search_options)
+        self.generator_task = None
 
         # Use for debugging asynchronous events if necessary:
         # asyncio.get_event_loop().set_debug(True)
@@ -394,13 +395,12 @@ class ModuleCore(BaseAiCore):
         This method ensures proper cleanup when generation is stopped,
         whether by user cancellation or completion.
         """
-        if self.generator_task and not self.generator_task.done():
+        task = self.generator_task
+        if task and task is not asyncio.current_task() and not task.done():
             self.logger.debug("Stopping generator task")
-            # Cancel the task
-            self.generator_task.cancel()
+            task.cancel()
             try:
-                # Wait for the task to complete cancellation
-                await self.generator_task
+                await task
             except asyncio.CancelledError:
                 # Expected when task is cancelled
                 self.logger.debug("Generator task cancelled successfully")
@@ -537,7 +537,8 @@ class ModuleCore(BaseAiCore):
              "name": "settings_dialog_module_llama_cpp_config_response_temperature_label",
              "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('module_llama_cpp_config_response_temperature_label',
-                                      temperature=self.settings.module_llama_cpp_response_temperature),
+                                      temperature=self.model_helper.convert_temperature(
+                                          self.settings.module_llama_cpp_response_temperature)),
              "callback": lambda obj: tab_module_llama_cpp_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # Slider to adjust the temperature setting
             {"type": QSlider, "args": [Qt.Orientation.Horizontal],

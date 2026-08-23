@@ -23,7 +23,7 @@ import json
 import re
 import os
 
-from typing import Any, Union, Iterable
+from typing import Any, Union
 from json import JSONDecodeError
 
 from .helpers import file_helper
@@ -73,9 +73,8 @@ class FileHeader:
         self.header['notolog.app'].update(self.generate_enc())
 
     def is_valid(self) -> bool:
-        return (self.header is not None
-                and isinstance(self.header, Iterable)
-                and 'notolog.app' in self.header)
+        return (isinstance(self.header, dict)
+                and isinstance(self.header.get('notolog.app'), dict))
 
     def is_file_encrypted(self) -> bool:
         if not self.is_valid():
@@ -85,9 +84,21 @@ class FileHeader:
 
     def validate_enc(self) -> None:
         """
-        Ensure that the header is valid and do migrations if necessary.
+        Validate untrusted encryption metadata and normalize its iteration count.
         """
-        pass
+        if not self.is_file_encrypted():
+            raise ValueError('Encryption metadata is missing')
+
+        enc = self.get_param('enc')
+        salt = enc.get('slt')
+        if not isinstance(salt, (str, bytes)):
+            raise ValueError('Invalid encryption salt')
+        salt_bytes = salt.encode('utf-8') if isinstance(salt, str) else salt
+        enc['itr'] = EncHelper.validate_parameters(salt_bytes, enc.get('itr'))
+
+        hint = enc.get('hint', '')
+        if not isinstance(hint, str):
+            raise ValueError('Invalid encryption password hint')
 
     def refresh(self) -> None:
         date_now = datetime.datetime.now()
@@ -186,8 +197,6 @@ class FileHeader:
             search = re.search(self.HEADER_TPL % '(.*?)', file_header_line, re.IGNORECASE)
             file_header_json = search.group(1) if search else None
             self.header = json.loads(file_header_json)
-            # Run migrations here if needed
-            self.validate_enc()
         except (TypeError, JSONDecodeError):
             self.logger.debug('File header is empty')
             return self, file_data

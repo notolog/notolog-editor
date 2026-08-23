@@ -51,13 +51,19 @@ The General tab contains app-wide configuration options.
 | Setting | Key | Default | Description |
 |---------|-----|---------|-------------|
 | Show Navigation Arrows | `show_navigation_arrows` | `true` | Show navigation arrows in the status bar |
-| Show Global Cursor Position | `show_global_cursor_position` | `true` | Display cursor position in status bar |
+| Show Global Cursor Position | `show_global_cursor_position` | `false` | Display cursor position in status bar |
 
 ### Font Size
 
 | Setting | Key | Default | Description |
 |---------|-----|---------|-------------|
 | Font Size | `app_font_size` | `12` | Global font size (range: 5-42) |
+
+### File Deletion
+
+| Setting | Key | Default | Description |
+|---------|-----|---------|-------------|
+| Delete files reversibly | `reversible_file_deletion` | `true` | Move deleted files to Notolog's litter bin by appending a `.del` extension instead of deleting them permanently |
 
 ---
 
@@ -148,4 +154,3 @@ notolog --help     # Show help message
 ---
 
 *For AI-specific configuration, see [AI Assistant Guide](ai-assistant.md).*
-

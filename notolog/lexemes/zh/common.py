@@ -60,6 +60,9 @@ lexemes = {
     "dialog_encrypt_file_rewrite_existing_title": "重写现有文件",
     "dialog_encrypt_file_rewrite_existing_text": "重写现有文件 \"{file_path}\"?",
 
+    "dialog_encrypt_delete_source_title": "删除未加密的源文件",
+    "dialog_encrypt_delete_source_text": "加密文件已成功创建。是否删除未加密的源文件 \"{file_name}\"？",
+
     "dialog_decrypt_file_title": "解密文件",
     "dialog_decrypt_file_text": "解密文件 \"{file_name}\"?",
     "decrypt_file_warning_file_is_not_encrypted": "文件未加密!",

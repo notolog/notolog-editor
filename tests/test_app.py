@@ -22,8 +22,6 @@ from notolog.app import main
 from notolog.app_config import AppConfig
 from notolog.notolog_editor import NotologEditor
 
-from types import SimpleNamespace
-
 import sys
 import pytest
 import logging
@@ -73,39 +71,22 @@ class TestApp:
         assert captured.out.strip() == exp_result
         assert excinfo.value.code == exp_exit_code
 
-    @pytest.mark.asyncio
-    async def test_app(self, test_obj_app_config: AppConfig, mocker, monkeypatch):
+    def test_app(self, test_obj_app_config: AppConfig, mocker, monkeypatch):
         # Simulate command-line arguments
         monkeypatch.setattr(sys, "argv", [])
-
-        # Create a proper async coroutine function for event.wait() that returns immediately
-        async def mock_wait():
-            return None
-
-        # Helper to consume coroutines without running them (to avoid un-awaited warnings)
-        def consume_coroutine(coro):
-            if asyncio.iscoroutine(coro):
-                coro.close()  # Close the coroutine to prevent "was never awaited" warning
-            return None
 
         # Create a mock event loop with proper methods
         mock_loop = mocker.MagicMock()
         mock_loop.__enter__ = mocker.MagicMock(return_value=mock_loop)
         mock_loop.__exit__ = mocker.MagicMock(return_value=False)
-        # Make run_until_complete consume the coroutine without running it
-        mock_loop.run_until_complete = mocker.MagicMock(side_effect=consume_coroutine)
+        scheduled_callbacks = []
+        mock_loop.call_soon = mocker.MagicMock(side_effect=scheduled_callbacks.append)
+        mock_loop.run_forever = mocker.MagicMock(side_effect=lambda: scheduled_callbacks.pop(0)())
 
         # Mock QEventLoop to return our mock_loop instance
         mocker.patch('notolog.app.QEventLoop', return_value=mock_loop)
 
-        mocker.patch.object(asyncio, 'set_event_loop', return_value=None)
-        # Create a mock Event with a proper async wait method that returns a coroutine
-        mocker.patch.object(asyncio, 'Event', return_value=SimpleNamespace(**{'set': lambda: None, 'wait': mock_wait}))
-
-        # Mock aboutToQuit signal to prevent waiting
-        mock_about_to_quit = mocker.MagicMock()
-        mock_about_to_quit.connect = mocker.MagicMock(return_value=None)
-        mocker.patch.object(QApplication, 'aboutToQuit', new_callable=mocker.PropertyMock, return_value=mock_about_to_quit)
+        test_set_event_loop = mocker.patch.object(asyncio, 'set_event_loop', return_value=None)
 
         # Mock NotologEditor initialization to prevent UI creation that causes segfault
         mocker.patch.object(NotologEditor, '__init__', return_value=None)
@@ -147,6 +128,9 @@ class TestApp:
         test_set_style.assert_called_once()
 
         test_notolog_editor_show.assert_called()
+        mock_loop.call_soon.assert_called_once()
+        mock_loop.run_forever.assert_called_once_with()
+        assert test_set_event_loop.call_args_list == [mocker.call(mock_loop), mocker.call(None)]
 
     @pytest.mark.asyncio
     async def test_async(self):

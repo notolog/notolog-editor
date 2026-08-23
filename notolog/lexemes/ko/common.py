@@ -62,6 +62,9 @@ lexemes = {
     "dialog_encrypt_file_rewrite_existing_title": "기존 파일 덮어쓰기",
     "dialog_encrypt_file_rewrite_existing_text": "기존 파일 \"{file_path}\"을(를) 덮어쓰시겠습니까?",
 
+    "dialog_encrypt_delete_source_title": "암호화되지 않은 원본 파일 삭제",
+    "dialog_encrypt_delete_source_text": "암호화된 파일이 성공적으로 생성되었습니다. 암호화되지 않은 원본 파일 \"{file_name}\"을(를) 삭제하시겠습니까?",
+
     "dialog_decrypt_file_title": "파일 복호화",
     "dialog_decrypt_file_text": "파일 \"{file_name}\"을(를) 복호화하시겠습니까?",
     "decrypt_file_warning_file_is_not_encrypted": "파일이 암호화되지 않았습니다!",

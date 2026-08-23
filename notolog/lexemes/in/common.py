@@ -62,6 +62,9 @@ lexemes = {
     "dialog_encrypt_file_rewrite_existing_title": "मौजूदा फ़ाइल को पुनः लिखें",
     "dialog_encrypt_file_rewrite_existing_text": "क्या आप वाकई मौजूदा फ़ाइल \"{file_path}\" को पुनः लिखना चाहते हैं?",
 
+    "dialog_encrypt_delete_source_title": "अनएन्क्रिप्टेड स्रोत फ़ाइल हटाएँ",
+    "dialog_encrypt_delete_source_text": "एन्क्रिप्टेड फ़ाइल सफलतापूर्वक बनाई गई। अनएन्क्रिप्टेड स्रोत फ़ाइल \"{file_name}\" हटाएँ?",
+
     "dialog_decrypt_file_title": "फ़ाइल डिक्रिप्ट करें",
     "dialog_decrypt_file_text": "क्या आप वाकई फ़ाइल \"{file_name}\" को डिक्रिप्ट करना चाहते हैं?",
     "decrypt_file_warning_file_is_not_encrypted": "फ़ाइल एन्क्रिप्टेड नहीं है!",

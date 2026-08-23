@@ -8,10 +8,7 @@ lexemes = {
     "statusbar_next_path_accessible_name": "기록에서 다음 파일로 이동",
     "statusbar_litter_bin_label": "휴지통",
     "statusbar_litter_bin_accessible_name": "휴지통 내용 보기",
-
-    "statusbar_save_progress_label": b'\xf0\x9f\x92\xbe',
-    "statusbar_encryption_symbol_encrypted_label": b'\xf0\x9f\x94\x92',
-    "statusbar_encryption_symbol_unencrypted_label": b'\xf0\x9f\x94\x93',
+    "statusbar_file_path_copy_tooltip": "클릭하여 복사: {file_path}",
 
     "statusbar_mode_label_mode_view": "보기 모드",
     "statusbar_mode_label_mode_edit": "편집 모드",
@@ -20,7 +17,6 @@ lexemes = {
     "statusbar_source_label_source_markdown": "Markdown",
     "statusbar_source_label_source_html": "HTML",
 
-    "statusbar_encryption_label": "{encryption} {icon}",
     "statusbar_encryption_label_encryption_plain": "일반",
     "statusbar_encryption_label_encryption_encrypted": "암호화됨",
 

@@ -121,6 +121,8 @@ The left panel shows your notes directory:
 - **Restored**: Right-click → Restore
 - **Deleted completely**: Right-click → Delete completely
 
+To make regular deletion permanent, disable `Settings` → `General` → `Delete files reversibly`. Existing `.del` files remain available through the Litter Bin until restored or deleted completely.
+
 !!! note "Important Note"
     When the Litter bin is inactive, deleted files are hidden from the file tree but still exist on disk and can be found via your system's file manager.
 
@@ -180,6 +182,7 @@ Notolog provides AES-128 encryption for sensitive notes.
 3. Enter a strong password
 4. Optionally add a password hint (avoid using personal info like date of birth - use something memorable yet unique that won't give clues if the file is accessed by others)
 5. File is saved with `.enc` extension
+6. After Notolog successfully reopens the encrypted file, choose whether to remove the unencrypted source. Removal follows the `Delete files reversibly` setting.
 
 ### Opening Encrypted Files
 

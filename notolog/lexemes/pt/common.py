@@ -62,6 +62,9 @@ lexemes = {
     "dialog_encrypt_file_rewrite_existing_title": "Sobrescrever arquivo existente",
     "dialog_encrypt_file_rewrite_existing_text": "Sobrescrever arquivo existente \"{file_path}\"?",
 
+    "dialog_encrypt_delete_source_title": "Excluir arquivo de origem não criptografado",
+    "dialog_encrypt_delete_source_text": "O arquivo criptografado foi criado com sucesso. Excluir o arquivo de origem não criptografado \"{file_name}\"?",
+
     "dialog_decrypt_file_title": "Descriptografar arquivo",
     "dialog_decrypt_file_text": "Descriptografar arquivo \"{file_name}\"?",
     "decrypt_file_warning_file_is_not_encrypted": "O arquivo não está criptografado!",

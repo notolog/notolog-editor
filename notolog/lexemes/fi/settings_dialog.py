@@ -27,6 +27,11 @@ lexemes = {
     "general_app_font_size_label": "Fonttikoko: {size}pt",
     "general_app_font_size_slider_accessible_description": "Säädä sovelluksen yleistä fonttikokoa",
 
+    "general_file_deletion_label": "Tiedostojen poistaminen",
+    "general_reversible_file_deletion_checkbox": "Poista tiedostot palautettavasti",
+    "general_reversible_file_deletion_checkbox_accessible_description":
+        "Siirrä poistetut tiedostot Notologin roskakoriin lisäämällä .del-tunniste",
+
     "general_statusbar_label": "Tilarivi",
     "general_statusbar_show_global_cursor_position_checkbox": "Näytä globaali kursorin sijainti",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":

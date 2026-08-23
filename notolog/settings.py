@@ -139,6 +139,7 @@ class Settings(QSettings):
         self.create_property("show_deleted_files", bool, False)
         self.create_property("show_navigation_arrows", bool, True)
         self.create_property("show_global_cursor_position", bool, False)
+        self.create_property("reversible_file_deletion", bool, True)
         self.create_property("default_path", str, "")
         self.create_property("ui_init_ts", int, 0)
         # Editor state

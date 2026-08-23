@@ -91,7 +91,6 @@ from PySide6.QtGui import QTextDocument, QTextCursor, QTextBlock, QDesktopServic
 from PySide6.QtWidgets import QWidget, QMainWindow, QVBoxLayout, QSplitter, QListView, QTextBrowser
 from PySide6.QtWidgets import QPlainTextEdit, QSizePolicy, QDialog, QStyle, QFileSystemModel, QFileDialog
 
-from qasync import asyncClose
 import asyncio
 
 # Markdown library
@@ -511,18 +510,11 @@ class NotologEditor(QMainWindow):
                     'statusbar_source_label_source_%s' % Source(self.get_source()).name.lower(), scope='statusbar')
                 self.statusbar['source_label'].setText(source_label_text)
             if data['c'] == Encryption:
-                encryption_symbol_encrypted = self.lexemes.get('statusbar_encryption_symbol_encrypted_label',
-                                                               scope='statusbar')
-                encryption_symbol_unencrypted = self.lexemes.get('statusbar_encryption_symbol_unencrypted_label',
-                                                                 scope='statusbar')
-                encryption_symbol = encryption_symbol_encrypted if self.get_encryption() == Encryption.ENCRYPTED\
-                    else encryption_symbol_unencrypted
                 encryption_status = self.lexemes.get('statusbar_encryption_label_encryption_%s'
                                                      % Encryption(self.get_encryption()).name.lower(),
                                                      scope='statusbar')
-                encryption_label_text = self.lexemes.get('statusbar_encryption_label', scope='statusbar',
-                                                         encryption=encryption_status, icon=encryption_symbol)
-                self.statusbar['encryption_label'].setText(encryption_label_text)
+                self.statusbar['encryption_label'].setText(encryption_status)
+                self.statusbar.set_encryption_icon(self.get_encryption() == Encryption.ENCRYPTED)
             # Show cursor position data
             self.statusbar['cursor_label'].setText(self.get_cursor_label_text())
             # Restore litter bin state
@@ -1159,6 +1151,10 @@ class NotologEditor(QMainWindow):
         Delete file dialog.
         """
 
+        if not self.settings.reversible_file_deletion:
+            self.delete_completely_file_dialog(file_path)
+            return
+
         self.logger.debug('Delete file "%s" dialog' % file_path)
 
         file_path = os.path.abspath(str(file_path))
@@ -1176,7 +1172,18 @@ class NotologEditor(QMainWindow):
 
         self.logger.debug('Delete file "%s" dialog callback with sub-callback %s' % (file_path, callback))
 
-        if os.path.isfile(file_path):
+        self.delete_file(file_path, reversible=True)
+        if callable(callback):
+            callback()
+
+    def delete_file(self, file_path: str, reversible: Optional[bool] = None) -> bool:
+        """Delete a file using the configured reversible or permanent strategy."""
+        file_path = os.path.abspath(str(file_path))
+        if reversible is None:
+            reversible = self.settings.reversible_file_deletion
+
+        deleted = False
+        if os.path.isfile(file_path) and reversible:
             del_filename_tpl = '%s.del%s'
             i = 0
             while ((del_file_path := file_helper.res_path(del_filename_tpl % (file_path, i if i > 0 else '')))
@@ -1184,24 +1191,37 @@ class NotologEditor(QMainWindow):
                 i += 1
             if not os.path.isfile(del_file_path):
                 if file_helper.is_writable_path(file_path) and file_helper.is_writable_path(del_file_path):
-                    os.rename(file_path, del_file_path)
-                    self.logger.debug('File (reversibly) deleted to "%s"', del_file_path)
+                    try:
+                        os.rename(file_path, del_file_path)
+                        self.logger.debug('File (reversibly) deleted to "%s"', del_file_path)
+                        deleted = True
+                    except OSError as e:
+                        self.logger.warning('Could not reversibly delete "%s": %s', file_path, e)
+                        MessageBox(text=self.lexemes.get('dialog_file_delete_error'), icon_type=2, parent=self)
                 else:
                     self.logger.warning(f"Permission denied when renaming the file {file_path} to {del_file_path}")
                     MessageBox(text=self.lexemes.get('rename_file_permission_error'), icon_type=2, parent=self)
             else:
                 self.logger.debug('Cannot delete file, error occurred "%s"' % del_file_path)
                 MessageBox(text=self.lexemes.get('dialog_file_delete_error'), icon_type=2, parent=self)
-            # Check deleted file was actually shown
-            if self.get_current_file_path() == file_path:
-                any_file_path = self.get_any_file()
-                if file_helper.is_file_openable(any_file_path):
-                    self.load_file(any_file_path)
+        elif os.path.isfile(file_path):
+            try:
+                os.remove(file_path)
+                self.logger.debug('File "%s" has been permanently deleted', file_path)
+                deleted = True
+            except OSError as e:
+                self.logger.warning('Could not permanently delete "%s": %s', file_path, e)
+                MessageBox(text=self.lexemes.get('dialog_file_delete_error'), icon_type=2, parent=self)
         else:
             self.logger.debug('File not found "%s"' % file_path)
             MessageBox(text=self.lexemes.get('dialog_file_delete_error_not_found'), icon_type=2, parent=self)
-        if callable(callback):
-            callback()
+
+        if deleted and self.get_current_file_path() == file_path:
+            any_file_path = self.get_any_file()
+            if file_helper.is_file_openable(any_file_path):
+                self.load_file(any_file_path)
+
+        return deleted
 
     def delete_completely_file_dialog(self, file_path: str) -> None:
         """
@@ -1225,22 +1245,7 @@ class NotologEditor(QMainWindow):
 
         self.logger.debug('Delete file completely "%s" dialog callback with sub-callback %s' % (file_path, callback))
 
-        if os.path.isfile(file_path):
-            try:
-                os.remove(file_path)
-                self.logger.debug(f"File {file_path} has been completely deleted.")
-            except OSError as e:
-                self.logger.warning(f"Error: {e.strerror}. Could not delete {file_path}.")
-                MessageBox(text=self.lexemes.get('dialog_file_delete_error'), icon_type=2, parent=self)
-
-            # Check deleted file was actually shown
-            if self.get_current_file_path() == file_path:
-                any_file_path = self.get_any_file()
-                if file_helper.is_file_openable(any_file_path):
-                    self.load_file(any_file_path)
-        else:
-            self.logger.debug('File not found "%s"' % file_path)
-            MessageBox(text=self.lexemes.get('dialog_file_delete_error_not_found'), icon_type=2, parent=self)
+        self.delete_file(file_path, reversible=False)
         if callable(callback):
             callback()
 
@@ -1740,31 +1745,17 @@ class NotologEditor(QMainWindow):
 
         return self.text_view
 
-    @asyncClose
-    async def closeEvent(self, event):
-        self.logger.info('Stopping events loop, closing the app... Sayonara!')
+    def closeEvent(self, event):
+        if getattr(self, '_shutdown_complete', False):
+            event.accept()
+            return
 
-        async def cleanup_tasks():
-            if not asyncio.get_event_loop().is_running():
-                return
-            tasks = asyncio.all_tasks()
-            tasks_total = len(tasks)
-            # Cancel and clean up all pending asyncio tasks
-            for i, task in enumerate(tasks):
-                # Or: not task.done()
-                if (task is not asyncio.current_task()
-                        # But not the final task set at main
-                        and not (hasattr(task, 'get_coro') and task.get_coro().__qualname__ == 'Event.wait')):
-                    task_res = task.cancel()
-                    try:
-                        await task
-                    except asyncio.CancelledError:
-                        self.logger.info(f'[{i + 1}/{tasks_total}] Pending task {task.get_name()} '
-                                         f'was cancelled with result "{task_res}"')
-                        pass
+        shutdown_task = getattr(self, '_shutdown_task', None)
+        if shutdown_task is not None and not shutdown_task.done():
+            event.ignore()
+            return
 
-        # Await tasks to complete
-        await cleanup_tasks()
+        self.logger.info('Closing the app... Sayonara!')
 
         if self.get_mode() == Mode.EDIT:
             # Save any unsaved changes
@@ -1786,7 +1777,34 @@ class NotologEditor(QMainWindow):
         self.settings.mode = self.get_mode().value
         self.settings.source = self.get_source().value
 
-        event.accept()
+        # Retry the close after asynchronous cleanup finishes.
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            # This can happen in isolated widget tests or if Qt is already tearing down.
+            self._shutdown_complete = True
+            event.accept()
+            return
+
+        event.ignore()
+        self._shutdown_task = loop.create_task(self.finish_shutdown(), name='notolog-shutdown')
+
+    async def finish_shutdown(self) -> None:
+        """Cancel and drain outstanding asyncio tasks before retrying the close."""
+        current_task = asyncio.current_task()
+        tasks = [task for task in asyncio.all_tasks()
+                 if task is not current_task and not task.done()]
+        tasks_total = len(tasks)
+        for task in tasks:
+            task.cancel()
+
+        if tasks:
+            await asyncio.gather(*tasks, return_exceptions=True)
+            for i, task in enumerate(tasks):
+                self.logger.info(f'[{i + 1}/{tasks_total}] Pending task {task.get_name()} was cancelled')
+
+        self._shutdown_complete = True
+        self.close()
 
     def rehighlight_editor(self, full_rehighlight: bool = False) -> None:
         # First of all check it's necessary
@@ -2592,15 +2610,18 @@ class NotologEditor(QMainWindow):
         # Only if the file is encrypted!
         try:
             file_header.validate_enc()
-        except Exception as e:
+        except (TypeError, ValueError) as e:
             self.logger.error('File header cannot be validated "%s"' % e)
+            if callable(callback):
+                callback()
+            return
 
         # Update the header with new date
         file_header.refresh()
 
         # Get file specific salt if set
         file_salt = file_header.get_enc_param('slt')
-        file_iterations = int(file_header.get_enc_param('itr'))
+        file_iterations = file_header.get_enc_param('itr')
 
         # Encrypt
         encrypted_file_body_b = (self.get_encrypt_helper(
@@ -2621,16 +2642,37 @@ class NotologEditor(QMainWindow):
         else:
             result = False
 
-        # Switch to the new file
+        # Switch to the new file and verify it can be opened before offering to remove the source.
+        encrypted_file_opened = False
         if result:
             self.header = file_header
             self.content = file_body
             if file_helper.is_file_openable(to_file_path):
-                self.load_file(to_file_path)
+                encrypted_file_opened = self.load_file(to_file_path)
             else:
                 self.logger.warning(f"Permission denied when accessing the file {to_file_path}")
                 MessageBox(text=self.lexemes.get('open_file_permission_error'), icon_type=2, parent=self)
 
+        if callable(callback):
+            callback()
+
+        if encrypted_file_opened and os.path.isfile(from_file_path):
+            source_file_name = os.path.basename(from_file_path)
+            source_delete_text = self.lexemes.get(
+                name='dialog_encrypt_delete_source_text', file_name=source_file_name)
+            if not self.settings.reversible_file_deletion:
+                source_delete_text = self.lexemes.get(
+                    name='dialog_file_delete_completely_text', file_name=source_file_name)
+            self.common_dialog(
+                self.lexemes.get('dialog_encrypt_delete_source_title'),
+                source_delete_text,
+                callback=lambda dialog_callback: self.delete_encrypted_source_dialog_callback(
+                    dialog_callback, from_file_path),
+            )
+
+    def delete_encrypted_source_dialog_callback(self, callback: Callable[..., Any], file_path: str) -> None:
+        """Delete the plaintext source after the encrypted copy was opened successfully."""
+        self.delete_file(file_path)
         if callable(callback):
             callback()
 
@@ -2681,17 +2723,10 @@ class NotologEditor(QMainWindow):
             return
 
         file_header, encrypted_file_body = FileHeader().load_file(from_file_path)
-        # Check file header contains salt and the other params. May update migration params.
-        # Only if the file is encrypted!
         try:
             file_header.validate_enc()
-        except Exception as e:
-            self.logger.error('File header cannot be validated "%s"' % e)
-        # File specific salt should be set within encrypted file
-        file_salt = file_header.get_enc_param('slt')
-        file_iterations = int(file_header.get_enc_param('itr'))
-
-        try:
+            file_salt = file_header.get_enc_param('slt')
+            file_iterations = file_header.get_enc_param('itr')
             decrypted_file_body = self.get_encrypt_helper(
                 salt=file_salt, iterations=file_iterations).decrypt_data(encrypted_file_body.encode("utf-8"))
             if decrypted_file_body:
@@ -2706,7 +2741,7 @@ class NotologEditor(QMainWindow):
                 * https://docs.python.org/3/reference/compound_stmts.html#the-try-statement
                 """
                 raise InvalidToken
-        except (InvalidToken, InvalidSignature, TypeError):
+        except (InvalidToken, InvalidSignature, TypeError, ValueError):
             self.logger.warning('Cannot apply decryption password!')
             result = False
 
@@ -3104,17 +3139,10 @@ class NotologEditor(QMainWindow):
         # Check is file encrypted
         if self.is_file_encrypted(file_path):
             file_header, file_body = FileHeader().load_file(file_path)
-            # Check file header contains salt and the other params. May update migration params.
-            # Only if the file is encrypted!
             try:
                 file_header.validate_enc()
-            except Exception as e:
-                self.logger.error('File header cannot be validated "%s"' % e)
-            # File specific salt should be set within encrypted file
-            file_salt = file_header.get_enc_param('slt')
-            file_iterations = int(file_header.get_enc_param('itr'))
-
-            try:
+                file_salt = file_header.get_enc_param('slt')
+                file_iterations = file_header.get_enc_param('itr')
                 decrypted_data = (
                     self.get_encrypt_helper(
                         salt=file_salt, hint=file_header.get_enc_param('hint'),
@@ -3131,7 +3159,7 @@ class NotologEditor(QMainWindow):
                     raise InvalidToken
                 # Reset encryption password dialogue count
                 self.enc_password_dialog_cnt = 0
-            except (InvalidToken, InvalidSignature, TypeError):
+            except (InvalidToken, InvalidSignature, TypeError, ValueError):
                 self.logger.debug('Cannot apply encryption password!')
                 # Setup file's cursor position to a very beginning
                 self.settings.line_num = 0
@@ -3263,7 +3291,8 @@ class NotologEditor(QMainWindow):
         Previous approach was as simple as:
         True if file_path[-4:] == '.enc' else False
         """
-        file_header, _ = FileHeader().load_file(file_path)
+        header = FileHeader()
+        file_header, _ = header.load(header.read(file_path))
         return file_header.is_file_encrypted()
 
     def search_text(self) -> None:
@@ -3414,14 +3443,14 @@ class NotologEditor(QMainWindow):
         if (file_content or self.estate.allow_save_empty) and self.content != file_content:
             # Show saving progress in the status bar
             if hasattr(self, 'statusbar'):
-                self.statusbar['save_progress_label'].setVisible(True)
+                self.statusbar.show_save_progress(True)
             # Disable the save button in the toolbar
             if hasattr(self.toolbar, 'toolbar_save_button'):
                 self.toolbar.toolbar_save_button.setDisabled(True)
 
             def restore_saving_ui_state() -> None:
                 if hasattr(self, 'statusbar'):
-                    self.statusbar['save_progress_label'].setVisible(False)
+                    self.statusbar.show_save_progress(False)
                 # Keep it switched off to explicitly show the nothing to save state
                 # self.toolbar.toolbar_save_button.setEnabled(True)
             # Restore saving UI state automatically.
@@ -3439,25 +3468,26 @@ class NotologEditor(QMainWindow):
 
             # To keep initial content unencrypted
             content = file_content
+            encryption_failed = False
             if self.get_encryption() == Encryption.ENCRYPTED:
-                # Check file header contains salt and the other params. May update migration params.
-                # Only if the file is encrypted!
                 try:
                     header.validate_enc()
-                except Exception as e:
-                    self.logger.error('File header cannot be validated "%s"' % e)
-                # Get file specific salt
-                file_salt = header.get_enc_param('slt')
-                file_iterations = int(header.get_enc_param('itr'))
-
-                # Encrypt
-                encrypted_content_b = self.get_encrypt_helper(
-                    salt=file_salt, iterations=file_iterations).encrypt_data(content.encode("utf-8"))
-                if encrypted_content_b:
+                    file_salt = header.get_enc_param('slt')
+                    file_iterations = header.get_enc_param('itr')
+                    encrypted_content_b = self.get_encrypt_helper(
+                        salt=file_salt, iterations=file_iterations).encrypt_data(content.encode("utf-8"))
+                    if encrypted_content_b is None:
+                        raise ValueError('Encryption returned no data')
                     content = encrypted_content_b.decode("utf-8")
+                except (TypeError, ValueError) as e:
+                    self.logger.error('File header cannot be validated "%s"' % e)
+                    encryption_failed = True
 
-            content = header.pack(content)
-            save_result = self.save_file_content(current_file_path, content)
+            if encryption_failed:
+                save_result = False
+            else:
+                content = header.pack(content)
+                save_result = self.save_file_content(current_file_path, content)
 
             if save_result:
                 self.header = header

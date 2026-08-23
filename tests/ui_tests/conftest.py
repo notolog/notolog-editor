@@ -67,7 +67,7 @@ def mock_notolog_editor(mocker):
         # Create mock statusbar with stateful behavior
         status_mode = {'value': 'Modus Visum'}
         status_source = {'value': 'HTML'}
-        status_encryption = {'value': 'Simplicitas 🔓'}
+        status_encryption = {'value': 'Simplicitas'}
 
         self.statusbar = {}
         self.statusbar['mode_label'] = MagicMock()

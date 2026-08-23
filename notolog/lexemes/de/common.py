@@ -62,6 +62,9 @@ lexemes = {
     "dialog_encrypt_file_rewrite_existing_title": "Vorhandene Datei überschreiben",
     "dialog_encrypt_file_rewrite_existing_text": "Vorhandene Datei \"{file_path}\" überschreiben?",
 
+    "dialog_encrypt_delete_source_title": "Unverschlüsselte Quelldatei löschen",
+    "dialog_encrypt_delete_source_text": "Die verschlüsselte Datei wurde erfolgreich erstellt. Unverschlüsselte Quelldatei \"{file_name}\" löschen?",
+
     "dialog_decrypt_file_title": "Datei entschlüsseln",
     "dialog_decrypt_file_text": "Datei \"{file_name}\" entschlüsseln?",
     "decrypt_file_warning_file_is_not_encrypted": "Die Datei ist nicht verschlüsselt!",

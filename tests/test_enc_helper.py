@@ -126,6 +126,22 @@ class TestEncHelper:
         assert type(_salt) is str
 
     @pytest.mark.parametrize(
+        "test_obj_enc_password, test_obj_enc_helper, salt, iterations",
+        [
+            (('password'), ('salt', 1024), b'', 1024),
+            (('password'), ('salt', 1024), b'x' * (EncHelper.MAX_SALT_LENGTH + 1), 1024),
+            (('password'), ('salt', 1024), b'salt', 0),
+            (('password'), ('salt', 1024), b'salt', EncHelper.MAX_ITERATIONS + 1),
+            (('password'), ('salt', 1024), b'salt', 'invalid'),
+            (('password'), ('salt', 1024), b'salt', True),
+        ],
+        indirect=['test_obj_enc_password', 'test_obj_enc_helper'],
+    )
+    def test_untrusted_kdf_parameters_are_bounded(self, test_obj_enc_helper, salt, iterations):
+        with pytest.raises(ValueError):
+            EncHelper.validate_parameters(salt, iterations)
+
+    @pytest.mark.parametrize(
         "test_obj_enc_password, test_obj_enc_helper, test_exp_param_fixture",
         [
             ((None), (None, 16000),

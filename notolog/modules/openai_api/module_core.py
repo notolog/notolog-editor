@@ -105,6 +105,9 @@ class ModuleCore(BaseAiCore):
 
         # API helper
         self.api_helper = ApiHelper()
+        self.generator_task = None
+        self.network_manager = QNetworkAccessManager(self)
+        self.active_reply = None
 
         # Just in case of debug of async events
         # asyncio.get_event_loop().set_debug(True)
@@ -225,16 +228,46 @@ class ModuleCore(BaseAiCore):
         request_data = self.api_helper.init_request_params(
             prompt_messages=user_prompt, api_model=self.openai_api_model, options=options)
 
-        # Set request data
-        manager = QNetworkAccessManager(self)
-        reply = manager.post(request, request_data)
+        reply = self.network_manager.post(request, request_data)
+        self.active_reply = reply
+        loop = asyncio.get_running_loop()
+        reply_finished = loop.create_future()
 
-        # Connect finished signal
-        reply.finished.connect(
-            lambda _reply=reply: self.handle_response(_reply, request_msg_id, response_msg_id))
-        # Connect error signal
-        reply.errorOccurred.connect(
-            lambda error, _reply=reply: self.handle_response(_reply, request_msg_id, response_msg_id, error))
+        def mark_finished():
+            if not reply_finished.done():
+                reply_finished.set_result(None)
+
+        reply.finished.connect(mark_finished)
+
+        # The request is now cancellable from the assistant's Stop button.
+        if self.init_callback and callable(self.init_callback):
+            self.init_callback()
+
+        try:
+            await reply_finished
+            error_code = reply.error()
+            self.handle_response(
+                reply, request_msg_id, response_msg_id,
+                None if error_code == QNetworkReply.NetworkError.NoError else error_code,
+            )
+        except asyncio.CancelledError:
+            if reply.isRunning():
+                reply.abort()
+            if self.finished_callback and callable(self.finished_callback):
+                self.finished_callback(
+                    request_msg_id=request_msg_id,
+                    response_msg_id=response_msg_id,
+                    message_type=EnumMessageType.RESPONSE,
+                )
+            raise
+        finally:
+            try:
+                reply.finished.disconnect(mark_finished)
+            except RuntimeError:
+                pass
+            if self.active_reply is reply:
+                self.active_reply = None
+            reply.deleteLater()
 
     def handle_response(self, reply: QNetworkReply, request_msg_id, response_msg_id, error_code=None):
         # Get received status code, say 200
@@ -271,42 +304,29 @@ class ModuleCore(BaseAiCore):
             self.update_signal.emit(result_message if result_message else '[%s] %s' % (status_code, reply.errorString()),
                                     None, None, EnumMessageType.DEFAULT, EnumMessageStyle.ERROR)
 
-        # Call API initialized callback here to update waiting status
-        if self.init_callback and callable(self.init_callback):
-            self.init_callback()
-
         # Call finished callback
         if self.finished_callback and callable(self.finished_callback):
             self.finished_callback(request_msg_id=request_msg_id, response_msg_id=response_msg_id,
                                    message_type=EnumMessageType.RESPONSE)
 
-        reply.finished.disconnect()
-        reply.errorOccurred.disconnect()
-        reply.deleteLater()  # Clean up the QNetworkReply object
-
     def process_response(self, reply: QNetworkReply, request_msg_id, response_msg_id, status_code) -> str:
         # The request was successful
         data = reply.readAll()  # type: QByteArray
 
-        self.logger.debug(f'Raw RESPONSE [{status_code}]: {data}')
+        self.logger.debug('API response received [%s]: %d bytes', status_code, data.size())
 
         # json_document = QJsonDocument.fromJson(data)
         # json_data = json_document.object()
 
         # Convert QByteArray to string
         res_string = data.toStdString()  # Or: str(data.data(), encoding='utf-8')
-        self.logger.debug(f'Result multi-line STRING: {res_string}')
-
         # Clean up the string and make one line
         json_str = ''.join(line.strip() for line in res_string.splitlines())
-
-        self.logger.debug(f'Result STRING: {json_str}')
 
         result_message = self.lexemes.get('network_connection_error_empty', scope='common')
         # Parse JSON response
         try:
             json_data = json.loads(json_str)
-            self.logger.debug(f"Result JSON: {json_data}")
             if ('choices' in json_data
                     and len(json_data['choices']) > 0
                     # Legacy completions
@@ -340,11 +360,16 @@ class ModuleCore(BaseAiCore):
         return result_message
 
     async def stop_generator(self):
-        # Cancel async task(s)
+        reply = self.active_reply
+        if reply is not None and reply.isRunning():
+            reply.abort()
+
         if self.generator_task and not self.generator_task.done():
-            # Allow to finish callback, do not remove:
-            # > self.generator_task.remove_done_callback(self.finished_callback)
             self.generator_task.cancel()
+            try:
+                await self.generator_task
+            except asyncio.CancelledError:
+                pass
 
     def extend_settings_dialog_fields_conf(self, tab_widget) -> list:
         # OpenAI API Config
@@ -446,7 +471,8 @@ class ModuleCore(BaseAiCore):
              "name": "settings_dialog_module_openai_api_base_response_temperature_label",
              "alignment": Qt.AlignmentFlag.AlignLeft,
              "text": self.lexemes.get('module_openai_api_base_response_temperature_label',
-                                      temperature=self.settings.module_openai_api_base_response_temperature),
+                                      temperature=self.api_helper.convert_temperature(
+                                          self.settings.module_openai_api_base_response_temperature)),
              "callback": lambda obj: tab_openai_api_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # Slider to adjust the temperature setting
             {"type": QSlider, "args": [Qt.Orientation.Horizontal],

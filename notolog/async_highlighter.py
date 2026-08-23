@@ -95,14 +95,14 @@ class AsyncHighlighter:
             if postpone:
                 self.logger.debug('Re-highlighting the text > postpone')
                 # Keep this method particular amount of time to avoid overwhelming
-                await asyncio.sleep(0.15, self.loop)
+                await asyncio.sleep(0.15)
             # Re-highlight
             self.callback(full_rehighlight)
             self.logger.debug('Async re-highlighting queue task processed')
             # Postpone after re-highlighting to keep the queue busy
             self.logger.debug('Re-highlighting the text > wait to return')
             # Keep this method particular amount of time to avoid overwhelming
-            await asyncio.sleep(0.3, self.loop)
+            await asyncio.sleep(0.3)
         except asyncio.CancelledError:
             # All tasks will be cancelled later upon close event
             pass

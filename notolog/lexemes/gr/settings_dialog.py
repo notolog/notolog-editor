@@ -29,6 +29,11 @@ lexemes = {
     "general_app_font_size_slider_accessible_description":
         "Ρύθμιση του παγκόσμιου μεγέθους γραμματοσειράς της εφαρμογής",
 
+    "general_file_deletion_label": "Διαγραφή αρχείων",
+    "general_reversible_file_deletion_checkbox": "Αναστρέψιμη διαγραφή αρχείων",
+    "general_reversible_file_deletion_checkbox_accessible_description":
+        "Μετακίνηση των διαγραμμένων αρχείων στον κάδο του Notolog με προσθήκη επέκτασης .del",
+
     "general_statusbar_label": "Γραμμή Κατάστασης",
     "general_statusbar_show_global_cursor_position_checkbox": "Εμφάνιση Παγκόσμιας Θέσης Δρομέα",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":

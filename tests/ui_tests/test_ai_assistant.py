@@ -38,7 +38,8 @@ import pytest
 class TestAiAssistant:
 
     @pytest.fixture(scope="class", autouse=True)
-    def settings_obj(self):
+    @classmethod
+    def settings_obj(cls):
         """
         Use 'autouse=True' to enable automatic setup, or pass 'settings_obj' directly to main_window()
         """
@@ -86,6 +87,9 @@ class TestAiAssistant:
 
         # Check default window title
         assert ui_obj.windowTitle() == "Postulatio ad AI"
+
+        # Icon-only save button must match the text-bearing send button at every DPI.
+        assert ui_obj.save_history_button.height() == ui_obj.send_button.sizeHint().height()
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize(

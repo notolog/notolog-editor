@@ -1,11 +1,11 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2026-02-07 00:00:00.000000"}} -->
+<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2026-08-23 00:00:00.000000"}} -->
 # Notolog Editor
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/notolog/notolog-editor/main/docs/assets/notolog-logo-blue.png" alt="Notolog Markdown Editor" width="72" height="72" /><br/>
 </p>
 
-[![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/) [![Conda Version](https://img.shields.io/conda/vn/conda-forge/notolog)](https://anaconda.org/conda-forge/notolog) [![PyPI - Python Version](https://img.shields.io/badge/python-3.10+-blue.svg)](https://pypi.org/project/notolog/) [![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor?color=yellow)](https://github.com/notolog/notolog-editor/blob/master/LICENSE) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/notolog/notolog-editor/tests.yaml?color=green)](https://github.com/notolog/notolog-editor/actions/workflows/tests.yaml) [![PyPI - Downloads](https://img.shields.io/pypi/dm/notolog)](https://pypistats.org/packages/notolog) [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/notolog)](https://anaconda.org/conda-forge/notolog)
+[![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/) [![Conda Version](https://img.shields.io/conda/vn/conda-forge/notolog?logo=anaconda&logoColor=green)](https://anaconda.org/conda-forge/notolog) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)](https://pypi.org/project/notolog/) [![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor?color=yellow)](https://github.com/notolog/notolog-editor/blob/master/LICENSE) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/notolog/notolog-editor/tests.yaml?color=green)](https://github.com/notolog/notolog-editor/actions/workflows/tests.yaml) [![PyPI - Downloads](https://img.shields.io/pypi/dm/notolog)](https://pypistats.org/packages/notolog) [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/notolog)](https://anaconda.org/conda-forge/notolog)
 
 Notolog is an open-source Markdown editor built with Python and PySide6, featuring AI-powered assistance and local-first privacy.
 
@@ -63,7 +63,7 @@ See the [User Guide](https://notolog.app/user-guide/) for complete feature docum
 
 ## Requirements
 
-- **Python 3.10+** ([python.org](https://python.org))
+- **Python 3.10–3.14** ([python.org](https://python.org))
 - 4 GB RAM minimum (8+ GB for local AI models)
 
 
@@ -97,6 +97,7 @@ See the [AI Assistant Guide](https://notolog.app/ai-assistant/) for setup instru
 ```sh
 git clone https://github.com/notolog/notolog-editor.git
 cd notolog-editor
+python3 -m venv .venv && source .venv/bin/activate
 pip install -e .
 python -m notolog.app
 ```
@@ -104,7 +105,7 @@ python -m notolog.app
 **Run tests:**
 ```sh
 python dev_install.py test
-pytest
+python -m pytest
 ```
 
 See [CONTRIBUTING.md](https://github.com/notolog/notolog-editor/blob/main/CONTRIBUTING.md) for guidelines.

@@ -261,6 +261,20 @@ class SettingsDialog(QDialog):
              "callback": lambda obj: tab_general_layout.addWidget(obj),
              "accessible_description":
                  self.lexemes.get('general_app_font_size_slider_accessible_description')},
+            # Horizontal spacer
+            {"type": HorizontalLineSpacer, "callback": lambda obj: tab_general_layout.addWidget(obj)},
+            # File deletion settings
+            {"type": QLabel, "name": "settings_dialog_general_file_deletion_label",
+             "props": {"setProperty": ("class", "group-header-label")},
+             "alignment": Qt.AlignmentFlag.AlignLeft, "style": {"bold": True},
+             "text": self.lexemes.get('general_file_deletion_label'),
+             "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
+            {"type": QCheckBox,
+             "name": "settings_dialog_general_reversible_file_deletion_checkbox:reversible_file_deletion",
+             "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
+             "text": self.lexemes.get('general_reversible_file_deletion_checkbox'),
+             "accessible_description":
+                 self.lexemes.get('general_reversible_file_deletion_checkbox_accessible_description')},
             # Spacer to keep elements above on top
             {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding),
              "callback": lambda obj: tab_general_layout.addWidget(obj)},
@@ -747,7 +761,7 @@ class SettingsDialog(QDialog):
                                 and callable(getattr(obj, 'setText'))):
                             self.logger.debug(
                                 f'Object lexeme update: {obj.objectName()} with id: {id(obj)}, lexeme "{lexeme}"')
-                            obj.setText(lexeme)
+                            obj.setText(self.format_widget_lexeme(obj, lexeme))
                         if isinstance(obj, QPushButton):
                             self.logger.debug(
                                 f'Object lexeme update: {obj.objectName()} with id: {id(obj)}, lexeme "{lexeme}"')
@@ -833,6 +847,26 @@ class SettingsDialog(QDialog):
                     app_font_size_label.setFont(font)
                     """
                     obj.setText(self.lexemes.get('general_app_font_size_label', size=font_size))
+
+    def format_widget_lexeme(self, obj: QObject, lexeme: str) -> str:
+        """Resolve dynamic settings-label placeholders during a language refresh."""
+        if not isinstance(lexeme, str):
+            return lexeme
+
+        values = {}
+        if '{size}' in lexeme:
+            values['size'] = self.settings.app_font_size
+        if '{temperature}' in lexeme:
+            slider_name = obj.objectName().removesuffix('_label')
+            slider = next(
+                (item for item in self.findChildren(QSlider)
+                 if self.parse_object_name(item.objectName())[0] == slider_name),
+                None,
+            )
+            if slider is not None:
+                values['temperature'] = slider.value() / 100
+
+        return lexeme.format(**values) if values else lexeme
 
     def set_tab_text(self, tab_object_name, text):
         # Iterate through all the tabs

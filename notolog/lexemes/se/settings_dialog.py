@@ -27,6 +27,11 @@ lexemes = {
     "general_app_font_size_label": "Teckenstorlek: {size}pt",
     "general_app_font_size_slider_accessible_description": "Justera appens globala teckenstorlek",
 
+    "general_file_deletion_label": "Filborttagning",
+    "general_reversible_file_deletion_checkbox": "Ta bort filer återställningsbart",
+    "general_reversible_file_deletion_checkbox_accessible_description":
+        "Flytta borttagna filer till Notologs papperskorg genom att lägga till filändelsen .del",
+
     "general_statusbar_label": "Statusfält",
     "general_statusbar_show_global_cursor_position_checkbox": "Visa global muspekareposition",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":

@@ -62,6 +62,9 @@ lexemes = {
     "dialog_encrypt_file_rewrite_existing_title": "Επανεγγραφή υπάρχοντος αρχείου",
     "dialog_encrypt_file_rewrite_existing_text": "Επανεγγραφή υπάρχοντος αρχείου \"{file_path}\";",
 
+    "dialog_encrypt_delete_source_title": "Διαγραφή μη κρυπτογραφημένου αρχείου προέλευσης",
+    "dialog_encrypt_delete_source_text": "Το κρυπτογραφημένο αρχείο δημιουργήθηκε επιτυχώς. Διαγραφή του μη κρυπτογραφημένου αρχείου προέλευσης \"{file_name}\";",
+
     "dialog_decrypt_file_title": "Αποκρυπτογράφηση αρχείου",
     "dialog_decrypt_file_text": "Αποκρυπτογράφηση του αρχείου \"{file_name}\";",
     "decrypt_file_warning_file_is_not_encrypted": "Το αρχείο δεν είναι κρυπτογραφημένο!",

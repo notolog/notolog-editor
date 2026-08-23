@@ -62,6 +62,9 @@ lexemes = {
     "dialog_encrypt_file_rewrite_existing_title": "既存のファイルを上書き",
     "dialog_encrypt_file_rewrite_existing_text": "既存のファイル \"{file_path}\" を上書きしますか？",
 
+    "dialog_encrypt_delete_source_title": "暗号化されていない元ファイルを削除",
+    "dialog_encrypt_delete_source_text": "暗号化ファイルが正常に作成されました。暗号化されていない元ファイル \"{file_name}\" を削除しますか？",
+
     "dialog_decrypt_file_title": "ファイルの復号",
     "dialog_decrypt_file_text": "ファイル \"{file_name}\" を復号しますか？",
     "decrypt_file_warning_file_is_not_encrypted": "ファイルは暗号化されていません！",

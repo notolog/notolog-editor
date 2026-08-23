@@ -27,6 +27,11 @@ lexemes = {
     "general_app_font_size_label": "フォントサイズ：{size}pt",
     "general_app_font_size_slider_accessible_description": "アプリの全体的なフォントサイズを調整する",
 
+    "general_file_deletion_label": "ファイルの削除",
+    "general_reversible_file_deletion_checkbox": "ファイルを復元可能な方法で削除",
+    "general_reversible_file_deletion_checkbox_accessible_description":
+        ".del 拡張子を追加して、削除したファイルを Notolog のごみ箱に移動します",
+
     "general_statusbar_label": "ステータスバー",
     "general_statusbar_show_global_cursor_position_checkbox": "グローバルカーソル位置を表示",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":

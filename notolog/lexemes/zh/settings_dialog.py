@@ -27,6 +27,11 @@ lexemes = {
     "general_app_font_size_label": "字体大小：{size}pt",
     "general_app_font_size_slider_accessible_description": "调整应用程序的全局字体大小",
 
+    "general_file_deletion_label": "文件删除",
+    "general_reversible_file_deletion_checkbox": "以可恢复方式删除文件",
+    "general_reversible_file_deletion_checkbox_accessible_description":
+        "通过添加 .del 扩展名将已删除文件移至 Notolog 回收站",
+
     "general_statusbar_label": "状态栏",
     "general_statusbar_show_global_cursor_position_checkbox": "显示全局光标位置",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":

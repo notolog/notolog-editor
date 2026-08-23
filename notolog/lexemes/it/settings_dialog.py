@@ -28,6 +28,11 @@ lexemes = {
     "general_app_font_size_label": "Dimensione del carattere: {size}pt",
     "general_app_font_size_slider_accessible_description": "Regola la dimensione del carattere globale dell'app",
 
+    "general_file_deletion_label": "Eliminazione dei file",
+    "general_reversible_file_deletion_checkbox": "Elimina i file in modo reversibile",
+    "general_reversible_file_deletion_checkbox_accessible_description":
+        "Sposta i file eliminati nel cestino di Notolog aggiungendo un'estensione .del",
+
     "general_statusbar_label": "Barra di Stato",
     "general_statusbar_show_global_cursor_position_checkbox": "Mostra la Posizione Globale del Cursore",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":

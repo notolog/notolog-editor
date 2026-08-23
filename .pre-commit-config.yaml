@@ -6,9 +6,9 @@
 # - Functionality: Allows automatic code quality checks and formatting before commits.
 #
 # Installation:
-# - Install pre-commit: pip install pre-commit
-# - Install hooks: pre-commit install
-# - Run manually: pre-commit run --all-files
+# - Install development tools: python dev_install.py dev
+# - Install hooks: python -m pre_commit install
+# - Run manually: python -m pre_commit run --all-files
 #
 # Information:
 # - See https://pre-commit.com for more information
@@ -29,7 +29,7 @@ default_language_version:
 repos:
   # Standard pre-commit hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: trailing-whitespace
         exclude: ^(docs/|htmlcov/|site/)
@@ -69,7 +69,7 @@ repos:
 
   # Flake8 linting
   - repo: https://github.com/PyCQA/flake8
-    rev: 7.1.1
+    rev: 7.3.0
     hooks:
       - id: flake8
         args: [
@@ -82,7 +82,7 @@ repos:
 
   # Security checks with bandit
   - repo: https://github.com/PyCQA/bandit
-    rev: 1.8.0
+    rev: 1.9.4
     hooks:
       - id: bandit
         args: ['-c', 'pyproject.toml', '-r', 'notolog/']
@@ -95,9 +95,8 @@ repos:
       # Run pytest (fast tests only)
       - id: pytest-check
         name: pytest quick check
-        entry: |
-          python -m pytest --ignore=tests/ui_tests --ignore=tests/test_qt_async.py --ignore=tests/test_enc_helper.py --ignore=tests/test_file_header.py -q --tb=no
-        language: system
+        entry: hooks/run_pytest.py
+        language: script
         pass_filenames: false
         always_run: true
         stages: [pre-commit]

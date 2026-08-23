@@ -66,7 +66,7 @@ class TestQtUi:
 
         assert main_window.statusbar['mode_label'].text() == 'Modus Visum'
         assert main_window.statusbar['source_label'].text() == 'HTML'
-        assert main_window.statusbar['encryption_label'].text() == 'Simplicitas 🔓'
+        assert main_window.statusbar['encryption_label'].text() == 'Simplicitas'
 
         # Test that clicking the edit button updates the editor state
         button = main_window.toolbar.toolbar_edit_button
@@ -75,7 +75,7 @@ class TestQtUi:
 
         assert main_window.statusbar['mode_label'].text() == 'Modus Editio'
         assert main_window.statusbar['source_label'].text() == 'Markdown'
-        assert main_window.statusbar['encryption_label'].text() == 'Simplicitas 🔓'
+        assert main_window.statusbar['encryption_label'].text() == 'Simplicitas'
 
     def test_search_elements(self, main_window):
         assert hasattr(main_window.toolbar, 'search_form')

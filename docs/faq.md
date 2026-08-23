@@ -118,10 +118,11 @@ First-time ONNX model loading can take **up to 60 seconds**. Subsequent loads ar
 
 **Intel Mac**: If you experience hangs or crashes, try:
 1. Set GPU Layers to "0" (CPU-only mode) in Settings → Module llama.cpp
-2. If issues persist, downgrade llama-cpp-python:
-   ```bash
-   pip install llama-cpp-python==0.2.90 --force-reinstall
-   ```
+2. Restart Notolog and retry with the currently supported llama-cpp-python release.
+3. If the issue persists, report the macOS, Python, model, and llama-cpp-python versions.
+
+Version 0.2.90 was a validated workaround for older Notolog releases, but the current integration uses newer
+llama-cpp-python APIs and cannot safely downgrade to it.
 
 ---
 
@@ -186,6 +187,12 @@ First-time ONNX model loading can take **up to 60 seconds**. Subsequent loads ar
 ### Q: File won't open after encryption
 
 Ensure you're entering the exact password used during encryption. Passwords are case-sensitive.
+
+---
+
+### Q: What happens to the original file after encryption?
+
+After creating and successfully reopening the `.enc` file, Notolog asks whether to remove the unencrypted source. By default it is moved to Notolog's reversible litter bin using a `.del` extension. Disable `Settings` → `General` → `Delete files reversibly` only if you want confirmed deletions to be permanent.
 
 ---
 

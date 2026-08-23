@@ -27,6 +27,11 @@ lexemes = {
     "general_app_font_size_label": "Lettergrootte: {size}pt",
     "general_app_font_size_slider_accessible_description": "Pas de globale lettergrootte van de app aan",
 
+    "general_file_deletion_label": "Bestanden verwijderen",
+    "general_reversible_file_deletion_checkbox": "Bestanden omkeerbaar verwijderen",
+    "general_reversible_file_deletion_checkbox_accessible_description":
+        "Verplaats verwijderde bestanden naar de Notolog-prullenbak door een .del-extensie toe te voegen",
+
     "general_statusbar_label": "Statusbalk",
     "general_statusbar_show_global_cursor_position_checkbox": "Toon globale cursorpositie",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":

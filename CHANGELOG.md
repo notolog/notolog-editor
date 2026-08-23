@@ -1,6 +1,41 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.2.1] - 2026-08-23
+
+### Added
+- Added a post-encryption prompt to remove the unencrypted source using the configured reversible or permanent deletion mode.
+- Added a clickable, middle-elided current-file indicator to the status bar that shows and copies the full path.
+- Added a general setting to choose between reversible `.del` file deletion and permanent deletion.
+
+### Changed
+- Replaced status-bar emoji with compact themed icons, while preserving the established navigation-button sizing.
+- Matched the current-file status icon to the file type shown in the file tree.
+- Updated runtime, optional AI, development, test, and build dependency constraints to current compatible releases.
+- Declared pre-commit as a development dependency and made its pytest hook use the project environment.
+- Added Python 3.14 support for On-Device LLM inference while retaining the newest compatible ONNX Runtime GenAI release for Python 3.10.
+- Removed unused transitive and test-only packages from the runtime dependency surface.
+
+### Fixed
+- Made OpenAI inference cancellation abort and await the active network request.
+- Prevented local inference tasks from attempting to await themselves during cleanup.
+- Fixed a qasync shutdown race that could stop Qt's event loop before its close future completed.
+- Prevented duplicate shutdown logging during the post-cleanup close retry.
+- Deferred background-task cancellation until after the user confirms closing the editor.
+- Matched the AI Assistant save-history button height to the adjacent action button across themes and DPI settings.
+- Clarified project website and documentation URLs, and corrected version metadata.
+- Fixed AI temperature labels showing unresolved placeholders or inconsistent values after changing the interface language.
+- Avoided reading an entire document twice when checking its encryption header.
+- Replaced the ambiguous symlink icon for the parent-directory entry with a distinct, theme-colored open-folder icon.
+
+### Security
+- Bounded password-derivation parameters read from encrypted-file headers to prevent excessive CPU or memory use.
+- Prevented plaintext files from being left behind unnoticed after successfully creating and reopening an encrypted copy.
+- Updated `cryptography` to 50.0.0 to include the CVE-2026-69247 mitigation.
+- Updated Python-Markdown to 3.10.3, including malformed HTML comment denial-of-service fixes.
+- Validated file-header structure and encryption metadata before key derivation, and made encrypted saves fail closed instead of risking plaintext fallback.
+- Removed AI prompts and response bodies from debug logging.
+
 ## [1.2.0] - 2026-02-07
 
 ### Added

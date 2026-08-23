@@ -62,6 +62,9 @@ lexemes = {
     "dialog_encrypt_file_rewrite_existing_title": "Kirjoita olemassa oleva tiedosto uudelleen",
     "dialog_encrypt_file_rewrite_existing_text": "Kirjoita olemassa oleva tiedosto \"{file_path}\" uudelleen?",
 
+    "dialog_encrypt_delete_source_title": "Poista salaamaton lähdetiedosto",
+    "dialog_encrypt_delete_source_text": "Salattu tiedosto luotiin onnistuneesti. Poistetaanko salaamaton lähdetiedosto \"{file_name}\"?",
+
     "dialog_decrypt_file_title": "Pura tiedoston salaus",
     "dialog_decrypt_file_text": "Pura tiedoston salaus \"{file_name}\"?",
     "decrypt_file_warning_file_is_not_encrypted": "Tiedosto ei ole salattu!",

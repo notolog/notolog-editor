@@ -27,6 +27,11 @@ lexemes = {
     "general_app_font_size_label": "შრიფტის ზომა: {size}pt",
     "general_app_font_size_slider_accessible_description": "შრიფტის გლობალური ზომის რეგულირება",
 
+    "general_file_deletion_label": "ფაილების წაშლა",
+    "general_reversible_file_deletion_checkbox": "ფაილების აღდგენადად წაშლა",
+    "general_reversible_file_deletion_checkbox_accessible_description":
+        "წაშლილი ფაილების Notolog-ის კალათაში გადატანა .del გაფართოების დამატებით",
+
     "general_statusbar_label": "სტატუსის ზოლი",
     "general_statusbar_show_global_cursor_position_checkbox": "მსოფლიო კურსორის პოზიციის ჩვენება",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":

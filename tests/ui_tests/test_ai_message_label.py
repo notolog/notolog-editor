@@ -46,7 +46,8 @@ class TestAIMessageLabel:
         yield _app_config
 
     @pytest.fixture(scope="class", autouse=True)
-    def settings_obj(self):
+    @classmethod
+    def settings_obj(cls):
         """
         Use 'autouse=True' to enable automatic setup, or pass 'settings_obj' directly to main_window()
         """

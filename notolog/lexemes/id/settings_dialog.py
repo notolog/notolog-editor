@@ -27,6 +27,11 @@ lexemes = {
     "general_app_font_size_label": "Ukuran Font: {size}pt",
     "general_app_font_size_slider_accessible_description": "Sesuaikan ukuran font global aplikasi",
 
+    "general_file_deletion_label": "Penghapusan berkas",
+    "general_reversible_file_deletion_checkbox": "Hapus berkas secara reversibel",
+    "general_reversible_file_deletion_checkbox_accessible_description":
+        "Pindahkan berkas yang dihapus ke tempat sampah Notolog dengan menambahkan ekstensi .del",
+
     "general_statusbar_label": "Bilah Status",
     "general_statusbar_show_global_cursor_position_checkbox": "Tampilkan Posisi Kursor Global",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":

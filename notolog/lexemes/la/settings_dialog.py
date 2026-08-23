@@ -27,6 +27,11 @@ lexemes = {
     "general_app_font_size_label": "Magnitudo Fontis: {size}pt",
     "general_app_font_size_slider_accessible_description": "Regula magnitudinem fontis globalis applicationis",
 
+    "general_file_deletion_label": "Deletio fasciculorum",
+    "general_reversible_file_deletion_checkbox": "Fasciculos modo restituibili dele",
+    "general_reversible_file_deletion_checkbox_accessible_description":
+        "Fasciculos deletos in corbem Notolog move addita extensione .del",
+
     "general_statusbar_label": "Status Barra",
     "general_statusbar_show_global_cursor_position_checkbox": "Ostende Globalem Cursoris Positionem",
     "general_statusbar_show_global_cursor_position_checkbox_accessible_description":

@@ -106,20 +106,45 @@ pytest tests/test_app.py -v
 Install pre-commit hooks to automatically check code quality before commits:
 
 ```bash
-# Install pre-commit
-pip install pre-commit
+# Activate the same virtual environment configured as the project interpreter first
+# POSIX: source /path/to/venv/bin/activate
+# Windows PowerShell: & C:\path\to\venv\Scripts\Activate.ps1
+
+# Install the declared development dependencies into the active project environment
+python dev_install.py dev
 
 # Install the git hooks
-pre-commit install
+python -m pre_commit install
 
 # Run all hooks manually (optional)
-pre-commit run --all-files
+python -m pre_commit run --all-files
 ```
+
+Using `python -m pre_commit` ensures the hook manager runs from the same Python
+environment as the project. In PyCharm, verify that the selected project interpreter
+matches the interpreter used by the terminal before installing the hooks. Keep that
+environment activated when running the hooks because the local pytest hook intentionally
+tests against the project's installed dependency set.
 
 The pre-commit configuration includes:
 - **Flake8**: Linting for critical errors
 - **Bandit**: Security vulnerability scanning
 - **pytest**: Quick test validation
+
+#### MkDocs Documentation Build
+
+When modifying documentation, validate the build:
+
+```bash
+# Install MkDocs and every plugin enabled in mkdocs.yml
+pip install mkdocs "mkdocs-material[imaging]" mkdocs-minify-plugin mkdocs-rss-plugin
+
+# Build and validate (checks for broken links, missing files)
+mkdocs build --strict
+
+# Preview locally
+mkdocs serve
+```
 
 #### Manual Linting
 

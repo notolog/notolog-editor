@@ -24,16 +24,15 @@ import pytest
 class TestTextBlockData:
 
     @pytest.fixture(scope="class", autouse=True)
-    def test_object(self):
+    @classmethod
+    def test_object(cls):
         """
         Fixture to pass storage between the methods below.
         The sequence is matter!
         * https://docs.pytest.org/en/7.4.x/explanation/fixtures.html
         * https://docs.pytest.org/en/latest/example/parametrize.html
         """
-        if not hasattr(self, 'test_obj'):
-            self.test_obj = TextBlockData(123)
-        return self.test_obj
+        return TextBlockData(123)
 
     def test_text_block_data_init(self, test_object, exp_block_number=123):
         assert test_object is not None
