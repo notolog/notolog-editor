@@ -20,6 +20,11 @@ lexemes = {
     "statusbar_encryption_label_encryption_plain": "Düz",
     "statusbar_encryption_label_encryption_encrypted": "Şifreli",
 
+    "statusbar_system_cpu_usage": "Sistem CPU kullanımı: {percentage}%",
+    "statusbar_system_cpu_usage_unavailable": "Sistem CPU kullanımı mevcut değil",
+    "statusbar_system_memory_usage": "Sistem bellek kullanımı: {percentage}%",
+    "statusbar_system_memory_usage_unavailable": "Sistem bellek kullanımı mevcut değil",
+
     "statusbar_cursor_label": "satır: {line} → süt: {column}",
     "statusbar_cursor_label_selected": "satır: {line} → süt: {column} → seç: {selected}",
     "statusbar_cursor_label_with_global": "satır: {line} → süt: {column} → kon: {position}",

@@ -5,7 +5,7 @@
 ## Project Overview
 
 **Name:** Notolog
-**Version:** 1.2.1
+**Version:** 1.2.2
 **License:** MIT
 **Language:** Python 3.10+
 **Author:** Vadim Bakhrenkov

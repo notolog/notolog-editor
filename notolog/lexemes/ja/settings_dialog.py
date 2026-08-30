@@ -6,8 +6,7 @@ lexemes = {
     "button_close": "閉じる",
 
     "tab_general": "一般",
-    "tab_editor_config": "エディター",
-    "tab_viewer_config": "ビューア",
+    "tab_workspace": "ワークスペース",
     "tab_ai_config": "AI 設定",
 
     "general_app_config_label": "アプリ設定",
@@ -32,26 +31,25 @@ lexemes = {
     "general_reversible_file_deletion_checkbox_accessible_description":
         ".del 拡張子を追加して、削除したファイルを Notolog のごみ箱に移動します",
 
-    "general_statusbar_label": "ステータスバー",
-    "general_statusbar_show_global_cursor_position_checkbox": "グローバルカーソル位置を表示",
-    "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
+    "workspace_bottom_bar_show_global_cursor_position_checkbox": "グローバルカーソル位置を表示",
+    "workspace_bottom_bar_show_global_cursor_position_checkbox_accessible_description":
         "ステータスバーにグローバルカーソル位置を表示する",
-    "general_statusbar_show_navigation_arrows_checkbox": "ナビゲーション矢印を表示",
-    "general_statusbar_show_navigation_arrows_checkbox_accessible_description": "ステータスバーにナビゲーション矢印を表示",
+    "workspace_bottom_bar_show_navigation_arrows_checkbox": "ナビゲーション矢印を表示",
+    "workspace_bottom_bar_show_navigation_arrows_checkbox_accessible_description": "ステータスバーにナビゲーション矢印を表示",
 
-    "editor_config_label": "エディタ設定",
-    "editor_config_show_line_numbers_checkbox": "行番号を表示",
-    "editor_config_show_line_numbers_checkbox_accessible_description": "エディタ内で行番号を表示する",
+    "workspace_editor_mode_label": "編集モード",
+    "workspace_editor_mode_show_line_numbers_checkbox": "行番号を表示",
+    "workspace_editor_mode_show_line_numbers_checkbox_accessible_description": "エディタ内で行番号を表示する",
 
-    "viewer_config_label": "ビューワ設定",
-    "viewer_config_process_emojis_checkbox": "テキスト絵文字をグラフィックに変換",
-    "viewer_config_process_emojis_checkbox_accessible_description": "テキスト絵文字をグラフィカルな表現に変換する",
-    "viewer_config_highlight_todos_checkbox": "TODOをハイライト",
-    "viewer_config_highlight_todos_checkbox_accessible_description": "テキスト内のTODOタグを強調表示する",
-    "viewer_config_open_link_confirmation_checkbox": "リンク開く前に確認が必要",
-    "viewer_config_open_link_confirmation_checkbox_accessible_description": "リンクを開く前に確認を求める",
-    "viewer_config_save_resources_checkbox": "外部画像をディスクに自動保存",
-    "viewer_config_save_resources_checkbox_accessible_description":
+    "workspace_view_mode_label": "表示モード",
+    "workspace_view_mode_process_emojis_checkbox": "テキスト絵文字をグラフィックに変換",
+    "workspace_view_mode_process_emojis_checkbox_accessible_description": "テキスト絵文字をグラフィカルな表現に変換する",
+    "workspace_view_mode_highlight_todos_checkbox": "TODOをハイライト",
+    "workspace_view_mode_highlight_todos_checkbox_accessible_description": "テキスト内のTODOタグを強調表示する",
+    "workspace_view_mode_open_link_confirmation_checkbox": "リンク開く前に確認が必要",
+    "workspace_view_mode_open_link_confirmation_checkbox_accessible_description": "リンクを開く前に確認を求める",
+    "workspace_view_mode_save_resources_checkbox": "外部画像をディスクに自動保存",
+    "workspace_view_mode_save_resources_checkbox_accessible_description":
         "オフラインアクセスのために外部画像のコピーをディスクに自動保存します。",
 
     "ai_config_inference_module_label": "推論モジュール",
@@ -69,4 +67,11 @@ lexemes = {
     "ai_config_convert_to_md_checkbox": "結果をMarkdownに変換",
     "ai_config_convert_to_md_checkbox_accessible_description":
         "出力メッセージをMarkdown形式に変換します。",
+    "workspace_bottom_bar_label": "下部バー",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox": "CPUとメモリのグラフを表示",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox_accessible_description":
+        "下部バーにCPUとメモリの使用率グラフおよび区切り線を表示します",
+    "workspace_bottom_bar_system_load_interval_ms_label": "グラフの更新間隔",
+    "workspace_bottom_bar_system_load_interval_ms_accessible_description":
+        "CPUとメモリの使用率を読み取る間隔をミリ秒単位で設定します",
 }

@@ -19,7 +19,8 @@ For detailed instructions and project information, please see the repository's R
 from PySide6.QtCore import Qt, QObject
 from PySide6.QtWidgets import QWidget, QTabWidget, QLabel, QCheckBox, QLineEdit, QSlider
 from PySide6.QtWidgets import QScrollArea, QVBoxLayout, QSizePolicy, QPlainTextEdit, QComboBox, QSpinBox, QDoubleSpinBox
-from PySide6.QtTest import QTest
+from PySide6.QtWidgets import QStyle
+from PySide6.QtTest import QTest, QSignalSpy
 
 from notolog.ui.settings_dialog import SettingsDialog
 from notolog.ui.enum_combo_box import EnumComboBox
@@ -108,10 +109,9 @@ class TestSettingsDialog:
 
         # Mind the Latin translation
         assert ui_obj.tab_widget.tabText(0) == 'Generale'
-        assert ui_obj.tab_widget.tabText(1) == 'Editor'
-        assert ui_obj.tab_widget.tabText(2) == 'Visor'
-        assert ui_obj.tab_widget.tabText(3) == 'Configuratio AI'
-        assert ui_obj.tab_widget.tabText(4) == ''
+        assert ui_obj.tab_widget.tabText(1) == 'Area operis'
+        assert ui_obj.tab_widget.tabText(2) == 'Configuratio AI'
+        assert ui_obj.tab_widget.tabText(3) == ''
 
         # Ensure the initial tab is the first tab
         assert ui_obj.tab_widget.currentIndex() == 0
@@ -125,7 +125,11 @@ class TestSettingsDialog:
         # Check the result
         assert ui_obj.tab_widget.currentIndex() == 1
         assert isinstance(ui_obj.tab_widget.currentWidget(), QScrollArea)
-        assert ui_obj.tab_widget.currentWidget().objectName() == 'settings_dialog_tab_editor_config'
+        assert ui_obj.tab_widget.currentWidget().objectName() == 'settings_dialog_tab_workspace'
+        assert not any(
+            obj.objectName().startswith('settings_dialog_editor_')
+            for obj in ui_obj.findChildren(QObject)
+        )
 
         checkboxes = ui_obj.findChildren(QCheckBox)
         deletion_checkbox = ui_obj.findChild(
@@ -179,12 +183,134 @@ class TestSettingsDialog:
 
         assert ui_obj.format_widget_lexeme(label, 'Temperature: {temperature}') == 'Temperature: 0.2'
 
+    def test_workspace_lexemes_update_after_language_change(self, ui_obj: SettingsDialog):
+        language_combo = ui_obj.findChild(
+            EnumComboBox,
+            'settings_dialog_general_app_language_combo:app_language',
+        )
+        english_index = next(
+            index for index in range(language_combo.count())
+            if language_combo.itemData(index).name.lower() == 'en'
+        )
+
+        language_combo.setCurrentIndex(english_index)
+
+        assert ui_obj.tab_widget.tabText(1) == 'Workspace'
+        assert ui_obj.findChild(
+            QLabel, 'settings_dialog_workspace_editor_mode_label').text() == 'Editor mode'
+        assert ui_obj.findChild(
+            QLabel, 'settings_dialog_workspace_view_mode_label').text() == 'View mode'
+        assert ui_obj.findChild(
+            QLabel, 'settings_dialog_workspace_bottom_bar_label').text() == 'Bottom bar'
+        assert ui_obj.findChild(
+            QLabel,
+            'settings_dialog_workspace_bottom_bar_system_load_interval_ms_label',
+        ).text() == 'Graph refresh interval'
+
+    def test_bottom_bar_system_load_controls(self, ui_obj: SettingsDialog, settings_obj):
+        checkbox = ui_obj.findChild(
+            QCheckBox,
+            'settings_dialog_workspace_bottom_bar_show_system_load_graphs_checkbox:show_system_load_graphs',
+        )
+        interval = ui_obj.findChild(
+            QSpinBox,
+            'settings_dialog_workspace_bottom_bar_system_load_interval_ms:system_load_interval_ms',
+        )
+        options = ui_obj.findChild(
+            QWidget,
+            'settings_dialog_workspace_bottom_bar_system_load_options',
+        )
+        interval_label = ui_obj.findChild(
+            QLabel,
+            'settings_dialog_workspace_bottom_bar_system_load_interval_ms_label',
+        )
+
+        assert checkbox is not None
+        assert checkbox.isChecked() is True
+        assert options is not None
+        assert options.isEnabled() is True
+        assert interval_label.parentWidget() is options
+        assert 'QLabel:disabled' in options.styleSheet()
+        assert 'QSpinBox:disabled' in options.styleSheet()
+        assert interval is not None
+        assert interval.parentWidget() is options
+        assert interval.value() == 1000
+        assert interval.minimum() == 250
+        assert interval.maximum() == 60000
+        assert interval.singleStep() == 250
+        assert interval.suffix() == ' ms'
+        margins = options.layout().contentsMargins()
+        expected_indent = checkbox.style().pixelMetric(QStyle.PixelMetric.PM_IndicatorWidth)
+        expected_indent += checkbox.style().pixelMetric(QStyle.PixelMetric.PM_CheckBoxLabelSpacing)
+        assert (margins.left(), margins.top(), margins.right(), margins.bottom()) == (
+            expected_indent, 0, 0, 0)
+
+        published = QSignalSpy(ui_obj.settings.value_changed)
+        checkbox.click()
+        assert options.isEnabled() is False
+        assert interval_label.isEnabled() is False
+        assert interval.isEnabled() is False
+        interval.setValue(2000)
+
+        assert settings_obj.show_system_load_graphs is False
+        assert settings_obj.system_load_interval_ms == 2000
+        assert published.count() == 2
+
+        checkbox.click()
+
+        assert options.isEnabled() is True
+        assert interval.isEnabled() is True
+        assert interval.value() == 2000
+        assert published.count() == 3
+
+    def test_system_load_controls_follow_external_settings_updates(self, ui_obj: SettingsDialog):
+        checkbox = ui_obj.findChild(QCheckBox, ui_obj.SYSTEM_LOAD_CHECKBOX_NAME)
+        options = ui_obj.findChild(QWidget, ui_obj.SYSTEM_LOAD_OPTIONS_NAME)
+        interval = ui_obj.findChild(QSpinBox, ui_obj.SYSTEM_LOAD_INTERVAL_NAME)
+        published = QSignalSpy(ui_obj.settings.value_changed)
+
+        ui_obj.settings.show_system_load_graphs = False
+        ui_obj.settings.system_load_interval_ms = 2250
+
+        assert checkbox.isChecked() is False
+        assert options.isEnabled() is False
+        assert interval.value() == 2250
+        assert published.count() == 2
+
+    def test_workspace_uses_existing_persisted_setting_keys(self, main_window, settings_obj):
+        expected_states = {
+            'show_line_numbers': False,
+            'viewer_process_emojis': False,
+            'viewer_highlight_todos': False,
+            'viewer_open_link_confirmation': False,
+            'viewer_save_resources': False,
+            'show_navigation_arrows': False,
+            'show_global_cursor_position': True,
+            'show_system_load_graphs': False,
+        }
+        for setting_name, value in expected_states.items():
+            setattr(settings_obj, setting_name, value)
+        settings_obj.system_load_interval_ms = 2250
+
+        dialog = SettingsDialog(parent=main_window)
+
+        restored_states = {}
+        for checkbox in dialog.findChildren(QCheckBox):
+            _lexeme_key, setting_name = dialog.parse_object_name(checkbox.objectName())
+            if setting_name in expected_states:
+                restored_states[setting_name] = checkbox.isChecked()
+        assert restored_states == expected_states
+        interval = dialog.findChild(
+            QSpinBox,
+            'settings_dialog_workspace_bottom_bar_system_load_interval_ms:system_load_interval_ms',
+        )
+        assert interval.value() == 2250
+
     @pytest.mark.parametrize(
         "test_params_fixture, test_exp_params_fixture",
         [
             ('get_general_fields', 'settings_dialog_tab_general'),
-            ('get_editor_config_fields', 'settings_dialog_tab_editor_config'),
-            ('get_viewer_config_fields', 'settings_dialog_tab_viewer_config'),
+            ('get_workspace_fields', 'settings_dialog_tab_workspace'),
             ('get_ai_config_fields', 'settings_dialog_tab_ai_config'),
         ],
         indirect=True
@@ -193,8 +319,7 @@ class TestSettingsDialog:
         """
         Covers:
         - SettingsDialog.get_general_fields
-        - SettingsDialog.get_editor_config_fields
-        - SettingsDialog.get_viewer_config_fields
+        - SettingsDialog.get_workspace_fields
         - SettingsDialog.get_ai_config_fields
         """
 

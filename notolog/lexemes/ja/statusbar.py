@@ -20,6 +20,11 @@ lexemes = {
     "statusbar_encryption_label_encryption_plain": "プレーン",
     "statusbar_encryption_label_encryption_encrypted": "暗号化",
 
+    "statusbar_system_cpu_usage": "システムCPU使用率: {percentage}%",
+    "statusbar_system_cpu_usage_unavailable": "システムCPU使用率を取得できません",
+    "statusbar_system_memory_usage": "システムメモリ使用率: {percentage}%",
+    "statusbar_system_memory_usage_unavailable": "システムメモリ使用率を取得できません",
+
     "statusbar_cursor_label": "行: {line} → 列: {column}",
     "statusbar_cursor_label_selected": "行: {line} → 列: {column} → 選択: {selected}",
     "statusbar_cursor_label_with_global": "行: {line} → 列: {column} → 位置: {position}",

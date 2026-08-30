@@ -6,8 +6,7 @@ lexemes = {
     "button_close": "Fermer",
 
     "tab_general": "Général",
-    "tab_editor_config": "Éditeur",
-    "tab_viewer_config": "Visualiseur",
+    "tab_workspace": "Espace de travail",
     "tab_ai_config": "Config IA",
 
     "general_app_config_label": "Configuration de l'application",
@@ -32,29 +31,28 @@ lexemes = {
     "general_reversible_file_deletion_checkbox_accessible_description":
         "Déplacer les fichiers supprimés vers la corbeille Notolog en ajoutant une extension .del",
 
-    "general_statusbar_label": "Barre de statut",
-    "general_statusbar_show_global_cursor_position_checkbox": "Afficher la position globale du curseur",
-    "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
+    "workspace_bottom_bar_show_global_cursor_position_checkbox": "Afficher la position globale du curseur",
+    "workspace_bottom_bar_show_global_cursor_position_checkbox_accessible_description":
         "Afficher la position globale du curseur dans la barre de statut",
-    "general_statusbar_show_navigation_arrows_checkbox": "Afficher les flèches de navigation",
-    "general_statusbar_show_navigation_arrows_checkbox_accessible_description":
+    "workspace_bottom_bar_show_navigation_arrows_checkbox": "Afficher les flèches de navigation",
+    "workspace_bottom_bar_show_navigation_arrows_checkbox_accessible_description":
         "Afficher les flèches de navigation dans la barre d'état",
 
-    "editor_config_label": "Configuration de l'éditeur",
-    "editor_config_show_line_numbers_checkbox": "Afficher les numéros de ligne",
-    "editor_config_show_line_numbers_checkbox_accessible_description": "Afficher les numéros de ligne dans l'éditeur",
+    "workspace_editor_mode_label": "Mode édition",
+    "workspace_editor_mode_show_line_numbers_checkbox": "Afficher les numéros de ligne",
+    "workspace_editor_mode_show_line_numbers_checkbox_accessible_description": "Afficher les numéros de ligne dans l'éditeur",
 
-    "viewer_config_label": "Configuration du visualiseur",
-    "viewer_config_process_emojis_checkbox": "Convertir les emojis de texte en graphiques",
-    "viewer_config_process_emojis_checkbox_accessible_description":
+    "workspace_view_mode_label": "Mode affichage",
+    "workspace_view_mode_process_emojis_checkbox": "Convertir les emojis de texte en graphiques",
+    "workspace_view_mode_process_emojis_checkbox_accessible_description":
         "Convertir les emojis de texte en représentations graphiques",
-    "viewer_config_highlight_todos_checkbox": "Mettre en évidence les TODO",
-    "viewer_config_highlight_todos_checkbox_accessible_description": "Souligner les balises TODO dans le texte",
-    "viewer_config_open_link_confirmation_checkbox": "Demander confirmation avant d'ouvrir les liens",
-    "viewer_config_open_link_confirmation_checkbox_accessible_description":
+    "workspace_view_mode_highlight_todos_checkbox": "Mettre en évidence les TODO",
+    "workspace_view_mode_highlight_todos_checkbox_accessible_description": "Souligner les balises TODO dans le texte",
+    "workspace_view_mode_open_link_confirmation_checkbox": "Demander confirmation avant d'ouvrir les liens",
+    "workspace_view_mode_open_link_confirmation_checkbox_accessible_description":
         "Demander une confirmation avant d'ouvrir des liens",
-    "viewer_config_save_resources_checkbox": "Enregistrer automatiquement les images externes sur le disque",
-    "viewer_config_save_resources_checkbox_accessible_description":
+    "workspace_view_mode_save_resources_checkbox": "Enregistrer automatiquement les images externes sur le disque",
+    "workspace_view_mode_save_resources_checkbox_accessible_description":
         "Enregistre automatiquement des copies des images externes sur le disque pour un accès hors ligne.",
 
     "ai_config_inference_module_label": "Module d'inférence",
@@ -73,4 +71,11 @@ lexemes = {
     "ai_config_convert_to_md_checkbox": "Convertir le résultat en Markdown",
     "ai_config_convert_to_md_checkbox_accessible_description":
         "Convertissez le message de sortie au format Markdown.",
+    "workspace_bottom_bar_label": "Barre inférieure",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox": "Afficher les graphiques CPU et mémoire",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox_accessible_description":
+        "Afficher les graphiques CPU et mémoire et leur séparateur dans la barre inférieure",
+    "workspace_bottom_bar_system_load_interval_ms_label": "Intervalle d'actualisation des graphiques",
+    "workspace_bottom_bar_system_load_interval_ms_accessible_description":
+        "Définir la fréquence de lecture du CPU et de la mémoire en millisecondes",
 }

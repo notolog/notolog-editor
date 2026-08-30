@@ -6,8 +6,7 @@ lexemes = {
     "button_close": "Sulje",
 
     "tab_general": "Yleiset",
-    "tab_editor_config": "Editori",
-    "tab_viewer_config": "Katselin",
+    "tab_workspace": "Työtila",
     "tab_ai_config": "Tekoälyn asetukset",
 
     "general_app_config_label": "Sovelluksen asetukset",
@@ -32,27 +31,26 @@ lexemes = {
     "general_reversible_file_deletion_checkbox_accessible_description":
         "Siirrä poistetut tiedostot Notologin roskakoriin lisäämällä .del-tunniste",
 
-    "general_statusbar_label": "Tilarivi",
-    "general_statusbar_show_global_cursor_position_checkbox": "Näytä globaali kursorin sijainti",
-    "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
+    "workspace_bottom_bar_show_global_cursor_position_checkbox": "Näytä globaali kursorin sijainti",
+    "workspace_bottom_bar_show_global_cursor_position_checkbox_accessible_description":
         "Näytä globaali kursorin sijainti tilarivillä",
-    "general_statusbar_show_navigation_arrows_checkbox": "Näytä navigointinuolet",
-    "general_statusbar_show_navigation_arrows_checkbox_accessible_description": "Näytä navigointinuolet tilapalkissa",
+    "workspace_bottom_bar_show_navigation_arrows_checkbox": "Näytä navigointinuolet",
+    "workspace_bottom_bar_show_navigation_arrows_checkbox_accessible_description": "Näytä navigointinuolet tilapalkissa",
 
-    "editor_config_label": "Editorin konfigurointi",
-    "editor_config_show_line_numbers_checkbox": "Näytä rivinumerot",
-    "editor_config_show_line_numbers_checkbox_accessible_description": "Näytä rivinumerot editorissa",
+    "workspace_editor_mode_label": "Muokkaustila",
+    "workspace_editor_mode_show_line_numbers_checkbox": "Näytä rivinumerot",
+    "workspace_editor_mode_show_line_numbers_checkbox_accessible_description": "Näytä rivinumerot editorissa",
 
-    "viewer_config_label": "Katselimen konfigurointi",
-    "viewer_config_process_emojis_checkbox": "Muunna tekstiemojit graafisiksi",
-    "viewer_config_process_emojis_checkbox_accessible_description": "Muunna tekstiemojit graafisiksi esityksiksi",
-    "viewer_config_highlight_todos_checkbox": "Korosta TODOt",
-    "viewer_config_highlight_todos_checkbox_accessible_description": "Korosta TODO-tägit tekstissä",
-    "viewer_config_open_link_confirmation_checkbox": "Vaatii vahvistuksen linkkien avaamiseen",
-    "viewer_config_open_link_confirmation_checkbox_accessible_description":
+    "workspace_view_mode_label": "Katselutila",
+    "workspace_view_mode_process_emojis_checkbox": "Muunna tekstiemojit graafisiksi",
+    "workspace_view_mode_process_emojis_checkbox_accessible_description": "Muunna tekstiemojit graafisiksi esityksiksi",
+    "workspace_view_mode_highlight_todos_checkbox": "Korosta TODOt",
+    "workspace_view_mode_highlight_todos_checkbox_accessible_description": "Korosta TODO-tägit tekstissä",
+    "workspace_view_mode_open_link_confirmation_checkbox": "Vaatii vahvistuksen linkkien avaamiseen",
+    "workspace_view_mode_open_link_confirmation_checkbox_accessible_description":
         "Pyydä vahvistus ennen linkkien avaamista",
-    "viewer_config_save_resources_checkbox": "Tallenna ulkoiset kuvat automaattisesti levylle",
-    "viewer_config_save_resources_checkbox_accessible_description":
+    "workspace_view_mode_save_resources_checkbox": "Tallenna ulkoiset kuvat automaattisesti levylle",
+    "workspace_view_mode_save_resources_checkbox_accessible_description":
         "Tallenna automaattisesti ulkoisten kuvien kopiot levylle offline-käyttöä varten.",
 
     "ai_config_inference_module_label": "Päätöksentekomoduuli",
@@ -71,4 +69,11 @@ lexemes = {
     "ai_config_convert_to_md_checkbox": "Muunna tulos Markdown-muotoon",
     "ai_config_convert_to_md_checkbox_accessible_description":
         "Muunna tulosviesti Markdown-muotoon.",
+    "workspace_bottom_bar_label": "Alapalkki",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox": "Näytä suorittimen ja muistin kaaviot",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox_accessible_description":
+        "Näytä suorittimen ja muistin käyttökaaviot sekä erotin alapalkissa",
+    "workspace_bottom_bar_system_load_interval_ms_label": "Kaavioiden päivitysväli",
+    "workspace_bottom_bar_system_load_interval_ms_accessible_description":
+        "Määritä suorittimen ja muistin käytön lukuväli millisekunteina",
 }

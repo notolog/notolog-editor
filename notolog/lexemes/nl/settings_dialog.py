@@ -6,8 +6,7 @@ lexemes = {
     "button_close": "Sluiten",
 
     "tab_general": "Algemeen",
-    "tab_editor_config": "Editor",
-    "tab_viewer_config": "Viewer",
+    "tab_workspace": "Werkruimte",
     "tab_ai_config": "AI Configuratie",
 
     "general_app_config_label": "App configuratie",
@@ -32,28 +31,27 @@ lexemes = {
     "general_reversible_file_deletion_checkbox_accessible_description":
         "Verplaats verwijderde bestanden naar de Notolog-prullenbak door een .del-extensie toe te voegen",
 
-    "general_statusbar_label": "Statusbalk",
-    "general_statusbar_show_global_cursor_position_checkbox": "Toon globale cursorpositie",
-    "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
+    "workspace_bottom_bar_show_global_cursor_position_checkbox": "Toon globale cursorpositie",
+    "workspace_bottom_bar_show_global_cursor_position_checkbox_accessible_description":
         "Toon de globale cursorpositie in de statusbalk",
-    "general_statusbar_show_navigation_arrows_checkbox": "Navigatiepijlen weergeven",
-    "general_statusbar_show_navigation_arrows_checkbox_accessible_description":
+    "workspace_bottom_bar_show_navigation_arrows_checkbox": "Navigatiepijlen weergeven",
+    "workspace_bottom_bar_show_navigation_arrows_checkbox_accessible_description":
         "Navigatiepijlen weergeven in de statusbalk",
 
-    "editor_config_label": "Editor Configuratie",
-    "editor_config_show_line_numbers_checkbox": "Toon regelnummers",
-    "editor_config_show_line_numbers_checkbox_accessible_description": "Toon regelnummers in de editor",
+    "workspace_editor_mode_label": "Editormodus",
+    "workspace_editor_mode_show_line_numbers_checkbox": "Toon regelnummers",
+    "workspace_editor_mode_show_line_numbers_checkbox_accessible_description": "Toon regelnummers in de editor",
 
-    "viewer_config_label": "Viewer Configuratie",
-    "viewer_config_process_emojis_checkbox": "Zet tekstemoji's om naar grafische afbeeldingen",
-    "viewer_config_process_emojis_checkbox_accessible_description": "Zet tekstemoji's om naar grafische afbeeldingen",
-    "viewer_config_highlight_todos_checkbox": "Markeer TODO's",
-    "viewer_config_highlight_todos_checkbox_accessible_description": "Benadruk TODO-tags binnen de tekst",
-    "viewer_config_open_link_confirmation_checkbox": "Bevestiging vereist om links te openen",
-    "viewer_config_open_link_confirmation_checkbox_accessible_description":
+    "workspace_view_mode_label": "Weergavemodus",
+    "workspace_view_mode_process_emojis_checkbox": "Zet tekstemoji's om naar grafische afbeeldingen",
+    "workspace_view_mode_process_emojis_checkbox_accessible_description": "Zet tekstemoji's om naar grafische afbeeldingen",
+    "workspace_view_mode_highlight_todos_checkbox": "Markeer TODO's",
+    "workspace_view_mode_highlight_todos_checkbox_accessible_description": "Benadruk TODO-tags binnen de tekst",
+    "workspace_view_mode_open_link_confirmation_checkbox": "Bevestiging vereist om links te openen",
+    "workspace_view_mode_open_link_confirmation_checkbox_accessible_description":
         "Vraag om bevestiging voordat links worden geopend",
-    "viewer_config_save_resources_checkbox": "Auto-save externe afbeeldingen naar schijf",
-    "viewer_config_save_resources_checkbox_accessible_description":
+    "workspace_view_mode_save_resources_checkbox": "Auto-save externe afbeeldingen naar schijf",
+    "workspace_view_mode_save_resources_checkbox_accessible_description":
         "Sla automatisch kopieën van externe afbeeldingen op schijf op voor offline toegang.",
 
     "ai_config_inference_module_label": "Inferentiemodule",
@@ -71,4 +69,11 @@ lexemes = {
     "ai_config_convert_to_md_checkbox": "Converteer het resultaat naar Markdown",
     "ai_config_convert_to_md_checkbox_accessible_description":
         "Converteer het uitvoerbericht naar Markdown-indeling.",
+    "workspace_bottom_bar_label": "Onderste balk",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox": "CPU- en geheugengrafieken tonen",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox_accessible_description":
+        "CPU- en geheugengebruik met scheidingslijn in de onderste balk tonen",
+    "workspace_bottom_bar_system_load_interval_ms_label": "Vernieuwingsinterval grafieken",
+    "workspace_bottom_bar_system_load_interval_ms_accessible_description":
+        "Instellen hoe vaak CPU- en geheugengebruik wordt gelezen, in milliseconden",
 }

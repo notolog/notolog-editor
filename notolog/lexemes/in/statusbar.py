@@ -20,6 +20,11 @@ lexemes = {
     "statusbar_encryption_label_encryption_plain": "सादा",
     "statusbar_encryption_label_encryption_encrypted": "एन्क्रिप्टेड",
 
+    "statusbar_system_cpu_usage": "सिस्टम CPU उपयोग: {percentage}%",
+    "statusbar_system_cpu_usage_unavailable": "सिस्टम CPU उपयोग उपलब्ध नहीं है",
+    "statusbar_system_memory_usage": "सिस्टम मेमोरी उपयोग: {percentage}%",
+    "statusbar_system_memory_usage_unavailable": "सिस्टम मेमोरी उपयोग उपलब्ध नहीं है",
+
     "statusbar_cursor_label": "पंक्ति: {line} → स्तंभ: {column}",
     "statusbar_cursor_label_selected": "पंक्ति: {line} → स्तंभ: {column} → चयनित: {selected}",
     "statusbar_cursor_label_with_global": "पंक्ति: {line} → स्तंभ: {column} → स्थान: {position}",

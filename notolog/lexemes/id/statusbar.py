@@ -20,6 +20,11 @@ lexemes = {
     "statusbar_encryption_label_encryption_plain": "Polos",
     "statusbar_encryption_label_encryption_encrypted": "Terenkripsi",
 
+    "statusbar_system_cpu_usage": "Penggunaan CPU sistem: {percentage}%",
+    "statusbar_system_cpu_usage_unavailable": "Penggunaan CPU sistem tidak tersedia",
+    "statusbar_system_memory_usage": "Penggunaan memori sistem: {percentage}%",
+    "statusbar_system_memory_usage_unavailable": "Penggunaan memori sistem tidak tersedia",
+
     "statusbar_cursor_label": "baris: {line} → kol: {column}",
     "statusbar_cursor_label_selected": "baris: {line} → kol: {column} → terpilih: {selected}",
     "statusbar_cursor_label_with_global": "baris: {line} → kol: {column} → pos: {position}",

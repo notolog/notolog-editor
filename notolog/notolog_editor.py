@@ -2950,7 +2950,10 @@ class NotologEditor(QMainWindow):
         self.save_active_file(clear_after=False)
 
         settings = SettingsDialog(self)
-        settings.exec()
+        try:
+            settings.exec()
+        finally:
+            settings.deleteLater()
 
     def action_reset_settings(self):
         """

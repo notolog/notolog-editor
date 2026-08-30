@@ -6,8 +6,7 @@ lexemes = {
     "button_close": "बंद करें",
 
     "tab_general": "सामान्य",
-    "tab_editor_config": "संपादक",
-    "tab_viewer_config": "दर्शक",
+    "tab_workspace": "कार्यक्षेत्र",
     "tab_ai_config": "एआई कॉन्फ़िग",
 
     "general_app_config_label": "एप्लिकेशन कॉन्फ़िग",
@@ -32,27 +31,26 @@ lexemes = {
     "general_reversible_file_deletion_checkbox_accessible_description":
         ".del एक्सटेंशन जोड़कर हटाई गई फ़ाइलों को Notolog की टोकरी में ले जाएँ",
 
-    "general_statusbar_label": "स्थिति पट्टी",
-    "general_statusbar_show_global_cursor_position_checkbox": "ग्लोबल कर्सर स्थिति दिखाएं",
-    "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
+    "workspace_bottom_bar_show_global_cursor_position_checkbox": "ग्लोबल कर्सर स्थिति दिखाएं",
+    "workspace_bottom_bar_show_global_cursor_position_checkbox_accessible_description":
         "स्थिति पट्टी में ग्लोबल कर्सर स्थिति दिखाएं",
-    "general_statusbar_show_navigation_arrows_checkbox": "नेविगेशन तीर दिखाएं",
-    "general_statusbar_show_navigation_arrows_checkbox_accessible_description": "स्टेटस बार में नेविगेशन तीर दिखाएं",
+    "workspace_bottom_bar_show_navigation_arrows_checkbox": "नेविगेशन तीर दिखाएं",
+    "workspace_bottom_bar_show_navigation_arrows_checkbox_accessible_description": "स्टेटस बार में नेविगेशन तीर दिखाएं",
 
-    "editor_config_label": "संपादक कॉन्फ़िगरेशन",
-    "editor_config_show_line_numbers_checkbox": "लाइन संख्याएँ दिखाएं",
-    "editor_config_show_line_numbers_checkbox_accessible_description": "संपादक में लाइन संख्याएँ दिखाएं",
+    "workspace_editor_mode_label": "संपादक मोड",
+    "workspace_editor_mode_show_line_numbers_checkbox": "लाइन संख्याएँ दिखाएं",
+    "workspace_editor_mode_show_line_numbers_checkbox_accessible_description": "संपादक में लाइन संख्याएँ दिखाएं",
 
-    "viewer_config_label": "दर्शक कॉन्फ़िगरेशन",
-    "viewer_config_process_emojis_checkbox": "पाठ इमोजी को ग्राफिक में परिवर्तित करें",
-    "viewer_config_process_emojis_checkbox_accessible_description": "पाठ इमोजी को चित्रित प्रतिनिधि में परिवर्तित करें",
-    "viewer_config_highlight_todos_checkbox": "TODO को हाइलाइट करें",
-    "viewer_config_highlight_todos_checkbox_accessible_description": "पाठ में TODO टैग को महत्वपूर्ण बनाएं",
-    "viewer_config_open_link_confirmation_checkbox": "लिंक खोलने के लिए पुष्टि की आवश्यकता",
-    "viewer_config_open_link_confirmation_checkbox_accessible_description":
+    "workspace_view_mode_label": "दृश्य मोड",
+    "workspace_view_mode_process_emojis_checkbox": "पाठ इमोजी को ग्राफिक में परिवर्तित करें",
+    "workspace_view_mode_process_emojis_checkbox_accessible_description": "पाठ इमोजी को चित्रित प्रतिनिधि में परिवर्तित करें",
+    "workspace_view_mode_highlight_todos_checkbox": "TODO को हाइलाइट करें",
+    "workspace_view_mode_highlight_todos_checkbox_accessible_description": "पाठ में TODO टैग को महत्वपूर्ण बनाएं",
+    "workspace_view_mode_open_link_confirmation_checkbox": "लिंक खोलने के लिए पुष्टि की आवश्यकता",
+    "workspace_view_mode_open_link_confirmation_checkbox_accessible_description":
         "लिंक खोलने से पहले पुष्टि की आवश्यकता है",
-    "viewer_config_save_resources_checkbox": "बाहरी छवियों को डिस्क में स्वचालित रूप से सहेजें",
-    "viewer_config_save_resources_checkbox_accessible_description":
+    "workspace_view_mode_save_resources_checkbox": "बाहरी छवियों को डिस्क में स्वचालित रूप से सहेजें",
+    "workspace_view_mode_save_resources_checkbox_accessible_description":
         "ऑफ़लाइन पहुंच के लिए बाहरी छवियों की स्वचालित प्रतिलिपियाँ डिस्क में सहेजें।",
 
     "ai_config_inference_module_label": "अनुमान मॉड्यूल",
@@ -70,4 +68,11 @@ lexemes = {
     "ai_config_convert_to_md_checkbox": "परिणाम को Markdown में बदलें",
     "ai_config_convert_to_md_checkbox_accessible_description":
         "आउटपुट संदेश को Markdown प्रारूप में बदलें।",
+    "workspace_bottom_bar_label": "निचली पट्टी",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox": "CPU और मेमोरी ग्राफ दिखाएं",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox_accessible_description":
+        "निचली पट्टी में CPU और मेमोरी उपयोग ग्राफ और उनका विभाजक दिखाएं",
+    "workspace_bottom_bar_system_load_interval_ms_label": "ग्राफ़ रीफ़्रेश अंतराल",
+    "workspace_bottom_bar_system_load_interval_ms_accessible_description":
+        "CPU और मेमोरी उपयोग पढ़ने का अंतराल मिलीसेकंड में सेट करें",
 }

@@ -6,8 +6,7 @@ lexemes = {
     "button_close": "关闭",
 
     "tab_general": "通用",
-    "tab_editor_config": "编辑器",
-    "tab_viewer_config": "查看器",
+    "tab_workspace": "工作区",
     "tab_ai_config": "AI 配置",
 
     "general_app_config_label": "应用配置",
@@ -32,27 +31,26 @@ lexemes = {
     "general_reversible_file_deletion_checkbox_accessible_description":
         "通过添加 .del 扩展名将已删除文件移至 Notolog 回收站",
 
-    "general_statusbar_label": "状态栏",
-    "general_statusbar_show_global_cursor_position_checkbox": "显示全局光标位置",
-    "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
+    "workspace_bottom_bar_show_global_cursor_position_checkbox": "显示全局光标位置",
+    "workspace_bottom_bar_show_global_cursor_position_checkbox_accessible_description":
         "在状态栏显示全局光标位置",
-    "general_statusbar_show_navigation_arrows_checkbox": "显示导航箭头",
-    "general_statusbar_show_navigation_arrows_checkbox_accessible_description": "在状态栏中显示导航箭头",
+    "workspace_bottom_bar_show_navigation_arrows_checkbox": "显示导航箭头",
+    "workspace_bottom_bar_show_navigation_arrows_checkbox_accessible_description": "在状态栏中显示导航箭头",
 
-    "editor_config_label": "编辑器配置",
-    "editor_config_show_line_numbers_checkbox": "显示行号",
-    "editor_config_show_line_numbers_checkbox_accessible_description": "在编辑器中显示行号",
+    "workspace_editor_mode_label": "编辑模式",
+    "workspace_editor_mode_show_line_numbers_checkbox": "显示行号",
+    "workspace_editor_mode_show_line_numbers_checkbox_accessible_description": "在编辑器中显示行号",
 
-    "viewer_config_label": "查看器配置",
-    "viewer_config_process_emojis_checkbox": "将文本表情转换为图形",
-    "viewer_config_process_emojis_checkbox_accessible_description": "将文本表情转换为图形表示",
-    "viewer_config_highlight_todos_checkbox": "突出显示待办事项",
-    "viewer_config_highlight_todos_checkbox_accessible_description": "在文本中突出显示待办事项标签",
-    "viewer_config_open_link_confirmation_checkbox": "打开链接前需确认",
-    "viewer_config_open_link_confirmation_checkbox_accessible_description":
+    "workspace_view_mode_label": "查看模式",
+    "workspace_view_mode_process_emojis_checkbox": "将文本表情转换为图形",
+    "workspace_view_mode_process_emojis_checkbox_accessible_description": "将文本表情转换为图形表示",
+    "workspace_view_mode_highlight_todos_checkbox": "突出显示待办事项",
+    "workspace_view_mode_highlight_todos_checkbox_accessible_description": "在文本中突出显示待办事项标签",
+    "workspace_view_mode_open_link_confirmation_checkbox": "打开链接前需确认",
+    "workspace_view_mode_open_link_confirmation_checkbox_accessible_description":
         "打开链接前询问确认",
-    "viewer_config_save_resources_checkbox": "自动保存外部图片到硬盘",
-    "viewer_config_save_resources_checkbox_accessible_description": "自动将外部图片的副本保存到硬盘以供离线访问。",
+    "workspace_view_mode_save_resources_checkbox": "自动保存外部图片到硬盘",
+    "workspace_view_mode_save_resources_checkbox_accessible_description": "自动将外部图片的副本保存到硬盘以供离线访问。",
 
     "ai_config_inference_module_label": "推理模块",
     "ai_config_inference_module_names_combo_label": "活跃推理模块",
@@ -69,4 +67,11 @@ lexemes = {
     "ai_config_convert_to_md_checkbox": "将结果转换为Markdown",
     "ai_config_convert_to_md_checkbox_accessible_description":
         "将输出消息转换为Markdown格式。",
+    "workspace_bottom_bar_label": "底栏",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox": "显示 CPU 和内存图表",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox_accessible_description":
+        "在底栏显示 CPU 和内存使用率图表及其分隔线",
+    "workspace_bottom_bar_system_load_interval_ms_label": "图表刷新间隔",
+    "workspace_bottom_bar_system_load_interval_ms_accessible_description":
+        "设置读取 CPU 和内存使用率的间隔（毫秒）",
 }

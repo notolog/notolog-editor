@@ -2,7 +2,8 @@
 
 from PySide6.QtWidgets import QMainWindow
 from PySide6.QtCore import Qt, QSize
-from PySide6.QtGui import QColor
+from PySide6.QtGui import QColor, QImage
+from types import SimpleNamespace
 import pytest
 
 from notolog.settings import Settings
@@ -25,6 +26,9 @@ def test_current_file_indicator_elides_and_copies_path(test_app, tmp_path):  # n
     assert statusbar.file_label.isHidden() is False
     assert statusbar.file_icon_label.toolTip() == f'Click to copy: {file_path}'
     assert statusbar.file_icon_label.focusPolicy() == Qt.FocusPolicy.TabFocus
+    assert statusbar.file_icon_label.testAttribute(
+        Qt.WidgetAttribute.WA_AlwaysShowToolTips)
+    assert statusbar.file_icon_label.hasMouseTracking()
     assert '…' in statusbar.file_label.text()
     assert (statusbar.file_label.palette().color(statusbar.file_label.foregroundRole())
             == statusbar.data_size_label.palette().color(statusbar.data_size_label.foregroundRole()))
@@ -79,6 +83,7 @@ def test_font_size_change_resizes_compact_icons(test_app, tmp_path):  # noqa: F8
     statusbar.set_file_path(str(file_path))
     statusbar.set_encryption_icon(encrypted=True)
     previous_size = statusbar._compact_icon_size()
+    previous_graph_size = statusbar.cpu_load_graph.size()
 
     font = window.font()
     font.setPointSize(font.pointSize() + 12)
@@ -91,6 +96,8 @@ def test_font_size_change_resizes_compact_icons(test_app, tmp_path):  # noqa: F8
     assert statusbar.save_progress_label.pixmap().size() == QSize(compact_size, compact_size)
     assert statusbar.encryption_icon_label.pixmap().size() == QSize(compact_size, compact_size)
     assert statusbar.warning_label.iconSize() == QSize(compact_size, compact_size)
+    assert statusbar.cpu_load_graph.width() == previous_graph_size.width()
+    assert statusbar.cpu_load_graph.height() > previous_graph_size.height()
     expected_encryption_icon = statusbar.theme_helper.get_icon(
         theme_icon='shield-lock-fill.svg',
         color=QColor(statusbar.theme_helper.get_color('statusbar_icon_color_default')),
@@ -112,3 +119,149 @@ def test_save_progress_container_does_not_reserve_hidden_spacing(test_app):  # n
     statusbar.show_save_progress(False)
     assert statusbar.save_progress_label.isHidden()
     assert statusbar.save_progress_container.isHidden()
+
+
+def test_system_load_indicators_update_without_blocking(test_app, mocker):  # noqa: F811
+    settings = Settings()
+    settings.clear()
+    settings.app_language = 'en'
+    cpu_percent = mocker.patch('notolog.ui.statusbar.psutil.cpu_percent', return_value=12.6)
+    virtual_memory = mocker.patch(
+        'notolog.ui.statusbar.psutil.virtual_memory',
+        return_value=SimpleNamespace(percent=54.4),
+    )
+
+    statusbar = StatusBar(QMainWindow())
+
+    assert statusbar.cpu_load_graph.current_value is None
+    assert statusbar.memory_load_graph.current_value is None
+    assert statusbar.cpu_load_graph.toolTip() == 'System CPU usage unavailable'
+    assert statusbar.memory_load_graph.toolTip() == 'System memory usage unavailable'
+    cpu_percent.assert_called_once_with(interval=None)
+    virtual_memory.assert_not_called()
+
+    statusbar.update_system_load()
+
+    assert statusbar.cpu_load_graph.values[-1] == 13
+    assert statusbar.memory_load_graph.values[-1] == 54
+    assert statusbar.cpu_load_graph.toolTip() == 'System CPU usage: 13%'
+    assert statusbar.memory_load_graph.toolTip() == 'System memory usage: 54%'
+    assert statusbar.cpu_load_graph.testAttribute(
+        Qt.WidgetAttribute.WA_AlwaysShowToolTips)
+    assert statusbar.cpu_load_graph.focusPolicy() == Qt.FocusPolicy.NoFocus
+    assert statusbar.cpu_load_graph.hasMouseTracking()
+    assert statusbar.system_load_timer.isActive()
+    assert statusbar.system_load_timer.interval() == statusbar.DEFAULT_SYSTEM_LOAD_INTERVAL_MS
+    assert statusbar.DEFAULT_SYSTEM_LOAD_INTERVAL_MS == 1000
+    assert (statusbar.labels_layout.indexOf(statusbar.cursor_label)
+            < statusbar.labels_layout.indexOf(statusbar.system_load_separator)
+            < statusbar.labels_layout.indexOf(statusbar.cpu_load_graph))
+    assert statusbar.cpu_load_graph.COLUMN_WIDTH == 1
+    assert statusbar.cpu_load_graph.COLUMN_GAP == 0
+    assert statusbar.cpu_load_graph.INNER_PADDING == 1
+    assert statusbar.cpu_load_graph.HISTORY_SIZE == 30
+    assert statusbar.cpu_load_graph.width() == 34
+    assert statusbar.cpu_load_graph.border_color == QColor(
+        statusbar.theme_helper.get_color('statusbar_cpu_graph_border_color'))
+    assert statusbar.cpu_load_graph.column_color == QColor(
+        statusbar.theme_helper.get_color('statusbar_cpu_graph_column_color'))
+    assert statusbar.memory_load_graph.border_color == QColor(
+        statusbar.theme_helper.get_color('statusbar_memory_graph_border_color'))
+    assert statusbar.memory_load_graph.column_color == QColor(
+        statusbar.theme_helper.get_color('statusbar_memory_graph_column_color'))
+    assert cpu_percent.call_count == 2
+    virtual_memory.assert_called_once_with()
+
+
+def test_system_load_graph_has_exact_border_and_inner_padding(test_app):  # noqa: F811
+    statusbar = StatusBar(QMainWindow())
+    graph = statusbar.cpu_load_graph
+    border_color = QColor('#123456')
+    column_color = QColor('#abcdef')
+    graph.set_colors(border_color, column_color)
+    for _ in range(graph.HISTORY_SIZE):
+        graph.set_value(100)
+
+    image = QImage(graph.size(), QImage.Format.Format_ARGB32)
+    image.fill(Qt.GlobalColor.transparent)
+    graph.render(image)
+
+    assert image.pixelColor(0, 0) == border_color
+    assert image.pixelColor(graph.width() - 1, graph.height() - 1) == border_color
+    assert image.pixelColor(1, 2) != column_color
+    assert image.pixelColor(2, 2) == column_color
+    assert image.pixelColor(graph.width() - 3, 2) == column_color
+    assert image.pixelColor(graph.width() - 2, 2) != column_color
+    assert image.pixelColor(2, graph.height() - 3) == column_color
+    assert image.pixelColor(2, graph.height() - 2) != column_color
+
+
+def test_system_load_indicators_handle_monitoring_failure(test_app, mocker):  # noqa: F811
+    settings = Settings()
+    settings.clear()
+    settings.app_language = 'en'
+    mocker.patch('notolog.ui.statusbar.psutil.cpu_percent', side_effect=OSError)
+
+    statusbar = StatusBar(QMainWindow())
+
+    assert statusbar.cpu_load_graph.toolTip() == 'System CPU usage unavailable'
+    assert statusbar.memory_load_graph.toolTip() == 'System memory usage unavailable'
+
+
+def test_system_load_tooltips_follow_language_changes(test_app, mocker):  # noqa: F811
+    mocker.patch('notolog.ui.statusbar.psutil.cpu_percent', return_value=12.6)
+    mocker.patch(
+        'notolog.ui.statusbar.psutil.virtual_memory',
+        return_value=SimpleNamespace(percent=54.4),
+    )
+    settings = Settings()
+    settings.clear()
+    settings.app_language = 'en'
+    statusbar = StatusBar(QMainWindow())
+
+    statusbar.update_system_load()
+
+    settings.app_language = 'de'
+
+    assert statusbar.cpu_load_graph.toolTip() == 'System-CPU-Auslastung: 13 %'
+    assert statusbar.memory_load_graph.toolTip() == 'Systemspeicherauslastung: 54 %'
+    assert statusbar.cpu_load_graph.accessibleName() == statusbar.cpu_load_graph.toolTip()
+
+
+def test_system_load_visibility_stops_sampling_and_hides_separator(test_app, mocker):  # noqa: F811
+    settings = Settings()
+    settings.clear()
+    statusbar = StatusBar(QMainWindow())
+    update_system_load = mocker.patch.object(statusbar, 'update_system_load')
+    cpu_percent = mocker.patch('notolog.ui.statusbar.psutil.cpu_percent')
+
+    settings.show_system_load_graphs = False
+
+    assert statusbar.system_load_separator.isHidden()
+    assert statusbar.cpu_load_graph.isHidden()
+    assert statusbar.memory_load_graph.isHidden()
+    assert not statusbar.system_load_timer.isActive()
+
+    settings.show_system_load_graphs = True
+
+    assert not statusbar.system_load_separator.isHidden()
+    assert not statusbar.cpu_load_graph.isHidden()
+    assert not statusbar.memory_load_graph.isHidden()
+    assert statusbar.system_load_timer.isActive()
+    update_system_load.assert_not_called()
+    assert cpu_percent.call_args_list[-1].kwargs == {'interval': None}
+
+
+def test_system_load_interval_setting_is_applied_and_bounded(test_app):  # noqa: F811
+    settings = Settings()
+    settings.clear()
+    statusbar = StatusBar(QMainWindow())
+
+    settings.system_load_interval_ms = 2500
+    assert statusbar.system_load_timer.interval() == 2500
+
+    settings.system_load_interval_ms = 1
+    assert statusbar.system_load_timer.interval() == statusbar.MIN_SYSTEM_LOAD_INTERVAL_MS
+
+    settings.system_load_interval_ms = 100000
+    assert statusbar.system_load_timer.interval() == statusbar.MAX_SYSTEM_LOAD_INTERVAL_MS

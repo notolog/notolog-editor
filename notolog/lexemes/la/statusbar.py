@@ -20,6 +20,11 @@ lexemes = {
     "statusbar_encryption_label_encryption_plain": "Simplicitas",
     "statusbar_encryption_label_encryption_encrypted": "Cryptatus",
 
+    "statusbar_system_cpu_usage": "Usus CPU systematis: {percentage}%",
+    "statusbar_system_cpu_usage_unavailable": "Usus CPU systematis non praesto est",
+    "statusbar_system_memory_usage": "Usus memoriae systematis: {percentage}%",
+    "statusbar_system_memory_usage_unavailable": "Usus memoriae systematis non praesto est",
+
     "statusbar_cursor_label": "linea: {line} → columna: {column}",
     "statusbar_cursor_label_selected": "linea: {line} → columna: {column} → selectus: {selected}",
     "statusbar_cursor_label_with_global": "linea: {line} → columna: {column} → positio: {position}",

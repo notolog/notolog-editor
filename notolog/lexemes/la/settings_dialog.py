@@ -6,8 +6,7 @@ lexemes = {
     "button_close": "Claudere",
 
     "tab_general": "Generale",
-    "tab_editor_config": "Editor",
-    "tab_viewer_config": "Visor",
+    "tab_workspace": "Area operis",
     "tab_ai_config": "Configuratio AI",
 
     "general_app_config_label": "Configuratio App",
@@ -32,29 +31,28 @@ lexemes = {
     "general_reversible_file_deletion_checkbox_accessible_description":
         "Fasciculos deletos in corbem Notolog move addita extensione .del",
 
-    "general_statusbar_label": "Status Barra",
-    "general_statusbar_show_global_cursor_position_checkbox": "Ostende Globalem Cursoris Positionem",
-    "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
+    "workspace_bottom_bar_show_global_cursor_position_checkbox": "Ostende Globalem Cursoris Positionem",
+    "workspace_bottom_bar_show_global_cursor_position_checkbox_accessible_description":
         "Ostende globalem cursoris positionem in status barra",
-    "general_statusbar_show_navigation_arrows_checkbox": "Monstra sagittas navigationis",
-    "general_statusbar_show_navigation_arrows_checkbox_accessible_description":
+    "workspace_bottom_bar_show_navigation_arrows_checkbox": "Monstra sagittas navigationis",
+    "workspace_bottom_bar_show_navigation_arrows_checkbox_accessible_description":
         "Monstra sagittas navigationis in barra status",
 
-    "editor_config_label": "Editoris Configuratio",
-    "editor_config_show_line_numbers_checkbox": "Ostende Numeros Linearum",
-    "editor_config_show_line_numbers_checkbox_accessible_description": "Ostende numeros linearum in editor",
+    "workspace_editor_mode_label": "Modus editoris",
+    "workspace_editor_mode_show_line_numbers_checkbox": "Ostende Numeros Linearum",
+    "workspace_editor_mode_show_line_numbers_checkbox_accessible_description": "Ostende numeros linearum in editor",
 
-    "viewer_config_label": "Visoris Configuratio",
-    "viewer_config_process_emojis_checkbox": "Converte Textum Emojis ad Graphica",
-    "viewer_config_process_emojis_checkbox_accessible_description":
+    "workspace_view_mode_label": "Modus visus",
+    "workspace_view_mode_process_emojis_checkbox": "Converte Textum Emojis ad Graphica",
+    "workspace_view_mode_process_emojis_checkbox_accessible_description":
         "Converte emojis textuales in representationes graphicas",
-    "viewer_config_highlight_todos_checkbox": "Illustra TODOs",
-    "viewer_config_highlight_todos_checkbox_accessible_description": "In textu TODOs signa illustra",
-    "viewer_config_open_link_confirmation_checkbox": "Postulat Confirmationem ad Aperiendum Nexus",
-    "viewer_config_open_link_confirmation_checkbox_accessible_description":
+    "workspace_view_mode_highlight_todos_checkbox": "Illustra TODOs",
+    "workspace_view_mode_highlight_todos_checkbox_accessible_description": "In textu TODOs signa illustra",
+    "workspace_view_mode_open_link_confirmation_checkbox": "Postulat Confirmationem ad Aperiendum Nexus",
+    "workspace_view_mode_open_link_confirmation_checkbox_accessible_description":
         "Quaere confirmationem ante apertionem nexus",
-    "viewer_config_save_resources_checkbox": "Serva imagines externas in disco automatice",
-    "viewer_config_save_resources_checkbox_accessible_description":
+    "workspace_view_mode_save_resources_checkbox": "Serva imagines externas in disco automatice",
+    "workspace_view_mode_save_resources_checkbox_accessible_description":
         "Automatice servat exemplaria imaginum externarum in disco ad usum sine nexu.",
 
     "ai_config_inference_module_label": "Modulus Inferentiae",
@@ -73,4 +71,11 @@ lexemes = {
     "ai_config_convert_to_md_checkbox": "Resultatum in Markdown Convertere",
     "ai_config_convert_to_md_checkbox_accessible_description":
         "Convertere nuntium exitu in formam Markdown.",
+    "workspace_bottom_bar_label": "Barra inferior",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox": "Graphica CPU et memoriae ostende",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox_accessible_description":
+        "Graphica usus CPU et memoriae cum separatore in barra inferiore ostende",
+    "workspace_bottom_bar_system_load_interval_ms_label": "Intervallum renovationis graphorum",
+    "workspace_bottom_bar_system_load_interval_ms_accessible_description":
+        "Intervallum lectionis CPU et memoriae in millisecondis constitue",
 }

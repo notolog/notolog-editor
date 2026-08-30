@@ -271,3 +271,18 @@ class TestLexemes:
 
                         # Check the actual language data exists
                         assert isinstance(module.lexemes, dict)
+
+    @pytest.mark.parametrize('scope', ('settings_dialog', 'statusbar'))
+    def test_translation_keys_are_consistent(self, scope):
+        translations_root = os.path.join(
+            pathlib.Path(os.path.dirname(__file__)).parent.resolve(), 'notolog', 'lexemes')
+        english_path = os.path.join(translations_root, 'en', f'{scope}.py')
+        expected_keys = set(self.load_module_from_file(
+            english_path, f'en.{scope}').lexemes)
+
+        for language in os.listdir(translations_root):
+            translation_path = os.path.join(translations_root, language, f'{scope}.py')
+            if os.path.isfile(translation_path):
+                translated_keys = set(self.load_module_from_file(
+                    translation_path, f'{language}.{scope}').lexemes)
+                assert translated_keys == expected_keys, language

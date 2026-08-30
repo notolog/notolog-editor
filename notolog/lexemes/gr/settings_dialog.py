@@ -6,8 +6,7 @@ lexemes = {
     "button_close": "Κλείσιμο",
 
     "tab_general": "Γενικά",
-    "tab_editor_config": "Επεξεργαστής",
-    "tab_viewer_config": "Προβολέας",
+    "tab_workspace": "Χώρος εργασίας",
     "tab_ai_config": "Ρυθμίσεις AI",
 
     "general_app_config_label": "Ρυθμίσεις Εφαρμογής",
@@ -34,29 +33,28 @@ lexemes = {
     "general_reversible_file_deletion_checkbox_accessible_description":
         "Μετακίνηση των διαγραμμένων αρχείων στον κάδο του Notolog με προσθήκη επέκτασης .del",
 
-    "general_statusbar_label": "Γραμμή Κατάστασης",
-    "general_statusbar_show_global_cursor_position_checkbox": "Εμφάνιση Παγκόσμιας Θέσης Δρομέα",
-    "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
+    "workspace_bottom_bar_show_global_cursor_position_checkbox": "Εμφάνιση Παγκόσμιας Θέσης Δρομέα",
+    "workspace_bottom_bar_show_global_cursor_position_checkbox_accessible_description":
         "Εμφάνιση της παγκόσμιας θέσης του δρομέα στη γραμμή κατάστασης",
-    "general_statusbar_show_navigation_arrows_checkbox": "Εμφάνιση βελών πλοήγησης",
-    "general_statusbar_show_navigation_arrows_checkbox_accessible_description":
+    "workspace_bottom_bar_show_navigation_arrows_checkbox": "Εμφάνιση βελών πλοήγησης",
+    "workspace_bottom_bar_show_navigation_arrows_checkbox_accessible_description":
         "Εμφάνιση των βελών πλοήγησης στη γραμμή κατάστασης",
 
-    "editor_config_label": "Ρυθμίσεις Επεξεργαστή",
-    "editor_config_show_line_numbers_checkbox": "Εμφάνιση Αριθμών Γραμμών",
-    "editor_config_show_line_numbers_checkbox_accessible_description": "Εμφάνιση αριθμών γραμμών στον επεξεργαστή",
+    "workspace_editor_mode_label": "Λειτουργία επεξεργασίας",
+    "workspace_editor_mode_show_line_numbers_checkbox": "Εμφάνιση Αριθμών Γραμμών",
+    "workspace_editor_mode_show_line_numbers_checkbox_accessible_description": "Εμφάνιση αριθμών γραμμών στον επεξεργαστή",
 
-    "viewer_config_label": "Ρυθμίσεις Προβολέα",
-    "viewer_config_process_emojis_checkbox": "Μετατροπή Εικονιδίων Κειμένου σε Γραφικά",
-    "viewer_config_process_emojis_checkbox_accessible_description":
+    "workspace_view_mode_label": "Λειτουργία προβολής",
+    "workspace_view_mode_process_emojis_checkbox": "Μετατροπή Εικονιδίων Κειμένου σε Γραφικά",
+    "workspace_view_mode_process_emojis_checkbox_accessible_description":
         "Μετατροπή εικονιδίων κειμένου σε γραφικές αναπαραστάσεις",
-    "viewer_config_highlight_todos_checkbox": "Επισήμανση Σημειώσεων TODO",
-    "viewer_config_highlight_todos_checkbox_accessible_description": "Επισήμανση ετικετών TODO μέσα στο κείμενο",
-    "viewer_config_open_link_confirmation_checkbox": "Απαίτηση Επιβεβαίωσης για Άνοιγμα Συνδέσμων",
-    "viewer_config_open_link_confirmation_checkbox_accessible_description":
+    "workspace_view_mode_highlight_todos_checkbox": "Επισήμανση Σημειώσεων TODO",
+    "workspace_view_mode_highlight_todos_checkbox_accessible_description": "Επισήμανση ετικετών TODO μέσα στο κείμενο",
+    "workspace_view_mode_open_link_confirmation_checkbox": "Απαίτηση Επιβεβαίωσης για Άνοιγμα Συνδέσμων",
+    "workspace_view_mode_open_link_confirmation_checkbox_accessible_description":
         "Ζήτηση επιβεβαίωσης πριν το άνοιγμα συνδέσμων",
-    "viewer_config_save_resources_checkbox": "Αυτόματη αποθήκευση εξωτερικών εικόνων στον δίσκο",
-    "viewer_config_save_resources_checkbox_accessible_description":
+    "workspace_view_mode_save_resources_checkbox": "Αυτόματη αποθήκευση εξωτερικών εικόνων στον δίσκο",
+    "workspace_view_mode_save_resources_checkbox_accessible_description":
         "Αυτόματη αποθήκευση αντιγράφων εξωτερικών εικόνων στον δίσκο για πρόσβαση χωρίς σύνδεση.",
 
     "ai_config_inference_module_label": "Μονάδα Συμπερασμού",
@@ -75,4 +73,11 @@ lexemes = {
     "ai_config_convert_to_md_checkbox": "Μετατροπή του αποτελέσματος σε Markdown",
     "ai_config_convert_to_md_checkbox_accessible_description":
         "Μετατρέψτε το μήνυμα εξόδου σε μορφή Markdown.",
+    "workspace_bottom_bar_label": "Κάτω γραμμή",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox": "Εμφάνιση γραφημάτων CPU και μνήμης",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox_accessible_description":
+        "Εμφάνιση γραφημάτων CPU και μνήμης και του διαχωριστικού τους στην κάτω γραμμή",
+    "workspace_bottom_bar_system_load_interval_ms_label": "Διάστημα ανανέωσης γραφημάτων",
+    "workspace_bottom_bar_system_load_interval_ms_accessible_description":
+        "Ορισμός συχνότητας ανάγνωσης CPU και μνήμης σε χιλιοστά του δευτερολέπτου",
 }

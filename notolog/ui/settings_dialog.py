@@ -17,9 +17,10 @@ License: MIT License
 For detailed instructions and project information, please see the repository's README.md.
 """
 
-from PySide6.QtCore import Qt, QObject, QSize, QRegularExpression
+from PySide6.QtCore import Qt, QObject, QSize, QRegularExpression, QSignalBlocker
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QTabWidget, QWidget, QSizePolicy, QPlainTextEdit, QScrollArea
 from PySide6.QtWidgets import QLabel, QCheckBox, QLineEdit, QPushButton, QComboBox, QSpinBox, QDoubleSpinBox, QSlider
+from PySide6.QtWidgets import QStyle
 
 import logging
 from typing import TYPE_CHECKING
@@ -45,6 +46,13 @@ if TYPE_CHECKING:
 
 
 class SettingsDialog(QDialog):
+
+    SYSTEM_LOAD_CHECKBOX_NAME = (
+        'settings_dialog_workspace_bottom_bar_show_system_load_graphs_checkbox:show_system_load_graphs')
+    SYSTEM_LOAD_OPTIONS_NAME = 'settings_dialog_workspace_bottom_bar_system_load_options'
+    SYSTEM_LOAD_INTERVAL_NAME = (
+        'settings_dialog_workspace_bottom_bar_system_load_interval_ms:system_load_interval_ms')
+
     def __init__(self, parent):
         super().__init__(parent, Qt.WindowType.Window)
 
@@ -79,6 +87,7 @@ class SettingsDialog(QDialog):
         self.setStyleSheet(self.theme_helper.get_css('settings_dialog'))
 
         self.init_ui()
+        self.settings.value_changed.connect(self.settings_update_handler)
 
     def init_ui(self):
         # Dialog widget's main layout
@@ -125,8 +134,7 @@ class SettingsDialog(QDialog):
 
         fields_config = []
         fields_config.extend(self.get_general_fields())
-        fields_config.extend(self.get_editor_config_fields())
-        fields_config.extend(self.get_viewer_config_fields())
+        fields_config.extend(self.get_workspace_fields())
         fields_config.extend(self.get_ai_config_fields())
 
         # Extend settings UI based on extended settings
@@ -222,28 +230,6 @@ class SettingsDialog(QDialog):
              "text": self.lexemes.get('general_app_main_menu_checkbox'),
              "accessible_description":
                  self.lexemes.get('general_app_main_menu_checkbox_accessible_description')},
-            # Label for the status bar settings block
-            {"type": QLabel, "name": "settings_dialog_general_statusbar_label", "alignment": Qt.AlignmentFlag.AlignLeft,
-             "text": self.lexemes.get('general_statusbar_label'),
-             "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
-            # Toggle the visibility of navigation arrows in the status bar
-            {"type": QCheckBox,
-             # Lexeme key : Setting name
-             "name": "settings_dialog_general_statusbar_show_navigation_arrows_checkbox"
-                     ":show_navigation_arrows",
-             "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
-             "text": self.lexemes.get('general_statusbar_show_navigation_arrows_checkbox'),
-             "accessible_description":
-                 self.lexemes.get('general_statusbar_show_navigation_arrows_checkbox_accessible_description')},
-            # Toggle to show or hide the global position in the status bar
-            {"type": QCheckBox,
-             # Lexeme key : Setting name
-             "name": "settings_dialog_general_statusbar_show_global_cursor_position_checkbox"
-                     ":show_global_cursor_position",
-             "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
-             "text": self.lexemes.get('general_statusbar_show_global_cursor_position_checkbox'),
-             "accessible_description":
-                 self.lexemes.get('general_statusbar_show_global_cursor_position_checkbox_accessible_description')},
             # Horizontal spacer
             {"type": HorizontalLineSpacer, "callback": lambda obj: tab_general_layout.addWidget(obj)},
             # Main menu label
@@ -280,111 +266,129 @@ class SettingsDialog(QDialog):
              "callback": lambda obj: tab_general_layout.addWidget(obj)},
         ]
 
-    def get_editor_config_fields(self) -> list:
-        # Editor
-        tab_editor_config = QWidget(self)
-
-        # Create the scroll area
+    def get_workspace_fields(self) -> list:
+        tab_workspace = QWidget(self)
         scroll_area = QScrollArea(self)
-        scroll_area.setObjectName('settings_dialog_tab_editor_config')
+        scroll_area.setObjectName('settings_dialog_tab_workspace')
         scroll_area.setWidgetResizable(True)
+        tab_workspace_layout = QVBoxLayout(tab_workspace)
+        scroll_area.setWidget(tab_workspace)
+        self.tab_widget.addTab(scroll_area, self.lexemes.get('tab_workspace'))
 
-        # Layout for the Editor Config tab
-        tab_editor_config_layout = QVBoxLayout(tab_editor_config)
+        def add_to_workspace(obj):
+            tab_workspace_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)
 
-        # Set the content widget inside the scroll area
-        scroll_area.setWidget(tab_editor_config)
+        system_load_controls = {}
 
-        self.tab_widget.addTab(scroll_area, self.lexemes.get('tab_editor_config'))
+        def add_system_load_checkbox(obj):
+            system_load_controls['checkbox'] = obj
+            add_to_workspace(obj)
+
+        def add_system_load_options(obj):
+            checkbox = system_load_controls['checkbox']
+            options_layout = QVBoxLayout(obj)
+            indent = checkbox.style().pixelMetric(QStyle.PixelMetric.PM_IndicatorWidth)
+            indent += checkbox.style().pixelMetric(QStyle.PixelMetric.PM_CheckBoxLabelSpacing)
+            options_layout.setContentsMargins(indent, 0, 0, 0)
+            obj.setStyleSheet(
+                'QLabel:disabled, QSpinBox:disabled { color: gray; }')
+            system_load_controls['layout'] = options_layout
+            checkbox.toggled.connect(obj.setEnabled)
+            obj.setEnabled(checkbox.isChecked())
+            add_to_workspace(obj)
+
+        def add_to_system_load_options(obj):
+            system_load_controls['layout'].addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)
 
         return [
-            # [Editor config]
-            # Editor block label
-            {"type": QLabel, "name": "settings_dialog_editor_config_label", "alignment": Qt.AlignmentFlag.AlignLeft,
+            {"type": QLabel, "name": "settings_dialog_workspace_editor_mode_label",
+             "alignment": Qt.AlignmentFlag.AlignLeft,
              "props": {"setProperty": ("class", "group-header-label")},
-             "text": self.lexemes.get('editor_config_label'), "style": {"bold": True},
-             "callback": lambda obj: tab_editor_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
-            # Either to show or not editor's line numbers
+             "text": self.lexemes.get('workspace_editor_mode_label'), "style": {"bold": True},
+             "callback": add_to_workspace},
             {"type": QCheckBox,
-             # Lexeme key : Setting name
-             "name": "settings_dialog_editor_config_show_line_numbers_checkbox:show_line_numbers",
-             "callback": lambda obj: tab_editor_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
-             "text": self.lexemes.get('editor_config_show_line_numbers_checkbox'),
+             "name": "settings_dialog_workspace_editor_mode_show_line_numbers_checkbox:show_line_numbers",
+             "callback": add_to_workspace,
+             "text": self.lexemes.get('workspace_editor_mode_show_line_numbers_checkbox'),
              "accessible_description":
-                 self.lexemes.get('editor_config_show_line_numbers_checkbox_accessible_description')},
-            # Spacer to keep elements above on top
-            {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding),
-             "callback": lambda obj: tab_editor_config_layout.addWidget(obj)},
-        ]
-
-    def get_viewer_config_fields(self) -> list:
-        # Viewer
-        tab_viewer_config = QWidget(self)
-
-        # Create the scroll area
-        scroll_area = QScrollArea(self)
-        scroll_area.setObjectName('settings_dialog_tab_viewer_config')
-        scroll_area.setWidgetResizable(True)
-
-        # Layout for the Viewer Config tab
-        tab_viewer_config_layout = QVBoxLayout(tab_viewer_config)
-
-        # Set the content widget inside the scroll area
-        scroll_area.setWidget(tab_viewer_config)
-
-        self.tab_widget.addTab(scroll_area, self.lexemes.get('tab_viewer_config'))
-
-        return [
-            # [Viewer config]
-            # Viewer block label
-            {"type": QLabel, "name": "settings_dialog_viewer_config_label", "alignment": Qt.AlignmentFlag.AlignLeft,
+                 self.lexemes.get('workspace_editor_mode_show_line_numbers_checkbox_accessible_description')},
+            {"type": HorizontalLineSpacer,
+             "callback": lambda obj: tab_workspace_layout.addWidget(obj)},
+            {"type": QLabel, "name": "settings_dialog_workspace_view_mode_label",
+             "alignment": Qt.AlignmentFlag.AlignLeft,
              "props": {"setProperty": ("class", "group-header-label")},
-             "text": self.lexemes.get('viewer_config_label'), "style": {"bold": True},
-             "callback": lambda obj: tab_viewer_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
-            # Either to show or not viewer's emojis
+             "text": self.lexemes.get('workspace_view_mode_label'), "style": {"bold": True},
+             "callback": add_to_workspace},
             {"type": QCheckBox,
-             # Lexeme key : Setting name
-             "name": "settings_dialog_viewer_config_process_emojis_checkbox:viewer_process_emojis",
-             "callback": lambda obj: tab_viewer_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
-             "text": self.lexemes.get('viewer_config_process_emojis_checkbox'),
+             "name": "settings_dialog_workspace_view_mode_process_emojis_checkbox:viewer_process_emojis",
+             "callback": add_to_workspace,
+             "text": self.lexemes.get('workspace_view_mode_process_emojis_checkbox'),
              "accessible_description":
-                 self.lexemes.get('viewer_config_process_emojis_checkbox_accessible_description')},
-            # Spacer
-            {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum),
-             "callback": lambda obj: tab_viewer_config_layout.addWidget(obj)},
-            # Either to show or not viewer's TODOs
+                 self.lexemes.get('workspace_view_mode_process_emojis_checkbox_accessible_description')},
             {"type": QCheckBox,
-             # Lexeme key : Setting name
-             "name": "settings_dialog_viewer_config_highlight_todos_checkbox:viewer_highlight_todos",
-             "callback": lambda obj: tab_viewer_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
-             "text": self.lexemes.get('viewer_config_highlight_todos_checkbox'),
+             "name": "settings_dialog_workspace_view_mode_highlight_todos_checkbox:viewer_highlight_todos",
+             "callback": add_to_workspace,
+             "text": self.lexemes.get('workspace_view_mode_highlight_todos_checkbox'),
              "accessible_description":
-                 self.lexemes.get('viewer_config_highlight_todos_checkbox_accessible_description')},
-            # Spacer
-            {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum),
-             "callback": lambda obj: tab_viewer_config_layout.addWidget(obj)},
-            # Either to show open link confirmation dialog or not
+                 self.lexemes.get('workspace_view_mode_highlight_todos_checkbox_accessible_description')},
             {"type": QCheckBox,
-             # Lexeme key : Setting name
-             "name": "settings_dialog_viewer_config_open_link_confirmation_checkbox:viewer_open_link_confirmation",
-             "callback": lambda obj: tab_viewer_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
-             "text": self.lexemes.get('viewer_config_open_link_confirmation_checkbox'),
+             "name": "settings_dialog_workspace_view_mode_open_link_confirmation_checkbox"
+                     ":viewer_open_link_confirmation",
+             "callback": add_to_workspace,
+             "text": self.lexemes.get('workspace_view_mode_open_link_confirmation_checkbox'),
              "accessible_description":
-                 self.lexemes.get('viewer_config_open_link_confirmation_checkbox_accessible_description')},
-            # Spacer
-            {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum),
-             "callback": lambda obj: tab_viewer_config_layout.addWidget(obj)},
-            # Auto save downloaded resources on disk
+                 self.lexemes.get('workspace_view_mode_open_link_confirmation_checkbox_accessible_description')},
             {"type": QCheckBox,
-             # Lexeme key : Setting name
-             "name": "settings_dialog_viewer_config_save_resources_checkbox:viewer_save_resources",
-             "callback": lambda obj: tab_viewer_config_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop),
-             "text": self.lexemes.get('viewer_config_save_resources_checkbox'),
+             "name": "settings_dialog_workspace_view_mode_save_resources_checkbox:viewer_save_resources",
+             "callback": add_to_workspace,
+             "text": self.lexemes.get('workspace_view_mode_save_resources_checkbox'),
              "accessible_description":
-                 self.lexemes.get('viewer_config_save_resources_checkbox_accessible_description')},
-            # Spacer to keep elements above on top
-            {"type": QWidget, "name": None, "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding),
-             "callback": lambda obj: tab_viewer_config_layout.addWidget(obj)},
+                 self.lexemes.get('workspace_view_mode_save_resources_checkbox_accessible_description')},
+            {"type": HorizontalLineSpacer,
+             "callback": lambda obj: tab_workspace_layout.addWidget(obj)},
+            {"type": QLabel, "name": "settings_dialog_workspace_bottom_bar_label",
+             "alignment": Qt.AlignmentFlag.AlignLeft,
+             "props": {"setProperty": ("class", "group-header-label")},
+             "text": self.lexemes.get('workspace_bottom_bar_label'), "style": {"bold": True},
+             "callback": add_to_workspace},
+            {"type": QCheckBox,
+             "name": "settings_dialog_workspace_bottom_bar_show_navigation_arrows_checkbox"
+                     ":show_navigation_arrows",
+             "callback": add_to_workspace,
+             "text": self.lexemes.get('workspace_bottom_bar_show_navigation_arrows_checkbox'),
+             "accessible_description":
+                 self.lexemes.get('workspace_bottom_bar_show_navigation_arrows_checkbox_accessible_description')},
+            {"type": QCheckBox,
+             "name": "settings_dialog_workspace_bottom_bar_show_global_cursor_position_checkbox"
+                     ":show_global_cursor_position",
+             "callback": add_to_workspace,
+             "text": self.lexemes.get('workspace_bottom_bar_show_global_cursor_position_checkbox'),
+             "accessible_description":
+                 self.lexemes.get('workspace_bottom_bar_show_global_cursor_position_checkbox_accessible_description')},
+            {"type": QCheckBox,
+             "name": self.SYSTEM_LOAD_CHECKBOX_NAME,
+             "callback": add_system_load_checkbox,
+             "text": self.lexemes.get('workspace_bottom_bar_show_system_load_graphs_checkbox'),
+             "accessible_description":
+                  self.lexemes.get('workspace_bottom_bar_show_system_load_graphs_checkbox_accessible_description')},
+            {"type": QWidget,
+             "name": self.SYSTEM_LOAD_OPTIONS_NAME,
+             "callback": add_system_load_options},
+            {"type": QLabel,
+             "name": "settings_dialog_workspace_bottom_bar_system_load_interval_ms_label",
+             "alignment": Qt.AlignmentFlag.AlignLeft,
+             "text": self.lexemes.get('workspace_bottom_bar_system_load_interval_ms_label'),
+             "callback": add_to_system_load_options},
+            {"type": QSpinBox,
+             "name": self.SYSTEM_LOAD_INTERVAL_NAME,
+             "props": {"setMinimum": 250, "setMaximum": 60000,
+                        "setSingleStep": 250, "setSuffix": " ms"},
+             "callback": add_to_system_load_options,
+             "accessible_description":
+                  self.lexemes.get('workspace_bottom_bar_system_load_interval_ms_accessible_description')},
+            {"type": QWidget, "name": None,
+             "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding),
+             "callback": lambda obj: tab_workspace_layout.addWidget(obj)},
         ]
 
     def get_ai_config_fields(self) -> list:
@@ -823,6 +827,29 @@ class SettingsDialog(QDialog):
         if setting_name == 'app_font_size' or sender_widget.objectName().endswith('app_font_size'):
             # Update the font size of elements
             self.update_font_size(font_size=setting_value)
+
+    def settings_update_handler(self, data: dict) -> None:
+        """Synchronize dependent controls with settings publications."""
+        if not isinstance(data, dict):
+            return
+
+        if 'show_system_load_graphs' in data:
+            enabled = bool(data['show_system_load_graphs'])
+            checkbox = self.findChild(QCheckBox, self.SYSTEM_LOAD_CHECKBOX_NAME)
+            if checkbox is not None:
+                blocker = QSignalBlocker(checkbox)
+                checkbox.setChecked(enabled)
+                del blocker
+            options = self.findChild(QWidget, self.SYSTEM_LOAD_OPTIONS_NAME)
+            if options is not None:
+                options.setEnabled(enabled)
+
+        if 'system_load_interval_ms' in data:
+            interval = self.findChild(QSpinBox, self.SYSTEM_LOAD_INTERVAL_NAME)
+            if interval is not None:
+                blocker = QSignalBlocker(interval)
+                interval.setValue(int(data['system_load_interval_ms']))
+                del blocker
 
     def update_font_size(self, font_size: int):
         # Update the font from the parent to ensure it reflects the new font size.

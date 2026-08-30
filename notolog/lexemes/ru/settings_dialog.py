@@ -6,8 +6,7 @@ lexemes = {
     "button_close": "Закрыть",
 
     "tab_general": "Общие",
-    "tab_editor_config": "Редактор",
-    "tab_viewer_config": "Просмотрщик",
+    "tab_workspace": "Рабочая область",
     "tab_ai_config": "Настройки ИИ",
 
     "general_app_config_label": "Настройки приложения",
@@ -32,29 +31,28 @@ lexemes = {
     "general_reversible_file_deletion_checkbox_accessible_description":
         "Перемещать удалённые файлы в корзину Notolog, добавляя расширение .del",
 
-    "general_statusbar_label": "Строка состояния",
-    "general_statusbar_show_global_cursor_position_checkbox": "Показать глобальное положение курсора",
-    "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
+    "workspace_bottom_bar_show_global_cursor_position_checkbox": "Показать глобальное положение курсора",
+    "workspace_bottom_bar_show_global_cursor_position_checkbox_accessible_description":
         "Отображать глобальное положение курсора в строке состояния",
-    "general_statusbar_show_navigation_arrows_checkbox": "Показать стрелки навигации",
-    "general_statusbar_show_navigation_arrows_checkbox_accessible_description":
+    "workspace_bottom_bar_show_navigation_arrows_checkbox": "Показать стрелки навигации",
+    "workspace_bottom_bar_show_navigation_arrows_checkbox_accessible_description":
         "Отображение стрелок навигации в строке состояния",
 
-    "editor_config_label": "Настройки редактора",
-    "editor_config_show_line_numbers_checkbox": "Показать номера строк",
-    "editor_config_show_line_numbers_checkbox_accessible_description": "Отображать номера строк в редакторе",
+    "workspace_editor_mode_label": "Режим редактора",
+    "workspace_editor_mode_show_line_numbers_checkbox": "Показать номера строк",
+    "workspace_editor_mode_show_line_numbers_checkbox_accessible_description": "Отображать номера строк в редакторе",
 
-    "viewer_config_label": "Настройки просмотрщика",
-    "viewer_config_process_emojis_checkbox": "Преобразовать текстовые эмодзи в графику",
-    "viewer_config_process_emojis_checkbox_accessible_description":
+    "workspace_view_mode_label": "Режим просмотра",
+    "workspace_view_mode_process_emojis_checkbox": "Преобразовать текстовые эмодзи в графику",
+    "workspace_view_mode_process_emojis_checkbox_accessible_description":
         "Преобразовать текстовые эмодзи в графические изображения",
-    "viewer_config_highlight_todos_checkbox": "Выделить задачи TODO",
-    "viewer_config_highlight_todos_checkbox_accessible_description": "Выделять задачи TODO в тексте",
-    "viewer_config_open_link_confirmation_checkbox": "Требовать подтверждение перед открытием ссылок",
-    "viewer_config_open_link_confirmation_checkbox_accessible_description":
+    "workspace_view_mode_highlight_todos_checkbox": "Выделить задачи TODO",
+    "workspace_view_mode_highlight_todos_checkbox_accessible_description": "Выделять задачи TODO в тексте",
+    "workspace_view_mode_open_link_confirmation_checkbox": "Требовать подтверждение перед открытием ссылок",
+    "workspace_view_mode_open_link_confirmation_checkbox_accessible_description":
         "Запрашивать подтверждение перед открытием ссылок",
-    "viewer_config_save_resources_checkbox": "Автосохранение внешних изображений на диск",
-    "viewer_config_save_resources_checkbox_accessible_description":
+    "workspace_view_mode_save_resources_checkbox": "Автосохранение внешних изображений на диск",
+    "workspace_view_mode_save_resources_checkbox_accessible_description":
         "Автоматически сохраняет копии внешних изображений на диск для доступа без подключения к интернету.",
 
     "ai_config_inference_module_label": "Модуль вывода",
@@ -72,4 +70,11 @@ lexemes = {
     "ai_config_convert_to_md_checkbox": "Конвертировать результат в Markdown",
     "ai_config_convert_to_md_checkbox_accessible_description":
         "Преобразуйте выходное сообщение в формат Markdown.",
+    "workspace_bottom_bar_label": "Нижняя панель",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox": "Показывать графики ЦП и памяти",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox_accessible_description":
+        "Показывать графики загрузки ЦП и памяти с разделителем на нижней панели",
+    "workspace_bottom_bar_system_load_interval_ms_label": "Интервал обновления графиков",
+    "workspace_bottom_bar_system_load_interval_ms_accessible_description":
+        "Задать интервал чтения загрузки ЦП и памяти в миллисекундах",
 }

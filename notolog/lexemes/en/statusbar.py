@@ -20,6 +20,11 @@ lexemes = {
     "statusbar_encryption_label_encryption_plain": "Plain",
     "statusbar_encryption_label_encryption_encrypted": "Encrypted",
 
+    "statusbar_system_cpu_usage": "System CPU usage: {percentage}%",
+    "statusbar_system_cpu_usage_unavailable": "System CPU usage unavailable",
+    "statusbar_system_memory_usage": "System memory usage: {percentage}%",
+    "statusbar_system_memory_usage_unavailable": "System memory usage unavailable",
+
     "statusbar_cursor_label": "line: {line} → col: {column}",
     "statusbar_cursor_label_selected": "line: {line} → col: {column} → sel: {selected}",
     "statusbar_cursor_label_with_global": "line: {line} → col: {column} → pos: {position}",

@@ -6,8 +6,7 @@ lexemes = {
     "button_close": "დახურვა",
 
     "tab_general": "ძირითადი",
-    "tab_editor_config": "რედაქტორი",
-    "tab_viewer_config": "დამკვრელი",
+    "tab_workspace": "სამუშაო სივრცე",
     "tab_ai_config": "AI კონფიგურაცია",
 
     "general_app_config_label": "აპლიკაციის კონფიგურაცია",
@@ -32,27 +31,26 @@ lexemes = {
     "general_reversible_file_deletion_checkbox_accessible_description":
         "წაშლილი ფაილების Notolog-ის კალათაში გადატანა .del გაფართოების დამატებით",
 
-    "general_statusbar_label": "სტატუსის ზოლი",
-    "general_statusbar_show_global_cursor_position_checkbox": "მსოფლიო კურსორის პოზიციის ჩვენება",
-    "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
+    "workspace_bottom_bar_show_global_cursor_position_checkbox": "მსოფლიო კურსორის პოზიციის ჩვენება",
+    "workspace_bottom_bar_show_global_cursor_position_checkbox_accessible_description":
         "აჩვენეთ კურსორის მსოფლიო პოზიცია სტატუსის ზოლში",
-    "general_statusbar_show_navigation_arrows_checkbox": "ნავიგაციის ისრების ჩვენება",
-    "general_statusbar_show_navigation_arrows_checkbox_accessible_description": "ნავიგაციის ისრების გამოჩენა სტატუსბარში",
+    "workspace_bottom_bar_show_navigation_arrows_checkbox": "ნავიგაციის ისრების ჩვენება",
+    "workspace_bottom_bar_show_navigation_arrows_checkbox_accessible_description": "ნავიგაციის ისრების გამოჩენა სტატუსბარში",
 
-    "editor_config_label": "რედაქტორის კონფიგურაცია",
-    "editor_config_show_line_numbers_checkbox": "ხაზების ნომრების ჩვენება",
-    "editor_config_show_line_numbers_checkbox_accessible_description": "ხაზების ნომრების ჩვენება რედაქტორში",
+    "workspace_editor_mode_label": "რედაქტირების რეჟიმი",
+    "workspace_editor_mode_show_line_numbers_checkbox": "ხაზების ნომრების ჩვენება",
+    "workspace_editor_mode_show_line_numbers_checkbox_accessible_description": "ხაზების ნომრების ჩვენება რედაქტორში",
 
-    "viewer_config_label": "დამკვრელის კონფიგურაცია",
-    "viewer_config_process_emojis_checkbox": "ტექსტური ემოჯის გრაფიკულად გარდაქმნა",
-    "viewer_config_process_emojis_checkbox_accessible_description": "ტექსტური ემოჯების გრაფიკული წარმოჩენა",
-    "viewer_config_highlight_todos_checkbox": "TODO-ების გამოყოფა",
-    "viewer_config_highlight_todos_checkbox_accessible_description": "TODO ტეგების გამოყოფა ტექსტში",
-    "viewer_config_open_link_confirmation_checkbox": "ბმულების გახსნის დასტური",
-    "viewer_config_open_link_confirmation_checkbox_accessible_description":
+    "workspace_view_mode_label": "ნახვის რეჟიმი",
+    "workspace_view_mode_process_emojis_checkbox": "ტექსტური ემოჯის გრაფიკულად გარდაქმნა",
+    "workspace_view_mode_process_emojis_checkbox_accessible_description": "ტექსტური ემოჯების გრაფიკული წარმოჩენა",
+    "workspace_view_mode_highlight_todos_checkbox": "TODO-ების გამოყოფა",
+    "workspace_view_mode_highlight_todos_checkbox_accessible_description": "TODO ტეგების გამოყოფა ტექსტში",
+    "workspace_view_mode_open_link_confirmation_checkbox": "ბმულების გახსნის დასტური",
+    "workspace_view_mode_open_link_confirmation_checkbox_accessible_description":
         "ბმულების გახსნისას დასტურის მოთხოვნა",
-    "viewer_config_save_resources_checkbox": "გარე სურათების ავტომატური შენახვა დისკზე",
-    "viewer_config_save_resources_checkbox_accessible_description":
+    "workspace_view_mode_save_resources_checkbox": "გარე სურათების ავტომატური შენახვა დისკზე",
+    "workspace_view_mode_save_resources_checkbox_accessible_description":
         "გარე სურათების ასლების ავტომატურად შენახვა დისკზე ოფლაინ წვდომისთვის.",
 
     "ai_config_inference_module_label": "ინფერენციის მოდული",
@@ -71,4 +69,11 @@ lexemes = {
     "ai_config_convert_to_md_checkbox": "შედეგის Markdown-ში კონვერტაცია",
     "ai_config_convert_to_md_checkbox_accessible_description":
         "გადაიყვანეთ გამოსახული შეტყობინება Markdown ფორმატში.",
+    "workspace_bottom_bar_label": "ქვედა ზოლი",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox": "CPU-სა და მეხსიერების გრაფიკების ჩვენება",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox_accessible_description":
+        "ქვედა ზოლში CPU-სა და მეხსიერების გამოყენების გრაფიკებისა და გამყოფის ჩვენება",
+    "workspace_bottom_bar_system_load_interval_ms_label": "გრაფიკების განახლების ინტერვალი",
+    "workspace_bottom_bar_system_load_interval_ms_accessible_description":
+        "CPU-სა და მეხსიერების გამოყენების წაკითხვის ინტერვალი მილიწამებში",
 }

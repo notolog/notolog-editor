@@ -6,8 +6,7 @@ lexemes = {
     "button_close": "Stäng",
 
     "tab_general": "Allmänt",
-    "tab_editor_config": "Redigerare",
-    "tab_viewer_config": "Visare",
+    "tab_workspace": "Arbetsyta",
     "tab_ai_config": "AI-konfiguration",
 
     "general_app_config_label": "Appkonfiguration",
@@ -32,27 +31,26 @@ lexemes = {
     "general_reversible_file_deletion_checkbox_accessible_description":
         "Flytta borttagna filer till Notologs papperskorg genom att lägga till filändelsen .del",
 
-    "general_statusbar_label": "Statusfält",
-    "general_statusbar_show_global_cursor_position_checkbox": "Visa global muspekareposition",
-    "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
+    "workspace_bottom_bar_show_global_cursor_position_checkbox": "Visa global muspekareposition",
+    "workspace_bottom_bar_show_global_cursor_position_checkbox_accessible_description":
         "Visa den globala muspekarepositionen i statusfältet",
-    "general_statusbar_show_navigation_arrows_checkbox": "Visa navigeringspilar",
-    "general_statusbar_show_navigation_arrows_checkbox_accessible_description": "Visa navigeringspilar i statusfältet",
+    "workspace_bottom_bar_show_navigation_arrows_checkbox": "Visa navigeringspilar",
+    "workspace_bottom_bar_show_navigation_arrows_checkbox_accessible_description": "Visa navigeringspilar i statusfältet",
 
-    "editor_config_label": "Redigerarkonfiguration",
-    "editor_config_show_line_numbers_checkbox": "Visa radnummer",
-    "editor_config_show_line_numbers_checkbox_accessible_description": "Visa radnummer i redigeraren",
+    "workspace_editor_mode_label": "Redigeringsläge",
+    "workspace_editor_mode_show_line_numbers_checkbox": "Visa radnummer",
+    "workspace_editor_mode_show_line_numbers_checkbox_accessible_description": "Visa radnummer i redigeraren",
 
-    "viewer_config_label": "Visarkonfiguration",
-    "viewer_config_process_emojis_checkbox": "Konvertera textemojis till grafik",
-    "viewer_config_process_emojis_checkbox_accessible_description": "Konvertera textemojis till grafiska representationer",
-    "viewer_config_highlight_todos_checkbox": "Markera TODOs",
-    "viewer_config_highlight_todos_checkbox_accessible_description": "Markera TODO-taggar i texten",
-    "viewer_config_open_link_confirmation_checkbox": "Kräv bekräftelse för att öppna länkar",
-    "viewer_config_open_link_confirmation_checkbox_accessible_description":
+    "workspace_view_mode_label": "Visningsläge",
+    "workspace_view_mode_process_emojis_checkbox": "Konvertera textemojis till grafik",
+    "workspace_view_mode_process_emojis_checkbox_accessible_description": "Konvertera textemojis till grafiska representationer",
+    "workspace_view_mode_highlight_todos_checkbox": "Markera TODOs",
+    "workspace_view_mode_highlight_todos_checkbox_accessible_description": "Markera TODO-taggar i texten",
+    "workspace_view_mode_open_link_confirmation_checkbox": "Kräv bekräftelse för att öppna länkar",
+    "workspace_view_mode_open_link_confirmation_checkbox_accessible_description":
         "Begär bekräftelse innan länkar öppnas",
-    "viewer_config_save_resources_checkbox": "Spara automatiskt externa bilder på disk",
-    "viewer_config_save_resources_checkbox_accessible_description":
+    "workspace_view_mode_save_resources_checkbox": "Spara automatiskt externa bilder på disk",
+    "workspace_view_mode_save_resources_checkbox_accessible_description":
         "Sparar automatiskt kopior av externa bilder på disken för offline-åtkomst",
 
     "ai_config_inference_module_label": "Inferensmodul",
@@ -70,4 +68,11 @@ lexemes = {
     "ai_config_convert_to_md_checkbox": "Konvertera resultatet till Markdown",
     "ai_config_convert_to_md_checkbox_accessible_description":
         "Konvertera utgångsmeddelandet till Markdown-format.",
+    "workspace_bottom_bar_label": "Nedre fält",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox": "Visa CPU- och minnesdiagram",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox_accessible_description":
+        "Visa CPU- och minnesanvändning samt avgränsaren i det nedre fältet",
+    "workspace_bottom_bar_system_load_interval_ms_label": "Uppdateringsintervall för grafer",
+    "workspace_bottom_bar_system_load_interval_ms_accessible_description":
+        "Ange hur ofta CPU- och minnesanvändning läses, i millisekunder",
 }

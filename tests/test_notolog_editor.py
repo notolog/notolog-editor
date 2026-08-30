@@ -118,7 +118,7 @@ class TestNotologEditor:
         mock_method2 = mocker.patch.object(test_obj_notolog_editor, 'load_file', return_value=True)
 
         # Call the method under test
-        result = test_obj_notolog_editor.load_default_page()
+        result = test_obj_notolog_editor.load_default_page(ignore_settings=True)
         assert result is True
 
         # Current working directory
@@ -129,6 +129,23 @@ class TestNotologEditor:
         mock_method1.assert_not_called()
         # Assert that the method was called once with the param(s)
         mock_method2.assert_called_once_with(os.path.normpath('%s/README.md') % test_file_parent_dir)
+
+    @pytest.mark.parametrize('dialog_error', [None, RuntimeError('dialog failed')])
+    def test_action_settings_releases_dialog(self, mocker, test_obj_notolog_editor, dialog_error):
+        dialog = mocker.patch('notolog.notolog_editor.SettingsDialog').return_value
+        save_active_file = mocker.patch.object(test_obj_notolog_editor, 'save_active_file')
+        if dialog_error is not None:
+            dialog.exec.side_effect = dialog_error
+
+        if dialog_error is None:
+            test_obj_notolog_editor.action_settings()
+        else:
+            with pytest.raises(RuntimeError, match='dialog failed'):
+                test_obj_notolog_editor.action_settings()
+
+        save_active_file.assert_called_once_with(clear_after=False)
+        dialog.exec.assert_called_once_with()
+        dialog.deleteLater.assert_called_once_with()
 
     @pytest.mark.asyncio
     async def test_finish_shutdown_cancels_and_drains_tasks(self, mocker, test_obj_notolog_editor):

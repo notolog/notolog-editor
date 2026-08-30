@@ -6,8 +6,7 @@ lexemes = {
     "button_close": "Tutup",
 
     "tab_general": "Umum",
-    "tab_editor_config": "Editor",
-    "tab_viewer_config": "Penampil",
+    "tab_workspace": "Ruang kerja",
     "tab_ai_config": "Konfigurasi AI",
 
     "general_app_config_label": "Konfigurasi aplikasi",
@@ -32,28 +31,27 @@ lexemes = {
     "general_reversible_file_deletion_checkbox_accessible_description":
         "Pindahkan berkas yang dihapus ke tempat sampah Notolog dengan menambahkan ekstensi .del",
 
-    "general_statusbar_label": "Bilah Status",
-    "general_statusbar_show_global_cursor_position_checkbox": "Tampilkan Posisi Kursor Global",
-    "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
+    "workspace_bottom_bar_show_global_cursor_position_checkbox": "Tampilkan Posisi Kursor Global",
+    "workspace_bottom_bar_show_global_cursor_position_checkbox_accessible_description":
         "Tampilkan posisi kursor global di bilah status",
-    "general_statusbar_show_navigation_arrows_checkbox": "Tampilkan Panah Navigasi",
-    "general_statusbar_show_navigation_arrows_checkbox_accessible_description":
+    "workspace_bottom_bar_show_navigation_arrows_checkbox": "Tampilkan Panah Navigasi",
+    "workspace_bottom_bar_show_navigation_arrows_checkbox_accessible_description":
         "Tampilkan panah navigasi di bilah status.",
 
-    "editor_config_label": "Konfigurasi Editor",
-    "editor_config_show_line_numbers_checkbox": "Tampilkan Nomor Baris",
-    "editor_config_show_line_numbers_checkbox_accessible_description": "Tampilkan nomor baris di editor",
+    "workspace_editor_mode_label": "Mode editor",
+    "workspace_editor_mode_show_line_numbers_checkbox": "Tampilkan Nomor Baris",
+    "workspace_editor_mode_show_line_numbers_checkbox_accessible_description": "Tampilkan nomor baris di editor",
 
-    "viewer_config_label": "Konfigurasi Penampil",
-    "viewer_config_process_emojis_checkbox": "Konversi Emoji Teks ke Grafis",
-    "viewer_config_process_emojis_checkbox_accessible_description": "Konversi emoji teks ke representasi grafis",
-    "viewer_config_highlight_todos_checkbox": "Sorot TODO",
-    "viewer_config_highlight_todos_checkbox_accessible_description": "Tekankan tag TODO dalam teks",
-    "viewer_config_open_link_confirmation_checkbox": "Memerlukan Konfirmasi untuk Membuka Tautan",
-    "viewer_config_open_link_confirmation_checkbox_accessible_description":
+    "workspace_view_mode_label": "Mode tampilan",
+    "workspace_view_mode_process_emojis_checkbox": "Konversi Emoji Teks ke Grafis",
+    "workspace_view_mode_process_emojis_checkbox_accessible_description": "Konversi emoji teks ke representasi grafis",
+    "workspace_view_mode_highlight_todos_checkbox": "Sorot TODO",
+    "workspace_view_mode_highlight_todos_checkbox_accessible_description": "Tekankan tag TODO dalam teks",
+    "workspace_view_mode_open_link_confirmation_checkbox": "Memerlukan Konfirmasi untuk Membuka Tautan",
+    "workspace_view_mode_open_link_confirmation_checkbox_accessible_description":
         "Minta konfirmasi sebelum membuka tautan",
-    "viewer_config_save_resources_checkbox": "Simpan otomatis gambar eksternal ke disk",
-    "viewer_config_save_resources_checkbox_accessible_description":
+    "workspace_view_mode_save_resources_checkbox": "Simpan otomatis gambar eksternal ke disk",
+    "workspace_view_mode_save_resources_checkbox_accessible_description":
         "Menyimpan salinan gambar eksternal ke disk secara otomatis untuk akses offline.",
 
     "ai_config_inference_module_label": "Modul Inferensi",
@@ -70,4 +68,11 @@ lexemes = {
         "Ketika dimatikan, hanya pesan baru dan perintah sistem yang memengaruhi respons.",
     "ai_config_convert_to_md_checkbox": "Konversi hasil ke Markdown",
     "ai_config_convert_to_md_checkbox_accessible_description": "Konversi pesan keluaran ke format Markdown.",
+    "workspace_bottom_bar_label": "Bilah bawah",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox": "Tampilkan grafik CPU dan memori",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox_accessible_description":
+        "Tampilkan grafik penggunaan CPU dan memori beserta pemisahnya di bilah bawah",
+    "workspace_bottom_bar_system_load_interval_ms_label": "Interval penyegaran grafik",
+    "workspace_bottom_bar_system_load_interval_ms_accessible_description":
+        "Atur seberapa sering penggunaan CPU dan memori dibaca, dalam milidetik",
 }

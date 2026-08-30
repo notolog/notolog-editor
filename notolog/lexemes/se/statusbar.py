@@ -20,6 +20,11 @@ lexemes = {
     "statusbar_encryption_label_encryption_plain": "Oskyddad",
     "statusbar_encryption_label_encryption_encrypted": "Krypterad",
 
+    "statusbar_system_cpu_usage": "Systemets CPU-användning: {percentage}%",
+    "statusbar_system_cpu_usage_unavailable": "Systemets CPU-användning är inte tillgänglig",
+    "statusbar_system_memory_usage": "Systemets minnesanvändning: {percentage}%",
+    "statusbar_system_memory_usage_unavailable": "Systemets minnesanvändning är inte tillgänglig",
+
     "statusbar_cursor_label": "rad: {line} → kol: {column}",
     "statusbar_cursor_label_selected": "rad: {line} → kol: {column} → val: {selected}",
     "statusbar_cursor_label_with_global": "rad: {line} → kol: {column} → pos: {position}",

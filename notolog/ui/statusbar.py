@@ -16,12 +16,14 @@ License: MIT License
 For detailed instructions and project information, please see the repository's README.md.
 """
 
-from PySide6.QtCore import Qt, QDir, QSize
-from PySide6.QtGui import QColor
+from PySide6.QtCore import Qt, QDir, QSize, QTimer
+from PySide6.QtGui import QColor, QPainter
 from PySide6.QtWidgets import QStatusBar, QWidget, QHBoxLayout, QLabel, QPushButton, QSizePolicy
 
+from collections import deque
 import logging
 import os
+import psutil
 from typing import TYPE_CHECKING, Any, Dict, List
 
 from . import AppConfig
@@ -41,10 +43,85 @@ if TYPE_CHECKING:
     from typing import Union  # noqa
 
 
+class SystemLoadGraph(QWidget):
+    """Compact rolling utilization graph for the status bar."""
+
+    HISTORY_SIZE = 30
+    COLUMN_WIDTH = 1
+    COLUMN_GAP = 0
+    INNER_PADDING = 1
+    BORDER_WIDTH = 1
+
+    def __init__(self, metric_key: str, parent=None):
+        super().__init__(parent)
+        self.metric_key = metric_key
+        self.current_value = None  # type: Union[int, None]
+        self.values = deque([0.0] * self.HISTORY_SIZE, maxlen=self.HISTORY_SIZE)
+        self.border_color = QColor()
+        self.column_color = QColor()
+        self.setObjectName(f'statusbar_{metric_key}_load_graph')
+        self.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        self.setAttribute(Qt.WidgetAttribute.WA_AlwaysShowToolTips, True)
+        self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.setMouseTracking(True)
+        self.set_unavailable()
+
+    def set_graph_size(self, font_height: int) -> None:
+        width = (self.BORDER_WIDTH + self.INNER_PADDING) * 2
+        width += self.HISTORY_SIZE * self.COLUMN_WIDTH
+        width += (self.HISTORY_SIZE - 1) * self.COLUMN_GAP
+        self.setFixedSize(width, max(12, font_height))
+
+    def set_colors(self, border_color: QColor, column_color: QColor) -> None:
+        self.border_color = QColor(border_color)
+        self.column_color = QColor(column_color)
+        self.update()
+
+    def set_value(self, value: float) -> None:
+        value = max(0.0, min(100.0, float(value)))
+        self.values.append(value)
+        self.current_value = round(value)
+        self.update()
+
+    def set_unavailable(self) -> None:
+        self.current_value = None
+
+    def set_status_text(self, text: str) -> None:
+        self.setToolTip(text)
+        self.setAccessibleName(text)
+
+    def paintEvent(self, event) -> None:  # noqa: ARG002
+        painter = QPainter(self)
+        width = self.width()
+        height = self.height()
+        painter.fillRect(0, 0, width, self.BORDER_WIDTH, self.border_color)
+        painter.fillRect(0, height - self.BORDER_WIDTH,
+                         width, self.BORDER_WIDTH, self.border_color)
+        painter.fillRect(0, self.BORDER_WIDTH, self.BORDER_WIDTH,
+                         height - 2 * self.BORDER_WIDTH, self.border_color)
+        painter.fillRect(width - self.BORDER_WIDTH, self.BORDER_WIDTH,
+                         self.BORDER_WIDTH, height - 2 * self.BORDER_WIDTH,
+                         self.border_color)
+
+        # Border and padding each occupy one logical unit around the data.
+        inset = self.BORDER_WIDTH + self.INNER_PADDING
+        graph_height = height - 2 * inset
+        for index, value in enumerate(self.values):
+            bar_height = round(graph_height * value / 100)
+            if bar_height <= 0:
+                continue
+            x_pos = inset + index * (self.COLUMN_WIDTH + self.COLUMN_GAP)
+            y_pos = height - inset - bar_height
+            painter.fillRect(x_pos, y_pos, self.COLUMN_WIDTH, bar_height, self.column_color)
+
+
 class StatusBar(QStatusBar):
 
     BASE_ICON_SIZE = 64  # type: int
     MAX_FILE_NAME_WIDTH = 180  # pixels
+    DEFAULT_SYSTEM_LOAD_INTERVAL_MS = 1000
+    MIN_SYSTEM_LOAD_INTERVAL_MS = 250
+    MAX_SYSTEM_LOAD_INTERVAL_MS = 60000
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -58,8 +135,7 @@ class StatusBar(QStatusBar):
         self.logger = logging.getLogger('statusbar')
 
         self.settings = Settings(parent=self)
-        self.settings.value_changed.connect(
-            lambda v: self.settings_update_handler(v))
+        self.settings.value_changed.connect(self.settings_update_handler)
 
         self.theme_helper = ThemeHelper()
 
@@ -82,9 +158,14 @@ class StatusBar(QStatusBar):
         self.encryption_label = None  # type: Union[QLabel, None]
         self.source_label = None  # type: Union[QLabel, None]
         self.cursor_label = None  # type: Union[QLabel, None]
+        self.cpu_load_graph = None  # type: Union[SystemLoadGraph, None]
+        self.memory_load_graph = None  # type: Union[SystemLoadGraph, None]
+        self.system_load_separator = None  # type: Union[VerticalLineSpacer, None]
 
         self.warning_label = None  # type: Union[QPushButton, None]
         self._encryption_encrypted = False
+        self._system_load_error_logged = False
+        self.system_load_timer = None  # type: Union[QTimer, None]
 
         self.init()
 
@@ -109,6 +190,10 @@ class StatusBar(QStatusBar):
         # Render status bar icons
         self.draw_icons()
 
+        self.system_load_timer = QTimer(self)
+        self.system_load_timer.timeout.connect(self.update_system_load)
+        self.update_system_load_visibility(prime=True)
+
         central_spacer = QWidget(self)
         central_spacer.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         # Add a central spacer to balance layout spacing
@@ -129,6 +214,9 @@ class StatusBar(QStatusBar):
         self.file_icon_label = QPushButton(self)
         self.file_icon_label.setFlat(True)
         self.file_icon_label.setFocusPolicy(Qt.FocusPolicy.TabFocus)
+        self.file_icon_label.setAttribute(
+            Qt.WidgetAttribute.WA_AlwaysShowToolTips, True)
+        self.file_icon_label.setMouseTracking(True)
         self.file_icon_label.setCursor(Qt.CursorShape.PointingHandCursor)
         self.file_icon_label.setObjectName('statusbar_file_icon_label')
         self.file_icon_label.clicked.connect(self.copy_file_path)
@@ -184,6 +272,16 @@ class StatusBar(QStatusBar):
         self.cursor_label = QLabel(self)
         self.cursor_label.setFont(self.font())
         self.labels_layout.addWidget(self.cursor_label)
+
+        # Compact rolling system utilization graphs.
+        self.system_load_separator = VerticalLineSpacer()
+        self.labels_layout.addWidget(self.system_load_separator)
+        self.cpu_load_graph = SystemLoadGraph('cpu', self)
+        self.labels_layout.addWidget(self.cpu_load_graph)
+        self.memory_load_graph = SystemLoadGraph('memory', self)
+        self.labels_layout.addWidget(self.memory_load_graph)
+        self.refresh_system_load_graphs()
+        self.refresh_system_load_tooltips()
 
         # Warning label (initially hidden)
         self.warning_label = QPushButton(self)
@@ -399,12 +497,14 @@ class StatusBar(QStatusBar):
                 # Handle specific errors, e.g., object already deleted
                 self.logger.warning(f"Error occurred {e}")
             self.set_file_path(getattr(self, '_file_path', ''))
+            self.refresh_system_load_graphs()
 
         if 'app_font_size' in data:
             try:
                 self.refresh_element_fonts()
                 self.draw_icons()
                 self.refresh_compact_icons()
+                self.refresh_system_load_graphs()
             except RuntimeError as e:
                 # Handle specific errors, e.g., object already deleted
                 self.logger.warning(f"Error occurred {e}")
@@ -413,6 +513,7 @@ class StatusBar(QStatusBar):
             # Reload lexemes for the selected language and scope
             self.lexemes = Lexemes(self.settings.app_language, default_scope='statusbar')
             self.set_file_path(getattr(self, '_file_path', ''))
+            self.refresh_system_load_tooltips()
 
         if 'file_path' in data:
             self.set_file_path(data['file_path'])
@@ -421,6 +522,12 @@ class StatusBar(QStatusBar):
             # Update the status bar buttons
             self.draw_icons()
             self.update_history_buttons()
+
+        if 'show_system_load_graphs' in data:
+            self.update_system_load_visibility(prime=True)
+
+        if 'system_load_interval_ms' in data:
+            self.update_system_load_interval()
 
     def refresh_element_fonts(self, parent=None):
         if parent is None:
@@ -497,6 +604,78 @@ class StatusBar(QStatusBar):
         self._set_compact_label_icon(self.save_progress_label, 'floppy2.svg')
         self.set_encryption_icon(self._encryption_encrypted)
         self._size_compact_button(self.warning_label)
+
+    def refresh_system_load_graphs(self) -> None:
+        """Keep system-load graphs aligned with the active theme and font."""
+        font_height = self.fontMetrics().height()
+        graph_colors = (
+            (self.cpu_load_graph, 'statusbar_cpu_graph_border_color', 'statusbar_cpu_graph_column_color'),
+            (self.memory_load_graph, 'statusbar_memory_graph_border_color',
+             'statusbar_memory_graph_column_color'),
+        )
+        for graph, border_key, column_key in graph_colors:
+            graph.set_colors(
+                QColor(self.theme_helper.get_color(border_key)),
+                QColor(self.theme_helper.get_color(column_key)),
+            )
+            graph.set_graph_size(font_height)
+
+    def refresh_system_load_tooltips(self) -> None:
+        """Localize current system-load state without taking a new sample."""
+        for graph in (self.cpu_load_graph, self.memory_load_graph):
+            key = f'statusbar_system_{graph.metric_key}_usage'
+            if graph.current_value is None:
+                key += '_unavailable'
+                text = self.lexemes.get(key)
+            else:
+                text = self.lexemes.get(key, percentage=graph.current_value)
+            graph.set_status_text(text)
+
+    def system_load_interval(self) -> int:
+        """Return a safe polling interval from persisted settings."""
+        interval = getattr(self.settings, 'system_load_interval_ms', self.DEFAULT_SYSTEM_LOAD_INTERVAL_MS)
+        return max(self.MIN_SYSTEM_LOAD_INTERVAL_MS, min(self.MAX_SYSTEM_LOAD_INTERVAL_MS, interval))
+
+    def update_system_load_interval(self) -> None:
+        if self.system_load_timer is not None:
+            self.system_load_timer.setInterval(self.system_load_interval())
+
+    def update_system_load_visibility(self, prime: bool = False) -> None:
+        """Show or suspend the complete system-load status-bar segment."""
+        visible = bool(getattr(self.settings, 'show_system_load_graphs', True))
+        for widget in (self.system_load_separator, self.cpu_load_graph, self.memory_load_graph):
+            widget.setVisible(visible)
+
+        if not visible:
+            self.system_load_timer.stop()
+            return
+
+        if prime:
+            try:
+                psutil.cpu_percent(interval=None)
+            except (OSError, RuntimeError, psutil.Error) as error:
+                self.logger.warning(f'Unable to initialize CPU monitoring: {error}')
+                self._system_load_error_logged = True
+        self.system_load_timer.start(self.system_load_interval())
+
+    def update_system_load(self) -> None:
+        """Refresh non-blocking whole-system CPU and memory utilization."""
+        try:
+            cpu_percent = round(psutil.cpu_percent(interval=None))
+            memory_percent = round(psutil.virtual_memory().percent)
+        except (OSError, RuntimeError, psutil.Error) as error:
+            if not self._system_load_error_logged:
+                self.logger.warning(f'Unable to read system utilization: {error}')
+                self._system_load_error_logged = True
+            self.cpu_load_graph.set_unavailable()
+            self.memory_load_graph.set_unavailable()
+            self.refresh_system_load_tooltips()
+            return
+
+        self._system_load_error_logged = False
+        self.cpu_load_graph.set_value(cpu_percent)
+        self.memory_load_graph.set_value(memory_percent)
+        self.refresh_system_load_tooltips()
 
     def _compact_icon_size(self) -> int:
         return max(10, int(self.fontMetrics().height() * 0.6))

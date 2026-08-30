@@ -20,6 +20,11 @@ lexemes = {
     "statusbar_encryption_label_encryption_plain": "უშიფრადი",
     "statusbar_encryption_label_encryption_encrypted": "დაშიფრული",
 
+    "statusbar_system_cpu_usage": "სისტემის CPU-ის გამოყენება: {percentage}%",
+    "statusbar_system_cpu_usage_unavailable": "სისტემის CPU-ის გამოყენება მიუწვდომელია",
+    "statusbar_system_memory_usage": "სისტემის მეხსიერების გამოყენება: {percentage}%",
+    "statusbar_system_memory_usage_unavailable": "სისტემის მეხსიერების გამოყენება მიუწვდომელია",
+
     "statusbar_cursor_label": "ხაზი: {line} → სვეტი: {column}",
     "statusbar_cursor_label_selected": "ხაზი: {line} → სვეტი: {column} → არჩეული: {selected}",
     "statusbar_cursor_label_with_global": "ხაზი: {line} → სვეტი: {column} → პოზიცია: {position}",

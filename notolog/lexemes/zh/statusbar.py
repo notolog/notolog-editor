@@ -20,6 +20,11 @@ lexemes = {
     "statusbar_encryption_label_encryption_plain": "明文",
     "statusbar_encryption_label_encryption_encrypted": "加密",
 
+    "statusbar_system_cpu_usage": "系统 CPU 使用率：{percentage}%",
+    "statusbar_system_cpu_usage_unavailable": "系统 CPU 使用率不可用",
+    "statusbar_system_memory_usage": "系统内存使用率：{percentage}%",
+    "statusbar_system_memory_usage_unavailable": "系统内存使用率不可用",
+
     "statusbar_cursor_label": "行: {line} → 列: {column}",
     "statusbar_cursor_label_selected": "行: {line} → 列: {column} → 选: {selected}",
     "statusbar_cursor_label_with_global": "行: {line} → 列: {column} → 位: {position}",

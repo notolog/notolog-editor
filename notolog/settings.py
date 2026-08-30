@@ -17,13 +17,12 @@ License: MIT License
 For detailed instructions and project information, please see the repository's README.md.
 """
 
-from PySide6.QtCore import Signal, QSettings
+from PySide6.QtCore import QCoreApplication, QSettings, Signal
 
 from .app_config import AppConfig
 from .enums.themes import Themes
 from .enums.languages import Languages
 from .helpers.settings_helper import SettingsHelper
-from .helpers import file_helper
 
 from typing import TYPE_CHECKING, Any
 from threading import Lock
@@ -97,29 +96,25 @@ class Settings(QSettings):
             self.init_fields()
 
     def get_instance(self):
-        settings_file_path = self.get_filename()
-        # Check file permissions
-        if not file_helper.is_writable_path(settings_file_path):
-            self.logger.warning(f"Permission denied: Cannot write to the file {settings_file_path}")
-            settings_file_path = None
-        # Initialize settings with either a custom or the default path
-        if settings_file_path:
-            return QSettings(settings_file_path, QSettings.Format.NativeFormat)
-        else:
-            return QSettings()
+        organisation_name = (QCoreApplication.organizationName()
+                             or AppConfig().get_settings_org_name())
+        return QSettings(
+            QSettings.Format.NativeFormat,
+            QSettings.Scope.UserScope,
+            organisation_name,
+            self.get_settings_app_name(),
+        )
+
+    def get_settings_app_name(self):
+        app_name = (QCoreApplication.applicationName()
+                    or AppConfig().get_settings_app_name())
+        app_package = AppConfig().get_package_type()
+        if app_package != AppConfig.default_package:
+            app_name = f'{app_name}_{app_package}'
+        return app_name
 
     def get_filename(self):
-        # Get app's package
-        app_package = AppConfig().get_package_type()
-        # Get default path based on the application config
-        settings_file_path = self.fileName()
-        # Adjust path if the specific package is in use
-        if app_package != AppConfig.default_package:
-            # Split the file path into directory, filename without extension, and extension
-            directory, file = os.path.split(settings_file_path)
-            _file_name, _file_ext = os.path.splitext(file)
-            settings_file_path = os.path.join(directory, f'{_file_name}_{app_package}{_file_ext}')
-        return settings_file_path
+        return self.get_instance().fileName()
 
     def init_fields(self):
         # App's UI settings
@@ -139,6 +134,8 @@ class Settings(QSettings):
         self.create_property("show_deleted_files", bool, False)
         self.create_property("show_navigation_arrows", bool, True)
         self.create_property("show_global_cursor_position", bool, False)
+        self.create_property("show_system_load_graphs", bool, True)
+        self.create_property("system_load_interval_ms", int, 1000)
         self.create_property("reversible_file_deletion", bool, True)
         self.create_property("default_path", str, "")
         self.create_property("ui_init_ts", int, 0)

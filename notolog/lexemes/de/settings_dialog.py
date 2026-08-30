@@ -6,8 +6,7 @@ lexemes = {
     "button_close": "Schließen",
 
     "tab_general": "Allgemein",
-    "tab_editor_config": "Editor",
-    "tab_viewer_config": "Betrachter",
+    "tab_workspace": "Arbeitsbereich",
     "tab_ai_config": "KI-Konfiguration",
 
     "general_app_config_label": "App-Konfiguration",
@@ -33,28 +32,27 @@ lexemes = {
     "general_reversible_file_deletion_checkbox_accessible_description":
         "Gelöschte Dateien durch Anhängen einer .del-Erweiterung in den Notolog-Papierkorb verschieben",
 
-    "general_statusbar_label": "Statusleiste",
-    "general_statusbar_show_global_cursor_position_checkbox": "Globale Cursorposition anzeigen",
-    "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
+    "workspace_bottom_bar_show_global_cursor_position_checkbox": "Globale Cursorposition anzeigen",
+    "workspace_bottom_bar_show_global_cursor_position_checkbox_accessible_description":
         "Globale Cursorposition in der Statusleiste anzeigen",
-    "general_statusbar_show_navigation_arrows_checkbox": "Navigationspfeile anzeigen",
-    "general_statusbar_show_navigation_arrows_checkbox_accessible_description":
+    "workspace_bottom_bar_show_navigation_arrows_checkbox": "Navigationspfeile anzeigen",
+    "workspace_bottom_bar_show_navigation_arrows_checkbox_accessible_description":
         "Navigationspfeile in der Statusleiste anzeigen",
 
-    "editor_config_label": "Editor-Konfiguration",
-    "editor_config_show_line_numbers_checkbox": "Zeilennummern anzeigen",
-    "editor_config_show_line_numbers_checkbox_accessible_description": "Zeilennummern im Editor anzeigen",
+    "workspace_editor_mode_label": "Editormodus",
+    "workspace_editor_mode_show_line_numbers_checkbox": "Zeilennummern anzeigen",
+    "workspace_editor_mode_show_line_numbers_checkbox_accessible_description": "Zeilennummern im Editor anzeigen",
 
-    "viewer_config_label": "Viewer-Konfiguration",
-    "viewer_config_process_emojis_checkbox": "Text-Emojis in Grafiken umwandeln",
-    "viewer_config_process_emojis_checkbox_accessible_description": "Text-Emojis in grafische Darstellungen umwandeln",
-    "viewer_config_highlight_todos_checkbox": "TODOs hervorheben",
-    "viewer_config_highlight_todos_checkbox_accessible_description": "TODOs im Text hervorheben",
-    "viewer_config_open_link_confirmation_checkbox": "Bestätigung vor dem Öffnen von Links erforderlich",
-    "viewer_config_open_link_confirmation_checkbox_accessible_description":
+    "workspace_view_mode_label": "Ansichtsmodus",
+    "workspace_view_mode_process_emojis_checkbox": "Text-Emojis in Grafiken umwandeln",
+    "workspace_view_mode_process_emojis_checkbox_accessible_description": "Text-Emojis in grafische Darstellungen umwandeln",
+    "workspace_view_mode_highlight_todos_checkbox": "TODOs hervorheben",
+    "workspace_view_mode_highlight_todos_checkbox_accessible_description": "TODOs im Text hervorheben",
+    "workspace_view_mode_open_link_confirmation_checkbox": "Bestätigung vor dem Öffnen von Links erforderlich",
+    "workspace_view_mode_open_link_confirmation_checkbox_accessible_description":
         "Vor dem Öffnen von Links eine Bestätigung anfordern",
-    "viewer_config_save_resources_checkbox": "Externe Bilder automatisch auf Festplatte speichern",
-    "viewer_config_save_resources_checkbox_accessible_description":
+    "workspace_view_mode_save_resources_checkbox": "Externe Bilder automatisch auf Festplatte speichern",
+    "workspace_view_mode_save_resources_checkbox_accessible_description":
         "Speichert automatisch Kopien von externen Bildern auf der Festplatte für den Offline-Zugriff.",
 
     "ai_config_inference_module_label": "Inferenzmodul",
@@ -72,4 +70,11 @@ lexemes = {
     "ai_config_convert_to_md_checkbox": "Ergebnis in Markdown umwandeln",
     "ai_config_convert_to_md_checkbox_accessible_description":
         "Konvertieren Sie die Ausgabemeldung in das Markdown-Format.",
+    "workspace_bottom_bar_label": "Untere Leiste",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox": "CPU- und Speichergrafiken anzeigen",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox_accessible_description":
+        "CPU- und Speicherauslastung samt Trennlinie in der unteren Leiste anzeigen",
+    "workspace_bottom_bar_system_load_interval_ms_label": "Aktualisierungsintervall der Diagramme",
+    "workspace_bottom_bar_system_load_interval_ms_accessible_description":
+        "Intervall zum Auslesen der CPU- und Speicherauslastung in Millisekunden",
 }

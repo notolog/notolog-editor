@@ -72,4 +72,4 @@ Notolog is released under the [MIT License](https://github.com/notolog/notolog-e
 
 ---
 
-*Documentation version: 1.2.1*
+*Documentation version: 1.2.2*

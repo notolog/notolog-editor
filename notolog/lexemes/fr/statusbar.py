@@ -20,6 +20,11 @@ lexemes = {
     "statusbar_encryption_label_encryption_plain": "Clair",
     "statusbar_encryption_label_encryption_encrypted": "Crypté",
 
+    "statusbar_system_cpu_usage": "Utilisation du processeur système : {percentage} %",
+    "statusbar_system_cpu_usage_unavailable": "Utilisation du processeur système indisponible",
+    "statusbar_system_memory_usage": "Utilisation de la mémoire système : {percentage} %",
+    "statusbar_system_memory_usage_unavailable": "Utilisation de la mémoire système indisponible",
+
     "statusbar_cursor_label": "ligne : {line} → col : {column}",
     "statusbar_cursor_label_selected": "ligne : {line} → col : {column} → sel : {selected}",
     "statusbar_cursor_label_with_global": "ligne : {line} → col : {column} → pos : {position}",

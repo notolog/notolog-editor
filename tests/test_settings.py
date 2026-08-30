@@ -103,3 +103,16 @@ class TestSettings:
         # Clear the settings
         test_obj_settings.clear()
         assert not os.path.exists(settings_file_path)
+
+    def test_settings_use_package_specific_native_storage(self, mocker):
+        mocker.patch.object(AppConfig, 'get_package_type', return_value='bin')
+        Settings.reload()
+
+        settings = Settings()
+
+        assert settings.get_settings_app_name().endswith('_qa_bin')
+        assert settings.settings.fileName() == settings.get_filename()
+        assert '_qa_bin' in settings.settings.fileName()
+        settings.clear()
+        settings.sync()
+        Settings.reload()

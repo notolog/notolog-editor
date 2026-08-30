@@ -20,6 +20,11 @@ lexemes = {
     "statusbar_encryption_label_encryption_plain": "Απλό",
     "statusbar_encryption_label_encryption_encrypted": "Κρυπτογραφημένο",
 
+    "statusbar_system_cpu_usage": "Χρήση CPU συστήματος: {percentage}%",
+    "statusbar_system_cpu_usage_unavailable": "Η χρήση CPU συστήματος δεν είναι διαθέσιμη",
+    "statusbar_system_memory_usage": "Χρήση μνήμης συστήματος: {percentage}%",
+    "statusbar_system_memory_usage_unavailable": "Η χρήση μνήμης συστήματος δεν είναι διαθέσιμη",
+
     "statusbar_cursor_label": "γραμμή: {line} → στήλη: {column}",
     "statusbar_cursor_label_selected": "γραμμή: {line} → στήλη: {column} → επιλ: {selected}",
     "statusbar_cursor_label_with_global": "γραμμή: {line} → στήλη: {column} → θέση: {position}",

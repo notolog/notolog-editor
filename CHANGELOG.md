@@ -1,6 +1,21 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.2.2] - 2026-08-30
+
+### Added
+- Added optional theme-aware system CPU and memory usage graphs to the bottom bar with a configurable refresh interval.
+
+### Changed
+- Consolidated editor mode, view mode, and bottom-bar settings under a new Workspace tab.
+- Updated `cryptography` to 50.0.1 with refreshed OpenSSL 4.0.2 wheels.
+- Improved package metadata and included AI-agent context in source distributions.
+
+### Fixed
+- Ensured packaged builds use their separate `_bin` settings file from the first launch.
+- Made the current-file path tooltip available without requiring window focus.
+- Prevented closed Settings dialogs and status bars from being retained in memory.
+
 ## [1.2.1] - 2026-08-23
 
 ### Added
@@ -13,8 +28,8 @@ All notologable changes to this project will be documented in this file.
 - Matched the current-file status icon to the file type shown in the file tree.
 - Updated runtime, optional AI, development, test, and build dependency constraints to current compatible releases.
 - Declared pre-commit as a development dependency and made its pytest hook use the project environment.
-- Added Python 3.14 support for On-Device LLM inference while retaining the newest compatible ONNX Runtime GenAI release for Python 3.10.
-- Removed unused transitive and test-only packages from the runtime dependency surface.
+- Added Python 3.14 support for On-Device LLM inference while keeping Python 3.10 on the compatible ONNX Runtime GenAI 0.11.x series.
+- Removed unnecessary direct declarations of transitive and test-only packages from runtime dependencies.
 
 ### Fixed
 - Made OpenAI inference cancellation abort and await the active network request.
@@ -32,7 +47,7 @@ All notologable changes to this project will be documented in this file.
 - Bounded password-derivation parameters read from encrypted-file headers to prevent excessive CPU or memory use.
 - Prevented plaintext files from being left behind unnoticed after successfully creating and reopening an encrypted copy.
 - Updated `cryptography` to 50.0.0 to include the CVE-2026-69247 mitigation.
-- Updated Python-Markdown to 3.10.3, including malformed HTML comment denial-of-service fixes.
+- Updated Python-Markdown to 3.10.3, incorporating the malformed HTML-like input denial-of-service fix released in 3.8.1.
 - Validated file-header structure and encryption metadata before key derivation, and made encrypted saves fail closed instead of risking plaintext fallback.
 - Removed AI prompts and response bodies from debug logging.
 

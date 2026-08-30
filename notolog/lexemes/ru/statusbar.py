@@ -20,6 +20,11 @@ lexemes = {
     "statusbar_encryption_label_encryption_plain": "Обычный",
     "statusbar_encryption_label_encryption_encrypted": "Зашифрованный",
 
+    "statusbar_system_cpu_usage": "Загрузка ЦП системы: {percentage}%",
+    "statusbar_system_cpu_usage_unavailable": "Загрузка ЦП системы недоступна",
+    "statusbar_system_memory_usage": "Использование памяти системы: {percentage}%",
+    "statusbar_system_memory_usage_unavailable": "Использование памяти системы недоступно",
+
     "statusbar_cursor_label": "строка: {line} → столбец: {column}",
     "statusbar_cursor_label_selected": "строка: {line} → столбец: {column} → выбр: {selected}",
     "statusbar_cursor_label_with_global": "строка: {line} → столбец: {column} → поз: {position}",

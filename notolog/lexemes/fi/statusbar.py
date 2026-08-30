@@ -20,6 +20,11 @@ lexemes = {
     "statusbar_encryption_label_encryption_plain": "Salaamaton",
     "statusbar_encryption_label_encryption_encrypted": "Salattu",
 
+    "statusbar_system_cpu_usage": "Järjestelmän suorittimen käyttö: {percentage} %",
+    "statusbar_system_cpu_usage_unavailable": "Järjestelmän suorittimen käyttö ei ole saatavilla",
+    "statusbar_system_memory_usage": "Järjestelmän muistin käyttö: {percentage} %",
+    "statusbar_system_memory_usage_unavailable": "Järjestelmän muistin käyttö ei ole saatavilla",
+
     "statusbar_cursor_label": "rivi: {line} → sar: {column}",
     "statusbar_cursor_label_selected": "rivi: {line} → sar: {column} → val: {selected}",
     "statusbar_cursor_label_with_global": "rivi: {line} → sar: {column} → pos: {position}",

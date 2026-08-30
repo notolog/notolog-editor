@@ -20,6 +20,11 @@ lexemes = {
     "statusbar_encryption_label_encryption_plain": "일반",
     "statusbar_encryption_label_encryption_encrypted": "암호화됨",
 
+    "statusbar_system_cpu_usage": "시스템 CPU 사용량: {percentage}%",
+    "statusbar_system_cpu_usage_unavailable": "시스템 CPU 사용량을 확인할 수 없음",
+    "statusbar_system_memory_usage": "시스템 메모리 사용량: {percentage}%",
+    "statusbar_system_memory_usage_unavailable": "시스템 메모리 사용량을 확인할 수 없음",
+
     "statusbar_cursor_label": "줄: {line} → 열: {column}",
     "statusbar_cursor_label_selected": "줄: {line} → 열: {column} → 선택: {selected}",
     "statusbar_cursor_label_with_global": "줄: {line} → 열: {column} → 위치: {position}",

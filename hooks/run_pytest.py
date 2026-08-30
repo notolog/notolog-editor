@@ -1,5 +1,22 @@
 #!/usr/bin/env python3
-"""Run the pre-commit pytest check with the interpreter that owns the Git hook."""
+"""
+Notolog Editor
+An open-source Markdown editor built with Python.
+
+File Details:
+- Purpose: Run the public pre-commit pytest check.
+- Functionality: Reuse the interpreter recorded by pre-commit and isolate application settings during tests.
+
+Repository: https://github.com/notolog/notolog-editor
+Website: https://notolog.app
+PyPI: https://pypi.org/project/notolog
+
+Author: Vadim Bakhrenkov
+Copyright: 2024-2026 Vadim Bakhrenkov
+License: MIT License
+
+For detailed instructions and project information, please see the repository's README.md.
+"""
 
 from __future__ import annotations
 
@@ -9,6 +26,7 @@ import shlex
 import shutil
 import subprocess
 import sys
+import tempfile
 
 
 PYTEST_ARGS = (
@@ -59,7 +77,11 @@ def main() -> int:
         print('No project Python interpreter found. Activate the project environment first.', file=sys.stderr)
         return 1
 
-    return subprocess.call([python, '-m', 'pytest', *PYTEST_ARGS])
+    with tempfile.TemporaryDirectory(prefix='notolog-pytest-') as state_dir:
+        env = os.environ.copy()
+        env['XDG_CONFIG_HOME'] = os.path.join(state_dir, 'config')
+        env['XDG_DATA_HOME'] = os.path.join(state_dir, 'data')
+        return subprocess.call([python, '-m', 'pytest', *PYTEST_ARGS], env=env)
 
 
 if __name__ == '__main__':

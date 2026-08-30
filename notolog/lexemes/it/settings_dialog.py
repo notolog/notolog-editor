@@ -6,8 +6,7 @@ lexemes = {
     "button_close": "Chiudi",
 
     "tab_general": "Generale",
-    "tab_editor_config": "Editore",
-    "tab_viewer_config": "Visualizzatore",
+    "tab_workspace": "Area di lavoro",
     "tab_ai_config": "Configurazione IA",
 
     "general_app_config_label": "Configurazione dell'app",
@@ -33,29 +32,28 @@ lexemes = {
     "general_reversible_file_deletion_checkbox_accessible_description":
         "Sposta i file eliminati nel cestino di Notolog aggiungendo un'estensione .del",
 
-    "general_statusbar_label": "Barra di Stato",
-    "general_statusbar_show_global_cursor_position_checkbox": "Mostra la Posizione Globale del Cursore",
-    "general_statusbar_show_global_cursor_position_checkbox_accessible_description":
+    "workspace_bottom_bar_show_global_cursor_position_checkbox": "Mostra la Posizione Globale del Cursore",
+    "workspace_bottom_bar_show_global_cursor_position_checkbox_accessible_description":
         "Visualizza la posizione globale del cursore nella barra di stato",
-    "general_statusbar_show_navigation_arrows_checkbox": "Mostra frecce di navigazione",
-    "general_statusbar_show_navigation_arrows_checkbox_accessible_description":
+    "workspace_bottom_bar_show_navigation_arrows_checkbox": "Mostra frecce di navigazione",
+    "workspace_bottom_bar_show_navigation_arrows_checkbox_accessible_description":
         "Mostra le frecce di navigazione nella barra di stato",
 
-    "editor_config_label": "Configurazione Editor",
-    "editor_config_show_line_numbers_checkbox": "Mostra Numeri di Riga",
-    "editor_config_show_line_numbers_checkbox_accessible_description": "Visualizza i numeri di riga nell'editor",
+    "workspace_editor_mode_label": "Modalità editor",
+    "workspace_editor_mode_show_line_numbers_checkbox": "Mostra Numeri di Riga",
+    "workspace_editor_mode_show_line_numbers_checkbox_accessible_description": "Visualizza i numeri di riga nell'editor",
 
-    "viewer_config_label": "Configurazione Visualizzatore",
-    "viewer_config_process_emojis_checkbox": "Converti Emoji di Testo in Grafica",
-    "viewer_config_process_emojis_checkbox_accessible_description":
+    "workspace_view_mode_label": "Modalità visualizzazione",
+    "workspace_view_mode_process_emojis_checkbox": "Converti Emoji di Testo in Grafica",
+    "workspace_view_mode_process_emojis_checkbox_accessible_description":
         "Converti le emoji di testo in rappresentazioni grafiche",
-    "viewer_config_highlight_todos_checkbox": "Evidenzia TODO",
-    "viewer_config_highlight_todos_checkbox_accessible_description": "Evidenzia le etichette TODO nel testo",
-    "viewer_config_open_link_confirmation_checkbox": "Richiedi Conferma per Aprire i Link",
-    "viewer_config_open_link_confirmation_checkbox_accessible_description":
+    "workspace_view_mode_highlight_todos_checkbox": "Evidenzia TODO",
+    "workspace_view_mode_highlight_todos_checkbox_accessible_description": "Evidenzia le etichette TODO nel testo",
+    "workspace_view_mode_open_link_confirmation_checkbox": "Richiedi Conferma per Aprire i Link",
+    "workspace_view_mode_open_link_confirmation_checkbox_accessible_description":
         "Richiedi conferma prima di aprire i link",
-    "viewer_config_save_resources_checkbox": "Salva automaticamente le immagini esterne sul disco",
-    "viewer_config_save_resources_checkbox_accessible_description":
+    "workspace_view_mode_save_resources_checkbox": "Salva automaticamente le immagini esterne sul disco",
+    "workspace_view_mode_save_resources_checkbox_accessible_description":
         "Salva automaticamente copie delle immagini esterne sul disco per l'accesso offline.",
 
     "ai_config_inference_module_label": "Modulo di Inferenza",
@@ -74,4 +72,11 @@ lexemes = {
     "ai_config_convert_to_md_checkbox": "Converti il risultato in Markdown",
     "ai_config_convert_to_md_checkbox_accessible_description":
         "Converte il messaggio di output in formato Markdown.",
+    "workspace_bottom_bar_label": "Barra inferiore",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox": "Mostra grafici CPU e memoria",
+    "workspace_bottom_bar_show_system_load_graphs_checkbox_accessible_description":
+        "Mostra i grafici CPU e memoria e il relativo separatore nella barra inferiore",
+    "workspace_bottom_bar_system_load_interval_ms_label": "Intervallo di aggiornamento dei grafici",
+    "workspace_bottom_bar_system_load_interval_ms_accessible_description":
+        "Imposta ogni quanti millisecondi leggere l'utilizzo di CPU e memoria",
 }
