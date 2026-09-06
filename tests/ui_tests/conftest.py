@@ -1,11 +1,19 @@
 """
-Shared pytest configuration for UI tests.
+Notolog Editor
+An open-source Markdown editor built with Python.
 
-This module provides common fixtures for UI tests. Note that some tests
-require the real NotologEditor initialization (test_toolbar.py, test_settings_dialog.py)
-while others benefit from mocked initialization (test_qt_ui.py).
+File Details:
+- Purpose: Shared pytest configuration and lightweight window fixtures for UI tests.
 
-Tests that need mocking should use the mock_notolog_editor fixture explicitly.
+Repository: https://github.com/notolog/notolog-editor
+Website: https://notolog.app
+PyPI: https://pypi.org/project/notolog
+
+Author: Vadim Bakhrenkov
+Copyright: 2024-2026 Vadim Bakhrenkov
+License: MIT License
+
+For detailed instructions and project information, please see the repository's README.md.
 """
 
 import os
@@ -43,6 +51,11 @@ def mock_notolog_editor(mocker):
     def mock_init(self, *args, **kwargs):
         # Call the parent QMainWindow.__init__ to properly initialize Qt
         QMainWindow.__init__(self)
+
+        # This test double has no editor state or running application tasks.
+        # Keep Qt teardown on the already-completed shutdown path, including
+        # after pytest restores the patched constructor.
+        self._shutdown_complete = True
 
         # Initialize logger to prevent AttributeError
         self.logger = logging.getLogger('notolog')
@@ -117,6 +130,7 @@ def mock_main_window_for_widgets(mocker, test_app):
     def mock_init(self, *args, **kwargs):
         # Call parent QMainWindow.__init__
         QMainWindow.__init__(self)
+        self._shutdown_complete = True
 
         # Initialize essential attributes that nested widgets may need
         self.logger = logging.getLogger('notolog')

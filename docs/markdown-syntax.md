@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2024-03-26 00:19:36.466439", "updated": "2026-02-07 00:00:00.000000"}} -->
+<!-- {"notolog.app": {"created": "2024-03-26 00:19:36.466439", "updated": "2026-09-06 00:00:00.000000"}} -->
 # Markdown Syntax
 
 ## Headings
@@ -60,6 +60,32 @@ To align the content within your table cells, you can use colons (`:`) in the se
 * Left-aligned: Use `:--` or `:---` (colon on the left side)
 * Center-aligned: Use `:--:` or `:---:` (colons on both sides)
 * Right-aligned: Use `--:` or `---:` (colon on the right side)
+
+
+## Links
+
+Use `[label](destination)` for a text link and wrap `![Alt text](image-path)`
+inside it for a clickable picture. An optional quoted title follows the destination.
+Local links open supported text files relative to the current document.
+
+**Raw Markdown:**
+
+```markdown
+[Notolog documentation](https://notolog.app/)
+[Markdown guide](https://notolog.app/markdown-syntax/ "Markdown syntax")
+[Local user guide](user-guide.md)
+[![Documentation](assets/notolog-example-image.png)](https://notolog.app/)
+```
+
+**Rendered result:**
+
+[Notolog documentation](https://notolog.app/)
+
+[Markdown guide](https://notolog.app/markdown-syntax/ "Markdown syntax")
+
+[Local user guide](user-guide.md)
+
+[![Documentation](assets/notolog-example-image.png)](https://notolog.app/)
 
 
 ## Images
@@ -332,13 +358,53 @@ Code block within fences:
 print('Hello World!')
 ```
 
-Code block with colons example:
+In edit mode, Pygments adds language-aware colors when the fence declares one
+of these languages (aliases are shown in parentheses):
+
+- Bash (`sh`, `shell`, `zsh`), console
+- C (`h`), C++ (`cpp`, `c++`, `cc`, `hpp`)
+- CSS, diff (`patch`), Dockerfile (`docker`)
+- HTML (`htm`), INI, JavaScript (`js`), JSON, JSON5
+- Markdown (`md`), PHP, Python (`py`), SQL, TOML
+- TypeScript (`ts`), XML, YAML (`yml`)
+
+An omitted or unknown language still uses the generic code-block style. A
+`markdown` fence highlights Markdown tokens such as emphasis as code syntax;
+it does not render the fenced content as headings, lists, bold text, or italic
+text.
+
+Fenced code blocks also work inside lists and blockquotes, in both edit and view
+mode. Keep the opening and closing fences at the same indentation and indent
+their contents at least as far. Separate the block from surrounding text with
+a blank line:
+
+````markdown
+1. Install the audio dependencies:
+
+    ```sh
+    pip install "notolog[tts]"
+    ```
+
+2. Open Settings.
+````
+
+For nested lists, add another four spaces per list level. A fence must begin on
+its own line, below the list item marker.
+
+Notolog edit mode also recognizes a legacy indented pseudo-fence. The language
+name can use any alias supported by the editor's fenced-code highlighter, not
+only Python:
 
 	::::py
 	# My first code
 	print('Hello World!')
 
-*New line is required at the end of the block.*
+This is an edit-mode highlighting extension rather than Python-Markdown fence
+syntax. In rendered output it remains an ordinary indented code block and the
+`::::py` line is displayed literally. A blank line ends the pseudo-fence.
+
+Fenced code blocks must be placed at the document root. The bundled Extra
+extension does not parse fences nested inside lists or blockquotes.
 
 ``` {.html}
 <html>
@@ -357,24 +423,21 @@ Code blocks are perfect for monospace text, such as ASCII art:
 ╚═╝  ╚═══╝ ╚═════╝    ╚═╝    ╚═════╝ ╚══════╝ ╚═════╝  ╚═════╝ 
 ```
 
-### One-line blocks
+### Inline code
 
-One-line code within fences
+Inline code uses matching backtick delimiters:
 
 `pip3 install notolog`
 
-One-line code within fences, another example
+Longer delimiters allow the span to contain shorter backtick runs:
 
 ```ls -la ```
 
-This case is also correct, just do not forget spaces between the tokens
+Both directions are valid when spaces make the outer delimiter unambiguous:
 
 ` ```pip3 install notolog``` `
 
-Or
-
 ``` `pip3 install notolog` ```
-
 
 ## Horizontal line
 

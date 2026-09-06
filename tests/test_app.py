@@ -71,9 +71,12 @@ class TestApp:
         assert captured.out.strip() == exp_result
         assert excinfo.value.code == exp_exit_code
 
-    def test_app(self, test_obj_app_config: AppConfig, mocker, monkeypatch):
+    def test_app(self, test_obj_app_config: AppConfig, mocker, monkeypatch, qapp):
         # Simulate command-line arguments
         monkeypatch.setattr(sys, "argv", [])
+
+        # Reuse the session application regardless of test collection order.
+        application_factory = mocker.patch('notolog.app.QApplication', return_value=qapp)
 
         # Create a mock event loop with proper methods
         mock_loop = mocker.MagicMock()
@@ -105,6 +108,7 @@ class TestApp:
         # Call the main function
         main()
 
+        application_factory.assert_called_once_with([])
         test_logging_basic_config.assert_called_once()
 
         test_set_organisation_name.assert_called_once()

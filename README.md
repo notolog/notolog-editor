@@ -5,7 +5,7 @@
 <img src="https://raw.githubusercontent.com/notolog/notolog-editor/main/docs/assets/notolog-logo-blue.png" alt="Notolog Markdown Editor" width="72" height="72" /><br/>
 </p>
 
-[![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/) [![Conda Version](https://img.shields.io/conda/vn/conda-forge/notolog?logo=anaconda&logoColor=green)](https://anaconda.org/conda-forge/notolog) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)](https://pypi.org/project/notolog/) [![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor?color=yellow)](https://github.com/notolog/notolog-editor/blob/master/LICENSE) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/notolog/notolog-editor/tests.yaml?color=green)](https://github.com/notolog/notolog-editor/actions/workflows/tests.yaml) [![PyPI - Downloads](https://img.shields.io/pypi/dm/notolog)](https://pypistats.org/packages/notolog) [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/notolog)](https://anaconda.org/conda-forge/notolog)
+[![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/) [![Conda Version](https://img.shields.io/conda/vn/conda-forge/notolog?logo=anaconda&logoColor=green)](https://anaconda.org/conda-forge/notolog) [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/notolog)](https://pypi.org/project/notolog/) [![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor?color=yellow)](https://github.com/notolog/notolog-editor/blob/main/LICENSE) [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/notolog/notolog-editor/tests.yaml?color=green)](https://github.com/notolog/notolog-editor/actions/workflows/tests.yaml) [![PyPI - Downloads](https://img.shields.io/pypi/dm/notolog)](https://pypistats.org/packages/notolog) [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/notolog)](https://anaconda.org/conda-forge/notolog)
 
 Notolog is an open-source Markdown editor built with Python and PySide6, featuring AI-powered assistance and local-first privacy.
 
@@ -26,6 +26,11 @@ notolog  # Launch the app
 **With llama.cpp support:**
 ```sh
 pip install "notolog[llama]"
+```
+
+**With Text-to-Speech audio support:**
+```sh
+pip install "notolog[tts]"
 ```
 
 **Via Conda:**
@@ -53,6 +58,7 @@ python -m notolog.app
 
 - **Markdown Editor** - Real-time syntax highlighting in edit mode (implemented specifically for Notolog), live preview, adaptive line numbers, code blocks
 - **AI Assistant** - Supports: OpenAI API, ONNX Runtime GenAI (local), and llama.cpp (local, GGUF models)
+- **Text-to-Speech** - Read documents or selections aloud locally with NeMo-Speech.cpp and MagpieTTS
 - **File Encryption** - PBKDF2HMAC key derivation with Fernet (AES-128 CBC mode) for optional file encryption
 - **Multi-Language** - 19 languages supported
 - **Customizable** - 6 built-in themes
@@ -90,6 +96,34 @@ Notolog supports three AI backends:
 - **Module llama.cpp** - Local inference with GGUF quantized models (e.g. Llama, Mistral, Qwen)
 
 See the [AI Assistant Guide](https://notolog.app/ai-assistant/) for setup instructions.
+
+
+## Text-to-Speech
+
+The built-in Text-to-Speech module reads Markdown documents, selected text, or text from the cursor aloud locally,
+with play, pause, and stop controls. It supports spoken heading announcements and separate options to replace inline
+and multiline code with short labels.
+
+The context-length slider controls the maximum characters in each speech request. Its far-right position
+uses the whole document between heading breaks. Larger contexts increase startup time and memory use;
+the runtime's limits still apply. Speech text and generated audio travel through local pipes and memory,
+without temporary text or audio files. Operating-system swap, crash dumps, and external recording are
+outside this protection.
+
+Install the audio dependencies with `pip install "notolog[tts]"` (sounddevice/PortAudio). Linux pip users
+also need their system PortAudio library, such as `libportaudio2` on Debian/Ubuntu, plus `curl` and CA certificates
+for model downloads. In **Settings → Text-to-Speech**, enable the
+module and use **Get runtime** to find the compatible NeMo-Speech.cpp release. Extract the complete archive,
+select `bin/nemo-speech` (`bin/nemo-speech.exe` on Windows), choose a model folder, and download the models.
+The runtime and models are installed separately; they are not bundled with Notolog.
+
+Choose the document language in the module settings. English is the default; Spanish, German, French,
+Italian, Vietnamese, and Hindi are also supported. Mandarin and Japanese require a runtime built with
+support for those languages. Language detection is not automatic, and heading/code labels use English.
+
+See the [Text-to-Speech Guide](docs/text-to-speech.md) for setup, supported models, and troubleshooting.
+See [Text-to-Speech third-party notices](ThirdPartyNotices.md#text-to-speech) for runtime, model, and audio
+library licenses. Notolog is not affiliated with or endorsed by NVIDIA.
 
 
 ## Development

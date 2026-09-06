@@ -68,6 +68,31 @@ class TestTextBlockData:
         data = test_object.get_all(tag)
         assert len(data) == exp_cnt
 
+    def test_put_updates_matching_range_without_duplicating_it(self):
+        data = TextBlockData(1)
+        data.put(tag='code', opened=True, within=True, closed=False, start=0, end=3)
+        data.put(tag='code', opened=False, within=True, closed=True, start=0, end=3)
+
+        assert data.get_all('code') == [{
+            'opened': False,
+            'within': True,
+            'closed': True,
+            'start': 0,
+            'end': 3,
+        }]
+
+    def test_prune_inactive_removes_only_default_state(self):
+        data = TextBlockData(1)
+        data.put(tag='default', opened=False, within=False, closed=False)
+        data.put(tag='range', opened=False, within=False, closed=False, start=1, end=2)
+        data.put(tag='state', opened=False, within=True, closed=False)
+
+        data.prune_inactive()
+
+        assert data.get_all('default') is None
+        assert data.get_all('range') is not None
+        assert data.get_all('state') is not None
+
     @pytest.mark.parametrize("tag, index, exp_start, exp_end", [('s', 2, 79, 149)])
     def test_text_block_data_get_one(self, test_object, tag, index, exp_start, exp_end):
         assert tag in test_object.data

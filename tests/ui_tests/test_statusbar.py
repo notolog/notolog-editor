@@ -1,4 +1,20 @@
-"""Tests for the application status bar."""
+"""
+Notolog Editor
+An open-source Markdown editor built with Python.
+
+File Details:
+- Purpose: Tests for the application status bar.
+
+Repository: https://github.com/notolog/notolog-editor
+Website: https://notolog.app
+PyPI: https://pypi.org/project/notolog
+
+Author: Vadim Bakhrenkov
+Copyright: 2024-2026 Vadim Bakhrenkov
+License: MIT License
+
+For detailed instructions and project information, please see the repository's README.md.
+"""
 
 from PySide6.QtWidgets import QMainWindow
 from PySide6.QtCore import Qt, QSize
@@ -11,6 +27,33 @@ from notolog.ui.file_system_model import get_file_type_icon
 from notolog.ui.statusbar import StatusBar
 
 from . import test_app  # noqa: F401
+
+
+@pytest.mark.parametrize('language', ['en', 'de'])
+def test_failed_save_warning_explains_error_on_hover_and_click(test_app, mocker, language):  # noqa: F811
+    from notolog.notolog_editor import NotologEditor
+    from notolog.lexemes.lexemes import Lexemes
+    from notolog.helpers.tooltip_helper import TooltipHelper
+    settings = Settings()
+    settings.clear()
+    settings.app_language = language
+    window = QMainWindow()
+    statusbar = StatusBar(window)
+    lexemes = Lexemes(language)
+    host = SimpleNamespace(statusbar=statusbar, lexemes=lexemes, logger=mocker.Mock())
+    mocker.patch('notolog.notolog_editor.file_helper.save_file', return_value=False)
+    show_tooltip = mocker.patch.object(TooltipHelper, 'show_tooltip')
+    statusbar.show_warning(visible=True, tooltip='Previous warning')
+
+    assert NotologEditor.save_file_content(host, 'note.md', 'Unsaved content') is False
+    expected = lexemes.get('save_active_file_error_occurred')
+    assert expected and statusbar.warning_label.toolTip() == expected
+    assert not statusbar.warning_label.isHidden()
+    statusbar.warning_label.click()
+    show_tooltip.assert_called_once_with(widget=statusbar.warning_label, text=expected)
+    statusbar.show_warning(visible=False)
+    assert statusbar.warning_label.toolTip() == ''
+    window.close()
 
 
 def test_current_file_indicator_elides_and_copies_path(test_app, tmp_path):  # noqa: F811

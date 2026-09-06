@@ -1,6 +1,32 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.2.3] - 2026-09-06
+
+### Added
+
+- Added local streaming Text-to-Speech with model downloads, playback controls, translated settings, and reading from documents, selections, or the cursor.
+- Added language-aware Pygments highlighting for common fenced-code languages in edit mode, including Bash, C/C++, CSS, JavaScript, JSON, Markdown, PHP, Python, SQL, TypeScript, XML, and YAML.
+- Expanded Markdown regression tests for syntax boundaries, nested containers, Unicode, malformed input, and rendering, including comparisons with Python-Markdown.
+
+### Changed
+
+- Improved edit-mode Markdown highlighting for emphasis, inline code, headings, nested lists, blockquotes, thematic breaks, tables, links, images, references, abbreviations, inline HTML, and HTML comments.
+- Made fenced-code parsing stateful, validated fence types and language declarations, and kept Markdown-looking content inside code blocks literal while still allowing language-aware token colors.
+- Unified live language updates across settings and module panels, including TTS controls and application-generated log messages.
+- Updated the Nocturne theme's fenced-code string color for better contrast.
+- Updated Workspace documentation, Markdown syntax guidance, privacy guidance, and third-party notices.
+- Raised the minimum `coverage` version to 7.16.0.
+
+### Fixed
+
+- Fixed edit-mode formatting ranges around non-BMP emoji and other supplementary Unicode characters by translating Python code-point offsets to Qt UTF-16 offsets.
+- Fixed Markdown delimiters inside inline code and HTML comments being interpreted as active formatting.
+- Fixed stale or duplicate highlighter state accumulating after document edits, and capped inline and lexer work for unusually large input.
+- Fixed viewer strikethrough with emoji, final paragraphs, mixed decorations, and note switching; preserved literal code markers.
+- Highlighted TODO markers case-insensitively in both modes and preserved surrounding strikethrough and font styling.
+- Included `README.md` and `ThirdPartyNotices.md` in wheel distributions.
+
 ## [1.2.2] - 2026-08-30
 
 ### Added

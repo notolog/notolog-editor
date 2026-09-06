@@ -60,6 +60,7 @@ class TestToolBar:
     def ui_obj(self, mocker, main_window):
         # No modules
         mocker.patch.object(Modules, 'get_by_extension', return_value=[])
+        mocker.patch.object(main_window, 'speech_enabled', return_value=False)
         # Fixture to initialize object.
         _test_action = {'type': 'action', 'weight': 1, 'name': 'toolbar_actions_label_test',
                         'theme_icon': '', 'color': 'green',

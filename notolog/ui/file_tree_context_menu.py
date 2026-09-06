@@ -25,6 +25,8 @@ from . import ThemeHelper
 from . import ClipboardHelper
 
 from ..ui.create_new_dir_dialog import CreateNewDirDialog
+from ..modules.text_to_speech.actions import speech_action_icon
+from ..modules.text_to_speech.i18n import tr as speech_tr
 
 import os
 import logging
@@ -70,6 +72,14 @@ class FileTreeContextMenu(QMenu):
         self.tree_menu(dir_path=current_dir_path)
 
     def file_menu(self):
+        if (hasattr(self.parent, 'speech_enabled') and self.parent.speech_enabled()
+                and self.file_path.lower().endswith(('.md', '.markdown', '.mdown', '.mkd', '.txt', '.enc'))
+                and not self.parent.is_file_safely_deleted(self.file_path)):
+            action = self.addAction(speech_action_icon(filled=True), speech_tr('module_text_to_speech_action_read_file'),
+                                    lambda: self.parent.action_read_file_aloud(self.file_path))
+            action.setIconVisibleInMenu(True)
+            self.addSeparator()
+
         # Copy file path context action
         copy_file_path_icon = self.theme_helper.get_icon(
             theme_icon='signpost-split.svg', system_icon='edit-copy',

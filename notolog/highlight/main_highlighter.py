@@ -29,6 +29,7 @@ from . import ThemeHelper
 from ..font_loader import FontLoader
 
 import logging
+from copy import deepcopy
 
 if TYPE_CHECKING:
     from typing import Union  # noqa: F401
@@ -65,8 +66,11 @@ class MainHighlighter(QSyntaxHighlighter):
         self.font_size = AppConfig().get_font_size()
 
         # Walk rules to create QRegExp for each pattern
+        # Copy both together so rule styles still reference the corresponding
+        # theme entries, without mutating another instance or class defaults.
+        self.theme, rules = deepcopy((self.theme, self.re_rules))
         self.rules = [(self.get_regex(pattern), nth, tag, group, duple, fmt, reckon)
-                      for (pattern, nth, tag, group, duple, fmt, reckon) in self.re_rules]
+                      for (pattern, nth, tag, group, duple, fmt, reckon) in rules]
 
         # Collect found tokens
         self.tokens = {}

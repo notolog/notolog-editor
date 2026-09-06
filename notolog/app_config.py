@@ -1,3 +1,21 @@
+"""
+Notolog Editor
+An open-source Markdown editor built with Python.
+
+File Details:
+- Purpose: Application metadata and package-specific configuration.
+
+Repository: https://github.com/notolog/notolog-editor
+Website: https://notolog.app
+PyPI: https://pypi.org/project/notolog
+
+Author: Vadim Bakhrenkov
+Copyright: 2024-2026 Vadim Bakhrenkov
+License: MIT License
+
+For detailed instructions and project information, please see the repository's README.md.
+"""
+
 from PySide6.QtCore import QObject, QStandardPaths, Signal
 
 import os
@@ -14,7 +32,7 @@ from threading import Lock
 toml_base_app_config = """
 [app]
 name = "Notolog"
-version = "1.2.2"
+version = "1.2.3"
 license = "MIT License"
 date = "2024-2026"
 website = "https://notolog.app"

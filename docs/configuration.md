@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-31 00:00:00.000000"}} -->
+<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-09-06 00:00:00.000000"}} -->
 # Configuration Guide
 
 Detailed reference for all Notolog settings.
@@ -7,14 +7,10 @@ Detailed reference for all Notolog settings.
 
 - [Settings Storage](#settings-storage)
 - [General Tab](#general-tab)
-- [Editor Tab](#editor-tab)
-- [Viewer Tab](#viewer-tab)
+- [Workspace Tab](#workspace-tab)
 - [AI Config Tab](#ai-config-tab)
 - [AI Module Settings](#ai-module-settings)
 - [Command Line](#command-line)
-
----
-![Notolog - Python Markdown Editor - Settings UI](assets/images/ui/notolog-ui-settings.png)
 
 ## Settings Storage
 
@@ -46,13 +42,6 @@ The General tab contains app-wide configuration options.
 |---------|-----|---------|-------------|
 | Show Main Menu | `show_main_menu` | `true` | Display the app's main dropdown menu |
 
-### Status Bar
-
-| Setting | Key | Default | Description |
-|---------|-----|---------|-------------|
-| Show Navigation Arrows | `show_navigation_arrows` | `true` | Show navigation arrows in the status bar |
-| Show Global Cursor Position | `show_global_cursor_position` | `false` | Display cursor position in status bar |
-
 ### Font Size
 
 | Setting | Key | Default | Description |
@@ -67,26 +56,33 @@ The General tab contains app-wide configuration options.
 
 ---
 
-## Editor Tab
+## Workspace Tab
 
-Editor-specific configuration options.
+The Workspace tab groups settings by where they take effect.
+
+### Editor Mode
 
 | Setting | Key | Default | Description |
 |---------|-----|---------|-------------|
 | Show Line Numbers | `show_line_numbers` | `true` | Display line numbers in the editor |
 
----
+### View Mode
 
-## Viewer Tab
-
-Viewer-specific configuration options.
-
-| Setting | Key | Default | Description                                                                                  |
-|---------|-----|---------|----------------------------------------------------------------------------------------------|
-| Convert Text Emojis to Graphics | `viewer_process_emojis` | `true` | Convert text emojis to graphical representations                                             |
-| Highlight TODOs | `viewer_highlight_todos` | `true` | Emphasize @todo tags within the text                                                         |
+| Setting | Key | Default | Description |
+|---------|-----|---------|-------------|
+| Convert Text Emojis to Graphics | `viewer_process_emojis` | `true` | Convert text emojis to graphical representations |
+| Highlight TODOs | `viewer_highlight_todos` | `true` | Emphasize @todo tags within the text |
 | Require Confirmation to Open Links | `viewer_open_link_confirmation` | `true` | Ask for confirmation before opening external links in browser |
-| Auto-save external images to disk | `viewer_save_resources` | `true` | Automatically saves copies of external images to disk for offline access                     |
+| Auto-save external images to disk | `viewer_save_resources` | `true` | Automatically save copies of external images to disk for offline access |
+
+### Bottom Bar
+
+| Setting | Key | Default | Description |
+|---------|-----|---------|-------------|
+| Show Navigation Arrows | `show_navigation_arrows` | `true` | Show navigation arrows in the bottom bar |
+| Show Global Cursor Position | `show_global_cursor_position` | `false` | Display the global cursor position in the bottom bar |
+| Show CPU and memory graphs | `show_system_load_graphs` | `true` | Display CPU and memory usage graphs and their separator |
+| Graph refresh interval | `system_load_interval_ms` | `1000` ms | Set the system-usage sampling interval (250-60000 ms) |
 
 ---
 
@@ -96,7 +92,7 @@ AI Assistant configuration options.
 
 | Setting | Key | Default | Description |
 |---------|-----|---------|-------------|
-| Active Inference Module | `ai_config_inference_module` | (none) | Select from available AI inference modules |
+| Active Inference Module | `ai_config_inference_module` | `openai_api` | Select from available AI inference modules |
 | Multi-turn dialogue with conversational memory | `ai_config_multi_turn_dialogue` | `true` | Enable multi-turn dialogue that retains the previous prompt for conversational memory |
 | Convert the result to Markdown | `ai_config_convert_to_md` | `false` | Convert the output message into Markdown format |
 

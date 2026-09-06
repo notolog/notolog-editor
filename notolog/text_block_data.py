@@ -37,9 +37,9 @@ class TextBlockData(QTextBlockUserData):
                 if data_row == new_data:
                     return
                 # Check either update needed or not
-                # TODO: Improve the check algorithm as it's quite simple at the moment.
                 if data_row['start'] == new_data['start'] and data_row['end'] == new_data['end']:
                     existing_data[data_index].update(new_data)
+                    return
             if isinstance(existing_data, list):
                 existing_data.append(new_data)
             elif isinstance(existing_data, dict):
@@ -94,6 +94,18 @@ class TextBlockData(QTextBlockUserData):
                 # self.data[tag].__delitem__(index)
                 # self.data[tag] = [item for key, item in enumerate(self.data[tag]) if key != index]
                 del self.data[tag][index]
+
+    def prune_inactive(self) -> None:
+        """Discard default parser-state rows which carry no information."""
+        self.data = {
+            tag: active_rows
+            for tag, rows in self.data.items()
+            if (active_rows := [
+                row for row in rows
+                if (row['opened'] or row['within'] or row['closed']
+                    or row['start'] != row['end'])
+            ])
+        }
 
     def search(self, tag=str, key=str, value=any) -> Any:
         if tag in self.data:

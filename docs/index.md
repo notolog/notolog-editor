@@ -2,7 +2,7 @@
 # Notolog Documentation
 
 [![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/)
-[![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor)](https://github.com/notolog/notolog-editor/blob/master/LICENSE)
+[![GitHub License](https://img.shields.io/github/license/notolog/notolog-editor)](https://github.com/notolog/notolog-editor/blob/main/LICENSE)
 [![Conda Downloads](https://img.shields.io/conda/dn/conda-forge/notolog)](https://anaconda.org/conda-forge/notolog)
 
 Welcome to the official documentation for **Notolog** - an open-source Markdown editor built with Python and PySide6.
@@ -13,6 +13,7 @@ Welcome to the official documentation for **Notolog** - an open-source Markdown 
 * [User Guide](user-guide.md) - Complete feature overview
 * [Markdown Syntax](markdown-syntax.md) - Markdown syntax reference and examples
 * [AI Assistant](ai-assistant.md) - Using AI features (OpenAI, ONNX, llama.cpp)
+* [Text-to-Speech](text-to-speech.md) - Read documents and selections aloud locally
 * [Configuration](configuration.md) - Settings and customization
 * [API Reference](api-reference.md) - For developers and contributors
 * [FAQ & Troubleshooting](faq.md) - Common questions and solutions
@@ -26,6 +27,7 @@ Notolog is a privacy-focused Markdown editor that combines:
 
 - **Clean Markdown editing** with syntax highlighting
 - **AI-powered assistance** via OpenAI API or local LLMs (ONNX, GGUF)
+- **Local Text-to-Speech** for documents, selections, and reading from the cursor
 - **File encryption** using AES-128 with Fernet
 - **Multi-language support** (19 languages)
 - **Customizable themes** (6 built-in themes)

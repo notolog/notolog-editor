@@ -59,15 +59,17 @@ def main():
         class NotologArgumentParser(argparse.ArgumentParser):
             def print_help(self, file=None):
                 # Default command line intro
-                print("\033[90m", end='')
+                grey, white, green, reset = ('', '', '', '') if sys.platform == 'win32' else (
+                    '\033[90m', '\033[97m', '\033[92m', '\033[0m')
+                print(grey, end='')
                 print("░░░░░░░░░░░░░░░░░░░▒▒▒▒▒▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓███"
-                      "\033[97m NOTOLOG \033[90m"
+                      f"{white} NOTOLOG {grey}"
                       "███▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░")
-                print("\033[92m", end='')
+                print(green, end='')
                 print("╔═══════════════════════════════════════════════════════════════════════════════════════════╗")
                 print("║ Notolog Editor is a GUI application. Simply run the command without any options to start. ║")
                 print("╚═══════════════════════════════════════════════════════════════════════════════════════════╝")
-                print("\033[0m")
+                print(reset)
                 # Call the super method to print the standard help message
                 super().print_help()
 

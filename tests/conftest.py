@@ -18,6 +18,7 @@ For detailed instructions and project information, please see the repository's R
 
 import pytest
 import sys
+from PySide6.QtCore import QCoreApplication, QEvent
 from PySide6.QtWidgets import QApplication
 
 
@@ -33,9 +34,8 @@ def qapp():
 
     yield app
 
-    # Cleanup: close all top-level widgets and quit the application
+    # Destroy Qt-owned nested trees before Python collects their wrapper cycles.
     for widget in app.topLevelWidgets():
         widget.close()
-
-    # Note: We don't call app.quit() here as it may cause issues with pytest teardown
-    # The application will be cleaned up when the Python process exits
+        widget.deleteLater()
+    QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)

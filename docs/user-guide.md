@@ -1,4 +1,4 @@
-<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-31 00:00:00.000000"}} -->
+<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-09-06 00:00:00.000000"}} -->
 # User Guide
 
 Complete guide to all Notolog features and functionality.
@@ -9,6 +9,7 @@ Complete guide to all Notolog features and functionality.
 - [View Mode](#view-mode)
 - [File Management](#file-management)
 - [Search Features](#search-features)
+- [Text-to-Speech](text-to-speech.md)
 - [Encryption](#encryption)
 - [Themes](#themes)
 - [Multi-Language Support](#multi-language-support)
@@ -264,20 +265,28 @@ Access via `Settings` menu or toolbar.
 - **Theme**: Visual theme selection
 - **Default folder for notes**: Primary directory for notes
 - **Show Main Menu**: Toggle main menu visibility
-- **Show Navigation Arrows**: Display navigation arrows in the status bar
-- **Show Global Cursor Position**: Display cursor position in the status bar
 - **Font Size**: Adjust text size (range: 5-42)
+- **Delete files reversibly**: Move deleted files to Notolog's litter bin instead of deleting them permanently
 
-### Editor Tab
+### Workspace Tab
 
-- **Show Line Numbers**: Display line numbers in editor
+**Editor mode**
 
-### Viewer Tab
+- **Show Line Numbers**: Display line numbers in the editor
+
+**View mode**
 
 - **Convert Text Emojis to Graphics**: Render emojis graphically
 - **Highlight TODOs**: Emphasize @todo tags
 - **Require Confirmation to Open Links**: Show confirmation dialog before opening external links in your browser
 - **Auto-save external images to disk**: Save downloaded images locally
+
+**Bottom bar**
+
+- **Show Navigation Arrows**: Display navigation arrows
+- **Show Global Cursor Position**: Display the global cursor position
+- **Show CPU and memory graphs**: Display live system-usage graphs
+- **Graph refresh interval**: Set the sampling interval from 250 to 60000 ms
 
 ### AI Config Tab
 

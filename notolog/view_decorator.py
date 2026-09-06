@@ -85,106 +85,54 @@ class ViewDecorator:
         parent_widget.setTextCursor(cursor)
 
     def process(self):
+        """Format original ranges before removing delimiters from right to left."""
+        operations = []
+        block = self.doc.begin()
+        while block.isValid():
+            data = block.userData()
+            if data is not None and hasattr(data, 'get_all'):
+                # Highlighter regex ranges use Python characters; QTextCursor
+                # positions count UTF-16 code units, including surrogate pairs.
+                offsets = [0]
+                for character in block.text():
+                    offsets.append(offsets[-1] + (2 if ord(character) > 0xffff else 1))
+                for tag, oi, ci, fmt_key, repl in self.rules:
+                    if tag == 'todo' and not self.settings.viewer_highlight_todos:
+                        continue
+                    for row in data.get_all(tag) or ():
+                        start, end = row['start'], row['end']
+                        if not 0 <= start <= end < len(offsets):
+                            continue
+                        operations.append((
+                            block.position() + offsets[start],
+                            block.position() + offsets[end],
+                            oi, ci, fmt_key, repl or '',
+                        ))
+            block = block.next()
+
         cursor = QTextCursor(self.doc)
-        cursor.movePosition(QTextCursor.MoveOperation.Start)
-        while not (cursor.atEnd()
-                   # Sometimes, cursor.atEnd() doesn't work as the cursor unable to move next block at the very end
-                   or (cursor.block().blockNumber() > 0 and cursor.block().blockNumber() == self.doc.blockCount() - 1)):
-            current_block = cursor.block()
-            # current_block_number = current_block.blockNumber()
-            block_pos = current_block.position()
+        cursor.beginEditBlock()
+        try:
+            removals = {}
+            for start, end, oi, ci, fmt_key, repl in operations:
+                cursor.setPosition(start + oi)
+                cursor.setPosition(end - ci, QTextCursor.MoveMode.KeepAnchor)
+                style = self.highlighter.theme[fmt_key].copy()
+                if fmt_key == 'todo':
+                    style.setdefault('font_size_ratio', 0)
+                cursor.mergeCharFormat(self.highlighter.cf(**style))
+                if oi:
+                    removals[(start, start + oi)] = repl
+                if ci:
+                    removals[(end - ci, end)] = repl
 
-            for tag, oi, ci, fmt_key, repl in self.rules:
-                if tag == 'todo' and not self.settings.viewer_highlight_todos:
-                    continue
-                if repl is None:
-                    repl = ""
-                # Get theme's style format from the highlighter to keep single config and maintain overrides.
-                fmt = self.highlighter.theme[fmt_key]
-                data_storage = current_block.userData()  # type: Union[QTextBlockUserData, TextBlockData]
-                if (data_storage is not None
-                        and hasattr(data_storage, 'block_number')
-                        and data_storage.get_one(tag)):
+            # All tags share the original coordinate system. Deleting later
+            # markers first preserves both earlier ranges and other tag types.
+            for (start, end), repl in sorted(removals.items(), reverse=True):
+                cursor.setPosition(start)
+                cursor.setPosition(end, QTextCursor.MoveMode.KeepAnchor)
+                cursor.insertText(repl)
+        finally:
+            cursor.endEditBlock()
 
-                    # Each text cut reduced by token's length
-                    len_reduced = 0
-
-                    for block_data in data_storage.get_all(tag):
-                        self.logger.debug(
-                            'Current block data [%d]~[%d] "%s", in:%r, opened:%r, closed:%r, start: %d, end: %d'
-                            % (current_block.blockNumber(), data_storage.block_number, tag, block_data['within'],
-                               block_data['opened'], block_data['closed'], block_data['start'], block_data['end']))
-
-                        _r = {'o': block_pos + block_data['start'],
-                              'c': block_pos + block_data['end'],
-                              'oi': oi, 'ci': ci, 'fmt': fmt, 'repl': repl}
-
-                        find_cursor = QTextCursor(current_block)
-
-                        """
-                        # Proof of concept
-                        find_cursor = self.doc.find(pattern, find_cursor)
-                        if find_cursor.isNull():
-                           continue
-                        _r = {'o': find_cursor.selectionStart(), 'c': find_cursor.selectionEnd(),
-                              'oi': oi, 'ci': ci, 'fmt': fmt, 'repl': repl}
-                        self.logger.debug('Cursor position match block: %d, abs: %d, open: %d, close: %d, text: %s'
-                            % (find_cursor.positionInBlock(), find_cursor.position(), find_cursor.selectionStart(),
-                               find_cursor.selectionEnd(), find_cursor.selectedText()))
-                        """
-
-                        # Edit the block
-                        find_cursor.beginEditBlock()
-
-                        # Cursor opening
-                        open_pos = _r['o'] - len_reduced
-                        if _r['oi'] != 0:
-                            # open_pos = int(4 * (i - 1))
-                            """
-                            More about text cursor anchor and movement
-                            * https://doc.qt.io/qt-6/qtextcursor.html#anchor
-                            * https://doc.qt.io/qt-6/qtextcursor.html#MoveMode-enum
-
-                            More about text cursor position movement
-                            * https://doc.qt.io/qt-6/qtextcursor.html#movePosition
-                            * https://doc.qt.io/qt-6/qtextcursor.html#MoveOperation-enum
-
-                            `find_cursor.movePosition(QTextCursor.MoveOperation.Right, QTextCursor.MoveMode.KeepAnchor, 1)`
-
-                            More about text cursor selection
-                            * https://doc.qt.io/qt-6/qtextcursor.html#SelectionType-enum
-
-                            `find_cursor.select(QTextCursor.SelectionType.WordUnderCursor)`
-                            `find_cursor.removeSelectedText()`
-                            """
-                            find_cursor.setPosition(open_pos, QTextCursor.MoveMode.MoveAnchor)
-                            # KeepAnchor - the cursor selects the text it moves over.
-                            # The same effect as Shift key + moving cursor.
-                            find_cursor.setPosition(open_pos + _r['oi'], QTextCursor.MoveMode.KeepAnchor)
-                            find_cursor.insertText(_r['repl'])
-                            len_reduced += _r['oi'] - (len(_r['repl']) if _r['repl'] else 0)
-                        # Cursor closing
-                        close_pos = _r['c'] - len_reduced
-                        if _r['ci'] != 0:
-                            # close_pos = int(2 * (i - 1)) - int(2 * i) # works only for open-close pair of tokens
-                            find_cursor.setPosition(close_pos - _r['ci'], QTextCursor.MoveMode.MoveAnchor)
-                            find_cursor.setPosition(close_pos, QTextCursor.MoveMode.KeepAnchor)
-                            find_cursor.insertText(_r['repl'])
-                            len_reduced += _r['ci'] - (len(_r['repl']) if _r['repl'] else 0)
-
-                        find_cursor.setPosition(open_pos, QTextCursor.MoveMode.MoveAnchor)
-                        find_cursor.setPosition(close_pos - _r['ci'], QTextCursor.MoveMode.KeepAnchor)
-
-                        if _r['fmt'] is not None:
-                            cfc = _r['fmt'].copy()
-                            find_cursor.mergeCharFormat(self.highlighter.cf(**cfc))
-
-                        find_cursor.endEditBlock()
-
-            # Move cursor at the end of the block first if the next command fails
-            cursor.movePosition(QTextCursor.MoveOperation.EndOfBlock)
-            # Next block
-            cursor.movePosition(QTextCursor.MoveOperation.NextBlock)
-
-        # Restore original cursor position
         self.restore_cursor_pos()

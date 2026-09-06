@@ -5,6 +5,7 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
+| 1.2.x   | :white_check_mark: |
 | 1.1.x   | :white_check_mark: |
 | 1.0.x   | :white_check_mark: |
 | < 1.0   | :x:                |
@@ -78,7 +79,8 @@ Instead, please report security vulnerabilities by emailing the maintainers dire
 
 - Settings are stored locally using Qt's QSettings
 - Sensitive settings (API keys) are encrypted
-- No data is sent to external servers except when using cloud AI APIs
+- Note text is sent to external servers only when using cloud AI APIs
+- Requested speech runtime and model downloads contact their hosting services; speech synthesis processes note text locally
 
 ## Acknowledgments
 
@@ -86,4 +88,4 @@ We thank all security researchers who responsibly disclose vulnerabilities.
 
 ---
 
-*Last updated: January 2026*
+*Last updated: September 2026*

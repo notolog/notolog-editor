@@ -90,6 +90,16 @@ pytest tests/ --cov=notolog --cov-report=term
 pytest tests/test_app.py -v
 ```
 
+#### Optional TTS integration test
+
+Set `NOTOLOG_TTS_RUNTIME` to the runtime executable and `NOTOLOG_TTS_MODEL_DIR` to the downloaded model folder.
+
+```bash
+python -m pytest tests/modules_tests/text_to_speech/test_native_integration.py -v
+```
+
+The test skips unless configured. Set `NOTOLOG_TTS_PLAYBACK=1` to also test audio-device playback.
+
 ## Coding Standards
 
 ### Style Guide

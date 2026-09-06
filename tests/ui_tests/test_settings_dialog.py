@@ -61,10 +61,10 @@ class TestSettingsDialog:
         yield settings
 
     @pytest.fixture(autouse=True)
-    def modules_obj(self):
+    def modules_obj(self, mocker):
         # Fixture to create and return modules instance
         modules = Modules()
-        modules.modules = []
+        mocker.patch.object(modules, 'modules', {})
         yield modules
 
     @pytest.fixture
@@ -206,6 +206,24 @@ class TestSettingsDialog:
             QLabel,
             'settings_dialog_workspace_bottom_bar_system_load_interval_ms_label',
         ).text() == 'Graph refresh interval'
+
+    def test_hint_caption_has_one_text_renderer_after_language_changes(self, ui_obj: SettingsDialog):
+        key = 'general_app_default_path_label'
+        hint = ui_obj.findChild(LabelWithHint, 'settings_dialog_' + key)
+        assert hint is not None
+        for language in ('en', 'ru', 'es', 'en'):
+            ui_obj.settings.app_language = language
+            assert hint.text() == ui_obj.lexemes.get(key)
+            assert hint.text_label.text() == hint.text()
+            assert QLabel.text(hint) == ''
+            assert hint.sizeHint().width() >= hint.layout.minimumSize().width()
+        hint.setText('Updated caption')
+        assert hint.text_label.text() == 'Updated caption'
+        assert QLabel.text(hint) == ''
+        font = hint.font()
+        font.setPointSize(18)
+        hint.setFont(font)
+        assert hint.text_label.font().pointSize() == 18
 
     def test_bottom_bar_system_load_controls(self, ui_obj: SettingsDialog, settings_obj):
         checkbox = ui_obj.findChild(

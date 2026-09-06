@@ -179,7 +179,10 @@ class ModelHelper:
 
             # Check model path is correct
             self.model_path = model_path
-            if not os.path.isdir(self.model_path):
+            if not self.model_path:
+                self.logger.debug('No on-device model configured')
+                self.model_path = None
+            elif not os.path.isdir(self.model_path):
                 self.logger.warning(f'Model directory not found: {self.model_path}')
                 self.model_path = None
             elif not self._has_model_files(self.model_path):

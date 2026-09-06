@@ -25,9 +25,15 @@ import os
 import tomli
 import shutil
 import logging
+from pathlib import Path
 
 
 class TestAppConfig:
+
+    def test_runtime_version_matches_package_metadata(self):
+        with (Path(__file__).resolve().parents[1] / 'pyproject.toml').open('rb') as metadata:
+            package = tomli.load(metadata)
+        assert AppConfig.get_base_app_config()['app']['version'] == package['tool']['poetry']['version']
 
     @pytest.fixture(scope="function")
     def test_obj_app_package(self, mocker, request):

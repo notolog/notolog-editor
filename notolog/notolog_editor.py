@@ -97,6 +97,7 @@ import asyncio
 import markdown
 # Markdown library extensions
 from markdown.extensions.codehilite import CodeHiliteExtension
+from .fenced_code_extension import NestedFencesExtension
 # Custom markdown extension to process element tree
 from .etree_extension import ElementTreeExtension
 
@@ -370,6 +371,11 @@ class NotologEditor(QMainWindow):
 
         self.logger.debug(f'Settings update handler is processing: {data}')
 
+        if 'tts_enabled' in data:
+            if hasattr(self, 'toolbar'):
+                self.draw_menu()
+                self.toolbar.sync_speech_controls()
+
         if 'show_line_numbers' in data and hasattr(self, 'line_numbers'):
             # Show or hide the line numbers area
             self.line_numbers.update_numbers()
@@ -616,7 +622,10 @@ class NotologEditor(QMainWindow):
         Add custom element tree extensions if needed.
         Add `codehilite` to make actual highlighter work (CodeHiliteExtension() or ['codehilite'])
         """
-        extensions = self.md_extensions + [ElementTreeExtension(), CodeHiliteExtension(linenums=True)]
+        extensions = self.md_extensions + [
+            ElementTreeExtension(), CodeHiliteExtension(linenums=True),
+            NestedFencesExtension(),
+        ]
         # Init markdown object with the selected extensions
         self.md = markdown.Markdown(extensions=extensions)
 
@@ -857,6 +866,8 @@ class NotologEditor(QMainWindow):
         self.settings.ui_splitter_pos = width
 
     def set_app_title(self, sub_title: str = None):
+        if sub_title is None and isinstance(getattr(self, 'header', None), FileHeader):
+            sub_title = self.header.get_param('title')
         max_sub_length = 256
         # Format sub-title
         sub_title_f = (sub_title[:max_sub_length - 3] + "..."
@@ -869,7 +880,8 @@ class NotologEditor(QMainWindow):
             # App title
             title = app_title
         # Set up main window title
-        self.setWindowTitle(title)
+        if self.windowTitle() != title:
+            self.setWindowTitle(title)
 
     def get_editor_container(self) -> QWidget:
         if hasattr(self, 'editor_container') and isinstance(self.editor_container, QWidget):
@@ -1774,6 +1786,9 @@ class NotologEditor(QMainWindow):
         if not event.isAccepted():
             return
 
+        if getattr(self, '_speech_controller', None):
+            self._speech_controller.stop()
+
         self.settings.mode = self.get_mode().value
         self.settings.source = self.get_source().value
 
@@ -1883,6 +1898,10 @@ class NotologEditor(QMainWindow):
     # TODO control B-I-U-S buttons
     def on_selection_changed(self) -> None:
         self.logger.debug('Text selection changed')
+        if getattr(self, 'toolbar', None):
+            bar = self.toolbar.findChild(QWidget, 'speech_playback_bar')
+            if bar:
+                bar.update_selection()
 
     def on_cursor_position_changed(self) -> None:
         """
@@ -2111,6 +2130,7 @@ class NotologEditor(QMainWindow):
             ]},
             {'name': 'main_menu_group_tools', 'text': self.lexemes.get('group_tools_label', scope='main_menu'),
              'items': [
+                 *self.speech_menu_actions(),
                  {'type': 'action', 'name': 'main_menu_actions_tools_ai_assistant', 'theme_icon': 'robot.svg',
                   'label': self.lexemes.get('actions_tools_ai_assistant', scope='main_menu'),
                   'accessible_name': self.lexemes.get('actions_tools_accessible_name_ai_assistant', scope='main_menu'),
@@ -2904,6 +2924,74 @@ class NotologEditor(QMainWindow):
             MessageBox(text=self.lexemes.get('dialog_color_picker_color_copied_to_the_clipboard'),
                        frameless=True, timer_sec=2, parent=self)
 
+    def speech_enabled(self):
+        from .modules.text_to_speech.config import speech_settings, audio_available
+        return audio_available() and speech_settings().tts_enabled
+
+    def speech_menu_actions(self):
+        from .modules.text_to_speech.i18n import tr
+        if not self.speech_enabled():
+            return []
+        return [
+            {'type': 'action', 'name': name, 'theme_icon': icon, 'label': label, 'action': action}
+            for name, label, icon, action in [
+                ('read_aloud', tr('module_text_to_speech_action_read_selection'), 'play.svg', self.action_read_selection_aloud),
+                ('read_document', tr('module_text_to_speech_action_read_document'), 'play-fill.svg',
+                 lambda: self.action_read_aloud(whole_document=True)),
+                ('pause_speech', tr('module_text_to_speech_action_pause_resume'), 'pause-fill.svg', self.action_pause_speech),
+                ('stop_speech', tr('module_text_to_speech_action_stop'), 'stop-fill.svg', self.action_stop_speech),
+            ]
+        ] + [{'type': 'delimiter'}]
+
+    def get_speech_controller(self):
+        if not getattr(self, '_speech_controller', None):
+            from .modules.text_to_speech.controller import SpeechController
+            from .modules.text_to_speech.i18n import tr
+            self._speech_controller = SpeechController(self)
+            self._speech_controller.error.connect(
+                lambda text: MessageBox(text=tr('module_text_to_speech_error', error=text), icon_type=2, parent=self))
+        return self._speech_controller
+
+    def action_read_aloud(self, checked=False, *, source=None, html=False, whole_document=False):
+        if not self.speech_enabled():
+            return
+        if source is None:
+            widget = self.get_edit_widget() if self.get_mode() == Mode.EDIT else self.get_view_widget()
+            cursor = widget.textCursor() if widget else None
+            if cursor and cursor.hasSelection() and not whole_document:
+                from .modules.text_to_speech.actions import selection_source
+                source = selection_source(widget, rendered=self.get_mode() != Mode.EDIT)
+            else:
+                source = self.get_edit_widget().toPlainText() if self.get_mode() == Mode.EDIT else self.content or ''
+        self.get_speech_controller().read(source, html=html)
+
+    def action_read_selection_aloud(self, checked=False):
+        widget = self.get_edit_widget() if self.get_mode() == Mode.EDIT else self.get_view_widget()
+        if widget and widget.textCursor().hasSelection():
+            self.action_read_aloud()
+
+    def action_read_file_aloud(self, file_path):
+        from .modules.text_to_speech.i18n import tr
+        if os.path.abspath(file_path) == os.path.abspath(self.get_current_file_path() or '.'):
+            self.action_read_aloud(whole_document=True)
+            return
+        try:
+            header, body = FileHeader().load_file(file_path)
+            if header.is_file_encrypted():
+                MessageBox(text=tr('module_text_to_speech_error_note_locked'), parent=self)
+                return
+            self.action_read_aloud(source=body or '')
+        except (OSError, ValueError, UnicodeError) as exc:
+            MessageBox(text=tr('module_text_to_speech_error_read_note', error=str(exc)), icon_type=2, parent=self)
+
+    def action_pause_speech(self):
+        if getattr(self, '_speech_controller', None):
+            self._speech_controller.pause_resume()
+
+    def action_stop_speech(self):
+        if getattr(self, '_speech_controller', None):
+            self._speech_controller.stop()
+
     def action_ai_assistant(self) -> None:
         """
         Action: AI assistant.
@@ -3095,6 +3183,9 @@ class NotologEditor(QMainWindow):
         """
         Helper: Load content either into VIEW or EDIT areas.
         """
+
+        if getattr(self, '_speech_controller', None):
+            self._speech_controller.stop()
 
         # Set loader cursor whilst loading content
         # More cursor variants https://doc.qt.io/qt-6/qcursor.html#a-note-for-x11-users
@@ -3363,7 +3454,8 @@ class NotologEditor(QMainWindow):
         if write_res is False:
             # Display a warning in the status bar if the save fails
             if hasattr(self, 'statusbar'):
-                self.statusbar.show_warning(visible=True)
+                self.statusbar.show_warning(
+                    visible=True, tooltip=self.lexemes.get('save_active_file_error_occurred'))
 
         return write_res
 
@@ -3620,11 +3712,7 @@ class NotologEditor(QMainWindow):
         css_data = 'body { max-width: %dpx; }' % max_width
 
         # Get file specific title if set
-        title = header.get_param('title')
-        if title:
-            view_doc.setMetaInformation(QTextDocument.MetaInformation.DocumentTitle, title)
-        # Set either default or extended title
-        self.set_app_title(title)
+        title = header.get_param('title') or ''
 
         # Additional steps to make sure extensions work as expected
         if hasattr(self, 'md') and self.md:
@@ -3690,6 +3778,9 @@ class NotologEditor(QMainWindow):
         cursor = view_widget.textCursor()
         cursor.movePosition(QTextCursor.MoveOperation.Start)  # Or just: cursor.setPosition(0)
         view_widget.setTextCursor(cursor)
+
+        view_doc.setMetaInformation(QTextDocument.MetaInformation.DocumentTitle, title)
+        self.set_app_title(title)
 
     def is_resource_attached(self, resource_url: str) -> bool:
         """
@@ -3816,17 +3907,15 @@ class NotologEditor(QMainWindow):
         edit_widget.setReadOnly(True)
 
         # Get file specific title if set
-        title = header.get_param('title')
-        if title:
-            edit_widget.document().setMetaInformation(QTextDocument.MetaInformation.DocumentTitle, title)
-        # Set either default or extended title
-        self.set_app_title(title)
+        title = header.get_param('title') or ''
 
         """
         Set content as an editable plain text
         More info about QPlainTextEdit and setPlainText() method https://doc.qt.io/qt-6/qplaintextedit.html#setPlainText
         """
         edit_widget.setPlainText(content)
+        edit_widget.document().setMetaInformation(QTextDocument.MetaInformation.DocumentTitle, title)
+        self.set_app_title(title)
         edit_widget.setReadOnly(False)
 
         # After resizing data updates

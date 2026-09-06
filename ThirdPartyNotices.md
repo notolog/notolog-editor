@@ -1,12 +1,13 @@
 # Third-Party Notices
 
+
 This document details the third-party libraries used in the Notolog project, including licensing information relevant to the software's current version.
 
 
 ## Version and Update Information
 
 - **Library Version Management**: For the dependency versions used by this release, consult `pyproject.toml` and the build configuration files in the project repository.
-- **Date of Last License Review**: This document was reviewed for Notolog 1.2.2 on 30-August-2026. License terms should be reviewed again whenever dependencies or bundled assets change.
+- **License Review**: Text-to-Speech dependency notices reviewed on 6 September 2026.
 
 
 ## Contents
@@ -20,6 +21,7 @@ This document details the third-party libraries used in the Notolog project, inc
 - [SIL Open Font License](#sil-open-font-license)
 - [Development and Testing Tools](#development-and-testing-tools)
 - [Development and Building Tools](#development-and-building-tools)
+- [Text-to-Speech](#text-to-speech)
 - [License Texts](#license-texts)
 
 
@@ -1734,3 +1736,111 @@ Library.
    See the License for the specific language governing permissions and
    limitations under the License.
 ```
+
+## Text-to-Speech
+
+### PCM audio playback
+
+The optional `sounddevice` dependency provides raw PCM playback through PortAudio.
+It uses CFFI, whose license is included above. Windows and macOS wheels supply PortAudio;
+Debian packages use the system `libportaudio2` library.
+
+- [sounddevice source and license](https://github.com/spatialaudio/python-sounddevice/blob/master/LICENSE)
+- [PortAudio license](https://www.portaudio.com/license.html)
+
+#### sounddevice (MIT)
+
+```text
+Copyright (c) 2015-2025 Matthias Geier
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+```
+
+#### PortAudio (MIT)
+
+```text
+PortAudio Portable Real-Time Audio Library
+Copyright (c) 1999-2011 Ross Bencina and Phil Burk
+Copyright (c) 1999-2009 Ross Bencina
+Copyright (c) 1999-2008 Phil Burk
+Copyright (c) 1999-2000 Robert Marsanyi
+Copyright (c) 1999-2007 Andrew Baldwin
+Copyright (c) 2002 Joshua Haberman <joshua@haberman.com>
+Copyright (c) 2003 Fred Gleason
+Copyright (c) 2004 Stefan Westerfeld <stefan@space.twc.de>
+Copyright (c) 2004-2009 Arve Knudsen <arve.knudsen@gmail.com>
+Copyright (c) 2005-2006 Ludwig Schwardt
+Copyright (c) 2006-2007 David Viens
+Copyright (c) 2008 Kevin Kofler <kevin.kofler@chello.at>
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files
+(the "Software"), to deal in the Software without restriction,
+including without limitation the rights to use, copy, modify, merge,
+publish, distribute, sublicense, and/or sell copies of the Software,
+and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+The text above constitutes the entire PortAudio license; however,
+the PortAudio community also makes the following non-binding requests:
+
+Any person wishing to distribute modifications to the Software is
+requested to send the modifications to the original developer so that
+they can be incorporated into the canonical version. It is also
+requested that these non-binding requests be included along with the
+license above.
+```
+
+### NVIDIA NeMo-Speech.cpp
+
+- **Description**: Local speech synthesis runtime used by Notolog's Text-to-Speech module.
+- **License**: Apache License 2.0.
+- **Repository**: [NVIDIA NeMo-Speech.cpp](https://github.com/NVIDIA/NeMo-Speech.cpp).
+- **License Text**: [Apache License 2.0](https://github.com/NVIDIA/NeMo-Speech.cpp/blob/v0.1.0/LICENSE).
+- **Copyright**: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+
+Notolog is independent and is not affiliated with or endorsed by NVIDIA. NVIDIA names identify the upstream
+software and models; they do not imply sponsorship.
+
+The separately installed runtime includes its license and third-party notices under
+`share/licenses/nemo-speech/`. Redistribution is governed by the licenses supplied
+with that runtime.
+
+### MagpieTTS and NanoCodec models
+
+The runtime and its dependencies retain their upstream licenses and notices. The
+[MagpieTTS](https://huggingface.co/nvidia/magpie_tts_multilingual_357m) and
+[NanoCodec](https://huggingface.co/nvidia/nemo-nano-codec-22khz-1.89kbps-21.5fps) models are downloaded separately
+from their upstream repositories and are subject to the
+[NVIDIA Open Model License](https://developer.download.nvidia.com/licenses/nvidia-open-model-license-agreement-june-2024.pdf)
+and any accompanying component terms. Model use is governed by those terms, independently of Notolog's MIT license.
+Redistributing models requires the accompanying agreement and attribution Notice specified in section 3.1;
+this document does not replace those files.

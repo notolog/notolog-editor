@@ -266,6 +266,8 @@ class EditWidget(QPlainTextEdit):
     def contextMenuEvent(self, event):
         # Create the standard context menu
         menu = self.createStandardContextMenu()
+        from .modules.text_to_speech.actions import append_selection_action
+        append_selection_action(self, menu, position=event.pos() if event.reason() == event.Reason.Mouse else None)
 
         # Modify the menu font to hint the size
         menu.setFont(self.font())

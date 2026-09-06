@@ -133,11 +133,24 @@ class ToolBar(QToolBar):
         central_spacer.setSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.MinimumExpanding)
         self.addWidget(central_spacer)
 
-        # Add the search form.
-        self.addWidget(self.search_form)
+        self.speech_action = None
+        self.speech_separator = None
+        self.search_action = self.addWidget(self.search_form)
+        self.sync_speech_controls()
 
         # Set the toolbar's stylesheet from the theme helper.
         self.setStyleSheet(self.theme_helper.get_css('toolbar'))
+
+    def sync_speech_controls(self):
+        enabled = hasattr(self.parent, 'speech_enabled') and self.parent.speech_enabled()
+        if enabled and self.speech_action is None:
+            from ..modules.text_to_speech.playback_bar import PlaybackBar
+            self.speech_action = self.insertWidget(self.search_action, PlaybackBar(self.parent, self))
+            self.speech_separator = self.insertSeparator(self.search_action)
+            self.speech_separator.setObjectName('speech_search_separator')
+        if self.speech_action is not None:
+            self.speech_action.setVisible(enabled)
+            self.speech_separator.setVisible(enabled)
 
     def append_toolbar_icon(self, conf):
         """

@@ -440,3 +440,11 @@ class TestModelHelperCore:
 
 if __name__ == '__main__':
     pytest.main([__file__, '-v'])
+
+
+@pytest.mark.parametrize('model_path,should_warn', [('', False), ('/missing/notolog-test-model', True)])
+def test_unconfigured_model_is_quiet_but_invalid_path_warns(monkeypatch, caplog, model_path, should_warn):
+    from notolog.modules.ondevice_llm.model_helper import ModelHelper
+    monkeypatch.setattr(ModelHelper, '_instance', None)
+    ModelHelper(model_path=model_path)
+    assert ('Model directory not found' in caplog.text) == should_warn

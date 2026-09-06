@@ -17,7 +17,7 @@ License: MIT License
 For detailed instructions and project information, please see the repository's README.md.
 """
 
-from PySide6.QtCore import Qt, QObject, QSize, QRegularExpression, QSignalBlocker
+from PySide6.QtCore import Qt, QObject, QSize, QSignalBlocker
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QTabWidget, QWidget, QSizePolicy, QPlainTextEdit, QScrollArea
 from PySide6.QtWidgets import QLabel, QCheckBox, QLineEdit, QPushButton, QComboBox, QSpinBox, QDoubleSpinBox, QSlider
 from PySide6.QtWidgets import QStyle
@@ -38,6 +38,7 @@ from ..ui.horizontal_line_spacer import HorizontalLineSpacer
 from ..ui.label_with_hint import LabelWithHint
 from ..ui.dir_path_line_edit import DirPathLineEdit
 from ..ui.file_path_line_edit import FilePathLineEdit
+from .widget_translations import WidgetTranslations
 
 from ..modules.modules import Modules
 
@@ -46,6 +47,13 @@ if TYPE_CHECKING:
 
 
 class SettingsDialog(QDialog):
+
+    def done(self, result):
+        for widget in self.findChildren(QWidget):
+            confirm = getattr(widget, 'confirm_close', None)
+            if callable(confirm) and not confirm():
+                return
+        super().done(result)
 
     SYSTEM_LOAD_CHECKBOX_NAME = (
         'settings_dialog_workspace_bottom_bar_show_system_load_graphs_checkbox:show_system_load_graphs')
@@ -75,7 +83,9 @@ class SettingsDialog(QDialog):
         self.logger = logging.getLogger('settings_dialog')
 
         # Load lexemes for the selected language and scope
-        self.lexemes = Lexemes(self.settings.app_language, default_scope='settings_dialog')
+        self._module_lexemes_paths = [module.ModuleCore.get_lexemes_path()
+                                      for module in Modules().get_by_extension('settings_dialog')]
+        self.translations = WidgetTranslations(self, self.settings, self.load_language)
 
         self.setWindowTitle(self.lexemes.get('window_title'))
 
@@ -87,7 +97,24 @@ class SettingsDialog(QDialog):
         self.setStyleSheet(self.theme_helper.get_css('settings_dialog'))
 
         self.init_ui()
+        self.translations.bind(self.setWindowTitle, 'window_title')
+        self.translations.bind_named_widgets(
+            self, format_text=self.format_widget_lexeme, set_tab_text=self.set_tab_text)
         self.settings.value_changed.connect(self.settings_update_handler)
+
+    @property
+    def lexemes(self):
+        return self.translations.lexemes
+
+    def load_language(self, language):
+        lexemes = Lexemes(language, default_scope='settings_dialog')
+        for path in self._module_lexemes_paths:
+            if not path:
+                continue
+            module_lexemes = Lexemes(language, lexemes_dir=path)
+            for scope, entries in module_lexemes.get_all().items():
+                lexemes.lexemes.setdefault(scope, {}).update(entries)
+        return lexemes
 
     def init_ui(self):
         # Dialog widget's main layout
@@ -189,7 +216,8 @@ class SettingsDialog(QDialog):
              "text": self.lexemes.get('general_app_theme_label'),
              "callback": lambda obj: tab_general_layout.addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)},
             # Available themes dropdown list
-            {"type": EnumComboBox, "args": [sorted(Themes, key=lambda member: (not member.is_default, str(member.value)))],
+            {"type": EnumComboBox,
+             "args": [sorted(Themes, key=lambda member: (not member.is_default, str(member.value)))],
              "name": "settings_dialog_general_app_theme_combo:app_theme",  # Lexeme key : Setting name
              "callback": lambda obj: tab_general_layout.addWidget(obj),
              "placeholder_text": self.lexemes.get('general_app_theme_combo_placeholder_text'),
@@ -370,7 +398,7 @@ class SettingsDialog(QDialog):
              "callback": add_system_load_checkbox,
              "text": self.lexemes.get('workspace_bottom_bar_show_system_load_graphs_checkbox'),
              "accessible_description":
-                  self.lexemes.get('workspace_bottom_bar_show_system_load_graphs_checkbox_accessible_description')},
+                 self.lexemes.get('workspace_bottom_bar_show_system_load_graphs_checkbox_accessible_description')},
             {"type": QWidget,
              "name": self.SYSTEM_LOAD_OPTIONS_NAME,
              "callback": add_system_load_options},
@@ -382,10 +410,10 @@ class SettingsDialog(QDialog):
             {"type": QSpinBox,
              "name": self.SYSTEM_LOAD_INTERVAL_NAME,
              "props": {"setMinimum": 250, "setMaximum": 60000,
-                        "setSingleStep": 250, "setSuffix": " ms"},
+                       "setSingleStep": 250, "setSuffix": " ms"},
              "callback": add_to_system_load_options,
              "accessible_description":
-                  self.lexemes.get('workspace_bottom_bar_system_load_interval_ms_accessible_description')},
+                 self.lexemes.get('workspace_bottom_bar_system_load_interval_ms_accessible_description')},
             {"type": QWidget, "name": None,
              "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding),
              "callback": lambda obj: tab_workspace_layout.addWidget(obj)},
@@ -427,7 +455,7 @@ class SettingsDialog(QDialog):
             # Supported models dropdown list
             {"type": EnumComboBox,
              "args": [sorted(EnumBase('InferenceModuleNames', self.settings.ai_config_inference_modules),
-                      key=lambda member: (not member.is_default, str(member.value)))],
+                             key=lambda member: (not member.is_default, str(member.value)))],
              "name": "settings_dialog_ai_config_inference_module_names_combo:ai_config_inference_module",
              "callback": lambda obj: tab_ai_config_layout.addWidget(obj),
              "placeholder_text": self.lexemes.get('ai_config_inference_module_names_combo_placeholder_text'),
@@ -631,8 +659,8 @@ class SettingsDialog(QDialog):
                 _lexeme_key, setting_name = self.parse_object_name(text_edit.objectName())
                 if hasattr(self.settings, setting_name):
                     text_edit.setPlainText(getattr(self.settings, setting_name, ''))
-                # Connect signal after set up defaults or restore saved value to avoid signal emitting right after.
-                text_edit.textChanged.connect(self.save_settings)
+                    # Status logs are not settings; only connect fields backed by a setting.
+                    text_edit.textChanged.connect(self.save_settings)
 
         # Find children of type QSlider
         sliders = self.findChildren(QSlider)
@@ -642,7 +670,7 @@ class SettingsDialog(QDialog):
                 _lexeme_key, setting_name = self.parse_object_name(slider.objectName())
                 if hasattr(self.settings, setting_name):
                     slider.setValue(getattr(self.settings, setting_name, 0))
-                slider.valueChanged.connect(self.save_settings)
+                    slider.valueChanged.connect(self.save_settings)
 
     def save_settings(self):  # noqa: C901 - consider simplifying this method
         # Determine which widget emitted the signal by the object name set
@@ -705,108 +733,6 @@ class SettingsDialog(QDialog):
             self.logger.warning(f'ERROR: {e}')
 
         self.logger.debug(f"Setting new value: {getattr(self.settings, setting_name)}")
-
-        """
-        In case of language change try to update as much text labels as possible.
-        It may not cover all the labels, but may help with update anyway.
-        """
-        if setting_name == 'app_language' or sender_widget.objectName().endswith('app_language'):
-            # Update lexemes object as app language has just been changed
-            self.lexemes = Lexemes(self.settings.app_language, default_scope='settings_dialog')
-            # Get all the new lexemes
-            app_language_lexemes = self.lexemes.get_all()
-
-            # Load modules to retrieve lexemes for the settings dialog
-            for module in Modules().get_by_extension('settings_dialog'):
-                # Pass settings object to avoid circular dependencies
-                module_instance = Modules().create(module)
-                if hasattr(module_instance, 'lexemes'):
-                    app_language_lexemes['settings_dialog'].update(
-                        module_instance.lexemes.get_by_scope('settings_dialog'))
-
-            # Update dialog title at first
-            self.setWindowTitle(self.lexemes.get('window_title'))
-            # Iterate each lexeme's scope to match it with object name to update the text if applicable
-            for scope in app_language_lexemes:
-                self.logger.debug(f'Lexeme scope to check updates {scope}')
-                # Iterate each lexeme from the scope
-                for lexeme_key in app_language_lexemes[scope].keys():
-                    """
-                    Some objects may have name set with ":" delimiter, which means "lexeme_key:setting_name".
-                    It may help to transfer more params with object name with ease.
-                    """
-                    # Parse the object name in case it contains a combination of lexeme and setting keys
-                    lexeme_key, setting_name = self.parse_object_name(lexeme_key)
-
-                    # Get lexeme in the new language set
-                    lexeme = app_language_lexemes[scope][lexeme_key]
-
-                    """
-                    Search with regex as the object name should contain scope and may contain setting name as well,
-                    but the lexeme key is a crucial part of the name in this search.
-                    """
-                    regex = QRegularExpression(f"(?={scope}_)?{lexeme_key}.*?")
-                    # The self.findChildren() method results contain only the elements related to this dialog
-                    found_objects = self.findChildren(QObject, regex, Qt.FindChildOption.FindChildrenRecursively)
-                    if not found_objects:
-                        # Try to find it in the parent dialog to update the main window elements
-                        found_objects = self.parent.findChildren(QObject, regex,
-                                                                 Qt.FindChildOption.FindChildrenRecursively)
-                        if found_objects:
-                            self.logger.debug(f"Found object to update ({scope}){lexeme_key}: {found_objects}")
-
-                    # Search by the full object name
-                    # object_name = self.lexemes.get_full_key(lexeme_key)
-                    # found_objects = self.findChildren(QObject, object_name, Qt.FindChildrenRecursively)
-
-                    for obj in found_objects:
-                        if (isinstance(obj, (QLabel, LabelWithHint, QCheckBox, QComboBox))
-                                and hasattr(obj, 'setText')
-                                and callable(getattr(obj, 'setText'))):
-                            self.logger.debug(
-                                f'Object lexeme update: {obj.objectName()} with id: {id(obj)}, lexeme "{lexeme}"')
-                            obj.setText(self.format_widget_lexeme(obj, lexeme))
-                        if isinstance(obj, QPushButton):
-                            self.logger.debug(
-                                f'Object lexeme update: {obj.objectName()} with id: {id(obj)}, lexeme "{lexeme}"')
-                            if obj.text():  # Update only if a text value was previously set
-                                obj.setText(lexeme)
-                            if obj.toolTip():  # Update only if a text value was previously set
-                                obj.setToolTip(lexeme)
-                        if isinstance(obj, LabelWithHint):
-                            if obj.property('tooltip_lexeme'):
-                                # Lexeme must be default_scope='settings_dialog'
-                                obj.set_tooltip(self.lexemes.get(obj.property('tooltip_lexeme')))
-                        if isinstance(obj, QScrollArea):
-                            # Add iterable map of the tabs to change the search by QWidget to explicitly set tab text.
-                            self.set_tab_text(obj.objectName(), lexeme)
-                        # Exclusions
-                        if obj.objectName() == "settings_dialog_general_app_font_size_label":
-                            obj.setText(
-                                self.lexemes.get('general_app_font_size_label', size=self.settings.app_font_size))
-
-                # Create a regex pattern to match object names within the given scope
-                regex = QRegularExpression(f"{scope}_.*?")
-                # Search for editable fields (QLineEdit, QPlainTextEdit, including DirPathLineEdit and FilePathLineEdit)
-                # that match the regex pattern.
-                found_objects = self.findChildren(QLineEdit, regex)
-                found_objects += self.findChildren(QPlainTextEdit, regex)
-                for obj in found_objects:
-                    # Extract the object name and setting name from the object
-                    object_name, _setting_name = self.parse_object_name(obj.objectName())
-
-                    # Set placeholder text if the object supports it and a lexeme exists
-                    if hasattr(obj, 'setPlaceholderText') and callable(getattr(obj, 'setPlaceholderText')):
-                        placeholder_lexeme_key = f'{object_name}_placeholder_text'.replace(f'{scope}_', '')
-                        if placeholder_lexeme := self.lexemes.get(placeholder_lexeme_key):
-                            obj.setPlaceholderText(placeholder_lexeme)
-
-                    # Set accessible description if the object supports it and a lexeme exists
-                    if hasattr(obj, 'setAccessibleDescription') and callable(getattr(obj, 'setAccessibleDescription')):
-                        accessible_description_lexeme_key = (f'{object_name}_accessible_description'
-                                                             .replace(f'{scope}_', ''))
-                        if accessible_description_lexeme := self.lexemes.get(accessible_description_lexeme_key):
-                            obj.setAccessibleDescription(accessible_description_lexeme)
 
         if setting_name == 'app_theme' or sender_widget.objectName().endswith('app_theme'):
             # Apply the selected theme to the widget's stylesheet

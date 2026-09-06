@@ -25,12 +25,17 @@ For detailed instructions and project information, please see the repository's R
 
 from PySide6.QtCore import Qt
 
+from pygments.lexers import get_lexer_by_name
+from pygments.token import Comment, Generic, Keyword, Name, Number, Operator, Punctuation, String
+from pygments.util import ClassNotFound
+
 from .main_highlighter import MainHighlighter
 from . import TextBlockData
 
 from typing import TYPE_CHECKING, Pattern
 
 import re
+import zlib
 
 if TYPE_CHECKING:
     from typing import Union  # noqa: F401
@@ -117,6 +122,37 @@ class MdHighlighter(MainHighlighter):
     # Keep it consistent with ini-file name, say 'md.ini', item prefix 'md_color_h1_text'
     theme_ini_prefix = 'md'
 
+    # Keep edit-mode code highlighting deterministic and limited to common
+    # languages. Pygments aliases are normalized here instead of guessing from
+    # code, which can be expensive and surprising for an editor.
+    code_lexer_aliases = {
+        'bash': 'bash', 'console': 'console', 'sh': 'bash', 'shell': 'bash', 'zsh': 'bash',
+        'c': 'c', 'h': 'c', 'cpp': 'cpp', 'c++': 'cpp', 'cc': 'cpp', 'hpp': 'cpp',
+        'css': 'css', 'diff': 'diff', 'patch': 'diff', 'docker': 'docker', 'dockerfile': 'docker',
+        'html': 'html', 'htm': 'html', 'ini': 'ini', 'javascript': 'javascript', 'js': 'javascript',
+        'json': 'json', 'json5': 'json5', 'markdown': 'markdown', 'md': 'markdown',
+        'php': 'php', 'python': 'python', 'py': 'python', 'sql': 'sql', 'toml': 'toml',
+        'typescript': 'typescript', 'ts': 'typescript', 'xml': 'xml',
+        'yaml': 'yaml', 'yml': 'yaml',
+    }
+    max_code_highlight_length = 200_000
+    max_inline_highlight_length = 200_000
+    escape_sensitive_tags = {
+        'a', 'b', 'b_open', 'bi', 'bi_open', 'boo', 'boo_open',
+        'biu', 'biu_open', 'html', 'i', 'i_open', 'img', 'iu',
+        'iu_open', 's', 's_open', 'u', 'u_open',
+    }
+    closing_delimiter_lengths = {
+        'b': 2, 'b_close': 2, 'bi': 3, 'bi_close': 3,
+        'boo': 2, 'boo_close': 2, 'biu': 3, 'biu_close': 3,
+        'i': 1, 'i_close': 1, 'iu': 1, 'iu_close': 1,
+        's': 2, 's_close': 2, 'u': 4, 'u_close': 4,
+    }
+    block_container_prefix = (
+        r'(?: {0,3}>[\t ]?)*'
+        r'(?: {0,3}(?:[0-9]{1,9}[\.)]|[\*\+\-])[\t ]+)?'
+    )
+
     """
     Elements order is matter.
     Say, i* first, b** second, bi*** third one-by-one to override prev token.
@@ -130,54 +166,54 @@ class MdHighlighter(MainHighlighter):
         # Empty line
         (r'^([\r\n]*?)$', 1, 'rn', 'rn', False, theme['rn'], None),
         # Blockquotes
-        (r'^(\s*?)(\>+\s.*?)$', 2, 'blockquote', 'blockquote', False, theme['blockquote'], None),
+        (r'^((?: {0,3}>[\t ]?)+.*)$', 1, 'blockquote', 'blockquote', False, theme['blockquote'], None),
         # List
-        (r'^(\s+|\>{1}\s+|)([0-9]{1,}\.|[\*\+\-]{1})(?=\s)', 2, 'list', 'list', False, theme['list'], None),
-        (r'^(\s+|\>{1}\s+|)([0-9]{1,}\.|[\*\+\-]{1})(\s.*?)$', 3, 'list_text', 'list', False, theme['list_text'], None),
-        (r'^(\s+|\>{1}\s+|)([0-9]{1,}\.|[\*\+\-]{1})\s.*?$',
+        (r'^((?: {0,3}>[\t ]?)*[\t ]*)([0-9]{1,9}[\.)]|[\*\+\-])(?=[\t ]+|$)',
+         2, 'list', 'list', False, theme['list'], None),
+        (r'^((?: {0,3}>[\t ]?)*[\t ]*)([0-9]{1,9}[\.)]|[\*\+\-])([\t ]+.*?)$',
+         3, 'list_text', 'list', False, theme['list_text'], None),
+        (r'^((?: {0,3}>[\t ]?)*[\t ]*)([0-9]{1,9}[\.)]|[\*\+\-])[\t ]+.*?$',
          1, 'list_indent', 'list', False, theme['list_indent'], None),
-        # Code ``` (fenced)
-        (r'(?:^|\s|\W|[^`\#])(?<!`)(```(?!`).*?(?<!`)```)(?!`)(?:\s|\W|[^`]|$)',
-         1, 'codel', 'code', False, theme['codelf'], None),
-        (r'^(?<!\#)((?:[\s]*?)```)[a-z\-_\+#\s\.{}]*?(?!```)$', 1, 'code', 'code', True, theme['code'], None),
-        (r'^(?<!\#)((?:[\s]*?)```)(\s*?\{?[a-z\-_\+#\s\.^{}]+\}?)$',
-         2, 'code_lang', 'code', False, theme['code_lang'], None),
-        (r'^([\s]{1,})```([\S]+|)$', 1, 'wrong_indent', 'code', False, theme['wrong_indent'], None),
-        # Code ::::
-        (r'^(([\s]{4,}|[\t]{1,})(::::))[\S]*?\s*?$', 3, 'codec', 'code', False, theme['code'], None),
-        (r'^(([\s]{4,}|[\t]{1,})::::)([\S]+)\s*?$', 3, 'code_lang', 'code', False, theme['code_lang'], None),
-        (r'^([\s]{4,}|[\t]{1,})::::[\S]*?\s*?$', 1, 'code_indent', 'code', False, theme['code_indent'], None),
+        # Fenced blocks are parsed statefully in highlightBlock(). Keep a
+        # sentinel rule because the legacy inline pass expects the code group.
+        (r'(?!)', 1, 'code', 'code', True, theme['code'], None),
         # Italic (asterisk)
-        (r'(?<!\*)(\*[^\s\*][^\*]*?[^\s]?\*)(?!\*)', 1, 'i', 'i', False, theme['i'], None),  # between
+        (r'(?<!\*)(\*(?![\s\*])(?:\\.|[^\*\\])*(?<!\s)\*)(?!\*)',
+         1, 'i', 'i', False, theme['i'], None),  # between
         # \W to avoid character mention in a sequence like: *, ...
         (r'(^|\s)(\*[^\s\W\*][^\*]*?)(?!\*)$', 2, 'i_open', 'i', True, theme['i'], None),
         (r'^([^\*]+(?<!\s)\*)(?!\*)(?:\s|\W|$)', 1, 'i_close', 'i', True, theme['i'], None),
         # Italic (underline)
         # \W (non-word) characters are all characters apart from numbers, letters, and underscores.
-        (r'(^|\s)(_(?!\s|_).*?(?<!\s|_)_)(?:\s|[\W^_]|$)', 2, 'iu', 'iu', False, theme['iu'], None),  # between
-        (r'(^|\s)(_[^\s\W_][^_]*?)$', 2, 'iu_open', 'iu', True, theme['iu'], None),
+        (r'(?<![\w_])(_(?![\s_])(?:\\.|[^_\\])*(?<!\s)_)(?![\w_])',
+         1, 'iu', 'iu', False, theme['iu'], None),  # between
+        (r'(^|[^\w_])(_[^\s\W_][^_]*?)$', 2, 'iu_open', 'iu', True, theme['iu'], None),
         (r'^([^_]*?(?<!_)[^\s_]_)(?!_)(?:\s|\W|$)', 1, 'iu_close', 'iu', True, theme['iu'], None),
         # Bold (asterisk)
-        (r'(?<!\*)(\*{2}[^\s\*][^\*]*?[^\s]?\*{2})(?!\*)', 1, 'b', 'b', False, theme['b'], None),  # between
+        (r'(?<!\*)(\*{2}(?![\s\*])(?:\\.|[^\*\\]|\*(?!\*))*?(?<!\s)\*{2})(?!\*)',
+         1, 'b', 'b', False, theme['b'], None),  # between
         (r'(^|\s)(\*{2}[^\s\*][^\*]*?)(?!\*)$', 2, 'b_open', 'b', True, theme['b'], None),
         (r'^([^\*]+(?<!\s)\*{2})(?!\*)(?:\s|\W|$)', 1, 'b_close', 'b', True, theme['b'], None),
         # Bold (underline)
         # \b doesn't work, only [^\s]
-        (r'(^|\s)(__(?!\s|_).*?(?<!\s|_)__)(?:\s|[\W^_]|$)', 2, 'boo', 'boo', False, theme['boo'], None),  # between
-        (r'(^|\s)(__[^\s\W_][^_]*?)$', 2, 'boo_open', 'boo', True, theme['boo'], None),
+        (r'(?<![\w_])(__(?![\s_])(?:\\.|[^_\\]|_(?!_))*?(?<!\s)__)(?![\w_])',
+         1, 'boo', 'boo', False, theme['boo'], None),  # between
+        (r'(^|[^\w_])(__[^\s\W_][^_]*?)$', 2, 'boo_open', 'boo', True, theme['boo'], None),
         (r'^([^_]*?(?<!_)[^\s_]__)(?!__)(?:\s|\W|$)', 1, 'boo_close', 'boo', True, theme['boo'], None),
         # (r'(?<=__)([^\s].*?[^\s])(?=__)', 'b', 'b', 1, True, theme['b'], None),
         # Bold and Italic altogether (asterisk)
-        (r'(?<!\*)(\*{3}[^\s\*][^\*]*?[^\s]?\*{3})(?!\*)', 1, 'bi', 'bi', False, theme['bi'], None),  # between
+        (r'(?<!\*)(\*{3}(?![\s\*])(?:\\.|[^\*\\]|\*(?!\*)|\*{2}(?!\*))*?(?<!\s)\*{3})(?!\*)',
+         1, 'bi', 'bi', False, theme['bi'], None),  # between
         (r'(^|\s)(\*{3}[^\s\*][^\*]*?)(?!\*)$', 2, 'bi_open', 'bi', True, theme['bi'], None),
         (r'^([^\*]+(?<!\s)\*{3})(?!\*)(?:\s|\W|$)', 1, 'bi_close', 'bi', True, theme['bi'], None),
         # Bold and Italic altogether (underline)
-        (r'(^|\s)(___(?!\s|_).*?(?<!\s|_)___)(?:\s|[\W^_]|$)', 2, 'biu', 'biu', False, theme['biu'], None),  # between
-        (r'(^|\s)(___[^\s\W_][^_]*?)$', 2, 'biu_open', 'biu', True, theme['biu'], None),
+        (r'(?<![\w_])(___(?![\s_])(?:\\.|[^_\\]|_(?!_)|_{2}(?!_))*?(?<!\s)___)(?![\w_])',
+         1, 'biu', 'biu', False, theme['biu'], None),  # between
+        (r'(^|[^\w_])(___[^\s\W_][^_]*?)$', 2, 'biu_open', 'biu', True, theme['biu'], None),
         (r'^([^_]*?(?<!_)[^\s_]___)(?!___)(?:\s|\W|$)', 1, 'biu_close', 'biu', True, theme['biu'], None),
         # Strikethrough
         # ~~text~~ first to allow skip the open-close group as it may interference
-        (r'(~~(?!~|\s)[^~]*?(?<!~|\s)~~)', 1, 's', 's', False, theme['s'], None),  # between
+        (r'(?<!~)(~~(?!~|\s)[^~]*?(?<!~|\s)~~)', 1, 's', 's', False, theme['s'], None),  # between
         (r'(^|\s)(?<!~~)(~~(?!~|\s)[^~]*?)$', 2, 's_open', 's', True, theme['s'], None),
         (r'^([^~]*?[^\s~]~~)(?!~~)(?:\s|[\W^~]|$)', 1, 's_close', 's', True, theme['s'], None),
         # Underline
@@ -185,49 +221,69 @@ class MdHighlighter(MainHighlighter):
         (r'(<u>[^<>]*?)(?!</?u>)$', 1, 'u_open', 'u', True, theme['u'], None),
         (r'^([^<>]*?</u>)(?!</?u>)(?:\s|\W|$)', 1, 'u_close', 'u', True, theme['u'], None),
         # Code line within backticks
-        (r'(?:^|\s|\W|[^`\#])(?<!`)(`(?!`).*?(?<!`)`)(?!`)(?:\s|\W|[^`]|$)',
-         1, 'codel', 'code', False, theme['codel'], None),
+        # Inline code spans are parsed by delimiter-run length before the
+        # remaining inline rules are evaluated.
+        (r'(?!)', 1, 'codel', 'code', False, theme['codel'], None),
         # Header
         # (r'^(?:[\s\t]*?)(?<h1>#\s*?)(?<h1_text>.*)$', ['h1', 'h1_text'],
         # 'h1_text', 'h1', False, theme['h_text'], None),
-        (r'^((?:[\s\t]*?)#)\s*?.*?', 1, 'h1', 'h1', False, theme['h1'], None),
-        (r'^((?:[\s\t]*?)#\s*?)(.*)$', 2, 'h1_text', 'h1', False, theme['h1_text'], None),
-        (r'^((?:[\s\t]*?)[#]{2})\s*?.*?', 1, 'h2', 'h', False, theme['h2'], None),
-        (r'^((?:[\s\t]*?)[#]{2}\s*?)(.*)$', 2, 'h2_text', 'h', False, theme['h2_text'], None),
-        (r'^((?:[\s\t]*?)[#]{3})\s*?.*?', 1, 'h3', 'h', False, theme['h3'], None),
-        (r'^((?:[\s\t]*?)[#]{3}\s*?)(.*)$', 2, 'h3_text', 'h', False, theme['h3_text'], None),
-        (r'^((?:[\s\t]*?)[#]{4})\s*?.*?', 1, 'h4', 'h', False, theme['h4'], None),
-        (r'^((?:[\s\t]*?)[#]{4}\s*?)(.*)$', 2, 'h4_text', 'h', False, theme['h4_text'], None),
-        (r'^((?:[\s\t]*?)[#]{5})\s*?.*?', 1, 'h5', 'h', False, theme['h5'], None),
-        (r'^((?:[\s\t]*?)[#]{5}\s*?)(.*)$', 2, 'h5_text', 'h', False, theme['h5_text'], None),
-        (r'^((?:[\s\t]*?)[#]{6})\s*?.*?', 1, 'h6', 'h', False, theme['h6'], None),
-        (r'^((?:[\s\t]*?)[#]{6}\s*?)(.*)$', 2, 'h6_text', 'h', False, theme['h6_text'], None),
+        (rf'^{block_container_prefix}( {{0,3}}#)(?=[\t ]|$)',
+         1, 'h1', 'h1', False, theme['h1'], None),
+        (rf'^{block_container_prefix} {{0,3}}#[\t ]+(.*)$',
+         1, 'h1_text', 'h1', False, theme['h1_text'], None),
+        (rf'^{block_container_prefix}( {{0,3}}#{{2}})(?=[\t ]|$)',
+         1, 'h2', 'h', False, theme['h2'], None),
+        (rf'^{block_container_prefix} {{0,3}}#{{2}}[\t ]+(.*)$',
+         1, 'h2_text', 'h', False, theme['h2_text'], None),
+        (rf'^{block_container_prefix}( {{0,3}}#{{3}})(?=[\t ]|$)',
+         1, 'h3', 'h', False, theme['h3'], None),
+        (rf'^{block_container_prefix} {{0,3}}#{{3}}[\t ]+(.*)$',
+         1, 'h3_text', 'h', False, theme['h3_text'], None),
+        (rf'^{block_container_prefix}( {{0,3}}#{{4}})(?=[\t ]|$)',
+         1, 'h4', 'h', False, theme['h4'], None),
+        (rf'^{block_container_prefix} {{0,3}}#{{4}}[\t ]+(.*)$',
+         1, 'h4_text', 'h', False, theme['h4_text'], None),
+        (rf'^{block_container_prefix}( {{0,3}}#{{5}})(?=[\t ]|$)',
+         1, 'h5', 'h', False, theme['h5'], None),
+        (rf'^{block_container_prefix} {{0,3}}#{{5}}[\t ]+(.*)$',
+         1, 'h5_text', 'h', False, theme['h5_text'], None),
+        (rf'^{block_container_prefix}( {{0,3}}#{{6}})(?=[\t ]|$)',
+         1, 'h6', 'h', False, theme['h6'], None),
+        (rf'^{block_container_prefix} {{0,3}}#{{6}}[\t ]+(.*)$',
+         1, 'h6_text', 'h', False, theme['h6_text'], None),
         # Table
-        (r'^(\|[\s\|\:\-]+?\|)$', 1, 'table_h', 'table', False, theme['table_h'], None),
-        (r'^(\|(?=.*?[a-zA-Z0-9]).*?\|)$', 1, 'table_d', 'table', False, theme['table_d'], None),
+        # Apply the structural separator last so its distinct style wins over
+        # the deliberately broad table-row candidate.
+        (r'^( {0,3}\|?.*\|.*\|?[\t ]*)$', 1, 'table_d', 'table', False, theme['table_d'], None),
+        (r'^( {0,3}\|?[\t ]*:?-+:?[\t ]*(?:\|[\t ]*:?-+:?[\t ]*)+\|?[\t ]*)$',
+         1, 'table_h', 'table', False, theme['table_h'], None),
         # Image
-        (r'(!\[[^\]]*?\]\([^\)]*?\))', 1, 'img', 'img', False, theme['img'], None),
-        (r'(!\[[^\]]*?\]\[[^\]]*?\])', 1, 'img', 'img', False, theme['img'], None),
+        (r'(!\[(?:\\.|[^\[\]\\]|\[(?:\\.|[^\[\]\\])*\])*\]\((?P<destination>'
+         r'(?:<(?:\\.|[^<>\s\\])*>|(?:\\.|[^()\s\\]|\([^()\s]*\))*)'
+         r'(?:[\t ]+(?:"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'|\([^()]*\)))?[\t ]*)\))',
+         1, 'img', 'img', False, theme['img'], None),
+        (r'(?<!\\)(!\[(?:\\.|[^\[\]\\]|\[(?:\\.|[^\[\]\\])*\])*\]\[[^\]]*?\])',
+         1, 'img', 'img', False, theme['img'], None),
         # reference either image or link, footnotes also
-        (r'((?<!\*)\[[^\]]*?\]:)', 1, 'ref', 'ref', False, theme['ref'], None),
+        (rf'^{block_container_prefix}( {{0,3}}\[(?:\\.|[^\]\\])+\]:)',
+         1, 'ref', 'ref', False, theme['ref'], None),
         # (r'(\[[^\]]*?\]:)(\S*?)$', 2, 'ref_data', 'ref', False, theme['ref_data'], None),
         # abbreviations
-        (r'(\*\[.*?\]:.*?)', 1, 'abbr', 'abbr', False, theme['abbr'], None),
-        (r'(\*\[(.*?)\]:.*?)', 2, 'abbr_text', 'abbr', False, theme['abbr_text'], None),
+        (r'^( {0,3}\*\[[^\]]+\]:)', 1, 'abbr', 'abbr', False, theme['abbr'], None),
+        (r'^ {0,3}\*\[([^\]]+)\]:', 1, 'abbr_text', 'abbr', False, theme['abbr_text'], None),
         # hyperlinks (before the web links block to allow style overriding)
-        (r'((?<!!)\[.*?\]\(.*?\))', 1, 'a', 'a', False, theme['a'], None),
-        # Web link
-        # A word boundary \b matches the position between a word character (e.g., alphanumeric character or underscore)
-        # and a non-word character (e.g., whitespace, punctuation, or the beginning/end of a string).
-        # It allows you to match patterns only at the boundaries of words.
-        # RFC 3986: uri = "[A-Za-z0-9\-._~:/?#\[\]@!$&\'()*+,;=%]"
-        (r'((?:https?|ftp):\/\/(?:\S+(?::\S*)?@)?'
-         r'(?:\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}|(?!-)[A-Za-z0-9-]{1,63}(?:\.(?!-)[A-Za-z0-9-]{1,63})+)?(?:\:[0-9]+)?'
-         r'(?:\/(?:[^\:\?#\s\/\)]+)?)*(?:\?[^\s]*)?(?:#[^\s]*)?)', 1, 'link', 'link', False, theme['link'], None),
+        (r'((?<!!)\[(?:\\.|[^\[\]\\]|\[(?:\\.|[^\[\]\\])*\])*\]\((?P<destination>'
+         r'(?:<(?:\\.|[^<>\s\\])*>|(?:\\.|[^()\s\\]|\([^()\s]*\))*)'
+         r'(?:[\t ]+(?:"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'|\([^()]*\)))?[\t ]*)\))',
+         1, 'a', 'a', False, theme['a'], None),
+        # Scan URL candidates, then trim surrounding Markdown punctuation in
+        # _url_end(). Query strings must not swallow link attributes or titles.
+        (r'''(?<![\w])((?:https?|ftp)://[^\s<>{}"]+)''',
+         1, 'link', 'link', False, theme['link'], None),
         # horizontal line
-        (r'^(?:[\s>]*?)([\-\*_]{3,}(?:[\s]*?))$', 1, 'hr', 'hr', False, theme['hr'], None),
+        (r'^(?: {0,3}>[\t ]?)*( {0,3}(?:(?:\*[\t ]*){3,}|(?:-[\t ]*){3,}|(?:_[\t ]*){3,}))$',
+         1, 'hr', 'hr', False, theme['hr'], None),
         # Comments
-        # TODO: Add syntax highlighting based on the code language.
         (r'^([\s\t]*?[#]{1,}\s*?.*)$', 1, 'comment', 'comment', False, theme['comment'],
          lambda s: s.is_in_code()),
         (r'^((?:\s*?)"""(?!").*?(?<!")""")(?:\s*?)$', 1, 'comment', 'comment', False, theme['comment'],
@@ -236,15 +292,19 @@ class MdHighlighter(MainHighlighter):
          lambda s: s.is_in_code()),
         (r'(\/\/.*?)$', 1, 'comment', 'comment', False, theme['comment'],
          lambda s: s.is_in_code()),
-        # html tags
-        (r'(<\s*?([a-zA-Z][^>]*?)\s*?>)', 1, 'html', 'html', True, theme['html_open'], None),
-        (r'(<\s*?\/\s*?([a-zA-Z][^\s>]*?)\s*?>)', 1, 'html', 'html', True, theme['html_close'], None),
-        (r'(<\s*?([a-zA-Z!][^\/]*?)\s*?(\/)?\s*?>)', 1, 'html', 'html', False, theme['html'], None),
-        (r'(<!--(.*?)-->)', 1, 'html', 'html', False, theme['html_comment'], None),
+        # Inline HTML. Whitespace between '<' and the tag name is invalid;
+        # accepting it makes ordinary comparisons such as "a < b > c" look
+        # like markup.
+        (r'(<[A-Za-z][A-Za-z0-9-]*(?:[\t ]+[A-Za-z_:][A-Za-z0-9_.:-]*'
+         r'(?:[\t ]*=[\t ]*(?:"[^"]*"|\'[^\']*\'|[^\s"\'=<>`]+))?)*[\t ]*/?>)',
+         1, 'html', 'html', False, theme['html_open'], None),
+        (r'(</[A-Za-z][A-Za-z0-9-]*[\t ]*>)',
+         1, 'html', 'html', False, theme['html_close'], None),
+        (r'(?!)', 1, 'html_comment', 'html', False, theme['html_comment'], None),
         # emojis
         (r'(\:[a-zA-Z_]+\:)', 1, 'emoji', 'emoji', False, theme['emoji'], None),
         # To-do keywords
-        (r'([\s]*?)(@todo)(?=\s|$)', 2, 'todo', 'todo', False, theme['todo'], None),
+        (r'(?<![\w@])((?i:@todo))(?=\s|$|~~)', 1, 'todo', 'todo', False, theme['todo'], None),
         # Excess indent at the end of the line
         # (r'([\s]+)$', 1, 'wrong_indent', 'general', False, theme['wrong_indent'], None),
         # Code operators, group 1
@@ -302,7 +362,7 @@ class MdHighlighter(MainHighlighter):
         Block open tokens closing with a new empty line.
         The order in the row is matter because of processing one-by-one.
         """
-        return ['rn', 'codec', 'blockquote', 'list']
+        return ['rn', 'blockquote', 'list']
 
     def cleanup_line_tokens(self):
         """
@@ -323,11 +383,504 @@ class MdHighlighter(MainHighlighter):
             for line_num in lines_to_remove:
                 del self.line_tokens[line_num]
 
+    @staticmethod
+    def _container_prefix(text_str: str, max_depth: int | None = None) -> tuple[int, int]:
+        """Return the content offset and blockquote depth for a Markdown line."""
+        offset = 0
+        depth = 0
+        prefix = re.compile(r' {0,3}>[\t ]?')
+        while max_depth is None or depth < max_depth:
+            match = prefix.match(text_str, offset)
+            if match is None:
+                break
+            offset = match.end()
+            depth += 1
+        return offset, depth
+
+    @staticmethod
+    def _fence_state_id(state: dict) -> int:
+        """Create a stable positive QTextBlock state for fence propagation."""
+        value = '|'.join((
+            state['fence_char'],
+            str(state['fence_length']),
+            state['language'],
+            state.get('prefix', ''),
+        ))
+        return (zlib.crc32(value.encode('utf-8')) & 0x3fffffff) + 1
+
+    @staticmethod
+    def _utf16_offsets(text_str: str) -> list[int] | None:
+        """Map Python string boundaries to the UTF-16 offsets expected by Qt."""
+        if not any(ord(character) > 0xffff for character in text_str):
+            return None
+
+        offsets = [0]
+        offset = 0
+        for character in text_str:
+            offset += 2 if ord(character) > 0xffff else 1
+            offsets.append(offset)
+        return offsets
+
+    def _set_format(self, start: int, length: int, text_format, merge: bool = False) -> None:
+        """Apply a Python-indexed source range to Qt's UTF-16 text layout."""
+        text_length = len(self._format_text)
+        start = min(max(start, 0), text_length)
+        end = min(max(start + length, start), text_length)
+        qt_start = self._format_offsets[start] if self._format_offsets is not None else start
+        qt_end = self._format_offsets[end] if self._format_offsets is not None else end
+        if merge:
+            # Short overlays such as TODO markers keep the surrounding font
+            # properties (including strikeout) while adding their own colors.
+            for position in range(qt_start, qt_end):
+                merged = self.format(position)
+                merged.merge(text_format)
+                super().setFormat(position, 1, merged)
+            return
+        super().setFormat(qt_start, qt_end - qt_start, text_format)
+
+    @staticmethod
+    def _url_end(text_str: str, start: int, end: int, explicit: bool = False) -> int:
+        """Keep balanced URL parentheses/brackets, excluding outer markup."""
+        stack = []
+        for position in range(start, end):
+            character = text_str[position]
+            if character.isspace() or character in ('<', '>', '{', '}', '"'):
+                end = position
+                break
+            if character in '([':
+                stack.append(character)
+            elif character in ')]':
+                if not stack or stack[-1] != {')': '(', ']': '['}[character]:
+                    end = position
+                    break
+                stack.pop()
+        while not explicit and end > start and text_str[end - 1] in '.,;:!?':
+            end -= 1
+        # Apostrophes are valid URI characters. Only remove a final quote
+        # when the surrounding text also supplied an opening quote; retain
+        # apostrophes inside paths/queries and at explicit link boundaries.
+        if start > 0 and text_str[start - 1] == "'" and end > start and text_str[end - 1] == "'":
+            end -= 1
+        return end
+
+    def _url_matches(self, pattern, text_str: str):
+        """Resume at each URL boundary, including adjacent linked images."""
+        consumed = 0
+        for scheme in re.finditer(r'(?<![\w])(?:https?|ftp)://', text_str):
+            if scheme.start() < consumed:
+                continue
+            explicit = (scheme.start() > 0 and text_str[scheme.start() - 1] == '<') or any(
+                start <= scheme.start() < end for start, end in self._link_syntax_ranges)
+            end = self._url_end(text_str, scheme.start(), len(text_str), explicit=explicit)
+            match = pattern.match(text_str, scheme.start(), end)
+            if match is not None:
+                yield match
+            consumed = end
+
+    def _collect_link_syntax(self, text_str: str) -> None:
+        """Separate literal destinations/titles from labels and Extra attributes."""
+        attributes = re.compile(r'''\{(?::)?(?:[^{}"'\r\n]|"[^"\r\n]*"|'[^'\r\n]*')*\}''')
+        matches = (match for pattern, _, tag, *_ in self.rules if tag in ('a', 'img')
+                   for match in pattern.finditer(text_str))
+        for link in matches:
+            if self._is_escaped(text_str, link.start()) or self._range_is_protected(link.start(), link.end()):
+                continue
+            if 'destination' in link.groupdict():
+                self._link_syntax_ranges.append(link.span('destination'))
+            match = attributes.match(text_str, link.end())
+            if match is None or self._range_is_protected(match.start(), match.end()):
+                continue
+            start, end = match.span()
+            self.line_tokens[self.line_number].setdefault('link_attrs', []).append(
+                {'start': start, 'end': end, 'length': end - start})
+            self._protected_ranges.append((start, end))
+
+        url_pattern = next(pattern for pattern, _, tag, *_ in self.rules if tag == 'link')
+        self._url_literal_ranges = [match.span(1) for match in self._url_matches(url_pattern, text_str)]
+
+    def _list_match_is_valid(self, text_str: str, match) -> bool:
+        """Distinguish contextual nested items from root indented code."""
+        content_offset, _ = self._container_prefix(text_str)
+        marker_start = match.start(2)
+        indentation = text_str[content_offset:marker_start]
+        indentation_width = len(indentation.expandtabs(4))
+        if indentation_width <= 3:
+            return True
+        return bool(
+            self.tokens.get('list', {}).get('o')
+            or (self.user_data and self.user_data.get_param('list', 'within'))
+            or (self.prev_user_data and self.prev_user_data.get_param('list', 'within'))
+        )
+
+    @classmethod
+    def _extract_code_language(cls, info_string: str) -> str:
+        """Extract a supported Pygments alias from a fence info string."""
+        info_string = info_string.strip()
+        if not info_string:
+            return ''
+
+        if info_string.startswith('{') and info_string.endswith('}'):
+            attributes = info_string[1:-1].split()
+            language = next((item[1:] for item in attributes if item.startswith('.')), '')
+        else:
+            language = info_string.split(maxsplit=1)[0].lstrip('.')
+
+        return cls.code_lexer_aliases.get(language.casefold(), '')
+
+    @staticmethod
+    def _code_theme_key(token_type) -> str | None:
+        """Map a Pygments token hierarchy to the existing Markdown theme."""
+        if token_type in Comment:
+            return 'comment'
+        if token_type in Keyword:
+            return 'coop4'
+        if token_type in String:
+            return 'coop2'
+        if token_type in Number:
+            return 'coop5'
+        # Markdown lexers describe emphasis semantically. Reuse the editor's
+        # inline emphasis styles, but keep the fenced content literal code.
+        if token_type in Generic.EmphStrong:
+            return 'bi'
+        if token_type in Generic.Strong:
+            return 'b'
+        if token_type in Generic.Emph:
+            return 'i'
+        if token_type in Name.Function or token_type in Name.Class or token_type in Name.Tag:
+            return 'coop3'
+        if token_type in Name.Decorator or token_type in Name.Attribute:
+            return 'coop3'
+        if token_type in Operator or token_type in Punctuation:
+            return 'coop1'
+        return None
+
+    def _highlight_code_syntax(self, text_str: str, language: str, offset: int = 0) -> None:
+        """Apply language-aware Pygments tokens without retaining the source line."""
+        if not language or len(text_str) > self.max_code_highlight_length:
+            return
+
+        if not hasattr(self, '_code_lexers'):
+            self._code_lexers = {}
+        try:
+            lexer = self._code_lexers.get(language)
+            if lexer is None:
+                lexer_options = {
+                    'stripnl': False,
+                    'stripall': False,
+                    'ensurenl': False,
+                }
+                # PHP fences conventionally omit ``<?php``. Pygments treats
+                # such snippets as plain text unless inline mode is enabled.
+                if language == 'php':
+                    lexer_options['startinline'] = True
+                lexer = get_lexer_by_name(language, **lexer_options)
+                self._code_lexers[language] = lexer
+        except ClassNotFound:
+            return
+
+        # QTextBlock omits its line separator. Some lexers, notably PHP,
+        # finalize ``#`` and ``//`` comments only when they encounter a
+        # newline. Add one for tokenization and clamp it out below.
+        lexer_text = f'{text_str}\n'
+        for start, token_type, value in lexer.get_tokens_unprocessed(lexer_text):
+            if not value or (theme_key := self._code_theme_key(token_type)) is None:
+                continue
+            length = min(len(value), len(text_str) - start)
+            if length <= 0:
+                continue
+            style = self.theme['code_content'].copy()
+            style.update(self.theme[theme_key])
+            self._set_format(offset + start, length, self.cf(**style))
+
+    def _highlight_pseudo_fence(self, text_str: str) -> bool:
+        """Highlight Notolog's legacy indented ``::::language`` block."""
+        previous_state = getattr(self.prev_user_data, 'markdown_pseudo_fence', None)
+        if previous_state:
+            if not text_str:
+                self.setCurrentBlockState(0)
+                return False
+
+            indentation = re.match(r'(?: {4,}|\t+)', text_str)
+            content_offset = indentation.end() if indentation else 0
+            self._set_format(0, len(text_str), self.cf(**self.theme['code_content']))
+            if content_offset:
+                self._set_format(0, content_offset, self.cf(**self.theme['code_indent']))
+            self._highlight_code_syntax(
+                text_str[content_offset:], previous_state['language'], content_offset,
+            )
+            self.user_data.markdown_pseudo_fence = previous_state
+            self.user_data.put(
+                tag='code', opened=False, within=True, closed=False,
+                start=0, end=len(text_str),
+            )
+            self.setCurrentBlockState(self._fence_state_id(previous_state))
+            self.set_formatted('code')
+            return True
+
+        opening = re.fullmatch(
+            r'(?P<indent>(?: {4,}|\t+))(?P<marker>::::)(?P<info>\S*)[\t ]*',
+            text_str,
+        )
+        if opening is None:
+            return False
+        if self.line_number and self.prev_block.text():
+            return False
+
+        info_string = opening.group('info')
+        state = {
+            'fence_char': ':',
+            'fence_length': 4,
+            'language': self._extract_code_language(info_string),
+        }
+        indent_start, indent_end = opening.span('indent')
+        marker_start, marker_end = opening.span('marker')
+        self.user_data.markdown_pseudo_fence = state
+        self.user_data.put(
+            tag='code', opened=True, within=True, closed=False,
+            start=marker_start, end=marker_end,
+        )
+        self.line_tokens[self.line_number]['code_indent'] = [{
+            'start': indent_start, 'end': indent_end, 'length': indent_end - indent_start,
+        }]
+        self.line_tokens[self.line_number]['code'] = [{
+            'start': marker_start, 'end': marker_end, 'length': marker_end - marker_start,
+        }]
+        self._set_format(indent_start, indent_end - indent_start, self.cf(**self.theme['code_indent']))
+        self._set_format(marker_start, marker_end - marker_start, self.cf(**self.theme['code']))
+        if info_string:
+            info_start, info_end = opening.span('info')
+            self.line_tokens[self.line_number]['code_lang'] = [{
+                'start': info_start, 'end': info_end, 'length': info_end - info_start,
+            }]
+            self._set_format(info_start, info_end - info_start, self.cf(**self.theme['code_lang']))
+        self.setCurrentBlockState(self._fence_state_id(state))
+        self.set_formatted('code')
+        return True
+
+    def _highlight_fenced_code(self, text_str: str) -> bool:
+        """Highlight root and nested fences, preserving their container indentation."""
+        previous_state = getattr(self.prev_user_data, 'markdown_fence', None)
+        if previous_state:
+            prefix = previous_state.get('prefix', '')
+            if text_str.strip() and not text_str.startswith(prefix):
+                # A dedented line ends the container, including an unfinished fence.
+                previous_state = None
+            else:
+                offset = len(prefix) if text_str.startswith(prefix) else 0
+                content = text_str[offset:]
+                closing = re.fullmatch(
+                    rf'{re.escape(previous_state["fence_char"])}'
+                    rf'{{{previous_state["fence_length"]}}}[ ]*', content,
+                )
+                self._set_format(offset, len(content), self.cf(**self.theme['code_content']))
+                if closing:
+                    self._set_format(offset, len(content), self.cf(**self.theme['code']))
+                    self.user_data.put(tag='code', opened=False, within=True, closed=True,
+                                       start=offset, end=len(text_str))
+                    self.setCurrentBlockState(0)
+                else:
+                    self._highlight_code_syntax(content, previous_state['language'], offset=offset)
+                    self.user_data.markdown_fence = previous_state
+                    self.user_data.put(tag='code', opened=False, within=True, closed=False,
+                                       start=offset, end=len(text_str))
+                    self.setCurrentBlockState(self._fence_state_id(previous_state))
+                self.set_formatted('code')
+                return True
+
+        opening = re.fullmatch(
+            r'([ \t]*(?:>[ \t]*)*)(`{3,}|~{3,})[ ]*('
+            r'(?:\{[^\r\n]*\})|'
+            r'(?:\.?[\w#.+-]+(?:[ ]+hl_lines=(?:"[^"]*"|\'[^\']*\'))?)?'
+            r')[ ]*', text_str,
+        )
+        if opening is None:
+            return False
+        prefix, fence, info_string = opening.groups()
+        offset = len(prefix)
+        marker_end = offset + len(fence)
+        state = {
+            'prefix': prefix,
+            'fence_char': fence[0],
+            'fence_length': len(fence),
+            'language': self._extract_code_language(info_string),
+        }
+        self.user_data.markdown_fence = state
+        self.user_data.put(tag='code', opened=True, within=True, closed=False,
+                           start=offset, end=marker_end)
+        self._set_format(offset, len(fence), self.cf(**self.theme['code']))
+        if info_string:
+            self._set_format(marker_end, len(text_str) - marker_end, self.cf(**self.theme['code_lang']))
+        self.setCurrentBlockState(self._fence_state_id(state))
+        self.set_formatted('code')
+        return True
+
+    @staticmethod
+    def _is_escaped(text_str: str, position: int) -> bool:
+        backslashes = 0
+        position -= 1
+        while position >= 0 and text_str[position] == '\\':
+            backslashes += 1
+            position -= 1
+        return backslashes % 2 == 1
+
+    @classmethod
+    def _backtick_runs(cls, text_str: str, start: int = 0):
+        for match in re.finditer(r'`+', text_str[start:]):
+            absolute_start = start + match.start()
+            if not cls._is_escaped(text_str, absolute_start):
+                yield absolute_start, start + match.end()
+
+    def _highlight_inline_code(self, text_str: str) -> None:
+        """Highlight exact-length CommonMark backtick delimiter pairs."""
+        spans = []
+        runs = list(self._backtick_runs(text_str))
+        next_same_length = [None] * len(runs)
+        next_by_length = {}
+        for index in range(len(runs) - 1, -1, -1):
+            start, end = runs[index]
+            delimiter_length = end - start
+            next_same_length[index] = next_by_length.get(delimiter_length)
+            next_by_length[delimiter_length] = index
+
+        run_index = 0
+        while run_index < len(runs):
+            opening_start, _ = runs[run_index]
+            closing_index = next_same_length[run_index]
+            if closing_index is None:
+                run_index += 1
+                continue
+            _, closing_end = runs[closing_index]
+            spans.append((opening_start, closing_end))
+            run_index = closing_index + 1
+
+        if not spans:
+            return
+
+        self.line_tokens[self.line_number]['codel'] = [
+            {'start': start, 'end': end, 'length': end - start}
+            for start, end in spans
+        ]
+        for start, end in spans:
+            self._set_format(start, end - start, self.cf(**self.theme['codel']))
+            self._protected_ranges.append((start, end))
+        self.set_formatted('code')
+
+    def _range_is_protected(self, start: int, end: int) -> bool:
+        return any(range_start <= start and end <= range_end
+                   for range_start, range_end in self._protected_ranges)
+
+    def _delimiter_is_protected(self, start: int, end: int) -> bool:
+        """Return whether either edge of a candidate is inside protected syntax."""
+        return any(
+            range_start <= start < range_end
+            or range_start < end <= range_end
+            for range_start, range_end in (
+                *self._protected_ranges, *self._link_syntax_ranges, *self._url_literal_ranges)
+        )
+
+    def _restore_protected_formats(self) -> None:
+        """Reapply nested code/comment styles after their parent styles."""
+        for token_data in self.line_tokens[self.line_number].get('link_attrs', ()):
+            self._set_format(token_data['start'], token_data['length'], self.cf(**self.theme['html']))
+        for token_data in self.line_tokens[self.line_number].get('codel', ()):
+            self._set_format(
+                token_data['start'], token_data['length'],
+                self.cf(**self.theme['codel']),
+            )
+        for token_data in self.line_tokens[self.line_number].get('html_comment', ()):
+            self._set_format(
+                token_data['start'], token_data['length'],
+                self.cf(**self.theme['html_comment']),
+            )
+
+    def _highlight_html_comments(self, text_str: str) -> None:
+        """Highlight HTML comments, including comments spanning text blocks."""
+        spans = []
+        content_offset, quote_depth = self._container_prefix(text_str)
+        previous_state = getattr(self.prev_user_data, 'markdown_html_comment', None)
+        previous_depth = (
+            previous_state.get('quote_depth', 0)
+            if isinstance(previous_state, dict) else 0
+        )
+        if previous_state and quote_depth < previous_depth:
+            previous_state = None
+
+        search_start = 0
+        if previous_state:
+            if previous_depth:
+                content_offset, _ = self._container_prefix(text_str, previous_depth)
+            else:
+                content_offset = 0
+            closing = text_str.find('-->', content_offset)
+            if closing < 0:
+                spans.append((content_offset, len(text_str)))
+                self.user_data.markdown_html_comment = {
+                    'quote_depth': previous_depth,
+                }
+                search_start = len(text_str)
+            else:
+                search_start = closing + 3
+                spans.append((content_offset, search_start))
+
+        while search_start < len(text_str):
+            opening = text_str.find('<!--', search_start)
+            if opening < 0:
+                break
+            if self._range_is_protected(opening, opening + 4):
+                search_start = opening + 4
+                continue
+            closing = text_str.find('-->', opening + 4)
+            if closing < 0:
+                spans.append((opening, len(text_str)))
+                self.user_data.markdown_html_comment = {
+                    'quote_depth': quote_depth,
+                }
+                break
+            spans.append((opening, closing + 3))
+            search_start = closing + 3
+
+        if not spans:
+            return
+
+        # HTML comments take precedence over Markdown code spans. Backticks in
+        # a comment are literal, while a comment opener inside a code span was
+        # already skipped above.
+        code_spans = self.line_tokens[self.line_number].get('codel', [])
+        if code_spans:
+            code_spans = [
+                token_data for token_data in code_spans
+                if not any(
+                    start <= token_data['start'] and token_data['end'] <= end
+                    for start, end in spans
+                )
+            ]
+            if code_spans:
+                self.line_tokens[self.line_number]['codel'] = code_spans
+            else:
+                del self.line_tokens[self.line_number]['codel']
+            self._protected_ranges = [
+                (token_data['start'], token_data['end'])
+                for token_data in code_spans
+            ]
+        self.line_tokens[self.line_number]['html_comment'] = [
+            {'start': start, 'end': end, 'length': end - start}
+            for start, end in spans
+        ]
+        for start, end in spans:
+            self._set_format(start, end - start, self.cf(**self.theme['html_comment']))
+            self._protected_ranges.append((start, end))
+        self.set_formatted('html')
+
     def highlightBlock(self, text_str):  # noqa: C901 - consider simplifying this method
         """
         Apply a syntax highlighting to each line of the text.
         * https://doc.qt.io/qt-6/qsyntaxhighlighter.html#highlightBlock
         """
+
+        # Regex and Pygments use Python code-point offsets, while Qt formatting
+        # uses UTF-16 code units. Build one boundary map for this block.
+        self._format_text = text_str
+        self._format_offsets = self._utf16_offsets(text_str)
 
         # Get the current block and associated user data
         self.current_block = self.currentBlock()
@@ -347,16 +900,14 @@ class MdHighlighter(MainHighlighter):
             self.user_data = TextBlockData(self.line_number)
             """
             Restore within a code block state, for example when a new line appears.
-            Both 'code' and 'codec' have their own rules on how a code group works, so check them up separately.
+            Restore fenced-code state when a new text block appears.
             """
             if self.is_in_code(skip_data=True, force_tag='code'):
                 self.user_data.put(tag='code', opened=False, within=True, closed=True)
-            elif self.is_in_code(skip_data=True, force_tag='codec'):
-                self.user_data.put(tag='codec', opened=False, within=True, closed=True)
 
-        # Keep all line numbers even if no tags there
-        if self.line_number not in self.line_tokens:
-            self.line_tokens[self.line_number] = {}
+        # A block may be highlighted repeatedly after edits. Replace its token
+        # map so removed Markdown cannot leave stale parser context behind.
+        self.line_tokens[self.line_number] = {}
 
         # Periodically clean up old line tokens to prevent memory leaks
         if self.line_number % 100 == 0:  # Check every 100 lines
@@ -364,6 +915,62 @@ class MdHighlighter(MainHighlighter):
 
         # Each line is not formatted initially
         self.clear_formatted()
+        self._protected_ranges = []
+        self._link_syntax_ranges = []
+        self._url_literal_ranges = []
+        for state_attr in ('markdown_fence', 'markdown_pseudo_fence', 'markdown_html_comment'):
+            if hasattr(self.user_data, state_attr):
+                delattr(self.user_data, state_attr)
+        self.user_data.drop('code')
+
+        # Fences need their delimiter type, length, language and parent
+        # blockquote context. QTextBlockUserData carries that state without
+        # retaining document text or rescanning the entire document.
+        if self._highlight_pseudo_fence(text_str) or self._highlight_fenced_code(text_str):
+            self.current_block.setUserData(self.user_data)
+            return
+
+        # Markdown emphasis cannot continue across a paragraph boundary.
+        # In particular, TODO overlays must not expose an unmatched italic
+        # delimiter left open in a previous paragraph.
+        if not text_str.strip():
+            for tag in ('i_open', 'iu_open', 'b_open', 'boo_open', 'bi_open', 'biu_open'):
+                if tag in self.tokens:
+                    self.tokens[tag]['o'] = False
+
+        # Avoid pathological regular-expression and token-storage costs for a
+        # single enormous logical line. Block-state scans remain linear so a
+        # following line can still recover correctly.
+        if len(text_str) <= self.max_inline_highlight_length:
+            self._highlight_inline_code(text_str)
+        self._highlight_html_comments(text_str)
+        if len(text_str) > self.max_inline_highlight_length:
+            for state_tag in ('blockquote', 'list'):
+                if state_tag in self.tokens:
+                    self.tokens[state_tag]['o'] = False
+            self.user_data.prune_inactive()
+            self.current_block.setUserData(self.user_data)
+            self.setCurrentBlockState(
+                0x40000001 if getattr(self.user_data, 'markdown_html_comment', False) else 0)
+            self._restore_protected_formats()
+            return
+
+        self._collect_link_syntax(text_str)
+
+        # Python-Markdown keeps an unprefixed list item in the blockquote when
+        # it continues a list which was opened inside that quote. This is the
+        # structure used by the blockquote example in markdown-syntax.md.
+        # Other unprefixed lines remain conservative because lazy paragraph
+        # continuation requires more parser context than this line highlighter
+        # retains.
+        _, quote_depth = self._container_prefix(text_str)
+        continues_quoted_list = (
+            not quote_depth
+            and self.tokens.get('list', {}).get('o') is True
+            and re.match(r'^[\t ]*(?:[0-9]{1,9}[\.)]|[\*\+\-])(?=[\t ]+|$)', text_str)
+        )
+        if not quote_depth and not continues_quoted_list and 'blockquote' in self.tokens:
+            self.tokens['blockquote']['o'] = False
 
         # Groups of tokens for correction
         oct_map = self.get_open_close_token_map()
@@ -470,7 +1077,7 @@ class MdHighlighter(MainHighlighter):
             self.user_data.put(tag=tag, opened=False, within=True, closed=False)
             self.setCurrentBlockState(1)
             if not self.is_any_formatted():
-                self.setFormat(0, len(text_str), self.cf(**self.theme['code_content']))
+                self._set_format(0, len(text_str), self.cf(**self.theme['code_content']))
                 self.set_formatted('code')
             self.logger.debug(
                 '{%r} >=< Inside "%s" at [%d*], is in code %d (STRICT), prev state %d'
@@ -500,10 +1107,9 @@ class MdHighlighter(MainHighlighter):
             Process block tokens closing with a new line.
             * rn
             * blockquote
-            * codec
             * list
-            Notice: Do not processing it when located within a code block, like this:
-            if (self.is_in_code() and tag not in {'codec'}):
+            Notice: Do not process it when located within a code block, like this:
+            if self.is_in_code():
                 continue
             Causing a "jumping" syntax, so better to leave the blocks within the code block
             but re-write their style accordingly.
@@ -524,6 +1130,8 @@ class MdHighlighter(MainHighlighter):
 
             matches = re.finditer(pattern, text_str)
             match = next(matches, None)
+            if match and tag == 'list' and not self._list_match_is_valid(text_str, match):
+                match = None
 
             if match:
                 # Get regex result position into the text string
@@ -546,15 +1154,13 @@ class MdHighlighter(MainHighlighter):
                     )
                     continue
 
-                if ((tag in {'codec', 'list'}
-                     # Code block :::: has to start with empty line or at very beginning of the document.
+                if ((tag in {'list'}
                      and (self.line_number == 0
                           # Check prev line is an empty line
                           or (self.line_number - 1 in self.line_tokens
                               and 'rn' in self.line_tokens[self.line_number - 1])))
                         # Blockquote and list may start without preliminary empty line
-                        or (tag not in {'codec'}
-                            and not self.tokens[tag]['o'])):
+                        or not self.tokens[tag]['o']):
                     # Mind the indents
                     self.tokens[tag]['cnt'] += 1
                     self.tokens[tag]['o'] = True
@@ -592,21 +1198,16 @@ class MdHighlighter(MainHighlighter):
                 elif tag not in {'list'}:
                     self.logger.debug(
                         '{%r} >=< Inside "%s" at [%d*], is in code %d (lenient), prev state %d'
-                        % (self.rehighlight_block, tag, self.line_number_log, self.is_in_code(force_tag='codec'),
+                        % (self.rehighlight_block, tag, self.line_number_log, self.is_in_code(),
                            self.previousBlockState())
                     )
                     """
                     Block tokens cannot be located on the same line, suppose to find them one per line
                     """
                     self.user_data.put(tag=tag, opened=False, within=True, closed=False)
-                    if not self.is_any_formatted():
-                        if tag == 'blockquote':
-                            self.setFormat(0, len(text_str), self.cf(**self.theme['blockquote']))
-                            self.set_formatted('blockquote')
-                        elif (tag == 'codec'
-                              and self.is_in_code(skip_data=True, force_tag='codec')):
-                            self.setFormat(0, len(text_str), self.cf(**self.theme['code_content']))
-                            self.set_formatted('code')
+                    if not self.is_any_formatted() and tag == 'blockquote':
+                        self._set_format(0, len(text_str), self.cf(**self.theme['blockquote']))
+                        self.set_formatted('blockquote')
             else:
                 self.user_data.put(tag=tag, opened=False, within=False, closed=False)
                 self.logger.debug('{%r} ... No "%s" [%d*]' % (self.rehighlight_block, tag, self.line_number_log))
@@ -620,6 +1221,10 @@ class MdHighlighter(MainHighlighter):
             self.logger.error(f'Cannot setup block data "{self.user_data}", error occurred: {e}')
 
         format_map = {}  # To apply formatting after the whole line processed
+        seen_line_tokens = {
+            (tag, row['start'], row['end'])
+            for tag, rows in self.line_tokens[self.line_number].items() for row in rows
+        }
         for pattern, nth, tag, group, duple, cf_data, reckon in self.rules:
 
             if self.is_in_code() and group not in {'code', 'comment', 'coop', 'rn'}:
@@ -649,21 +1254,44 @@ class MdHighlighter(MainHighlighter):
             * https://docs.python.org/3/library/re.html
             * https://doc.qt.io/qt-6/qregularexpression.html
             """
-            matches = re.finditer(pattern, text_str)
+            matches = self._url_matches(pattern, text_str) if tag == 'link' else re.finditer(pattern, text_str)
 
             for match in matches:
+                if group == 'list' and not self._list_match_is_valid(text_str, match):
+                    continue
                 # Get regex result position into the text string
                 start = match.start(nth)
                 end = match.end(nth)
+                if tag == 'link' and any(
+                        image['start'] <= start and end <= image['end']
+                        for image in self.line_tokens[self.line_number].get('img', ())):
+                    # An image destination keeps its image style, even when
+                    # the image itself is the label of a clickable link.
+                    continue
                 length = end - start
+
+                if self._range_is_protected(start, end):
+                    continue
+                if (group in {'i', 'iu', 'b', 'boo', 'bi', 'biu', 's', 'u', 'a', 'img', 'html'}
+                        and self._delimiter_is_protected(start, end)):
+                    continue
+                if (tag in self.escape_sensitive_tags
+                        and self._is_escaped(text_str, start)):
+                    continue
+                if (delimiter_length := self.closing_delimiter_lengths.get(tag)) is not None:
+                    if self._is_escaped(text_str, end - delimiter_length):
+                        continue
 
                 # Collect line tokens only when any of them matched
                 if tag not in self.line_tokens[self.line_number]:
                     self.line_tokens[self.line_number][tag] = []
                 if tag != 'code' or tag not in nl_closing_tokens:
-                    # The line tokens data will be reset after re-highlighting, no need to check for duplicates
+                    # Constant-time deduplication keeps dense emphasis lines
+                    # from performing a growing list scan for every token.
                     line_token_data = {'start': start, 'end': end, 'length': length}
-                    if line_token_data not in self.line_tokens[self.line_number][tag]:
+                    token_key = (tag, start, end)
+                    if token_key not in seen_line_tokens:
+                        seen_line_tokens.add(token_key)
                         self.line_tokens[self.line_number][tag].append(line_token_data)
 
                 # Check if current tag should be skipped
@@ -712,12 +1340,7 @@ class MdHighlighter(MainHighlighter):
                 if (tag == 'table_h'
                     and (self.line_number - 1 in self.line_tokens
                          # Previous token is a table header
-                         and 'table_d' in self.line_tokens[self.line_number - 1]
-                         # The token before the table header either a new line or file's first line
-                         and ((self.line_number - 2 in self.line_tokens
-                              and 'rn' in self.line_tokens[self.line_number - 2])
-                              # line number "1" as table header token earliest line is next to "0"
-                              or self.line_number == 1))):
+                         and 'table_d' in self.line_tokens[self.line_number - 1])):
                     self.tokens['table_d']['o'] = True
                     # It will be highlighted after the next re-highlight
                     if self.prev_user_data:
@@ -736,11 +1359,6 @@ class MdHighlighter(MainHighlighter):
                     continue
                 # Not saving the block's data here;
                 # it will be automatically stored during the next block re-highlighting iteration.
-
-                # Header tags correction (emoji)
-                if group == 'h':
-                    if end == len(text_str):
-                        length += 1
 
                 # Prevent passing reference of the dict
                 cfc = cf_data.copy()
@@ -798,7 +1416,7 @@ class MdHighlighter(MainHighlighter):
                             # If the end of the line than add extra one
                             if end == len(text_str):
                                 length += 1
-                        elif tag not in {'code_lang', 'codel', 'codec',
+                        elif tag not in {'code_lang', 'codel',
                                          'i', 'i_open', 'iu_open',
                                          'b', 'b_open', 'boo_open',
                                          'bi', 'bi_open', 'biu_open',
@@ -837,6 +1455,8 @@ class MdHighlighter(MainHighlighter):
                     cfc['bg'] = self.theme['blockquote']['bg_inner']
 
                 # QTextCharFormat
+                if tag in ('todo', 'a'):
+                    cfc.setdefault('font_size_ratio', 0)
                 tc_fmt = self.cf(**cfc)
                 if tc_fmt is not None:
                     if tag not in format_map:
@@ -845,10 +1465,10 @@ class MdHighlighter(MainHighlighter):
                     format_map[tag].append({'group': group, 'start': start, 'length': length, 'fmt': tc_fmt})
 
         for tag, fmt_data in format_map.items():
-            if tag not in self.line_tokens[self.line_number]:
+            if tag == 'todo' or tag not in self.line_tokens[self.line_number]:
                 continue
             for fd in fmt_data:
-                self.setFormat(fd['start'], fd['length'], fd['fmt'])
+                self._set_format(fd['start'], fd['length'], fd['fmt'], merge=tag == 'a')
                 self.set_formatted(fd['group'])
 
         # TODO uncomment later when such block processing will be updated
@@ -868,8 +1488,23 @@ class MdHighlighter(MainHighlighter):
                     # and not self.is_group_formatted(token_data['group'])
                     and token_data['open'] in self.tokens
                     and self.tokens[token_data['open']]['o'] is True):
-                self.setFormat(0, len(text_str), self.cf(**self.theme[token_data['theme']]))
+                self._set_format(0, len(text_str), self.cf(**self.theme[token_data['theme']]))
                 self.set_formatted(token_data['group'])
+
+        # Outer link formatting must not overwrite a nested image's style.
+        for fd in format_map.get('img', []):
+            self._set_format(fd['start'], fd['length'], fd['fmt'])
+
+        # Overlay TODO colors after both inline and multiline font styling.
+        for fd in format_map.get('todo', []):
+            self._set_format(fd['start'], fd['length'], fd['fmt'], merge=True)
+            self.set_formatted(fd['group'])
+
+        if getattr(self.user_data, 'markdown_html_comment', False):
+            self.setCurrentBlockState(0x40000001)
+
+        self.user_data.prune_inactive()
+        self._restore_protected_formats()
 
     def check_and_set_in_code_state(self):
         if self.is_in_code(True):
@@ -888,16 +1523,17 @@ class MdHighlighter(MainHighlighter):
         Check if args position intersects with inline code block.
         """
         for _data in self.line_tokens[self.line_number]['codel']:
-            if (_data['start'] < start < _data['end']
-                    or _data['start'] < (start + length) < _data['end']
-                    or _data['start'] < end < _data['end']):
+            if _data['start'] <= start and end <= _data['end']:
                 # skip formatting within inline code block
                 return True
+        return False
 
     def adjust_pos_within_inline_code(self) -> bool:
         processed_res = False
         data_to_del = {}
         for _tag, _tag_data in self.line_tokens[self.line_number].items():
+            if _tag == 'codel':
+                continue
             data_to_del[_tag] = []
             for _data in _tag_data:
                 if self.pos_within_inline_code(_data['start'], _data['end'], _data['length']):
@@ -928,20 +1564,12 @@ class MdHighlighter(MainHighlighter):
                 and 'code' in self.tokens
                 and self.tokens['code']['o'] is True):
             return True
-        elif (not force_tag
-              and 'codec' in self.tokens
-              and self.tokens['codec']['o'] is True):
-            return True
         elif (not skip_data
               and self.currentBlockState() == 1):
             return True
         elif (not skip_data
               and self.user_data is not None
               and self.user_data.get_param('code', 'within')):
-            return True
-        elif (not skip_data
-              and self.user_data is not None
-              and self.user_data.get_param('codec', 'within')):
             return True
         else:
             return False

@@ -16,11 +16,12 @@ License: MIT License
 For detailed instructions and project information, please see the repository's README.md.
 """
 
-from PySide6.QtCore import Qt, QSize
+from PySide6.QtCore import Qt, QSize, QEvent
 from PySide6.QtWidgets import QLabel, QToolButton, QHBoxLayout
 from PySide6.QtGui import QIcon, QColor, QPixmap
 
 import logging
+import textwrap
 
 from ..app_config import AppConfig
 from ..settings import Settings
@@ -44,7 +45,6 @@ class LabelWithHint(QLabel):
 
         self.logger = logging.getLogger('label_with_hint')
 
-        self.text = text
         self.action = action
         self.tooltip = tooltip
         self.theme_icon = theme_icon
@@ -62,6 +62,28 @@ class LabelWithHint(QLabel):
         self.icon_button = None  # type: Union[QToolButton, None]
 
         self.init_ui()
+        self.setText(text or '')
+
+    def setText(self, text):
+        """Render the caption only in the child label beside the hint icon."""
+        super().setText('')
+        self.text_label.setText(text)
+        self.updateGeometry()
+
+    def text(self):
+        return self.text_label.text()
+
+    def sizeHint(self):
+        return self.layout.sizeHint()
+
+    def minimumSizeHint(self):
+        return self.layout.minimumSize()
+
+    def changeEvent(self, event):
+        if event.type() == QEvent.Type.FontChange and getattr(self, 'text_label', None) is not None:
+            self.text_label.setFont(self.font())
+            self.load_icon()
+        super().changeEvent(event)
 
     def init_ui(self):
         # Main layout
@@ -85,7 +107,8 @@ class LabelWithHint(QLabel):
             self.icon_button.clicked.connect(self.action)
 
         # Create the text label
-        self.text_label = QLabel(self.text)
+        self.text_label = QLabel()
+        self.text_label.setFont(self.font())
         self.text_label.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
 
         # Add icon and text to the layout
@@ -145,7 +168,11 @@ class LabelWithHint(QLabel):
             tooltip_text (str): The text to display in the tooltip.
         """
 
-        # Set the tooltip text
+        # Qt wraps rich text; wrap plain-text hints while preserving explicit lines.
+        if not tooltip_text.lstrip().startswith('<'):
+            tooltip_text = '\n'.join(textwrap.fill(line, width=55, break_long_words=False,
+                                                   break_on_hyphens=False)
+                                     for line in tooltip_text.split('\n'))
         self.icon_button.setToolTip(tooltip_text)
 
         # Customize the tooltip font size

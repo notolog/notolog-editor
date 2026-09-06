@@ -16,10 +16,12 @@ License: MIT License
 For detailed instructions and project information, please see the repository's README.md.
 """
 
-import pytest
+from pathlib import Path
 
 import emoji
 import markdown
+import pytest
+import tomli
 
 
 @pytest.fixture
@@ -53,3 +55,16 @@ def test_emoji_conversion():
     emoji_content = emoji.emojize(text_content, language="en")
 
     assert emoji_content == "🐈"
+
+
+def test_startup_readme_is_in_wheel_config():
+    project_root = Path(__file__).resolve().parent.parent
+    with (project_root / 'pyproject.toml').open('rb') as project_file:
+        project = tomli.load(project_file)
+
+    readme_include = next(
+        item for item in project['tool']['poetry']['include']
+        if isinstance(item, dict) and item.get('path') == 'README.md'
+    )
+
+    assert set(readme_include['format']) == {'sdist', 'wheel'}

@@ -63,7 +63,7 @@ class ViewHighlighter(MainHighlighter):
         (r'(^|\s)(?<!~~)(~~(?!~|\s)[^~]*?)$', 2, 's_open', 's', True, theme['s'], None),
         (r'^([^~]*?[^\s~]~~)(?!~~)(?:\s|[\W^~]|$)', 1, 's_close', 's', True, theme['s'], None),
         # todos highlighting
-        (r'([\s]*?)(@todo)(?=\s)', 2, 'todo', 'todo', False, theme['todo'], None),
+        (r'(?<![\w@])((?i:@todo))(?=\s|$|~~)', 1, 'todo', 'todo', False, theme['todo'], None),
         # invisible separator
         (r'(​)', 0, 'inv_sep', 'inv_sep', False, theme['inv_sep'], None),
     ]
@@ -99,8 +99,34 @@ class ViewHighlighter(MainHighlighter):
             """
             return
 
+        if line_number == 0:
+            # setHtml()/setPlainText() replace the blocks when another note is
+            # loaded. An unmatched delimiter in the previous note must not
+            # affect that new document or retain its per-line token cache.
+            self.tokens.clear()
+            self.line_tokens.clear()
+
         # Create block's data storage
         user_data = TextBlockData(line_number)
+
+        # Qt preserves the HTML <code>/<pre> monospace format. Literal code
+        # must not become viewer markup or lose characters during decoration.
+        code_ranges = []
+        fragment_iterator = current_block.begin()
+        while not fragment_iterator.atEnd():
+            fragment = fragment_iterator.fragment()
+            if fragment.isValid():
+                char_format = fragment.charFormat()
+                if (current_block.blockFormat().nonBreakableLines()
+                        or char_format.fontFixedPitch()
+                        or 'monospace' in (char_format.fontFamilies() or [])):
+                    start = fragment.position() - current_block.position()
+                    code_ranges.append((start, start + fragment.length()))
+            fragment_iterator += 1
+
+        offsets = [0]
+        for character in text_str:
+            offsets.append(offsets[-1] + (2 if ord(character) > 0xffff else 1))
 
         # Each line is not formatted initially
         self.clear_formatted()
@@ -128,6 +154,22 @@ class ViewHighlighter(MainHighlighter):
                 start = match.start(nth)
                 end = match.end(nth)
                 length = end - start
+
+                if tag in close_tokens and self.get_opened_group_token(group) is None:
+                    # A closing marker alone is literal text. The decorator
+                    # must never remove it without a matching opening state.
+                    continue
+
+                if group == 's':
+                    delimiters = []
+                    if tag in ('s', 's_open'):
+                        delimiters.append((offsets[start], offsets[start + 2]))
+                    if tag in ('s', 's_close'):
+                        delimiters.append((offsets[end - 2], offsets[end]))
+                    if any(marker_start < code_end and marker_end > code_start
+                           for marker_start, marker_end in delimiters
+                           for code_start, code_end in code_ranges):
+                        continue
 
                 # Collect line tokens only when any of them matched
                 if tag not in self.line_tokens[line_number]:
@@ -188,6 +230,7 @@ class ViewHighlighter(MainHighlighter):
             """
             # Not formatted elements within the multiline block
             if (not self.is_group_formatted(token_data['group'])
+                    and not current_block.blockFormat().nonBreakableLines()
                     and token_data['open'] in self.tokens
                     and self.tokens[token_data['open']]['o'] is True):
                 self.set_formatted(token_data['group'])
