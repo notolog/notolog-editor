@@ -100,30 +100,13 @@ See the [AI Assistant Guide](https://notolog.app/ai-assistant/) for setup instru
 
 ## Text-to-Speech
 
-The built-in Text-to-Speech module reads Markdown documents, selected text, or text from the cursor aloud locally,
-with play, pause, and stop controls. It supports spoken heading announcements and separate options to replace inline
-and multiline code with short labels.
+Notolog reads documents, selections, or text from the cursor aloud locally using NeMo-Speech.cpp and MagpieTTS,
+with play, pause, and stop controls.
 
-The context-length slider controls the maximum characters in each speech request. Its far-right position
-uses the whole document between heading breaks. Larger contexts increase startup time and memory use;
-the runtime's limits still apply. Speech text and generated audio travel through local pipes and memory,
-without temporary text or audio files. Operating-system swap, crash dumps, and external recording are
-outside this protection.
+For pip installations, install audio support with `pip install "notolog[tts]"`.
+The compatible runtime and models require separate downloads.
 
-Install the audio dependencies with `pip install "notolog[tts]"` (sounddevice/PortAudio). Linux pip users
-also need their system PortAudio library, such as `libportaudio2` on Debian/Ubuntu, plus `curl` and CA certificates
-for model downloads. In **Settings → Text-to-Speech**, enable the
-module and use **Get runtime** to find the compatible NeMo-Speech.cpp release. Extract the complete archive,
-select `bin/nemo-speech` (`bin/nemo-speech.exe` on Windows), choose a model folder, and download the models.
-The runtime and models are installed separately; they are not bundled with Notolog.
-
-Choose the document language in the module settings. English is the default; Spanish, German, French,
-Italian, Vietnamese, and Hindi are also supported. Mandarin and Japanese require a runtime built with
-support for those languages. Language detection is not automatic, and heading/code labels use English.
-
-See the [Text-to-Speech Guide](docs/text-to-speech.md) for setup, supported models, and troubleshooting.
-See [Text-to-Speech third-party notices](ThirdPartyNotices.md#text-to-speech) for runtime, model, and audio
-library licenses. Notolog is not affiliated with or endorsed by NVIDIA.
+See the [Text-to-Speech Guide](https://github.com/notolog/notolog-editor/blob/main/docs/text-to-speech.md) for setup, supported languages, and troubleshooting.
 
 
 ## Development
@@ -172,8 +155,9 @@ This project integrates third-party AI services and libraries:
 - **OpenAI API**: Users are required to supply their own API keys and adhere to OpenAI's applicable terms, policies, and [API documentation](https://platform.openai.com/docs/api-reference).
 - **ONNX Runtime GenAI**: Used for local ONNX model inference. More info: [onnxruntime-genai](https://github.com/microsoft/onnxruntime-genai)
 - **llama.cpp**: Used for local GGUF model inference via [llama-cpp-python](https://github.com/abetlen/llama-cpp-python).
+- **NVIDIA NeMo-Speech.cpp and MagpieTTS**: Used for local speech synthesis. See [Text-to-Speech third-party notices](https://github.com/notolog/notolog-editor/blob/main/ThirdPartyNotices.md#text-to-speech) for runtime, model, and audio-library licenses.
 
-*Notolog is developed independently and is not affiliated with these organizations or projects.*
+*Notolog is developed independently and is not affiliated with or endorsed by these organizations or projects.*
 
 ### Legal
 
