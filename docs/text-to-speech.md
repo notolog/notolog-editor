@@ -1,9 +1,11 @@
-<!-- {"notolog.app": {"created": "2026-09-05 00:00:00.000000", "updated": "2026-09-06 00:00:00.000000"}} -->
 # Text-to-Speech
 
 Notolog's built-in Text-to-Speech module reads Markdown and plain-text documents aloud on your computer.
 Read a whole document, selected text, or start from the cursor. Playback controls let you pause, resume,
 and stop reading while you work.
+
+Notolog 1.2.4 uses NeMo-Speech.cpp 0.2.0 and MagpieTTS v2607.
+Follow the runtime link in your installed application's settings to select a compatible release.
 
 ## Set up local speech
 
@@ -29,7 +31,7 @@ beside the disabled voice test. Restart Notolog after installing the dependencie
    license files alongside the executable.
 3. Under **Speech runtime**, select `bin/nemo-speech`, or `bin/nemo-speech.exe` on Windows.
 4. Choose a writable **Model folder** and select **Download models**. Downloads need `curl`, internet access,
-   and approximately 550 MB for the model set, in addition to the runtime.
+   and approximately 700 MB of free space for the model set, in addition to the runtime.
 5. Choose the document's **Language** and a **Voice**, then select **Test voice**.
 
 The runtime and models are separate downloads. Use the release linked from your installed application's
@@ -38,6 +40,24 @@ settings: a newer upstream runtime is not necessarily compatible with its native
 **Details** shows download and verification output. Existing files are reused after verification;
 **Verify models** also downloads missing or damaged files. Closing settings during a download asks whether
 to cancel it. Completed downloads are retained for a later attempt.
+
+A version mismatch reports the executable currently selected in **Speech runtime**. Installing another
+archive or updating the Python packages does not change that saved path. Select the new executable
+explicitly; if settings were changed outside a running app, restart Notolog to reload them.
+
+### Upgrade from runtime 0.1.0
+
+This integration requires **NeMo-Speech.cpp 0.2.0**. Open **Get runtime 0.2.0** (also available when a
+runtime is already selected), extract the complete archive, and select its executable. Then choose
+**Download models** or **Verify models** to obtain MagpieTTS v2607 and its matching tokenizers.
+Downloading or verifying models selects the runtime's default model set under **Custom model files**,
+replacing any custom path selections. Existing model files can remain in the download folder.
+
+Older cached tokenizer files can be incompatible with runtime 0.2.0. If initialization reports
+incompatible model/tokenizer files, download or verify models to select the complete matching set.
+
+A matching v2602 model/tokenizer pair can still be used with runtime 0.2.0, but it does not support
+the new Korean or Brazilian Portuguese options. Never combine a v2607 model with v2602 tokenizers.
 
 ## Read documents and selections
 
@@ -55,13 +75,27 @@ language, audio format, runtime, and model paths.
 The supplied model offers **John, Sofia, Aria, Jason, and Leo**. Aria is the default for a new setup.
 These are voices within one speech model, rather than separate model downloads.
 
+Enter a voice name or numeric speaker index supported by the selected model.
+For the default v2607 model, Aria, Jason, John, Leo, and Sofia map to indices 0–4 respectively.
+Keep custom models and their tokenizer assets matched, and use the voice names or indices
+documented for that model.
+
 Choose the document language explicitly; Notolog does not detect it automatically or infer it from the
-interface language. English is the default. Spanish, German, French, Italian, Vietnamese, and Hindi are
-also available. Mandarin and Japanese require a runtime built with their respective language support.
+interface language. The choices are limited to languages supported by both the app and the speech model.
+English is the default. Spanish, German, French, Italian, and Hindi are also available.
+MagpieTTS v2607 also supports Korean (`ko`) and Brazilian Portuguese (`pt-BR`). These options
+are shown by their native names. Mandarin and Japanese require a runtime built with
+`NEMO_SPEECH_TTS_WITH_ZH=ON` and `NEMO_SPEECH_TTS_WITH_JA=ON`, respectively; both options default to off upstream.
 The application's 19 interface translations do not imply 19 supported speech languages.
 Changing the app's interface language immediately updates the speech settings and playback controls.
 Application messages already shown in **Details** update too; native runtime output remains verbatim.
 Your selected speech language stays the same, and active downloads or playback continue.
+
+To switch the reading language, choose **Settings → Text-to-Speech → Reading → Language** and use
+**Test voice**, which speaks a sample in that language. Changing a speech setting stops active playback;
+start reading again to use the new selection. This setting controls pronunciation; it does not translate
+the document. If no language is selected, choose one before testing or reading. The selected language
+must be supported by the loaded model and runtime build.
 
 | Setting | Effect |
 |---------|--------|
@@ -82,13 +116,31 @@ speech playback. The default model set contains:
 
 | Component | Model or assets |
 |-----------|-----------------|
-| Speech generator | [NVIDIA MagpieTTS Multilingual 357M v2602](https://huggingface.co/nvidia/magpie_tts_multilingual_357m/tree/v2602), in F16 GGUF format |
+| Speech generator | [NVIDIA MagpieTTS Multilingual 357M v2607](https://huggingface.co/nvidia/magpie_tts_multilingual_357m/tree/19806879b16d3f2ccf28fb112b1bcd16a3c7923e), in F16 GGUF format |
 | Audio decoder | [NVIDIA NeMo NanoCodec 22 kHz](https://huggingface.co/nvidia/nemo-nano-codec-22khz-1.89kbps-21.5fps), in decoder F16 GGUF format |
 | Tokenizers | Matching tokenizer and pronunciation assets from the Magpie model archive |
 
 **Custom model files** can override the downloaded paths. They must form a compatible MagpieTTS,
-NanoCodec, and tokenizer set; an arbitrary GGUF or NeMo model cannot be substituted. Clear the override
-fields to return to the managed model folder.
+NanoCodec, and tokenizer set; an arbitrary GGUF or NeMo model cannot be substituted. Automatic discovery
+with empty fields works only when the model folder contains one unambiguous set. If multiple revisions
+are cached, download/verify again or select the three matching paths explicitly.
+
+### Runtime command line
+
+With the selected runtime on your `PATH`, these commands use the same default model set and an explicit
+speech language. Set `NEMO_SPEECH_MODEL_DIR` to Notolog's **Model folder** to reuse its cache:
+
+```sh
+nemo-speech --version
+nemo-speech pull magpie
+nemo-speech synthesize "Olá. Este é um exemplo de leitura." --language pt-BR --voice 0 --output portuguese.wav
+```
+
+For the default v2607 checkpoint, speaker index `0` selects Aria. The last command creates a WAV file;
+Notolog itself streams audio in memory. See the tagged
+[TTS configuration](https://github.com/NVIDIA/NeMo-Speech.cpp/blob/v0.2.0/docs/tts/configuration.md),
+[model guide](https://github.com/NVIDIA/NeMo-Speech.cpp/blob/v0.2.0/docs/tts/models.md), and
+[native C API example](https://github.com/NVIDIA/NeMo-Speech.cpp/blob/v0.2.0/examples/synthesize_text.cpp).
 
 ## Performance and privacy
 
@@ -97,6 +149,19 @@ to PortAudio in memory. The first request includes model loading. Smaller contex
 wait before playback; larger contexts provide more surrounding text but need more time and memory.
 Generation speed depends on the selected runtime and hardware, so uninterrupted real-time playback
 is not guaranteed. Streaming audio does not mean synthesizing each word independently.
+
+Use the default 160-character context for long documents. Large contexts and **Whole document**
+can produce incomplete audio because of runtime limits.
+
+The default download uses F16 weights. The runtime's published fused CUDA path
+instead requires a Q8_0 Magpie GGUF and compatible GPU hardware. A custom converted
+model must retain matching tokenizers and codec files; follow the tagged
+[model conversion guide](https://github.com/NVIDIA/NeMo-Speech.cpp/blob/v0.2.0/docs/tts/models.md).
+
+Notolog expands plain English numbers and dotted versions before synthesis: `Notolog 1.2.4` becomes
+“Notolog one point two point four,” and `v0.2.0` becomes “version zero point two point zero.”
+English decimal numbers are also expanded; other languages do not yet have app-side number normalization.
+Numbers, dates, and punctuation may be pronounced incorrectly, especially in other languages.
 
 After setup, speech generation runs locally without a cloud speech API. Model downloads contact Hugging
 Face. Document text and generated audio pass through local pipes and memory without temporary text or
@@ -111,7 +176,7 @@ outside this protection.
 | Runtime cannot load | Use the compatible release offered in Settings and extract the complete archive, including its companion libraries. Check the operating system and processor architecture. |
 | macOS blocks `nemo-speech` or repeatedly asks to approve its libraries | Follow [macOS runtime approval](#macos-runtime-approval) before retrying the download or voice test. |
 | Models are missing after changing folders | Download into the new folder, or select existing compatible files under **Custom model files**. |
-| Windows downloads models but cannot load them | With runtime 0.1.0, non-ASCII model paths can fail. Choose a writable **Model folder** whose entire path uses ASCII characters, such as `C:\NotologModels`, and download there. Apply the same rule to custom model and tokenizer paths. |
+| Windows downloads models but cannot load them | If the model path contains non-ASCII characters, try a writable ASCII-only **Model folder**, such as `C:\NotologModels`, and download there. |
 | Download or verification fails | Expand **Details**. Check internet access, `curl`, free space, and write permission for the model folder. |
 | Speech starts slowly or has gaps | Try a smaller context and close other heavy workloads. Initial model loading and generation both contribute to latency. |
 | Pronunciation is wrong | Select the document's language explicitly and check whether the runtime supports it. |
@@ -126,7 +191,7 @@ and confirm. Then retry **Download models** or **Test voice**. See
 
 If macOS asks to approve each `libnemo_*` or other bundled library separately, these are runtime components,
 not downloaded models. For a trusted archive whose SHA-256 matches the checksum published on the
-[compatible release page](https://github.com/NVIDIA/NeMo-Speech.cpp/releases/tag/v0.1.0), you can remove
+[compatible release page](https://github.com/NVIDIA/NeMo-Speech.cpp/releases/tag/v0.2.0), you can remove
 quarantine from the complete extracted runtime folder once. Replace the example path below with the folder
 containing `bin` and `lib`, then run in Terminal:
 

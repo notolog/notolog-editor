@@ -25,11 +25,38 @@ class SpeechLanguage(Enum):
     DE = 'German'
     FR = 'French'
     IT = 'Italian'
-    VI = 'Vietnamese'
     HI = 'Hindi'
     ZH = 'Chinese (Mandarin; requires runtime support)'
     JA = 'Japanese (requires runtime support)'
+    KO = '한국어'
+    PT_BR = 'Português (Brasil)'
+
+    @property
+    def code(self):
+        return self.name.lower().replace('_', '-')
+
+    @property
+    def sample(self):
+        """Speech examples follow the document language, independently of the UI."""
+        return {
+            'en': 'Welcome to Notolog. This is a test of your reading voice.',
+            'es': 'Hola. Esta es una prueba de la voz de lectura.',
+            'de': 'Hallo. Dies ist ein Test der Vorlesestimme.',
+            'fr': 'Bonjour. Ceci est un test de la voix de lecture.',
+            'it': 'Ciao. Questa è una prova della voce di lettura.',
+            'hi': 'नमस्ते। यह पढ़ने की आवाज़ का परीक्षण है।',
+            'zh': '你好。这是朗读声音测试。',
+            'ja': 'こんにちは。読み上げ音声のテストです。',
+            'ko': '안녕하세요. 읽기 음성 테스트입니다.',
+            'pt-br': 'Olá. Este é um teste da voz de leitura.',
+        }[self.code]
 
     @classmethod
     def from_code(cls, code):
-        return cls.__members__.get(code.replace('_', '-').split('-')[0].upper(), cls.EN)
+        code = code.strip().replace('-', '_').upper()
+        if code in cls.__members__:
+            return cls[code]
+        # Locale aliases can use an offered base language (e.g. en-US -> en).
+        # Portuguese requires the explicit pt-BR choice; there is no PT member.
+        base = code.split('_')[0]
+        return cls.__members__.get(base)

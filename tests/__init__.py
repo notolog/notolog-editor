@@ -16,15 +16,37 @@ License: MIT License
 For detailed instructions and project information, please see the repository's README.md.
 """
 
-from PySide6.QtCore import QCoreApplication
-
-from notolog.app_config import AppConfig
-
+import atexit
 import os
+from pathlib import Path
+import shutil
+import tempfile
+
 import pytest
 
-# For headless operation
-os.environ["QT_QPA_PLATFORM"] = "offscreen"
+# Configure Qt and all user-scoped storage before importing PySide6. Tests must
+# never read or modify real application data.
+_test_profile = Path(tempfile.mkdtemp(prefix='notolog-tests-'))
+for directory in ('config', 'data', 'appdata', 'localappdata', 'settings'):
+    (_test_profile / directory).mkdir()
+os.environ['HOME'] = str(_test_profile)
+os.environ['XDG_CONFIG_HOME'] = str(_test_profile / 'config')
+os.environ['XDG_DATA_HOME'] = str(_test_profile / 'data')
+os.environ['APPDATA'] = str(_test_profile / 'appdata')
+os.environ['LOCALAPPDATA'] = str(_test_profile / 'localappdata')
+os.environ['QT_QPA_PLATFORM'] = 'offscreen'
+os.environ['ORT_DISABLE_TELEMETRY'] = '1'
+atexit.register(shutil.rmtree, _test_profile, ignore_errors=True)
+
+from PySide6.QtCore import QCoreApplication, QSettings  # noqa: E402
+
+from notolog.app_config import AppConfig  # noqa: E402
+
+QSettings.setPath(
+    QSettings.Format.IniFormat,
+    QSettings.Scope.UserScope,
+    str(_test_profile / 'settings'),
+)
 
 
 @pytest.fixture(autouse=True)

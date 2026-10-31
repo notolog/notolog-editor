@@ -1824,7 +1824,7 @@ license above.
 - **Description**: Local speech synthesis runtime used by Notolog's Text-to-Speech module.
 - **License**: Apache License 2.0.
 - **Repository**: [NVIDIA NeMo-Speech.cpp](https://github.com/NVIDIA/NeMo-Speech.cpp).
-- **License Text**: [Apache License 2.0](https://github.com/NVIDIA/NeMo-Speech.cpp/blob/v0.1.0/LICENSE).
+- **License Text**: [Apache License 2.0](https://github.com/NVIDIA/NeMo-Speech.cpp/blob/v0.2.0/LICENSE).
 - **Copyright**: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
 
 Notolog is independent and is not affiliated with or endorsed by NVIDIA. NVIDIA names identify the upstream

@@ -1,4 +1,3 @@
-<!-- {"notolog.app": {"created": "2023-12-25 18:59:43.806614", "updated": "2026-08-30 00:00:00.000000"}} -->
 # Notolog Editor
 
 <p align="center">
@@ -69,8 +68,8 @@ See the [User Guide](https://notolog.app/user-guide/) for complete feature docum
 
 ## Requirements
 
-- **Python 3.10–3.14** ([python.org](https://python.org))
-- 4 GB RAM minimum (8+ GB for local AI models)
+- **Python 3.11–3.14** ([python.org](https://python.org))
+- 4 GB RAM minimum for the editor; local AI models need additional memory according to their requirements
 
 
 ## Installation
@@ -141,7 +140,7 @@ Notolog prioritizes data protection and user privacy:
 
 - **Encryption**: File encryption (optional) uses PBKDF2HMAC key derivation with Fernet (AES-128 CBC mode).
 - **Auto-Save**: Changes are saved automatically to prevent data loss.
-- **Privacy**: No telemetry or tracking. Local-only AI inference options available.
+- **Privacy**: Notolog's own code has no telemetry or tracking. Local inference options are available.
 
 For vulnerability reporting, see [SECURITY.md](https://github.com/notolog/notolog-editor/blob/main/SECURITY.md).
 

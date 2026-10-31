@@ -60,12 +60,12 @@ lexemes = {
         " licenza separata."
     ),
     "module_text_to_speech_config_runtime_input_accessible_description": (
-        "Richiede NeMo-Speech.cpp 0.1.0. Estrai l’archivio e seleziona bin/nemo-speech "
+        "Richiede NeMo-Speech.cpp 0.2.0. Estrai l’archivio e seleziona bin/nemo-speech "
         "(bin/nemo-speech.exe su Windows)."
     ),
     "module_text_to_speech_config_model_directory_input_accessible_description": (
         "I modelli vengono scaricati qui. I file esistenti sono verificati e riutilizzati. Richiede curl"
-        " e circa 550 MB."
+        " e circa 700 MB."
     ),
     "module_text_to_speech_config_custom_models_accessible_description": (
         "Sostituisci i percorsi dei modelli o svuota i campi per usare la cartella modelli."

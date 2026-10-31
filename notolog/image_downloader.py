@@ -18,8 +18,8 @@ License: MIT License
 For detailed instructions and project information, please see the repository's README.md.
 """
 
-from PySide6.QtCore import Signal, QObject, QUrl, QDir, QByteArray
-from PySide6.QtGui import QPixmap, QPixmapCache
+from PySide6.QtCore import Signal, QObject, QUrl, QDir, QByteArray, QTimer, QBuffer, QIODevice
+from PySide6.QtGui import QPixmap, QPixmapCache, QImageReader
 from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
 
 from .settings import Settings
@@ -27,7 +27,7 @@ from .app_config import AppConfig
 from .lexemes.lexemes import Lexemes
 from .helpers import file_helper
 
-from urllib.parse import urlparse
+from urllib.parse import urlparse, unquote
 from typing import Union
 
 from qasync import asyncSlot
@@ -48,6 +48,17 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
     finished = Signal(int)
 
     RESOURCE_DIR = AppConfig().get_editor_media_dir()
+    MAX_IMAGE_BYTES = 16 * 1024 * 1024
+    MAX_IMAGE_PIXELS = 16 * 1024 * 1024
+    IMAGE_EXTENSIONS = {
+        'bmp': '.bmp', 'cur': '.cur', 'gif': '.gif', 'icns': '.icns', 'ico': '.ico',
+        'jfif': '.jpg', 'jpeg': '.jpg', 'jpg': '.jpg', 'pbm': '.pbm', 'pgm': '.pgm', 'png': '.png',
+        'ppm': '.ppm', 'svg': '.svg', 'svgz': '.svgz', 'tga': '.tga', 'tif': '.tiff', 'tiff': '.tiff',
+        'wbmp': '.wbmp', 'webp': '.webp', 'xbm': '.xbm', 'xpm': '.xpm',
+    }
+    READ_BUFFER_BYTES = 64 * 1024
+    TRANSFER_TIMEOUT_MS = 30_000
+    DOWNLOAD_TIMEOUT_MS = 60_000
 
     event_loop = None  # async event loop
     resource_tasks: list = []  # async downloads task queue
@@ -66,6 +77,7 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
         self.lexemes = Lexemes()
 
         self.base_folder = base_folder
+        self._downloads = {}
 
         # Setup start up params
         self.initialize()
@@ -98,19 +110,67 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
         self.logger.debug(f'Downloading resource from "{url}"')
 
         request = QNetworkRequest(QUrl(url))
+        request.setTransferTimeout(self.TRANSFER_TIMEOUT_MS)
         reply = self.network_manager.get(request)
+        reply.setReadBufferSize(self.READ_BUFFER_BYTES)
+
+        deadline = QTimer(self)
+        deadline.setSingleShot(True)
+        timeout_connection = deadline.timeout.connect(
+            lambda: self._reject_download(reply, 'Image download deadline exceeded'))
+        self._downloads[reply] = (QByteArray(), deadline, timeout_connection, url)
+        deadline.start(self.DOWNLOAD_TIMEOUT_MS)
 
         # Connecting finished signal
         reply.finished.connect(lambda _reply=reply: self.handle_network_reply(_reply))
         # Connecting error signal
         reply.errorOccurred.connect(lambda error, _reply=reply: self.handle_network_reply_error(_reply, error))
+        reply.metaDataChanged.connect(lambda: self._check_reply_size(reply))
+        reply.readyRead.connect(lambda: self._read_reply(reply))
 
-    def save_image(self, url: str, data: QByteArray) -> None:
-        # file_name = os.path.basename(url)
-        file_name = self.url_to_filename(url)
-        # Alternative approach:
-        # file_extension = self.mime_to_extension(mime_type)
-        # file_name = f"{file_name}{file_extension}"
+    def _check_reply_size(self, reply) -> bool:
+        if reply not in self._downloads:
+            return False
+        length = reply.header(QNetworkRequest.KnownHeaders.ContentLengthHeader)
+        if isinstance(length, int) and length > self.MAX_IMAGE_BYTES:
+            self._reject_download(reply, 'Image response exceeds the download size limit')
+            return False
+        return True
+
+    def _read_reply(self, reply) -> bool:
+        if not self._check_reply_size(reply):
+            return False
+        data = self._downloads[reply][0]
+        # Count decoded response bytes too: Content-Length can be missing or misleading.
+        data.append(reply.read(self.MAX_IMAGE_BYTES - len(data) + 1))
+        if len(data) > self.MAX_IMAGE_BYTES:
+            self._reject_download(reply, 'Image response exceeds the download size limit')
+            return False
+        return True
+
+    def _reject_download(self, reply, message):
+        if reply in self._downloads:
+            self.logger.warning(message)
+            self._dispose_reply(reply, abort=True)
+
+    def _dispose_reply(self, reply, abort=False):
+        state = self._downloads.pop(reply, None)
+        if state is None:
+            return
+        _, deadline, timeout_connection, _ = state
+        deadline.stop()
+        QObject.disconnect(timeout_connection)
+        deadline.deleteLater()
+        reply.finished.disconnect()
+        reply.errorOccurred.disconnect()
+        reply.metaDataChanged.disconnect()
+        reply.readyRead.disconnect()
+        if abort:
+            reply.abort()
+        reply.deleteLater()
+
+    def save_image(self, url: str, data: QByteArray, image_format: str) -> None:
+        file_name = self.url_to_filename(url, image_format)
         # Create resource folder if not yet created
         if os.access(os.path.dirname(self.folder.path()), os.W_OK):
             os.makedirs(self.folder.path(), exist_ok=True)
@@ -126,48 +186,78 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
             self.logger.debug(f"Resource not saved {url} to {file_path} [{file_helper.size_f(len(data))}]")
 
     def handle_network_reply(self, reply):
+        if reply not in self._downloads:
+            return
         # Get received status code, say 200
         status_code = reply.attribute(QNetworkRequest.Attribute.HttpStatusCodeAttribute)
 
         self.logger.debug(f'Network reply, reply: {reply}, status_code: {status_code}')
 
-        # Make sure there is no error
-        if reply.error() == QNetworkReply.NetworkError.NoError:
-            # No error, processing the image
-            result_message = self.lexemes.get('network_connection_error_empty')
-            self.logger.debug(result_message)
-
-            # Check if the resource is an image
-            mime_type = reply.header(QNetworkRequest.KnownHeaders.ContentTypeHeader)
-            if 'image' in mime_type:
-                url = reply.url().toString()
-                data = reply.readAll()  # type: QByteArray
+        try:
+            if reply.error() == QNetworkReply.NetworkError.NoError and self._read_reply(reply):
+                mime_type = reply.header(QNetworkRequest.KnownHeaders.ContentTypeHeader)
+                if not isinstance(mime_type, str) or not mime_type.lower().startswith('image/'):
+                    return
+                url = self._downloads[reply][3]
+                data = self._downloads[reply][0]
 
                 self.logger.debug(f"Resource data downloaded {url} [{file_helper.size_f(len(data))}]")
 
                 # Store the image within the app's cache first
-                self.cache_pixmap(url, data)
+                decoded = self.cache_pixmap(url, data)
+                if decoded is None:
+                    return
+                image_format, pixmap = decoded
 
                 # Save file if settings allow
                 if self.settings.viewer_save_resources:
                     # Saving downloaded files
-                    self.save_image(url, data)
+                    self.save_image(url, data, image_format)
 
-                # Emit the file downloaded signal
-                self.downloaded.emit({'resource_name': url})
+                # The document must receive the image even if the optional cache rejects or evicts it.
+                self.downloaded.emit({'resource_name': url, 'pixmap': pixmap})
                 self.downloaded_cnt += 1
+        finally:
+            self._dispose_reply(reply)
 
-        reply.finished.disconnect()
-        reply.errorOccurred.disconnect()
-        reply.deleteLater()  # Clean up the QNetworkReply object
+    def cache_pixmap(self, url: str, data: QByteArray) -> tuple[str, QPixmap] | None:
+        if len(data) > self.MAX_IMAGE_BYTES:
+            return None
+        buffer = QBuffer()
+        buffer.setData(data)
+        buffer.open(QIODevice.OpenModeFlag.ReadOnly)
+        reader = QImageReader(buffer)
+        reader.setDecideFormatFromContent(True)
+        image_format = bytes(reader.format()).decode('ascii').lower()
+        size = reader.size()
+        if (image_format not in self.IMAGE_EXTENSIONS or not size.isValid()
+                or size.width() * size.height() > self.MAX_IMAGE_PIXELS):
+            return None
+        image = reader.read()
+        if image.isNull() or image.width() * image.height() > self.MAX_IMAGE_PIXELS:
+            return None
+        pixmap = QPixmap.fromImage(image)
+        if not QPixmapCache.insert(url, pixmap):
+            self.logger.debug('Decoded image was not retained in the pixmap cache')
+        return image_format, pixmap
 
-    def cache_pixmap(self, url: str, data: QByteArray):
-        # Store the image within the app's cache first
-        pixmap = QPixmap()
-        pixmap.loadFromData(data)
-        QPixmapCache.insert(url, pixmap)
+    def get_cached_image_path(self, url: str, base_folder: str = None) -> str | None:
+        folder = self.get_resource_folder(base_folder)
+        for image_format in self.IMAGE_EXTENSIONS:
+            path = folder.filePath(self.url_to_filename(url, image_format))
+            if os.path.isfile(path):
+                return path
+        legacy = self._legacy_filename(url)
+        # Older cache names included unparsed query strings; keep lookup within this folder.
+        if not any(character in legacy for character in ('/', '\\', '\x00')):
+            path = folder.filePath(legacy)
+            if os.path.isfile(path):
+                return path
+        return None
 
     def handle_network_reply_error(self, reply, error_code=None):
+        if reply not in self._downloads:
+            return
         # Get received status code, say 404
         status_code = reply.attribute(QNetworkRequest.Attribute.HttpStatusCodeAttribute)
 
@@ -193,9 +283,7 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
         self.logger.warning(result_message)
         self.logger.warning(f'Failed to download resource "{reply.errorString()}" with error code [{error_code}]')
 
-        reply.finished.disconnect()
-        reply.errorOccurred.disconnect()
-        reply.deleteLater()  # Clean up the QNetworkReply object
+        self._dispose_reply(reply)
 
     @asyncSlot()
     async def download_resource_in_queue(self, resource_url) -> None:
@@ -261,8 +349,18 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
             return False
         return not (parsed_url.netloc == '' or parsed_url.netloc.endswith(base_domain))
 
+    @classmethod
+    def url_to_filename(cls, url, image_format=None):
+        """Name an image using its URL identity and a supported image extension."""
+        basename = unquote(os.path.basename(urlparse(url).path))
+        stem, suffix = os.path.splitext(basename)
+        safe_stem = re.sub(r'[^a-zA-Z0-9_-]+', '_', stem)[:80] or 'image'
+        extension = cls.IMAGE_EXTENSIONS.get(image_format or suffix[1:].lower(), '')
+        url_hash = hashlib.sha256(url.encode('utf-8')).hexdigest()[:16]
+        return f'{url_hash}_{safe_stem}{extension}'
+
     @staticmethod
-    def url_to_filename(url):
+    def _legacy_filename(url):
         """
         Generate a filename from a URL by hashing the URL except its basename and combining it with the basename.
         Convert a URL into a safe filename by replacing non-alphanumeric characters with underscores.

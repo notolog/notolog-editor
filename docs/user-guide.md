@@ -1,4 +1,3 @@
-<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-09-06 00:00:00.000000"}} -->
 # User Guide
 
 Complete guide to all Notolog features and functionality.
@@ -14,6 +13,7 @@ Complete guide to all Notolog features and functionality.
 - [Themes](#themes)
 - [Multi-Language Support](#multi-language-support)
 - [Settings Overview](#settings-overview)
+- [Privacy and Network Activity](#privacy-and-network-activity)
 
 ---
 
@@ -83,12 +83,16 @@ Toggle between Edit and View modes:
 
 ### Image Handling
 
-Images are automatically:
-1. Cached in memory for fast display
-2. Optionally saved to a local `images` directory
-3. Displayed with proper scaling
+Notolog displays local and remote images. Remote images are cached in memory when space is
+available and can optionally be saved to a local `images` directory.
 
-Configure in `Settings` → `Viewer` tab → `Auto-save external images to disk`.
+Configure in `Settings` → `Workspace` → `View mode` → `Auto-save external images to disk`.
+
+Remote image downloads are limited to 16 MiB per image and 60 seconds overall,
+with a 30-second inactivity timeout. Images must decode successfully and contain no more than
+16,777,216 pixels. Saved copies use an extension matching the detected image format;
+URL query strings are excluded from the filename. Valid older cached images remain available.
+Larger images can be saved separately and linked locally.
 
 ---
 
@@ -139,7 +143,6 @@ Notolog stores metadata in HTML comment headers:
 This preserves:
 - Creation timestamp
 - Last modification time
-- Future: Custom metadata
 
 ---
 
@@ -251,7 +254,8 @@ Notolog supports 19 languages:
 
 `Settings` → `General` → `Language`
 
-Instant, but in some cases restart may be required for full effect.
+Interface labels update immediately, including settings and TTS controls.
+The selected speech language is independent of the interface language.
 
 ---
 
@@ -295,6 +299,23 @@ Access via `Settings` menu or toolbar.
 - **Convert the result to Markdown**: Convert AI output to Markdown format
 
 See [AI Assistant Guide](ai-assistant.md) for AI module-specific settings.
+
+---
+
+## Privacy and Network Activity
+
+Notes and settings are stored on your device; file encryption is optional. Third-party libraries,
+runtimes, and services have their own diagnostic behavior and privacy policies.
+
+- **Local AI and speech**: Inference runs locally after the required models and runtimes are installed.
+- **API backend**: Prompts, included conversation history, and credentials go to the configured endpoint,
+  which may be OpenAI or another compatible service. That service's privacy terms apply.
+- **Downloads and web resources**: Model downloads, remote document images, links opened in a browser,
+  and update checks can contact external services. Update checks query the latest published release
+  in Notolog's GitHub repository.
+- **Local diagnostics**: Debug logging can include document or conversation content. Review logs before sharing them.
+
+For speech-specific storage and privacy details, see the [Text-to-Speech Guide](text-to-speech.md#performance-and-privacy).
 
 ---
 

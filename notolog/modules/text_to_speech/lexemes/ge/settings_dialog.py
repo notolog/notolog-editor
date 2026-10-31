@@ -60,12 +60,12 @@ lexemes = {
         "ლიცენზია აქვთ."
     ),
     "module_text_to_speech_config_runtime_input_accessible_description": (
-        "საჭიროა NeMo-Speech.cpp 0.1.0. გაშალეთ არქივი და აირჩიეთ bin/nemo-speech (Windows-ზე "
+        "საჭიროა NeMo-Speech.cpp 0.2.0. გაშალეთ არქივი და აირჩიეთ bin/nemo-speech (Windows-ზე "
         "bin/nemo-speech.exe)."
     ),
     "module_text_to_speech_config_model_directory_input_accessible_description": (
         "მოდელები აქ იტვირთება. არსებული ფაილები მოწმდება და ხელახლა გამოიყენება. საჭიროა curl და "
-        "დაახლოებით 550 მბ."
+        "დაახლოებით 700 მბ."
     ),
     "module_text_to_speech_config_custom_models_accessible_description": (
         "შეცვალეთ მოდელების გზები ან გაასუფთავეთ ველები მოდელების საქაღალდის გამოსაყენებლად."

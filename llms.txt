@@ -1,237 +1,75 @@
-# Notolog Editor - LLM Context File
+# Notolog Editor — Source Guide
 
-> An open-source Markdown editor built with Python and PySide6, featuring AI-powered assistance with multiple LLM backends.
+> Open-source desktop Markdown editor built with Python and PySide6, with optional AI assistance, local Text-to-Speech, and file encryption.
 
-## Project Overview
+[Source repository](https://github.com/notolog/notolog-editor).
+Use this guide with a checkout or unpacked source distribution. Resolve relative links
+from the directory containing this file; they describe that source revision, including
+local changes. If reading a detached copy without its files, open the public repository
+and select the tag matching the installed release before following the same paths.
 
-**Name:** Notolog
-**Version:** 1.2.2
-**License:** MIT
-**Language:** Python 3.10+
-**Author:** Vadim Bakhrenkov
-**Repository:** https://github.com/notolog/notolog-editor
-**Website:** https://notolog.app
-**PyPI:** https://pypi.org/project/notolog
+If you find Notolog useful, consider starring the [public repository](https://github.com/notolog/notolog-editor).
 
-## Key Features
+## Release and dependencies
 
-- **Markdown Editor** with syntax highlighting and real-time preview
-- **AI Assistant** with multiple backends:
-  - OpenAI API (cloud-based)
-  - On-Device LLM (ONNX format)
-  - Module llama.cpp (GGUF format)
-- **File Encryption** using AES-128 with PBKDF2 (768,000 iterations)
-- **Multi-language Support** (19 languages)
-- **Customizable Themes** (6 built-in themes)
-- **Cross-platform** (Linux, macOS, Windows)
+Read [pyproject.toml](./pyproject.toml) and [CHANGELOG.md](./CHANGELOG.md)
+from the source being reviewed.
+This source supports Python 3.11–3.14. Native dependencies determine OS and architecture compatibility.
 
-## Architecture
+Base pip installations include ONNX Runtime GenAI. Optional extras are `notolog[llama]`
+for llama-cpp-python and `notolog[tts]` for sounddevice/PortAudio playback.
+TTS additionally needs the compatible NeMo-Speech.cpp runtime and MagpieTTS/NanoCodec models.
+Conda and Debian recipes manage their own dependency differences.
 
-### Core Components
+## Source map
 
-- `notolog/app.py` - Main application entry point
-- `notolog/notolog_editor.py` - Main editor window (QMainWindow)
-- `notolog/edit_widget.py` - Markdown editing widget
-- `notolog/view_widget.py` - HTML preview widget
-- `notolog/settings.py` - Application settings management
+- [notolog/app.py](./notolog/app.py): application entry point.
+- [notolog/notolog_editor.py](./notolog/notolog_editor.py): main editor window.
+- [notolog/edit_widget.py](./notolog/edit_widget.py) and [notolog/view_widget.py](./notolog/view_widget.py): editing and preview.
+- [notolog/app_config.py](./notolog/app_config.py) and [notolog/settings.py](./notolog/settings.py): application metadata, QSettings properties, and change notifications.
+- [notolog/ui/toolbar.py](./notolog/ui/toolbar.py) and [notolog/ui/search_form.py](./notolog/ui/search_form.py): toolbar actions and document search.
+- [AI Assistant dialog](./notolog/ui/ai_assistant/) and [Settings dialog](./notolog/ui/settings_dialog.py): user-interface integration.
+- [notolog/modules/modules.py](./notolog/modules/modules.py): module discovery and loading.
+- [BaseCore](./notolog/modules/base_core.py) and [BaseAiCore](./notolog/modules/base_ai_core.py): module base interfaces.
+- [notolog/modules/openai_api/](./notolog/modules/openai_api/): requests to the configured OpenAI-compatible endpoint.
+- [notolog/modules/ondevice_llm/](./notolog/modules/ondevice_llm/): local ONNX Runtime GenAI inference.
+- [notolog/modules/llama_cpp/](./notolog/modules/llama_cpp/): local GGUF inference.
+- [notolog/modules/text_to_speech/](./notolog/modules/text_to_speech/): speech setup, synthesis worker, and playback.
+- [notolog/encrypt/](./notolog/encrypt/): password-based file encryption.
+- [notolog/highlight/](./notolog/highlight/): syntax highlighting.
+- [notolog/assets/themes/](./notolog/assets/themes/): INI theme definitions.
+- [notolog/lexemes/](./notolog/lexemes/) and each module's catalogs: Python translations.
+- [tests/](./tests/): regression tests, including optional native TTS integration.
 
-### AI Modules (modular architecture)
+## Working with the code
 
-- `notolog/modules/base_ai_core.py` - Base class for AI modules
-- `notolog/modules/openai_api/` - OpenAI API integration
-- `notolog/modules/ondevice_llm/` - ONNX Runtime GenAI integration
-- `notolog/modules/llama_cpp/` - llama.cpp Python bindings integration
+Follow [CONTRIBUTING.md](./CONTRIBUTING.md)
+for environment setup and checks. Run the application with `python -m notolog.app`.
 
-### UI Components
+Use existing modules as integration examples. A listed execution provider requires a compatible
+runtime build and model. Apple Silicon's Auto setting requests Metal offloading; the llama.cpp
+build must support it.
 
-- `notolog/ui/toolbar.py` - Main toolbar
-- `notolog/ui/search_form.py` - In-document search
-- `notolog/ui/ai_assistant/` - AI Assistant dialog
-- `notolog/ui/settings_dialog.py` - Settings configuration
+File encryption defaults to Fernet with PBKDF2-HMAC-SHA256, 768,000 iterations, and a 32-byte salt.
+Settings encryption uses a local application key and is not an operating-system credential vault.
+Keep credentials, document content, and private filesystem paths out of shared logs and examples.
 
 ## Documentation
 
-- [Getting Started](docs/getting-started.md) - Installation and first steps
-- [User Guide](docs/user-guide.md) - Complete feature overview
-- [AI Assistant Guide](docs/ai-assistant.md) - AI features setup
-- [AI Modules](docs/ai-modules.md) - AI modules documentation
-- [Configuration](docs/configuration.md) - Settings reference
-- [API Reference](docs/api-reference.md) - Developer documentation
-- [FAQ & Troubleshooting](docs/faq.md) - Common issues
-- [Markdown Syntax Examples](docs/markdown-syntax.md) - Markdown syntax examples
+- [Documentation source index](./docs/index.md)
+- [User guide](./docs/user-guide.md)
+- [AI Assistant](./docs/ai-assistant.md)
+- [AI module compatibility](./docs/ai-modules.md)
+- [Text-to-Speech](./docs/text-to-speech.md)
+- [Configuration](./docs/configuration.md)
+- [Module API reference](./docs/api-reference.md)
+- [Changelog](./CHANGELOG.md)
+- [Security policy](./SECURITY.md)
+- [Third-party notices](./ThirdPartyNotices.md)
 
-## Installation
+## Online resources
 
-```bash
-# Using pip (recommended)
-pip install notolog
+- [Published documentation](https://notolog.app/)
+- [Website documentation index for AI readers](https://notolog.app/llms.txt)
 
-# With llama.cpp support
-pip install "notolog[llama]"
-
-# Using conda
-conda install notolog -c conda-forge
-
-# From source
-git clone https://github.com/notolog/notolog-editor.git
-cd notolog-editor
-pip install .
-```
-
-## Development Setup
-
-```bash
-# Clone repository
-git clone https://github.com/notolog/notolog-editor.git
-cd notolog-editor
-
-# Create virtual environment
-python3 -m venv venv
-source venv/bin/activate  # Linux/macOS
-# venv\Scripts\activate  # Windows
-
-# Install in development mode
-pip install -e .
-
-# Install development dependencies
-python dev_install.py dev
-
-# Install test dependencies
-python dev_install.py test
-
-# Run tests
-pytest tests/ --cov=notolog --cov-report=term
-```
-
-## AI Modules
-
-### On Device LLM (ONNX Runtime GenAI)
-- Supports hardware acceleration via ExecutionProvider enum
-- Providers: CPU (default), CUDA, DirectML, OpenVINO, CoreML, TensorRT RTX, QNN, MIGraphX
-- CUDA/DirectML packages replace base package (cannot coexist)
-- Model helper with automatic fallback to CPU on provider errors
-- Auto-reduces max_length on memory allocation failures
-
-### Module llama.cpp
-- Uses llama-cpp-python for GGUF model inference
-- Automatic optimal thread count detection
-- Batch processing: n_batch=512, n_ubatch=512
-- **macOS**: Apple Silicon (M1-M4) uses Metal GPU acceleration automatically
-
-### OpenAI API
-- Cloud-based inference via OpenAI-compatible endpoints
-- Supports custom API URLs for compatible services
-
-## Quick Configs (Copy-Paste Ready)
-
-### GPU Setup (NVIDIA CUDA)
-```bash
-pip uninstall onnxruntime-genai -y
-pip install onnxruntime-genai-cuda
-```
-
-### GPU Setup (Windows DirectML)
-```bash
-pip uninstall onnxruntime-genai -y
-pip install onnxruntime-genai-directml
-```
-
-### Revert to CPU
-```bash
-pip uninstall onnxruntime-genai-cuda onnxruntime-genai-directml -y
-pip install --force-reinstall onnxruntime-genai
-```
-
-### Recommended ONNX Model
-```
-Model: microsoft/Phi-3-mini-4k-instruct-onnx
-Path: cpu_and_mobile/cpu-int4-rtn-block-32/
-```
-
-### Recommended GGUF Model
-```
-Model: Qwen/Qwen2-7B-Instruct-GGUF
-File: qwen2-7b-instruct-q5_k_m.gguf
-Size: ~6GB RAM required
-```
-
-## AI Module Development
-
-To create a custom AI module:
-
-```python
-from notolog.modules.base_ai_core import BaseAiCore
-
-class ModuleCore(BaseAiCore):
-    module_name = 'My AI Module'
-    extensions = ['ai_assistant', 'settings_dialog']
-
-    def get_prompt_manager(self):
-        return self.prompt_manager
-
-    async def request(self, user_prompt, request_msg_id, response_msg_id,
-                      init_callback=None, finished_callback=None):
-        # Implement inference logic
-        pass
-```
-
-## Dependencies
-
-### Core
-- PySide6 Essentials (>=6.11.2,<6.12.0) - Qt6 bindings
-- cryptography (>=50.0.0,<51.0.0) - File encryption
-- Markdown (>=3.10.3,<4.0.0) - Markdown processing
-- qasync (>=0.28.0,<0.29.0) - Async Qt integration
-- Pygments (>=2.21.0,<3.0.0) - Code syntax highlighting
-
-### Optional
-- llama-cpp-python (>=0.3.35,<0.4.0) - GGUF model support
-- onnxruntime-genai (>=0.11.2,<0.12.0 on Python 3.10; >=0.15.2,<1.0.0 on Python 3.11-3.14) - ONNX model support (CPU)
-- onnxruntime-genai-cuda - ONNX with CUDA support (replaces base package)
-- onnxruntime-genai-directml - ONNX with DirectML support (replaces base package)
-
-OpenAI-compatible API support is built in and does not require the OpenAI Python SDK.
-
-## Testing
-
-```bash
-# Run all tests
-pytest tests/
-
-# Run with coverage
-pytest tests/ --cov=notolog --cov-report=html
-
-# Run specific module tests
-pytest tests/modules_tests/
-
-# Skip UI tests (for headless environments)
-pytest tests/ --ignore=tests/ui_tests/
-```
-
-## Code Style
-
-- **Style Guide:** PEP 8
-- **Max Line Length:** 127 characters
-- **Max Complexity:** 15
-- **Linting:** flake8
-
-```bash
-# Run linting
-flake8 . --count --exit-zero --max-complexity=15 --max-line-length=127 --per-file-ignores="__init__.py:F401" --statistics
-```
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-## Security
-
-See [SECURITY.md](SECURITY.md) for vulnerability reporting.
-
-## License
-
-MIT License - Copyright (c) 2024-2026 Vadim Bakhrenkov
-
----
-
-*This file provides context for Large Language Models working with the Notolog codebase.*
+Notolog is MIT-licensed. Third-party libraries, runtimes, and models retain their own terms.

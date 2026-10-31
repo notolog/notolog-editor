@@ -17,7 +17,7 @@ License: MIT License
 For detailed instructions and project information, please see the repository's README.md.
 """
 
-from functools import lru_cache
+from functools import lru_cache, partial
 from pathlib import Path
 
 from ...lexemes.lexemes import Lexemes
@@ -42,7 +42,25 @@ def tr(key, *, scope='common', **values):
     return text.format(**values) if values else text
 
 
+class SpeechSetupError(ValueError):
+    """Keep setup errors translatable after an interface language change."""
+
+    def __init__(self, key, *, scope='common', **values):
+        self.key = key
+        self.scope = scope
+        self.values = values
+        # Widgets can retain this callable without retaining an exception traceback.
+        self.message = partial(tr, key, scope=scope, **values)
+        super().__init__(key)
+
+    def __str__(self):
+        return self.message()
+
+
 def language_label(language, *, include_requirement=True):
+    if language.name in ('KO', 'PT_BR'):
+        # Autonyms keep the new model languages identifiable in every UI locale.
+        return language.value
     label = tr(f'module_text_to_speech_language_{language.name.lower()}')
     if include_requirement and language.name in ('ZH', 'JA'):
         label += ' (' + tr('module_text_to_speech_language_runtime_required') + ')'

@@ -60,12 +60,12 @@ lexemes = {
         "licentiam separatam habent."
     ),
     "module_text_to_speech_config_runtime_input_accessible_description": (
-        "NeMo-Speech.cpp 0.1.0 requiritur. Archivum expande et bin/nemo-speech elige (in Windows: "
+        "NeMo-Speech.cpp 0.2.0 requiritur. Archivum expande et bin/nemo-speech elige (in Windows: "
         "bin/nemo-speech.exe)."
     ),
     "module_text_to_speech_config_model_directory_input_accessible_description": (
         "Exemplaria hic extrahuntur. Documenta praesentia verificantur et iterum adhibentur. curl et "
-        "circa 550 MB requiruntur."
+        "circa 700 MB requiruntur."
     ),
     "module_text_to_speech_config_custom_models_accessible_description": (
         "Vias exemplarium muta vel campos vacua ut directorio exemplarium utaris."

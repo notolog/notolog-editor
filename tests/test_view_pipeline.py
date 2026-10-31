@@ -29,6 +29,26 @@ from notolog.highlight.view_highlighter import ViewHighlighter
 from notolog.notolog_editor import NotologEditor
 from notolog.file_header import FileHeader
 from notolog.fenced_code_extension import NestedFencesExtension
+from notolog.ui.ai_assistant.ai_assistant import AIAssistant
+
+
+@pytest.mark.parametrize('prefix', ['', '    ', '> ', '>     '])
+@pytest.mark.parametrize('renderer', [NotologEditor, AIAssistant])
+def test_fenced_attributes_cannot_inject_markup(prefix, renderer):
+    host = SimpleNamespace(md_extensions=NotologEditor.md_extensions)
+    renderer.init_md(host)
+    source = '\n'.join(prefix + line for line in [
+        '``` { .text #sample use_pygments=false data-label=fixture x><span/data-name=fixture }',
+        '<literal>',
+        '```',
+    ])
+    html = host.md.convert(source)
+    assert '<span' not in html
+    assert 'x_span_data-name="fixture"' in html
+    assert 'data-label="fixture"' in html
+    assert 'id="sample"' in html
+    assert 'class="language-text"' in html
+    assert '&lt;literal&gt;' in html
 
 
 @pytest.mark.parametrize('prefix', ['    ', '> ', '>     '])

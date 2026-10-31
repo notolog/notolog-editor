@@ -1,5 +1,25 @@
 # French lexemes common.py
 lexemes = {
+    "module_text_to_speech_error_runtime_version": (
+        "Cette intégration nécessite NeMo-Speech.cpp {version}. Version détectée : {detected}"
+    ),
+    "module_text_to_speech_error_runtime_missing": (
+        "Sélectionnez un exécutable nemo-speech installé dans les paramètres de synthèse vocale."
+    ),
+    "module_text_to_speech_error_models_missing": (
+        "Téléchargez les modèles ou sélectionnez Magpie, NanoCodec et le dossier des tokenizers dans les "
+        "paramètres de synthèse vocale."
+    ),
+    "module_text_to_speech_error_runtime_archive": (
+        "La diffusion audio native nécessite l’archive complète du moteur, y compris son dossier lib."
+    ),
+    "module_text_to_speech_error_language_selection": (
+        "Sélectionnez une langue vocale prise en charge dans les paramètres de synthèse vocale."
+    ),
+    "module_text_to_speech_error_download_incomplete": (
+        "Le téléchargement n’a pas fourni tous les modèles. Vérifiez la sortie du moteur ou sélectionnez "
+        "manuellement les chemins des modèles."
+    ),
     "module_text_to_speech_name": "Synthèse vocale",
     "module_text_to_speech_action_read_selection": "Lire la sélection à voix haute",
     "module_text_to_speech_action_read_file": "Lire le fichier à voix haute",

@@ -93,6 +93,31 @@ class TestExecutionProvider:
 class TestModelHelperCore:
     """Core functionality tests for ONNX model helper."""
 
+    @pytest.mark.parametrize('append_fails', [False, True])
+    def test_generator_uses_supported_token_api(self, mocker, append_fails):
+        from notolog.modules.ondevice_llm import model_helper
+
+        helper = object.__new__(model_helper.ModelHelper)
+        helper.model = object()
+        helper.generator = None
+        helper.logger = MagicMock()
+        params = MagicMock(spec_set=onnxruntime_genai.GeneratorParams)
+        generator = MagicMock(spec_set=onnxruntime_genai.Generator)
+        make_params = mocker.patch.object(model_helper, 'GeneratorParams', return_value=params)
+        make_generator = mocker.patch.object(model_helper, 'Generator', return_value=generator)
+        if append_fails:
+            generator.append_tokens.side_effect = RuntimeError('invalid token input')
+            with pytest.raises(RuntimeError, match='invalid token input'):
+                helper._create_generator([1, 2], {'max_length': 128})
+            assert helper.generator is None
+        else:
+            assert helper._create_generator([1, 2], {'max_length': 128}) is generator
+            assert helper.generator is generator
+        make_params.assert_called_once_with(helper.model)
+        params.set_search_options.assert_called_once_with(max_length=128)
+        make_generator.assert_called_once_with(helper.model, params)
+        generator.append_tokens.assert_called_once_with([1, 2])
+
     def test_convert_temperature(self):
         """Test temperature conversion from int to float."""
         from notolog.modules.ondevice_llm.model_helper import ModelHelper

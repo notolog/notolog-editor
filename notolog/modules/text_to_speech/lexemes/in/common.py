@@ -1,5 +1,24 @@
 # Hindi lexemes common.py
 lexemes = {
+    "module_text_to_speech_error_runtime_version": (
+        "इस एकीकरण के लिए NeMo-Speech.cpp {version} आवश्यक है। मिला: {detected}"
+    ),
+    "module_text_to_speech_error_runtime_missing": (
+        "टेक्स्ट-टू-स्पीच सेटिंग्स में स्थापित nemo-speech निष्पादन योग्य फ़ाइल चुनें।"
+    ),
+    "module_text_to_speech_error_models_missing": (
+        "मॉडल डाउनलोड करें या टेक्स्ट-टू-स्पीच सेटिंग्स में Magpie, NanoCodec और टोकनाइज़र फ़ोल्डर चुनें।"
+    ),
+    "module_text_to_speech_error_runtime_archive": (
+        "नेटिव ऑडियो स्ट्रीमिंग के लिए lib निर्देशिका सहित पूरा रनटाइम आर्काइव आवश्यक है।"
+    ),
+    "module_text_to_speech_error_language_selection": (
+        "टेक्स्ट-टू-स्पीच सेटिंग्स में समर्थित भाषा चुनें।"
+    ),
+    "module_text_to_speech_error_download_incomplete": (
+        "डाउनलोड पूरा हुआ, लेकिन सभी मॉडल नहीं मिले। रनटाइम आउटपुट जाँचें या मॉडल के पथ मैन्युअल रूप से "
+        "चुनें।"
+    ),
     "module_text_to_speech_name": "पाठ से वाणी",
     "module_text_to_speech_action_read_selection": "चयनित पाठ पढ़ें",
     "module_text_to_speech_action_read_file": "फ़ाइल पढ़ें",

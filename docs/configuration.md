@@ -1,13 +1,17 @@
-<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-09-06 00:00:00.000000"}} -->
 # Configuration Guide
 
 Detailed reference for all Notolog settings.
+
+The Settings window can be moved independently of the main editor window.
+Select Settings from the main menu or toolbar to bring an open Settings window to the foreground,
+including when it is minimized.
 
 ## Table of Contents
 
 - [Settings Storage](#settings-storage)
 - [General Tab](#general-tab)
 - [Workspace Tab](#workspace-tab)
+- [Text-to-Speech Tab](#text-to-speech-tab)
 - [AI Config Tab](#ai-config-tab)
 - [AI Module Settings](#ai-module-settings)
 - [Command Line](#command-line)
@@ -19,8 +23,11 @@ Settings are stored using Qt's QSettings in platform-specific locations:
 | Platform | Location |
 |----------|----------|
 | Linux | `~/.config/Notolog/notolog_editor.conf` |
-| macOS | `~/Library/Preferences/com.notolog.notolog_editor.plist` |
+| macOS | User preferences managed by Qt's native QSettings backend |
 | Windows | Registry: `HKEY_CURRENT_USER\Software\Notolog\notolog_editor` |
+
+Frozen distributions use the separate application name `notolog_editor_bin`.
+The exact location depends on Qt and the platform; `Settings().get_filename()` returns it.
 
 ---
 
@@ -32,7 +39,7 @@ The General tab contains app-wide configuration options.
 
 | Setting | Key | Default | Description |
 |---------|-----|---------|-------------|
-| Language | `app_language` | `en` | UI language selection |
+| Language | `app_language` | System locale, falling back to `en` | UI language selection when the locale matches an app language code |
 | Theme | `app_theme` | `default` | Visual theme (default, calligraphy, nocturne, noir_dark, spooky, strawberry) |
 | Default folder for notes | `default_path` | (empty) | Primary directory for notes |
 
@@ -86,6 +93,31 @@ The Workspace tab groups settings by where they take effect.
 
 ---
 
+## Text-to-Speech Tab
+
+Speech settings are independent of the interface language and AI Assistant backend.
+See the [Text-to-Speech guide](text-to-speech.md) for runtime installation, compatible models,
+language choices, and runtime 0.2.0 migration.
+
+| Setting | Key | Default | Description |
+|---------|-----|---------|-------------|
+| Enable Text-to-Speech | `tts_enabled` | Audio dependencies available | Enable local speech playback |
+| Speech runtime | `tts_runtime_path` | (empty) | Path to the compatible `nemo-speech` executable; otherwise searches `PATH` |
+| Model folder | `tts_model_directory` | App data folder | Directory for model downloads |
+| Language | `tts_language` | `en` | Document language, selected explicitly |
+| Voice | `tts_voice` | `Aria` | Voice within the selected model |
+| Speed | `tts_speed` | `1.0` | Playback speed multiplier; also changes pitch |
+| Context length | `tts_context_length` | `160` | Maximum characters per request; `0` selects Whole document, subject to runtime limits |
+| Announce headings | `tts_announce_headings` | `true` | Speak heading labels before heading text |
+| Skip inline code | `tts_skip_inline_code` | `true` | Speak a code label instead of inline code contents |
+| Skip multiline code | `tts_skip_multiline_code` | `true` | Speak a code label instead of fenced or indented code contents |
+
+**Custom model files** stores the speech model (`tts_magpie_path`), codec (`tts_codec_path`), and
+tokenizer directory (`tts_tokenizer_directory`). Downloading or verifying models fills these fields
+with the matching files. To use custom models, select a compatible set of all three components.
+
+---
+
 ## AI Config Tab
 
 AI Assistant configuration options.
@@ -108,7 +140,7 @@ Each AI module has its own settings tab in the Settings dialog.
 |-------------------------|-----|---------|-------------|
 | ONNX Model Location     | `module_ondevice_llm_model_path` | (empty) | Path to ONNX model directory |
 | Temperature             | `module_ondevice_llm_response_temperature` | `20` | Response randomness (0-100, maps to 0.0-1.0) |
-| Maximum Response Tokens | `module_ondevice_llm_response_max_tokens` | `0` | Maximum response tokens (0 = unlimited) |
+| Maximum Response Tokens | `module_ondevice_llm_response_max_tokens` | `0` | GenAI sequence-length limit; 0 uses the module default of 4096, subject to model limits |
 | Hardware Acceleration   | `module_ondevice_llm_execution_provider` | `cpu` | Execution provider (CPU, CUDA, DirectML, etc.) |
 | Prompt History Size     | `module_ondevice_llm_prompt_history_size` | `0` | Number of previous turns to remember |
 
@@ -118,10 +150,10 @@ Each AI module has its own settings tab in the Settings dialog.
 |----------------------------|-----|---------|-------------|
 | Model Location             | `module_llama_cpp_model_path` | (empty) | Path to `.gguf` model file |
 | Context Window Size        | `module_llama_cpp_context_window` | `2048` | Token context size (1-65536) |
-| Chat Formats               | `module_llama_cpp_chat_format` | `auto` | Chat format template (chatml, llama-2, etc.) |
+| Chat Formats               | `module_llama_cpp_chat_format` | `chatml` | Model's chat template: chatml, llama-2, or gemma |
 | System Prompt              | `module_llama_cpp_system_prompt` | (empty) | Initial instructions for the model |
 | Response Temperature       | `module_llama_cpp_response_temperature` | `20` | Response randomness (0-100) |
-| Max Tokens per Response    | `module_llama_cpp_response_max_tokens` | `0` | Maximum response tokens (0 = unlimited) |
+| Max Tokens per Response    | `module_llama_cpp_response_max_tokens` | `0` | Maximum response tokens; 0 uses the available context window |
 | Size of the Prompt History | `module_llama_cpp_prompt_history_size` | `0` | Number of previous turns to remember |
 
 ### OpenAI API
@@ -133,7 +165,7 @@ Each AI module has its own settings tab in the Settings dialog.
 | Supported Models        | `module_openai_api_model` | `gpt-5.2` | Model name to use |
 | System Prompt           | `module_openai_api_base_system_prompt` | (empty) | Initial instructions for the model |
 | Temperature             | `module_openai_api_base_response_temperature` | `20` | Response randomness (0-100) |
-| Maximum Response Tokens | `module_openai_api_base_response_max_tokens` | `0` | Maximum response tokens (0 = unlimited) |
+| Maximum Response Tokens | `module_openai_api_base_response_max_tokens` | `0` | Maximum response tokens; 0 omits this limit from the request, so the service's limits apply |
 | Prompt History Size     | `module_openai_api_prompt_history_size` | `0` | Number of previous turns to remember |
 
 ---

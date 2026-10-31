@@ -1,5 +1,25 @@
 # Dutch lexemes common.py
 lexemes = {
+    "module_text_to_speech_error_runtime_version": (
+        "Deze integratie vereist NeMo-Speech.cpp {version}. Gedetecteerd: {detected}"
+    ),
+    "module_text_to_speech_error_runtime_missing": (
+        "Selecteer een geïnstalleerd nemo-speech-programmabestand in de instellingen voor tekst-naar-spraak."
+    ),
+    "module_text_to_speech_error_models_missing": (
+        "Download de modellen of selecteer Magpie, NanoCodec en de tokenizermap in de instellingen voor "
+        "tekst-naar-spraak."
+    ),
+    "module_text_to_speech_error_runtime_archive": (
+        "Native audiostreaming vereist het volledige runtimearchief, inclusief de map lib."
+    ),
+    "module_text_to_speech_error_language_selection": (
+        "Selecteer een ondersteunde taal in de instellingen voor tekst-naar-spraak."
+    ),
+    "module_text_to_speech_error_download_incomplete": (
+        "De download is voltooid zonder een complete modelset. Controleer de runtime-uitvoer of selecteer de "
+        "modelpaden handmatig."
+    ),
     "module_text_to_speech_name": "Tekst-naar-spraak",
     "module_text_to_speech_action_read_selection": "Selectie voorlezen",
     "module_text_to_speech_action_read_file": "Bestand voorlezen",

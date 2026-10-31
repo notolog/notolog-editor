@@ -58,12 +58,12 @@ lexemes = {
         "tersendiri."
     ),
     "module_text_to_speech_config_runtime_input_accessible_description": (
-        "Memerlukan NeMo-Speech.cpp 0.1.0. Ekstrak arsip dan pilih bin/nemo-speech (bin/nemo-speech.exe "
+        "Memerlukan NeMo-Speech.cpp 0.2.0. Ekstrak arsip dan pilih bin/nemo-speech (bin/nemo-speech.exe "
         "di Windows)."
     ),
     "module_text_to_speech_config_model_directory_input_accessible_description": (
         "Model diunduh di sini. File yang ada diverifikasi dan digunakan kembali. Memerlukan curl dan "
-        "ruang sekitar 550 MB."
+        "ruang sekitar 700 MB."
     ),
     "module_text_to_speech_config_custom_models_accessible_description": (
         "Ganti jalur model atau kosongkan kolom untuk memakai folder model."

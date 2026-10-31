@@ -56,11 +56,11 @@ lexemes = {
         " licens."
     ),
     "module_text_to_speech_config_runtime_input_accessible_description": (
-        "Kräver NeMo-Speech.cpp 0.1.0. Packa upp arkivet och välj bin/nemo-speech (bin/nemo-speech.exe i"
+        "Kräver NeMo-Speech.cpp 0.2.0. Packa upp arkivet och välj bin/nemo-speech (bin/nemo-speech.exe i"
         " Windows)."
     ),
     "module_text_to_speech_config_model_directory_input_accessible_description": (
-        "Modeller hämtas hit. Befintliga filer kontrolleras och återanvänds. Kräver curl och cirka 550 "
+        "Modeller hämtas hit. Befintliga filer kontrolleras och återanvänds. Kräver curl och cirka 700 "
         "MB."
     ),
     "module_text_to_speech_config_custom_models_accessible_description": (

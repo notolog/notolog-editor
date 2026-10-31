@@ -60,12 +60,12 @@ lexemes = {
         " lisenssi."
     ),
     "module_text_to_speech_config_runtime_input_accessible_description": (
-        "Vaatii NeMo-Speech.cpp 0.1.0:n. Pura arkisto ja valitse bin/nemo-speech (Windowsissa "
+        "Vaatii NeMo-Speech.cpp 0.2.0:n. Pura arkisto ja valitse bin/nemo-speech (Windowsissa "
         "bin/nemo-speech.exe)."
     ),
     "module_text_to_speech_config_model_directory_input_accessible_description": (
         "Mallit ladataan tähän. Nykyiset tiedostot tarkistetaan ja käytetään uudelleen. Vaatii curlin ja"
-        " noin 550 Mt tilaa."
+        " noin 700 Mt tilaa."
     ),
     "module_text_to_speech_config_custom_models_accessible_description": (
         "Korvaa mallien polut tai tyhjennä kentät käyttääksesi mallikansiota."

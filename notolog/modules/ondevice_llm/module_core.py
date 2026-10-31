@@ -264,8 +264,7 @@ class ModuleCore(BaseAiCore):
                         # Emit update message signal
                         self.update_signal.emit(outputs, None, None, EnumMessageType.DEFAULT, EnumMessageStyle.ERROR)
                     else:
-                        result = task.result()
-                        self.logger.debug(f"Task completed with result: {result}")
+                        self.logger.debug("Generation task completed")
 
     async def run_generator(self, input_tokens, request_msg_id, response_msg_id):
         """
@@ -506,7 +505,7 @@ class ModuleCore(BaseAiCore):
             None
         """
 
-        AppConfig().logger.debug(f'Settings update handler is processing: {data}')
+        AppConfig().logger.debug('Processing On-Device LLM settings update')
 
         options = [
             'module_ondevice_llm_model_path',

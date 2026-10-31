@@ -53,10 +53,10 @@ lexemes = {
         "选择 NeMo-Speech.cpp 运行程序，然后下载 MagpieTTS、NanoCodec 和分词器。模型使用单独的许可证。"
     ),
     "module_text_to_speech_config_runtime_input_accessible_description": (
-        "需要 NeMo-Speech.cpp 0.1.0。解压归档后选择 bin/nemo-speech（Windows 上为 bin/nemo-speech.exe）。"
+        "需要 NeMo-Speech.cpp 0.2.0。解压归档后选择 bin/nemo-speech（Windows 上为 bin/nemo-speech.exe）。"
     ),
     "module_text_to_speech_config_model_directory_input_accessible_description": (
-        "模型将下载到此处。现有文件会被验证并重复使用。需要 curl 和约 550 MB 空间。"
+        "模型将下载到此处。现有文件会被验证并重复使用。需要 curl 和约 700 MB 空间。"
     ),
     "module_text_to_speech_config_custom_models_accessible_description": "指定自定义模型路径，或清空这些字段以使用模型文件夹。",
     "module_text_to_speech_config_reading_accessible_description": "选择声音、语言和播放速度。可以用简短的语音提示代替代码内容。",

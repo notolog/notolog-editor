@@ -1,5 +1,25 @@
 # Italian lexemes common.py
 lexemes = {
+    "module_text_to_speech_error_runtime_version": (
+        "Questa integrazione richiede NeMo-Speech.cpp {version}. Rilevato: {detected}"
+    ),
+    "module_text_to_speech_error_runtime_missing": (
+        "Seleziona un eseguibile nemo-speech installato nelle impostazioni di sintesi vocale."
+    ),
+    "module_text_to_speech_error_models_missing": (
+        "Scarica i modelli oppure seleziona Magpie, NanoCodec e la cartella dei tokenizer nelle impostazioni "
+        "di sintesi vocale."
+    ),
+    "module_text_to_speech_error_runtime_archive": (
+        "Lo streaming audio nativo richiede l’archivio completo del runtime, inclusa la cartella lib."
+    ),
+    "module_text_to_speech_error_language_selection": (
+        "Seleziona una lingua supportata nelle impostazioni di sintesi vocale."
+    ),
+    "module_text_to_speech_error_download_incomplete": (
+        "Il download è terminato senza un insieme completo di modelli. Controlla l’output del runtime o "
+        "seleziona manualmente i percorsi dei modelli."
+    ),
     "module_text_to_speech_name": "Sintesi vocale",
     "module_text_to_speech_action_read_selection": "Leggi selezione ad alta voce",
     "module_text_to_speech_action_read_file": "Leggi file ad alta voce",

@@ -98,8 +98,13 @@ class Settings(QSettings):
     def get_instance(self):
         organisation_name = (QCoreApplication.organizationName()
                              or AppConfig().get_settings_org_name())
+        settings_format = (
+            QSettings.Format.IniFormat
+            if AppConfig().get_test_mode()
+            else QSettings.Format.NativeFormat
+        )
         return QSettings(
-            QSettings.Format.NativeFormat,
+            settings_format,
             QSettings.Scope.UserScope,
             organisation_name,
             self.get_settings_app_name(),

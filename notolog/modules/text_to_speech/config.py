@@ -28,6 +28,7 @@ from PySide6.QtCore import QStandardPaths
 
 from ...settings import Settings
 from .languages import SpeechLanguage
+from .i18n import SpeechSetupError
 
 
 DEFAULTS = {
@@ -75,9 +76,9 @@ def speech_settings():
             settings.create_property(name, kind, audio_available() if name == 'tts_enabled' else default)
     if 0 < settings.tts_context_length < 10:
         settings.tts_context_length = 10
-    language = SpeechLanguage.from_code(settings.tts_language).name.lower()
-    if settings.tts_language != language:
-        settings.tts_language = language
+    language = SpeechLanguage.from_code(settings.tts_language)
+    if language and settings.tts_language != language.code:
+        settings.tts_language = language.code
     return settings
 
 
@@ -118,6 +119,5 @@ def model_paths(settings, *, overrides=True):
                 tokenizer = str(candidates[0].parent)
     if not (magpie and Path(magpie).is_file() and codec and Path(codec).is_file()
             and tokenizer and Path(tokenizer).is_dir()):
-        raise ValueError('Download the model set or select Magpie, NanoCodec, and the tokenizer folder '
-                         'in Text-to-Speech settings.')
+        raise SpeechSetupError('module_text_to_speech_error_models_missing')
     return magpie, codec, tokenizer

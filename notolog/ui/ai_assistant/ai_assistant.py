@@ -46,6 +46,7 @@ from ..rotating_label import RotatingLabel
 from ...modules.modules import Modules
 from ...modules.base_ai_core import BaseAiCore
 from ...enums.enum_base import EnumBase
+from ...fenced_code_extension import NestedFencesExtension
 
 from datetime import datetime
 
@@ -433,7 +434,7 @@ class AIAssistant(QDialog):
         """
         Init Markdown object and set it to variable.
         """
-        extensions = ['markdown.extensions.extra']
+        extensions = ['markdown.extensions.extra', NestedFencesExtension()]
         # Init markdown object with the selected extensions
         self.md = markdown.Markdown(extensions=extensions)
 

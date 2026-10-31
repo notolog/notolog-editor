@@ -1,5 +1,23 @@
 # Chinese lexemes common.py
 lexemes = {
+    "module_text_to_speech_error_runtime_version": (
+        "此集成需要 NeMo-Speech.cpp {version}。检测到：{detected}"
+    ),
+    "module_text_to_speech_error_runtime_missing": (
+        "请在文本转语音设置中选择已安装的 nemo-speech 可执行文件。"
+    ),
+    "module_text_to_speech_error_models_missing": (
+        "请下载模型，或在文本转语音设置中选择 Magpie、NanoCodec 和分词器文件夹。"
+    ),
+    "module_text_to_speech_error_runtime_archive": (
+        "原生音频流需要完整的运行时压缩包，包括 lib 目录。"
+    ),
+    "module_text_to_speech_error_language_selection": (
+        "请在文本转语音设置中选择受支持的语音语言。"
+    ),
+    "module_text_to_speech_error_download_incomplete": (
+        "下载已结束，但模型集不完整。请检查运行时输出或手动选择模型路径。"
+    ),
     "module_text_to_speech_name": "文本朗读",
     "module_text_to_speech_action_read_selection": "朗读所选文本",
     "module_text_to_speech_action_read_file": "朗读文件",

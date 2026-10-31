@@ -117,7 +117,7 @@ class PlaybackBar(QWidget):
         if hasattr(editor, 'estate'):
             editor.estate.value_changed.connect(self.update_selection)
         self.update_status(self.controller.status_key, check_selection=False)
-        QTimer.singleShot(0, self.update_selection)
+        QTimer.singleShot(0, self, self.update_selection)
 
     def button(self, layout, title, icon, action):
         button = QPushButton(self)
@@ -182,7 +182,8 @@ class PlaybackBar(QWidget):
         loaded = getattr(runtime, 'loaded', False)
         paths = configuration[1] if loaded and configuration else None
         rate = getattr(runtime, 'rate', None) if loaded else None
-        language = language_label(SpeechLanguage.from_code(settings.tts_language), include_requirement=False)
+        selected = SpeechLanguage.from_code(settings.tts_language)
+        language = language_label(selected, include_requirement=False) if selected else settings.tts_language
         not_loaded = tr('module_text_to_speech_model_not_loaded')
         runtime_label = f'NeMo-Speech.cpp {SUPPORTED_VERSION}'
         if not loaded:

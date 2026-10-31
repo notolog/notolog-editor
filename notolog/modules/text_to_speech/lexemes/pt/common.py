@@ -1,5 +1,26 @@
 # Portuguese lexemes common.py
 lexemes = {
+    "module_text_to_speech_error_runtime_version": (
+        "Esta integração requer NeMo-Speech.cpp {version}. Detetado: {detected}"
+    ),
+    "module_text_to_speech_error_runtime_missing": (
+        "Selecione um executável nemo-speech instalado nas definições de texto para voz."
+    ),
+    "module_text_to_speech_error_models_missing": (
+        "Transfira os modelos ou selecione Magpie, NanoCodec e a pasta dos tokenizadores nas definições de "
+        "texto para voz."
+    ),
+    "module_text_to_speech_error_runtime_archive": (
+        "A transmissão de áudio nativa requer o arquivo completo do ambiente de execução, incluindo a pasta "
+        "lib."
+    ),
+    "module_text_to_speech_error_language_selection": (
+        "Selecione um idioma de voz suportado nas definições de texto para voz."
+    ),
+    "module_text_to_speech_error_download_incomplete": (
+        "A transferência terminou sem um conjunto completo de modelos. Verifique a saída do ambiente de "
+        "execução ou selecione os caminhos dos modelos manualmente."
+    ),
     "module_text_to_speech_name": "Texto para fala",
     "module_text_to_speech_action_read_selection": "Ler seleção em voz alta",
     "module_text_to_speech_action_read_file": "Ler arquivo em voz alta",

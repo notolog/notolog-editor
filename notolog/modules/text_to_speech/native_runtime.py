@@ -25,6 +25,8 @@ import sys
 from PySide6.QtCore import QProcess
 
 from .config import runtime_path, model_paths
+from .languages import SpeechLanguage
+from .i18n import SpeechSetupError
 from .runtime import validate_runtime, process_environment, isolate_process, stop_process
 
 
@@ -46,6 +48,8 @@ class NativeRuntime:
         except asyncio.TimeoutError as exc:
             raise RuntimeError('Native speech worker timed out while preparing audio.') from exc
         if 'error' in event:
+            if event.get('error_code') == 'speaker_map':
+                raise SpeechSetupError('module_text_to_speech_error_models_missing')
             raise RuntimeError(event['error'])
         return event
 
@@ -65,7 +69,7 @@ class NativeRuntime:
                       root / 'lib' / 'libnemo_speech_tts.1.dylib', root / 'bin' / 'nemo_speech_tts.dll']
         library = next((path for path in candidates if path.is_file()), None)
         if library is None:
-            raise ValueError('Native streaming needs the complete runtime archive, including its lib directory.')
+            raise SpeechSetupError('module_text_to_speech_error_runtime_archive')
         events = self.events = asyncio.Queue()
         pending = bytearray()
         process = self.process = QProcess()
@@ -107,7 +111,10 @@ class NativeRuntime:
             raise
 
     async def stream(self, text):
-        self.send({'text': text, 'voice': self.settings.tts_voice, 'language': self.settings.tts_language})
+        language = SpeechLanguage.from_code(self.settings.tts_language)
+        if language is None:
+            raise SpeechSetupError('module_text_to_speech_error_language_selection')
+        self.send({'text': text, 'voice': self.settings.tts_voice, 'language': language.code})
         while True:
             event = await self.event()
             if event.get('done'):

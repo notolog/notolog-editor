@@ -1,4 +1,3 @@
-<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-31 00:00:00.000000"}} -->
 # Getting Started with Notolog
 
 This guide will help you install Notolog and get up and running quickly.
@@ -14,6 +13,15 @@ This guide will help you install Notolog and get up and running quickly.
 ---
 
 ## Installation Methods
+
+### Platform Compatibility
+
+Use Python **3.11–3.14**. Notolog's Python wheel is platform-independent, but Qt and AI/audio
+dependencies require builds for your operating system and processor. Older Windows and macOS
+versions are not supported merely because Python installs on them. Check the selected
+[PySide6 release files](https://pypi.org/project/PySide6-Essentials/6.11.3/#files) and
+[Qt platform guidance](https://doc.qt.io/qt-6/supported-platforms.html).
+Debian packages have their own architecture and distribution requirements listed with each release.
 
 ### Method 1: pip (Recommended)
 
@@ -32,6 +40,9 @@ pip install notolog
 
 # Or with llama.cpp support for GGUF models
 pip install "notolog[llama]"
+
+# Or with both llama.cpp and speech playback dependencies
+pip install "notolog[llama,tts]"
 
 # Upgrade to latest version
 pip install --upgrade notolog
@@ -53,22 +64,16 @@ conda install notolog -c conda-forge
 
 ### Method 3: Debian Package
 
-For Ubuntu/Debian users:
+Download the `.deb` for your architecture from the
+[Debian package releases](https://github.com/notolog/notolog-debian/releases).
+Check its supported distribution before installing. From the download directory, replace the
+filename below with the exact downloaded filename:
 
 ```bash
-# Check the latest version at:
-# https://github.com/notolog/notolog-debian/releases
-
-# Download the latest release (replace X.Y.Z with the actual version, e.g., 1.1.6)
-wget https://github.com/notolog/notolog-debian/releases/download/vX.Y.Z/notolog_X.Y.Z_amd64.deb
-# Or
-wget https://github.com/notolog/notolog-debian/releases/latest/download/notolog_X.Y.Z_amd64.deb
-
-# Install
-sudo dpkg -i notolog_X.Y.Z_amd64.deb
+sudo apt install ./notolog_VERSION_ARCH.deb
 ```
 
-**Tip:** Visit the [releases page](https://github.com/notolog/notolog-debian/releases){:target="_blank"} to find the latest version number.
+APT resolves the package's declared system dependencies.
 
 ### Method 4: From Source
 
@@ -79,6 +84,10 @@ python3 -m venv notolog_env
 source notolog_env/bin/activate
 pip install .
 ```
+
+To include both optional backends from the checkout, use `pip install ".[llama,tts]"` instead of
+`pip install .`. The speech runtime and models are separate downloads; see the
+[Text-to-Speech setup guide](text-to-speech.md).
 
 ---
 
@@ -141,12 +150,6 @@ On first launch, you'll see the main editor window with:
 |--------|---------------|-------|--------|
 | Save | `Ctrl+S` | `⌘+S` | ✓ |
 | Find | `Ctrl+F` | `⌘+F` | ✓ |
-| New File | `Ctrl+N` | `⌘+N` | *Planned* |
-| Toggle Edit/View | `Ctrl+E` | `⌘+E` | *Planned* |
-| Settings | `Ctrl+,` | `⌘+,` | *Planned* |
-| AI Assistant | `Ctrl+Shift+A` | `⌘+Shift+A` | *Planned* |
-
-*Shortcuts marked as "Planned" are not yet implemented.*
 
 ### File Tree Actions
 
@@ -155,7 +158,7 @@ On first launch, you'll see the main editor window with:
 
 ### Editor Features
 
-- **Line Numbers**: Click to jump to a line
+- **Line Numbers**: Show each line's position in the document
 - **Search**: `Ctrl+F` to find text in the current file
 - **Quick Filter**: Type in the file tree search box to filter files
 
@@ -184,18 +187,15 @@ sudo apt-get install -y libxcb-cursor0
 
 ### Permission Errors
 
-Ensure you have write access to the notes directory:
-
-```bash
-chmod 755 ~/Documents/Notes
-```
+Choose a notes directory owned by your user account with write access. Check ownership and permissions
+in your file manager; do not make private notes readable by other users to solve a write-access problem.
 
 ### Python Version Issues
 
 Verify your Python version:
 
 ```bash
-python3 --version  # Should be 3.10+
+python3 --version  # Supported: 3.11–3.14
 ```
 
 ---

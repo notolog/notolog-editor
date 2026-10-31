@@ -16,13 +16,15 @@ License: MIT License
 For detailed instructions and project information, please see the repository's README.md.
 """
 
-from notolog.settings import Settings
-from notolog.app_config import AppConfig
-
-from . import test_core_app  # noqa: F401
-
 import os
+from pathlib import Path
+
 import pytest
+
+from notolog.app_config import AppConfig
+from notolog.settings import Settings
+
+from . import _test_profile, test_core_app  # noqa: F401
 
 
 class TestSettings:
@@ -75,11 +77,11 @@ class TestSettings:
         assert settings.toolbar_icons == 8
         assert settings.reversible_file_deletion is False
 
-        # Linux: /home/runner/.config/Notolog/notolog_editor_tests.conf (notolog_editor_qa.conf)
-        # macOS: '/Users/runner/Library/Preferences/com.notolog.notolog_editor_tests.plist'
-        # Windows: '\\HKEY_CURRENT_USER\\Software\\Notolog\\notolog_editor_tests'
-        assert AppConfig().get_settings_app_name_qa() in settings.fileName()
-        assert test_obj_settings.fileName() == settings.fileName()
+        # Test-mode settings use package-specific QA storage.
+        assert AppConfig().get_settings_app_name_qa() in settings.get_filename()
+        assert Path(settings.get_filename()).resolve().is_relative_to(
+            (_test_profile / 'settings').resolve()
+        )
 
         # Clear all settings to reset to default state
         settings.clear()

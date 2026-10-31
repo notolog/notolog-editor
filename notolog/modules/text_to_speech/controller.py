@@ -23,12 +23,13 @@ from PySide6.QtCore import QObject, Signal
 from .config import speech_settings
 from .native_runtime import NativeRuntime
 from .audio_output import AudioOutput
+from .i18n import SpeechSetupError
 from .text import prepare_sections, SpeechSection, speech_chunks, normalize_numbers
 
 
 class SpeechController(QObject):
     status_changed = Signal(str)
-    error = Signal(str)
+    error = Signal(object)
     details_changed = Signal(str)
 
     def __init__(self, parent=None):
@@ -84,7 +85,7 @@ class SpeechController(QObject):
         except Exception as exc:
             self.runtime.close()
             self.status_changed.emit('module_text_to_speech_status_unavailable')
-            self.error.emit(str(exc))
+            self.error.emit(exc if isinstance(exc, SpeechSetupError) else str(exc))
         finally:
             if self.task is asyncio.current_task():
                 self.task = None

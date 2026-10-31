@@ -59,11 +59,11 @@ lexemes = {
         "NeMo-Speech.cpp चुनें और MagpieTTS, NanoCodec व टोकनाइज़र डाउनलोड करें। मॉडल का अलग लाइसेंस है।"
     ),
     "module_text_to_speech_config_runtime_input_accessible_description": (
-        "NeMo-Speech.cpp 0.1.0 आवश्यक है। संग्रह निकालें और bin/nemo-speech चुनें (Windows पर "
+        "NeMo-Speech.cpp 0.2.0 आवश्यक है। संग्रह निकालें और bin/nemo-speech चुनें (Windows पर "
         "bin/nemo-speech.exe)।"
     ),
     "module_text_to_speech_config_model_directory_input_accessible_description": (
-        "मॉडल यहाँ डाउनलोड होते हैं। मौजूदा फ़ाइलें सत्यापित करके फिर उपयोग होती हैं। curl और लगभग 550 "
+        "मॉडल यहाँ डाउनलोड होते हैं। मौजूदा फ़ाइलें सत्यापित करके फिर उपयोग होती हैं। curl और लगभग 700 "
         "MB जगह चाहिए।"
     ),
     "module_text_to_speech_config_custom_models_accessible_description": (

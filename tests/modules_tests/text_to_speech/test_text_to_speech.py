@@ -131,6 +131,47 @@ async def test_version_rejected_before_download(settings, monkeypatch):
 
 
 @pytest.mark.asyncio
+async def test_version_error_and_details_follow_ui_language(settings, monkeypatch):
+    from notolog.modules.text_to_speech.settings_widget import SpeechSettingsWidget
+    settings.app_language = 'fr'
+    widget = SpeechSettingsWidget()
+    monkeypatch.setattr(runtime, 'run_command', AsyncMock(return_value='nemo-speech 0.1.0'))
+
+    async def validate():
+        await runtime.validate_runtime(settings)
+
+    await widget._run(validate)
+    expected = 'Cette intégration nécessite NeMo-Speech.cpp 0.2.0. Version détectée : nemo-speech 0.1.0'
+    assert widget.status.text() == 'Erreur : ' + expected
+    assert expected in widget.output.toPlainText()
+    assert 'This integration requires' not in widget.output.toPlainText()
+    settings.app_language = 'de'
+    assert 'Diese Integration benötigt' in widget.status.text()
+    assert 'Diese Integration benötigt' in widget.output.toPlainText()
+    assert expected not in widget.output.toPlainText()
+    assert 'nemo-speech 0.1.0' in widget.status.text()
+    widget.close()
+
+
+@pytest.mark.asyncio
+async def test_controller_preserves_translatable_setup_errors(settings, monkeypatch):
+    from notolog.modules.text_to_speech.i18n import SpeechSetupError
+    from notolog.modules.text_to_speech.settings_widget import SpeechSettingsWidget
+    settings.app_language = 'fr'
+    controller = SpeechController()
+    failure = SpeechSetupError('module_text_to_speech_error_language_selection')
+    monkeypatch.setattr(controller.runtime, 'start', AsyncMock(side_effect=failure))
+    widget = SpeechSettingsWidget()
+    controller.error.connect(widget.voice_error)
+    await controller._read('Hello')
+    assert 'Sélectionnez une langue vocale' in widget.status.text()
+    settings.app_language = 'es'
+    assert 'Seleccione un idioma de voz' in widget.status.text()
+    assert 'Seleccione un idioma de voz' in widget.output.toPlainText()
+    widget.close()
+
+
+@pytest.mark.asyncio
 async def test_download_explicitly_pulls_complete_model_set(settings, monkeypatch, tmp_path):
     monkeypatch.setattr(runtime, 'validate_runtime', AsyncMock())
     magpie, codec, tokenizer = tmp_path / 'voice.gguf', tmp_path / 'decoder.gguf', tmp_path / 'assets'
@@ -349,8 +390,18 @@ async def test_settings_missing_runtime_reports_visible_error(settings, monkeypa
     widget.close()
 
 
+def test_speech_choices_belong_to_supported_app_languages():
+    from notolog.enums.languages import Languages
+    from notolog.modules.text_to_speech.languages import SpeechLanguage
+    # The app uses IN for Hindi; the model requires hi and Brazilian Portuguese.
+    app_names = {'HI': 'IN', 'PT_BR': 'PT'}
+    assert all(app_names.get(language.name, language.name) in Languages.__members__
+               for language in SpeechLanguage)
+
+
 @pytest.mark.parametrize('saved,expected', [
-    ('en', 'EN'), ('es-ES', 'ES'), ('fr_FR', 'FR'), ('zh-CN', 'ZH'), ('ja', 'JA'), ('invalid', 'EN'),
+    ('en', 'EN'), ('es-ES', 'ES'), ('fr_FR', 'FR'), ('zh-CN', 'ZH'), ('ja', 'JA'),
+    ('ko-KR', 'KO'), ('pt-BR', 'PT_BR'), ('PT_br', 'PT_BR'),
 ])
 def test_language_selector_preserves_supported_codes(settings, saved, expected):
     from notolog.modules.text_to_speech.settings_widget import SpeechSettingsWidget
@@ -360,11 +411,81 @@ def test_language_selector_preserves_supported_codes(settings, saved, expected):
     widget = SpeechSettingsWidget()
     assert isinstance(widget.language, EnumComboBox)
     assert widget.language.currentData() is SpeechLanguage[expected]
-    assert settings.tts_language == expected.lower()
-    assert widget.language.count() == 9
+    assert settings.tts_language == expected.lower().replace('_', '-')
+    assert widget.language.count() == 10
     assert widget.language.itemData(0) is SpeechLanguage.EN
     assert config.DEFAULTS['tts_language'][1] == 'en'
     widget.close()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('saved', ['invalid', 'pt', 'pt-PT', 'ar', 'ar-EG', 'ar-AE', 'ar_SA', 'ar-MSA', 'vi', 'vi-VN'])
+async def test_unknown_speech_language_never_falls_back_to_english(settings, saved):
+    from notolog.modules.text_to_speech.settings_widget import SpeechSettingsWidget
+    from notolog.modules.text_to_speech.native_runtime import NativeRuntime
+    settings.tts_language = saved
+    widget = SpeechSettingsWidget()
+    assert widget.language.currentIndex() == -1
+    assert settings.tts_language == saved
+    adapter = NativeRuntime(settings)
+    adapter.send = Mock()
+    with pytest.raises(ValueError, match='Select a supported speech language'):
+        await anext(adapter.stream('Private note'))
+    adapter.send.assert_not_called()
+    widget.close()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('code', ['en', 'es', 'ko', 'pt-br'])
+async def test_selected_language_reaches_voice_test_and_native_request(settings, monkeypatch, code):
+    from notolog.modules.text_to_speech import settings_widget
+    from notolog.modules.text_to_speech.languages import SpeechLanguage
+    from notolog.modules.text_to_speech.native_runtime import NativeRuntime
+    settings.tts_enabled = True
+    settings.app_language = 'de'
+    widget = settings_widget.SpeechSettingsWidget()
+    language = SpeechLanguage.from_code(code)
+    widget.language.setCurrentIndex(list(SpeechLanguage).index(language))
+    assert settings.tts_language == code
+    monkeypatch.setattr(settings_widget, 'validate_runtime', AsyncMock())
+    monkeypatch.setattr(settings_widget, 'model_paths', Mock())
+    controller = SpeechController()
+    host = SimpleNamespace(get_speech_controller=lambda: controller, action_read_aloud=Mock())
+    monkeypatch.setattr(widget, 'editor', lambda: host)
+    await widget._test_voice()
+    host.action_read_aloud.assert_called_once_with(source=language.sample)
+    adapter = NativeRuntime(settings)
+    adapter.send = Mock()
+    adapter.event = AsyncMock(return_value={'done': True})
+    assert [chunk async for chunk in adapter.stream(language.sample)] == []
+    assert adapter.send.call_args.args[0]['language'] == code
+    widget.close()
+
+
+@pytest.mark.asyncio
+async def test_download_selects_verified_revision_when_old_models_remain(settings, monkeypatch, tmp_path):
+    from notolog.modules.text_to_speech import settings_widget
+    for revision in ('v2602', 'v2607'):
+        folder = tmp_path / revision
+        folder.mkdir()
+        (folder / 'magpie.gguf').touch()
+        (folder / 'codec.gguf').touch()
+        (folder / 'tokenizer').mkdir()
+        (folder / 'tokenizer/model_config.yaml').touch()
+    settings.tts_model_directory = str(tmp_path)
+    paths = tuple(str(tmp_path / 'v2607' / name) for name in ('magpie.gguf', 'codec.gguf', 'tokenizer'))
+    monkeypatch.setattr(settings_widget, 'runtime_path', lambda _: '/runtime')
+    monkeypatch.setattr(settings_widget, 'download_models', AsyncMock(return_value=paths))
+    widget = settings_widget.SpeechSettingsWidget()
+    await widget._run(widget._download)
+    assert config.model_paths(settings) == paths
+    assert widget.download.text() == 'Verify models'
+    widget.close()
+    reopened = settings_widget.SpeechSettingsWidget()
+    assert config.model_paths(settings) == paths
+    assert reopened.download.text() == 'Verify models'
+    assert reopened.runtime_link.isHidden() is False
+    reopened.close()
 
 
 @pytest.mark.parametrize('expanded', [False, True])
@@ -496,7 +617,7 @@ async def test_settings_download_progress_success_and_cancel(settings, monkeypat
     monkeypatch.setattr(settings_widget, 'download_models', download)
     await widget._run(widget._download)
     assert 'downloaded and verified' in widget.status.text()
-    assert settings.tts_magpie_path == ''
+    assert config.model_paths(settings) == tuple(paths)
 
     async def blocked():
         await asyncio.Future()
@@ -1007,6 +1128,34 @@ def test_status_column_and_tab_header(settings):
     widget.close()
 
 
+def test_playback_bar_disconnects_after_destruction(settings, monkeypatch):
+    import sys
+    from PySide6.QtCore import QObject, Signal, QCoreApplication, QEvent, QTimer
+    from PySide6.QtWidgets import QWidget
+    from notolog.modules.text_to_speech.playback_bar import PlaybackBar
+
+    class State(QObject):
+        value_changed = Signal(dict)
+
+    controller = SpeechController()
+    estate = State()
+    host = SimpleNamespace(get_speech_controller=lambda: controller, estate=estate,
+                           action_read_aloud=Mock(), action_pause_speech=Mock(), action_stop_speech=Mock())
+    parent = QWidget()
+    bar = PlaybackBar(host, parent)
+    errors = []
+    monkeypatch.setattr(sys, 'excepthook', lambda *error: errors.append(error))
+    parent.deleteLater()
+    QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
+    estate.value_changed.emit({'selection': True})
+    controller.status_changed.emit(controller.status_key)
+    settings.value_changed.emit({'tts_voice': settings.tts_voice})
+    QTimer.singleShot(0, lambda: estate.value_changed.emit({'selection': False}))
+    QCoreApplication.processEvents()
+    assert errors == []
+    del bar
+
+
 def test_playback_bar_does_not_move_icons_when_status_changes(settings, monkeypatch):
     from notolog.modules.text_to_speech.playback_bar import PlaybackBar
     from notolog.modules.text_to_speech.i18n import catalog
@@ -1296,12 +1445,41 @@ def test_native_error_messages_do_not_leak_text_or_misidentify_runtime_failures(
      'Header one. Header two. Header three. Header four. Header five. Header six.'),
     ('There are 12 items and 1,234 files.', 'There are twelve items and one thousand two hundred thirty four files.'),
     ('Value 3.14, ID 007.', 'Value three point one four, ID zero zero seven.'),
-    ('Python3 v1.2.3', 'Python3 v1.2.3'),
+    ('Python3 v1.2.3', 'Python3 version one point two point three'),
+    ('Notolog 1.2.3', 'Notolog one point two point three'),
+    ('NeMo 0.2.0. Version 12.34.56.', 'NeMo zero point two point zero. Version twelve point thirty four point fifty six.'),
+    ('v1.2 and V2.03.004', 'version one point two and version two point zero three point zero zero four'),
+    ('Python3 uses 3.14, not 3.14.15.', 'Python3 uses three point one four, not three point fourteen point fifteen.'),
+    ('abc1.2.3 and 1.2.3xyz', 'abc1.2.3 and 1.2.3xyz'),
 ])
 def test_english_numbers_are_spoken_words(source, expected):
     from notolog.modules.text_to_speech.text import normalize_numbers
     assert normalize_numbers(source, 'en-US') == expected
     assert normalize_numbers(source, 'de-DE') == source
+
+
+@pytest.mark.asyncio
+async def test_invalid_speaker_map_has_localized_recovery(settings):
+    from notolog.modules.text_to_speech.native_runtime import NativeRuntime
+    from notolog.modules.text_to_speech.i18n import SpeechSetupError
+    settings.app_language = 'fr'
+    adapter = NativeRuntime(settings)
+    adapter.events = asyncio.Queue()
+    adapter.events.put_nowait({'error': 'Speech speaker mapping is invalid.', 'error_code': 'speaker_map'})
+    with pytest.raises(SpeechSetupError, match='Téléchargez les modèles'):
+        await adapter.event()
+
+
+@pytest.mark.asyncio
+async def test_versions_are_expanded_before_synthesis(settings):
+    settings.tts_enabled = True
+    settings.tts_language = 'en'
+    controller = SpeechController()
+    controller.runtime = SimpleNamespace(start=AsyncMock(), close=Mock())
+    controller._play_stream = AsyncMock()
+    controller.read('Notolog 1.2.3 has 12 improvements.')
+    await controller.task
+    controller._play_stream.assert_awaited_once_with('Notolog one point two point three has twelve improvements.')
 
 
 @pytest.mark.asyncio
@@ -2275,15 +2453,18 @@ async def test_settings_dialog_confirms_download_cancellation(settings, monkeypa
     from PySide6.QtCore import Qt
     from PySide6.QtTest import QTest
     from PySide6.QtWidgets import QMessageBox
-    from notolog.ui.settings_dialog import SettingsDialog
+    from notolog.notolog_editor import NotologEditor
     from notolog.modules.modules import Modules
     from notolog.modules import text_to_speech
     from notolog.modules.text_to_speech.settings_widget import SpeechSettingsWidget
     monkeypatch.setattr(Modules, 'get_by_extension', lambda *_: [text_to_speech])
     host = QMainWindow()
     host.settings = settings
-    dialog = SettingsDialog(host)
-    dialog.show()
+    host.logger = Mock()
+    host.save_active_file = Mock()
+    host.close_settings = lambda: NotologEditor.close_settings(host)
+    NotologEditor.action_settings(host)
+    dialog = host.settings_dialog
     widget = dialog.findChild(SpeechSettingsWidget)
     widget.operation = 'download'
     widget.task = asyncio.create_task(asyncio.sleep(60))
@@ -2300,11 +2481,16 @@ async def test_settings_dialog_confirms_download_cancellation(settings, monkeypa
     assert dialog.isVisible()
     await asyncio.sleep(0)
     assert not widget.task.done()
+    NotologEditor.action_settings(host)
+    assert host.settings_dialog is dialog
+    assert not widget.task.done()
+    assert settings.tts_language == 'en'
     question.return_value = QMessageBox.StandardButton.Yes
     close()
     assert not dialog.isVisible()
     with pytest.raises(asyncio.CancelledError):
         await widget.task
+    assert host.settings_dialog is None
     assert question.call_count == 2
     host.close()
 

@@ -27,9 +27,10 @@ from pathlib import Path
 from PySide6.QtCore import QProcess, QProcessEnvironment
 
 from .config import model_directory, runtime_path
+from .i18n import SpeechSetupError
 
 
-SUPPORTED_VERSION = '0.1.0'
+SUPPORTED_VERSION = '0.2.0'
 
 
 def process_environment(settings):
@@ -77,7 +78,7 @@ def stop_process(process):
 async def run_command(settings, arguments, progress=None, timeout=30):
     executable = runtime_path(settings)
     if not executable:
-        raise ValueError('Select an installed nemo-speech executable in Text-to-Speech settings.')
+        raise SpeechSetupError('module_text_to_speech_error_runtime_missing')
     process = QProcess()
     isolate_process(process)
     process.setProcessEnvironment(process_environment(settings))
@@ -133,7 +134,8 @@ async def validate_runtime(settings):
     output = await run_command(settings, ['--version'])
     match = re.search(r'\b(\d+\.\d+\.\d+)\b', output)
     if not match or match.group(1) != SUPPORTED_VERSION:
-        raise ValueError(f'This integration requires NeMo-Speech.cpp {SUPPORTED_VERSION}. Detected: {output.strip()}')
+        raise SpeechSetupError('module_text_to_speech_error_runtime_version',
+                               version=SUPPORTED_VERSION, detected=output.strip())
 
 
 async def download_models(settings, progress):
@@ -152,6 +154,5 @@ async def download_models(settings, progress):
     if (not all(role in artifacts for role in ('tts', 'codec', 'tokenizer'))
             or not Path(artifacts['tts']).is_file() or not Path(artifacts['codec']).is_file()
             or not Path(artifacts['tokenizer']).is_dir()):
-        raise ValueError('Download finished without a complete model set. '
-                         'Check the runtime output or select the model paths manually.')
+        raise SpeechSetupError('module_text_to_speech_error_download_incomplete')
     return artifacts['tts'], artifacts['codec'], artifacts['tokenizer']

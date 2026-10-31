@@ -294,6 +294,7 @@ class NotologEditor(QMainWindow):
 
         # Dialogs
         self.ai_assistant = None  # type: Union[QDialog, None]
+        self.settings_dialog = None  # type: Union[SettingsDialog, None]
         self.color_picker = None  # type: Union[QDialog, None]
 
         self.loop = asyncio.get_event_loop()
@@ -1759,6 +1760,10 @@ class NotologEditor(QMainWindow):
 
     def closeEvent(self, event):
         if getattr(self, '_shutdown_complete', False):
+            settings = getattr(self, 'settings_dialog', None)
+            if settings is not None and not settings.close():
+                event.ignore()
+                return
             event.accept()
             return
 
@@ -1784,6 +1789,11 @@ class NotologEditor(QMainWindow):
 
         # Check the event is not accepted in any prior dialogue
         if not event.isAccepted():
+            return
+
+        settings = getattr(self, 'settings_dialog', None)
+        if settings is not None and not settings.close():
+            event.ignore()
             return
 
         if getattr(self, '_speech_controller', None):
@@ -3034,13 +3044,29 @@ class NotologEditor(QMainWindow):
 
         self.logger.debug('Settings dialog')
 
+        settings = getattr(self, 'settings_dialog', None)
+        if settings is not None:
+            if settings.isMinimized() or settings.isHidden():
+                settings.showNormal()
+            settings.raise_()
+            settings.activateWindow()
+            return
+
         # Save any unsaved changes before calling a dialog
         self.save_active_file(clear_after=False)
 
-        settings = SettingsDialog(self)
+        self.settings_dialog = settings = SettingsDialog(self)
         try:
-            settings.exec()
-        finally:
+            settings.finished.connect(self.close_settings)
+            settings.show()
+        except Exception:
+            self.close_settings()
+            raise
+
+    def close_settings(self):
+        settings = self.settings_dialog
+        self.settings_dialog = None
+        if settings is not None:
             settings.deleteLater()
 
     def action_reset_settings(self):
@@ -3056,9 +3082,7 @@ class NotologEditor(QMainWindow):
         self.common_dialog(
             self.lexemes.get('dialog_reset_settings_title'),
             self.lexemes.get(name='dialog_reset_settings_text'),
-            callback=lambda dialog_callback:
-            # Call dialog callback first and close the app
-            (self.reset_settings_dialog_callback(dialog_callback), self.close()))
+            callback=self.reset_settings_dialog_callback)
 
     def reset_settings_dialog_callback(self, callback: Optional[Callable[..., Any]] = None):
         """
@@ -3066,6 +3090,12 @@ class NotologEditor(QMainWindow):
         """
 
         self.logger.debug('Reset settings dialog callback with sub-callback %s' % callback)
+
+        settings = self.settings_dialog
+        if settings is not None and not settings.close():
+            if callable(callback):
+                callback()
+            return
 
         # Clear all settings
         self.settings.clear()
@@ -3079,6 +3109,8 @@ class NotologEditor(QMainWindow):
 
         if callable(callback):
             callback()
+
+        self.close()
 
     def action_check_for_updates(self) -> None:
         """
@@ -3809,22 +3841,18 @@ class NotologEditor(QMainWindow):
         return True
 
     def get_cached_resource_pixmap(self, image_url) -> QPixmap:
-        # Convert url to local file name
-        file_name = self.resource_downloader.url_to_filename(image_url)
-        res_folder = self.resource_downloader.get_resource_folder(self.get_tree_active_dir())
-        file_path = os.path.join(res_folder.path(), file_name)
-        self.logger.debug(f"Resource url '{image_url}', local file '{file_path}'")
         # Check if the image is already downloaded and cached
         pixmap = QPixmap()
         if QPixmapCache.find(image_url, pixmap):
             self.logger.debug(f"Pixmap resource found in cache: {image_url}")
-        elif os.path.exists(file_path):
-            # Load from disk and cache
-            pixmap.load(file_path)
-            QPixmapCache.insert(image_url, pixmap)
-            self.logger.debug(f"Loaded from disk and cached: {image_url}")
         else:
-            if self.resource_downloader.is_external_url(image_url):
+            file_path = self.resource_downloader.get_cached_image_path(image_url, self.get_tree_active_dir())
+            if file_path:
+                # Load from disk and cache
+                pixmap.load(file_path)
+                QPixmapCache.insert(image_url, pixmap)
+                self.logger.debug(f"Loaded from disk and cached: {image_url}")
+            elif self.resource_downloader.is_external_url(image_url):
                 self.logger.debug(f"Resource's '{image_url}' file doesn't exist '{file_path}' yet")
         return pixmap
 
@@ -3834,8 +3862,9 @@ class NotologEditor(QMainWindow):
             self.logger.warning(f'Wrong data for added resource: {data}')
             return
         image_url = data['resource_name']
-        # Get cached resource data as handler should process an update
-        pixmap = self.get_cached_resource_pixmap(image_url)
+        pixmap = data.get('pixmap')
+        if not isinstance(pixmap, QPixmap) or pixmap.isNull():
+            pixmap = self.get_cached_resource_pixmap(image_url)
         if not pixmap.isNull():
             # Attach resource
             self.attach_resource(image_url, pixmap)

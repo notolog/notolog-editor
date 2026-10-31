@@ -62,12 +62,12 @@ lexemes = {
         " licentie."
     ),
     "module_text_to_speech_config_runtime_input_accessible_description": (
-        "NeMo-Speech.cpp 0.1.0 is vereist. Pak het archief uit en kies bin/nemo-speech "
+        "NeMo-Speech.cpp 0.2.0 is vereist. Pak het archief uit en kies bin/nemo-speech "
         "(bin/nemo-speech.exe op Windows)."
     ),
     "module_text_to_speech_config_model_directory_input_accessible_description": (
         "Modellen worden hier gedownload. Bestaande bestanden worden gecontroleerd en hergebruikt. "
-        "Vereist curl en ongeveer 550 MB."
+        "Vereist curl en ongeveer 700 MB."
     ),
     "module_text_to_speech_config_custom_models_accessible_description": (
         "Vervang modelpaden of wis de velden om de modelmap te gebruiken."

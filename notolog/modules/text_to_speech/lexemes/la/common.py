@@ -1,5 +1,24 @@
 # Latin lexemes common.py
 lexemes = {
+    "module_text_to_speech_error_runtime_version": (
+        "Haec integratio NeMo-Speech.cpp {version} requirit. Inventum: {detected}"
+    ),
+    "module_text_to_speech_error_runtime_missing": (
+        "In configuratione vocis elige programma nemo-speech iam institutum."
+    ),
+    "module_text_to_speech_error_models_missing": (
+        "Excipe exemplaria vel in configuratione vocis elige Magpie, NanoCodec et directorium tokenizatorum."
+    ),
+    "module_text_to_speech_error_runtime_archive": (
+        "Fluxus audio nativus integrum archivum ambitus exsecutionis requirit, incluso directorio lib."
+    ),
+    "module_text_to_speech_error_language_selection": (
+        "In configuratione vocis elige linguam sustentatam."
+    ),
+    "module_text_to_speech_error_download_incomplete": (
+        "Receptio finita est sine omnibus exemplaribus. Inspice exitum ambitus exsecutionis vel vias "
+        "exemplarium manu elige."
+    ),
     "module_text_to_speech_name": "Textus in vocem",
     "module_text_to_speech_action_read_selection": "Selectionem recita",
     "module_text_to_speech_action_read_file": "Documentum recita",

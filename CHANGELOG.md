@@ -1,16 +1,38 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.2.4] - 2026-11-03
+
+### Added
+- Added MagpieTTS v2607 speech choices for Korean and Brazilian Portuguese.
+
+### Changed
+- Required Python 3.11–3.14.
+- Updated Text-to-Speech to NeMo-Speech.cpp 0.2.0 and matching MagpieTTS v2607 models and tokenizers.
+- Raised the minimum cryptography version to 50.0.2 (OpenSSL 4.0.3 wheels) and Tomli to 2.5.0 (nested TOML parsing crash fix).
+- Required Python-Markdown 3.11.2 for inline parsing fixes and safer fenced-code attributes.
+- Updated to Qt for Python 6.11.3, ONNX Runtime GenAI CPU/CUDA 0.18, and llama-cpp-python 0.3.36 for optional GGUF inference.
+- Updated NumPy to compatible maintenance releases and emoji to 2.16 with Unicode 18 emoji data.
+- Limited speech choices to languages supported by both the app and the speech model.
+
+### Fixed
+- Allowed the Settings window to move independently of the main window.
+- Expanded dotted version strings into spoken English before synthesis.
+- Translated speech setup errors, including runtime version mismatches, and kept them translatable when the interface language changes.
+- Fixed speech setup after downloading a new model alongside older cached versions.
+- Made voice previews use the selected speech language and kept the runtime download link available for upgrades.
+- Validated external image contents and filenames, with limits of 16 MiB, 60 seconds overall, and 30 seconds idle.
+- Displayed downloaded images even when the optional pixmap cache cannot retain them.
+- Prevented speech toolbar errors when closing the editor.
+
 ## [1.2.3] - 2026-09-06
 
 ### Added
-
 - Added local streaming Text-to-Speech with model downloads, playback controls, translated settings, and reading from documents, selections, or the cursor.
 - Added language-aware Pygments highlighting for common fenced-code languages in edit mode, including Bash, C/C++, CSS, JavaScript, JSON, Markdown, PHP, Python, SQL, TypeScript, XML, and YAML.
 - Expanded Markdown regression tests for syntax boundaries, nested containers, Unicode, malformed input, and rendering, including comparisons with Python-Markdown.
 
 ### Changed
-
 - Improved edit-mode Markdown highlighting for emphasis, inline code, headings, nested lists, blockquotes, thematic breaks, tables, links, images, references, abbreviations, inline HTML, and HTML comments.
 - Made fenced-code parsing stateful, validated fence types and language declarations, and kept Markdown-looking content inside code blocks literal while still allowing language-aware token colors.
 - Unified live language updates across settings and module panels, including TTS controls and application-generated log messages.
@@ -19,7 +41,6 @@ All notologable changes to this project will be documented in this file.
 - Raised the minimum `coverage` version to 7.16.0.
 
 ### Fixed
-
 - Fixed edit-mode formatting ranges around non-BMP emoji and other supplementary Unicode characters by translating Python code-point offsets to Qt UTF-16 offsets.
 - Fixed Markdown delimiters inside inline code and HTML comments being interpreted as active formatting.
 - Fixed stale or duplicate highlighter state accumulating after document edits, and capped inline and lexer work for unusually large input.

@@ -1,227 +1,167 @@
-<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-31 00:00:00.000000"}} -->
 # API Reference
 
-Developer documentation for extending and integrating with Notolog.
-
-## Table of Contents
-
-- [Module Architecture](#module-architecture)
-- [Creating Custom Modules](#creating-custom-modules)
-- [Settings Integration](#settings-integration)
-- [Signal System](#signal-system)
-- [Key Classes](#key-classes)
-- [Contributing](#contributing)
-
----
+Source guide for contributors extending Notolog. These are internal interfaces; use the
+implementation from the application version you are targeting.
 
 ## Module Architecture
 
-Notolog uses a modular architecture for AI backends and extensions:
+Modules live under `notolog/modules/<module_name>/`. The
+[module loader](https://github.com/notolog/notolog-editor/blob/main/notolog/modules/modules.py)
+discovers directories containing `module_core.py`, imports their package, and checks its
+`is_available()` function. Available packages expose `ModuleCore`.
 
-```
-notolog/modules/
-├── base_core.py         # Base module class
-├── base_ai_core.py      # AI module base class
-├── modules.py           # Module loader and registry
-├── openai_api/          # OpenAI API module
-│   ├── module_core.py   # Module implementation
-│   ├── api_helper.py    # API client
-│   └── prompt_manager.py
-├── ondevice_llm/        # ONNX Runtime module
-│   ├── module_core.py
-│   ├── model_helper.py  # Model loading and inference
-│   └── prompt_manager.py
-└── llama_cpp/           # Module llama.cpp
-    ├── module_core.py
-    ├── model_helper.py
-    └── prompt_manager.py
-```
+- [BaseCore](https://github.com/notolog/notolog-editor/blob/main/notolog/modules/base_core.py)
+  defines module identity, extensions, and lexeme location.
+- [BaseAiCore](https://github.com/notolog/notolog-editor/blob/main/notolog/modules/base_ai_core.py)
+  additionally requires `get_prompt_manager()` and `request()`.
+- [OpenAI API](https://github.com/notolog/notolog-editor/tree/main/notolog/modules/openai_api),
+  [ONNX](https://github.com/notolog/notolog-editor/tree/main/notolog/modules/ondevice_llm),
+  and [llama.cpp](https://github.com/notolog/notolog-editor/tree/main/notolog/modules/llama_cpp)
+  implement AI Assistant integration.
+- [Text-to-Speech](https://github.com/notolog/notolog-editor/tree/main/notolog/modules/text_to_speech)
+  extends `BaseCore` for speech, settings, and playback integration.
 
----
+Within a backend, `module_core.py` owns integration, `prompt_manager.py` owns
+conversation construction, and `model_helper.py` owns local model loading and
+generation. The API backend uses `api_helper.py` for request construction instead.
+Its package `__init__.py` exports `ModuleCore` and provides the availability check.
 
 ## Creating Custom Modules
 
-### Base Class
+Use an existing module with the same extension points as your starting reference.
+Implement its package availability check, `ModuleCore`, `module_name`, `extensions`,
+and `get_lexemes_path()`.
 
-All AI modules extend `BaseAiCore`:
+AI modules also manage their prompt manager, asynchronous requests, dialog signal connections,
+and cancellation. Existing implementations use `attach_dialog()`, `parent_closed()`, and
+`request_cancelled()`; these are integration methods, not additional abstract methods on `BaseAiCore`.
+
+Cancellation and shutdown must release tasks and native resources without blocking the Qt event loop.
+Keep QWidget changes on the GUI thread.
+
+### AI request contract
+
+The existing backends use this request signature:
 
 ```python
-from notolog.modules.base_ai_core import BaseAiCore
-
-class ModuleCore(BaseAiCore):
-    """Custom AI module implementation."""
-
-    module_name = 'My Custom Module'
-    extensions = ['ai_assistant', 'settings_dialog']
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        # Initialize your module
-
-    def get_prompt_manager(self):
-        """Return the prompt manager instance."""
-        return self.prompt_manager
-
-    async def request(self, user_prompt, request_msg_id, response_msg_id,
-                      init_callback=None, finished_callback=None):
-        """
-        Handle inference requests.
-
-        Args:
-            user_prompt: The user's input text
-            request_msg_id: ID for the request message
-            response_msg_id: ID for the response message
-            init_callback: Called when inference starts
-            finished_callback: Called when inference completes
-        """
-        # Implement inference logic
-        pass
+async def request(self, user_prompt, request_msg_id, response_msg_id,
+                  init_callback=None, finished_callback=None):
+    ...
 ```
 
-### Required Methods
+This is an interface fragment, not a complete module. Create the prompt manager
+before a request is accepted and return it from `get_prompt_manager()`. Preserve
+the request and response IDs when emitting updates. Existing implementations call
+`init_callback()` when generation starts and invoke the completion callback with
+`request_msg_id`, `response_msg_id`, and `message_type` keyword arguments.
 
-| Method | Description |
-|--------|-------------|
-| `get_prompt_manager()` | Return the prompt manager instance |
-| `request()` | Handle inference requests (async) |
-| `attach_dialog()` | Connect to AI Assistant dialog |
+| Integration point | Responsibility |
+|-------------------|----------------|
+| `attach_dialog()` | Connect text/usage signals and dialog cancellation/closure; initialize the prompt manager. |
+| `request_cancelled()` | Stop the active request and release its resources. |
+| `parent_closed()` | Stop work and disconnect signals belonging to the closing dialog. |
 
-### Optional Methods
-
-| Method | Description |
-|--------|-------------|
-| `is_model_loaded()` | Check if model is initialized |
-| `cleanup()` | Release resources when module is unloaded |
-| `cancel_request()` | Cancel ongoing inference |
-
----
+Connect module-specific cleanup helpers to the cancellation and shutdown methods above.
 
 ## Settings Integration
 
-Modules can extend the settings dialog dynamically:
+Register properties through `extend_settings_create_property(extend_func)`, called with
+`Settings.create_property`. For example:
 
 ```python
 @staticmethod
 def extend_settings_create_property(extend_func):
-    """Register custom settings properties."""
     if callable(extend_func):
-        # Add a string setting
-        extend_func("my_module_setting", str, "default_value")
-        # Add an integer setting
-        extend_func("my_module_number", int, 100)
-        # Add a boolean setting
-        extend_func("my_module_enabled", bool, True)
+        extend_func("module_example_text", str, "")
+        extend_func("module_example_limit", int, 100)
+        extend_func("module_example_enabled", bool, False)
 ```
 
-### Settings Dialog Fields
+`extend_settings_dialog_fields_conf(tab_widget)` creates the tab/layout and returns widget
+configuration dictionaries. These use actual Qt widget classes under `type`, object names under
+`name`, and callbacks to place widgets in the layout. Use the
+[OpenAI settings implementation](https://github.com/notolog/notolog-editor/blob/main/notolog/modules/openai_api/module_core.py)
+for the complete schema and translated labels.
+
+For example, inside a module with its lexemes initialized:
 
 ```python
-def extend_settings_dialog_fields_conf(self, tab_widget) -> list:
-    """Return configuration for settings UI fields."""
+from PySide6.QtWidgets import QLabel, QLineEdit, QSpinBox, QVBoxLayout, QWidget
+
+def extend_settings_dialog_fields_conf(self, tab_widget):
+    page = QWidget()
+    layout = QVBoxLayout(page)
+    tab_widget.addTab(page, self.lexemes.get("module_example_tab"))
     return [
-        {
-            'type': 'line_edit',
-            'key': 'my_module_setting',
-            'label': 'My Setting',
-            'tooltip': 'Description of this setting'
-        },
-        {
-            'type': 'spin_box',
-            'key': 'my_module_number',
-            'label': 'Number Value',
-            'min': 0,
-            'max': 1000
-        }
+        {"type": QLabel, "name": "module_example_text_label",
+         "text": self.lexemes.get("module_example_text_label"),
+         "callback": layout.addWidget},
+        {"type": QLineEdit, "name": "module_example_text_input:module_example_text",
+         "callback": layout.addWidget},
+        {"type": QSpinBox, "name": "module_example_limit_input:module_example_limit",
+         "props": {"setMinimum": 0, "setMaximum": 1000},
+         "callback": layout.addWidget},
     ]
 ```
 
----
+Register the properties first and add the example label keys to the module's
+Python lexeme catalogs. The suffix after `:` binds a control to its settings
+property. Give translated controls stable object names and integrate them with
+language refresh, as the existing modules do.
+
+Follow the shared language-refresh mechanism so translated controls update without losing settings
+or cancelling unrelated operations. Catalogs are Python files under the module's `lexemes/` directory.
 
 ## Signal System
 
-AI modules use Qt signals for UI communication:
+Existing AI modules connect these signals to the AI Assistant:
 
-### Update Signal
+| Signal | Arguments |
+|--------|-----------|
+| `update_signal` | text, request ID, response ID, message type, message style |
+| `update_usage_signal` | model name, input tokens, output tokens, total tokens, incremental-update flag |
+
+Use the application's message enums and the same signal signatures as the target release.
+The final usage flag distinguishes incremental streamed counts from replacement totals.
+
+For a complete response and replacement usage totals, the emission forms are:
 
 ```python
-from PySide6.QtCore import Signal
+from notolog.ui.ai_assistant.ai_assistant import EnumMessageType, EnumMessageStyle
 
-# Emit text updates to the UI
-update_signal = Signal(str, object, object, EnumMessageType, EnumMessageStyle)
-
-# Usage:
 self.update_signal.emit(
-    "Response text",           # Message content
-    request_msg_id,            # Request message ID (or -1 for None)
-    response_msg_id,           # Response message ID (or -1 for None)
-    EnumMessageType.DEFAULT,   # Message type
-    EnumMessageStyle.DEFAULT   # Message style
+    "Response text", request_msg_id, response_msg_id,
+    EnumMessageType.RESPONSE, EnumMessageStyle.DEFAULT,
 )
-```
-
-### Usage Signal
-
-```python
-# Emit token usage statistics
-update_usage_signal = Signal(str, object, object, object, object)
-
-# Usage:
 self.update_usage_signal.emit(
-    "usage",          # Signal type
-    input_tokens,     # Input token count
-    output_tokens,    # Output token count
-    total_tokens,     # Total token count
-    model_name        # Model identifier
+    model_name, input_tokens, output_tokens, total_tokens, False,
 )
 ```
 
----
+Declare these as Qt signals on the module class, following the backend examples.
+Built-in backends use `None` for absent message IDs in text updates, such as
+status and error messages.
 
 ## Key Classes
 
-### AppConfig
-
-Singleton for application configuration:
-
 ```python
 from notolog.app_config import AppConfig
-
-config = AppConfig()
-version = config.get_app_version()
-logger_level = config.get_logger_level()
-```
-
-### Settings
-
-User settings management:
-
-```python
 from notolog.settings import Settings
-
-settings = Settings()
-theme = settings.theme
-language = settings.app_language
-```
-
-### Lexemes
-
-Internationalization support:
-
-```python
 from notolog.lexemes.lexemes import Lexemes
 
-lexemes = Lexemes(language='en', scope='ai_assistant')
-text = lexemes.get('dialog_title')
+version = AppConfig().get_app_version()
+logger_level = AppConfig().get_logger_level()
+theme = Settings().app_theme
+language = Settings().app_language
+lexemes = Lexemes(language="en", default_scope="ai_assistant")
+title = lexemes.get("dialog_title")
 ```
 
----
+Choose lexeme keys from the relevant catalog and scope.
+Settings changes emit `Settings.value_changed`; module implementations decide which changes require work.
 
 ## Contributing
 
-For contribution guidelines, see:
-- [Contributing Guidelines](https://github.com/notolog/notolog-editor/blob/main/CONTRIBUTING.md){:target="_blank"}
-- [Code of Conduct](https://github.com/notolog/notolog-editor/blob/main/CODE_OF_CONDUCT.md){:target="_blank"}
-
----
-
-*For user documentation, see [User Guide](user-guide.md).*
+See [CONTRIBUTING.md](https://github.com/notolog/notolog-editor/blob/main/CONTRIBUTING.md)
+for development setup, and [the security policy](https://github.com/notolog/notolog-editor/blob/main/SECURITY.md)
+for private vulnerability reporting.

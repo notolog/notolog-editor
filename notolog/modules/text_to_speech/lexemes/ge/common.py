@@ -1,5 +1,25 @@
 # Georgian lexemes common.py
 lexemes = {
+    "module_text_to_speech_error_runtime_version": (
+        "ამ ინტეგრაციისთვის საჭიროა NeMo-Speech.cpp {version}. აღმოჩენილია: {detected}"
+    ),
+    "module_text_to_speech_error_runtime_missing": (
+        "მეტყველების სინთეზის პარამეტრებში აირჩიეთ დაყენებული nemo-speech-ის შესრულებადი ფაილი."
+    ),
+    "module_text_to_speech_error_models_missing": (
+        "ჩამოტვირთეთ მოდელები ან მეტყველების სინთეზის პარამეტრებში აირჩიეთ Magpie, NanoCodec და "
+        "ტოკენიზატორების საქაღალდე."
+    ),
+    "module_text_to_speech_error_runtime_archive": (
+        "აუდიოს ნაკადის გადაცემას სჭირდება ძრავის სრული არქივი, lib საქაღალდის ჩათვლით."
+    ),
+    "module_text_to_speech_error_language_selection": (
+        "მეტყველების სინთეზის პარამეტრებში აირჩიეთ მხარდაჭერილი ენა."
+    ),
+    "module_text_to_speech_error_download_incomplete": (
+        "ჩამოტვირთვა დასრულდა მოდელების არასრული ნაკრებით. შეამოწმეთ ძრავის გამონატანი ან ხელით აირჩიეთ "
+        "მოდელების გზები."
+    ),
     "module_text_to_speech_name": "ტექსტის გახმოვანება",
     "module_text_to_speech_action_read_selection": "მონიშნულის ხმამაღლა წაკითხვა",
     "module_text_to_speech_action_read_file": "ფაილის ხმამაღლა წაკითხვა",

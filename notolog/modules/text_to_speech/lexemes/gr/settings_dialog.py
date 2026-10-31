@@ -62,12 +62,12 @@ lexemes = {
         "μοντέλα έχουν ξεχωριστή άδεια."
     ),
     "module_text_to_speech_config_runtime_input_accessible_description": (
-        "Απαιτείται NeMo-Speech.cpp 0.1.0. Αποσυμπιέστε το αρχείο και επιλέξτε bin/nemo-speech "
+        "Απαιτείται NeMo-Speech.cpp 0.2.0. Αποσυμπιέστε το αρχείο και επιλέξτε bin/nemo-speech "
         "(bin/nemo-speech.exe στα Windows)."
     ),
     "module_text_to_speech_config_model_directory_input_accessible_description": (
         "Τα μοντέλα αποθηκεύονται εδώ. Τα υπάρχοντα αρχεία επαληθεύονται και επαναχρησιμοποιούνται. "
-        "Απαιτούνται curl και περίπου 550 MB."
+        "Απαιτούνται curl και περίπου 700 MB."
     ),
     "module_text_to_speech_config_custom_models_accessible_description": (
         "Ορίστε άλλες διαδρομές μοντέλων ή αδειάστε τα πεδία για χρήση του φακέλου μοντέλων."

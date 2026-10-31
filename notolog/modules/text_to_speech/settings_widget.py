@@ -40,10 +40,10 @@ from ...ui.enum_combo_box import EnumComboBox
 from ...helpers.theme_helper import ThemeHelper
 from .config import speech_settings, runtime_path, model_directory, model_paths, CONTEXT_LENGTHS, audio_requirements
 from .config import default_model_directory
-from .runtime import download_models, validate_runtime
+from .runtime import download_models, validate_runtime, SUPPORTED_VERSION
 from .playback_bar import SpeechActivity
 from .languages import SpeechLanguage
-from .i18n import catalog, language_label
+from .i18n import catalog, language_label, SpeechSetupError
 
 
 class SpeechButton(QPushButton):
@@ -98,8 +98,8 @@ class SpeechSettingsWidget(QWidget):
                   'module_text_to_speech_config_runtime_input_accessible_description')
         self.runtime_link = QLabel()
         self.translations.bind(lambda text: self.runtime_link.setText(
-            '<a href="https://github.com/NVIDIA/NeMo-Speech.cpp/releases/tag/v0.1.0">' + text + '</a>'),
-                               'module_text_to_speech_config_get_runtime_link', version='0.1.0')
+            f'<a href="https://github.com/NVIDIA/NeMo-Speech.cpp/releases/tag/v{SUPPORTED_VERSION}">' + text + '</a>'),
+                               'module_text_to_speech_config_get_runtime_link', version=SUPPORTED_VERSION)
         self.runtime_link.linkActivated.connect(lambda url: QDesktopServices.openUrl(QUrl(url)))
         form.addRow('', self.runtime_link)
         self.path(form, 'module_text_to_speech_config_model_directory_label', 'tts_model_directory',
@@ -189,9 +189,10 @@ class SpeechSettingsWidget(QWidget):
         for index, language in enumerate(SpeechLanguage):
             self.language.setItemText(index, language_label(language))
         self.language.setObjectName('tts_language')
-        self.language.setCurrentIndex(list(SpeechLanguage).index(SpeechLanguage.from_code(self.settings.tts_language)))
+        selected = SpeechLanguage.from_code(self.settings.tts_language)
+        self.language.setCurrentIndex(list(SpeechLanguage).index(selected) if selected else -1)
         self.language.currentIndexChanged.connect(
-            lambda _: setattr(self.settings, 'tts_language', self.language.currentData().name.lower()))
+            lambda index: setattr(self.settings, 'tts_language', self.language.currentData().code) if index >= 0 else None)
         reading.addRow(self.hint('module_text_to_speech_config_language_label',
                                  'module_text_to_speech_config_language_input_accessible_description'), self.language)
         self.fields.append(self.language)
@@ -423,6 +424,14 @@ class SpeechSettingsWidget(QWidget):
             model_paths(self.settings, overrides=overrides)
             return True
         except (ValueError, OSError):
+            if overrides:
+                return False
+        # A selected downloaded revision still belongs to the model folder even
+        # when other revisions make automatic discovery ambiguous.
+        try:
+            root = model_directory(self.settings)
+            return all(Path(path).is_relative_to(root) for path in model_paths(self.settings))
+        except (ValueError, OSError):
             return False
 
     def refresh_controls(self, *, rescan=True, update_enabled=True):
@@ -430,7 +439,7 @@ class SpeechSettingsWidget(QWidget):
             self._have_models = self.have_models()
             self._folder_models = self.have_models(overrides=False)
         available = bool(runtime_path(self.settings))
-        self.runtime_link.setVisible(not available)
+        self.runtime_link.setVisible(True)
         self.download.setText(self.lexemes.get(
             'module_text_to_speech_config_verify_models_button') if self._folder_models else self.lexemes.get(
             'module_text_to_speech_config_download_models_button'))
@@ -517,14 +526,16 @@ class SpeechSettingsWidget(QWidget):
             if not isValid(self):
                 return
             outcome = 'Failed'
-            self.append_details(str(exc) + '\n')
+            if not isinstance(exc, SpeechSetupError):
+                self.append_details(str(exc) + '\n')
             if isinstance(exc, PermissionError):
                 self.report_key('module_text_to_speech_config_error_permission_denied', 'error')
             elif isinstance(exc, OSError):
                 self.report_key('module_text_to_speech_config_error_file_access', 'error',
                                 error=exc.strerror or str(exc))
             else:
-                self.report_key('module_text_to_speech_error', 'error', scope='common', error=str(exc))
+                self.report_key('module_text_to_speech_error', 'error', scope='common',
+                                error=exc.message if isinstance(exc, SpeechSetupError) else str(exc))
         finally:
             if isValid(self):
                 self.timer.stop()
@@ -587,16 +598,18 @@ class SpeechSettingsWidget(QWidget):
 
     async def _download(self):
         if not runtime_path(self.settings):
-            raise ValueError(self.lexemes.get('module_text_to_speech_config_runtime_required'))
+            raise SpeechSetupError('module_text_to_speech_config_runtime_required', scope='settings_dialog')
         self.download_started = False
         self.download_pending = ''
         self.completed_files = 0
         self.active_file = False
         self.report_key('module_text_to_speech_config_status_checking_models', 'busy')
-        await download_models(self.settings, self.download_output)
+        paths = await download_models(self.settings, self.download_output)
         self.completed_files = 3
-        for name in ('tts_magpie_path', 'tts_codec_path', 'tts_tokenizer_directory'):
-            self.findChild(QLineEdit, name).clear()
+        # The cache can contain multiple revisions after an upgrade. Use the
+        # verified set returned by this runtime instead of guessing by filename.
+        for name, path in zip(('tts_magpie_path', 'tts_codec_path', 'tts_tokenizer_directory'), paths):
+            self.findChild(QLineEdit, name).setText(path)
         self.report_key(
             'module_text_to_speech_config_status_models_downloaded' if self.download_started else
             'module_text_to_speech_config_status_models_verified', 'success')
@@ -658,19 +671,22 @@ class SpeechSettingsWidget(QWidget):
 
     async def _test_voice(self):
         if not self.settings.tts_enabled:
-            raise ValueError(self.lexemes.get('module_text_to_speech_config_enable_required'))
+            raise SpeechSetupError('module_text_to_speech_config_enable_required', scope='settings_dialog')
+        language = SpeechLanguage.from_code(self.settings.tts_language)
+        if language is None:
+            raise SpeechSetupError('module_text_to_speech_error_language_selection')
         await validate_runtime(self.settings)
         model_paths(self.settings)
         editor = self.editor()
         if not editor:
-            raise ValueError(self.lexemes.get('module_text_to_speech_config_editor_required'))
+            raise SpeechSetupError('module_text_to_speech_config_editor_required', scope='settings_dialog')
         controller = editor.get_speech_controller()
         controller.status_changed.connect(self.report_status)
         controller.error.connect(self.voice_error)
         controller.details_changed.connect(self.append_details)
         try:
             self.report_key('module_text_to_speech_config_status_testing_voice', 'busy')
-            editor.action_read_aloud(source='Welcome to Notolog. This is a test of your reading voice.')
+            editor.action_read_aloud(source=language.sample)
             if controller.task:
                 await controller.task
         except asyncio.CancelledError:
@@ -683,7 +699,10 @@ class SpeechSettingsWidget(QWidget):
                 controller.details_changed.disconnect(self.append_details)
 
     def voice_error(self, message):
-        self.report(message, 'error')
+        if isinstance(message, SpeechSetupError):
+            self.report_key('module_text_to_speech_error', 'error', scope='common', error=message.message)
+        else:
+            self.report(message, 'error')
 
     def report_status(self, key):
         active = self.operation == 'test' and key in (

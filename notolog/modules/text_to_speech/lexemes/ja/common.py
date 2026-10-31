@@ -1,5 +1,23 @@
 # Japanese lexemes common.py
 lexemes = {
+    "module_text_to_speech_error_runtime_version": (
+        "この連携には NeMo-Speech.cpp {version} が必要です。検出されたバージョン: {detected}"
+    ),
+    "module_text_to_speech_error_runtime_missing": (
+        "読み上げ設定で、インストール済みの nemo-speech 実行ファイルを選択してください。"
+    ),
+    "module_text_to_speech_error_models_missing": (
+        "モデルをダウンロードするか、読み上げ設定で Magpie、NanoCodec、トークナイザーのフォルダーを選択してください。"
+    ),
+    "module_text_to_speech_error_runtime_archive": (
+        "ネイティブ音声ストリーミングには、lib ディレクトリを含むランタイムの完全なアーカイブが必要です。"
+    ),
+    "module_text_to_speech_error_language_selection": (
+        "読み上げ設定で、対応している言語を選択してください。"
+    ),
+    "module_text_to_speech_error_download_incomplete": (
+        "ダウンロードは完了しましたが、モデルが揃っていません。ランタイムの出力を確認するか、モデルのパスを手動で選択してください。"
+    ),
     "module_text_to_speech_name": "テキスト読み上げ",
     "module_text_to_speech_action_read_selection": "選択範囲を読み上げる",
     "module_text_to_speech_action_read_file": "ファイルを読み上げる",

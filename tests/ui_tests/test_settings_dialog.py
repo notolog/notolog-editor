@@ -16,7 +16,7 @@ License: MIT License
 For detailed instructions and project information, please see the repository's README.md.
 """
 
-from PySide6.QtCore import Qt, QObject
+from PySide6.QtCore import Qt, QObject, QPoint, QTimer, QCoreApplication, QEvent
 from PySide6.QtWidgets import QWidget, QTabWidget, QLabel, QCheckBox, QLineEdit, QSlider
 from PySide6.QtWidgets import QScrollArea, QVBoxLayout, QSizePolicy, QPlainTextEdit, QComboBox, QSpinBox, QDoubleSpinBox
 from PySide6.QtWidgets import QStyle
@@ -29,6 +29,7 @@ from notolog.ui.dir_path_line_edit import DirPathLineEdit
 from notolog.ui.file_path_line_edit import FilePathLineEdit
 from notolog.ui.horizontal_line_spacer import HorizontalLineSpacer
 from notolog.settings import Settings
+from notolog.editor_state import Mode, Source
 from notolog.enums.languages import Languages
 from notolog.modules.modules import Modules
 
@@ -39,6 +40,7 @@ from . import test_app  # noqa: F401
 import pytest
 
 from unittest.mock import MagicMock
+from shiboken6 import isValid
 
 
 class TestSettingsDialog:
@@ -93,6 +95,130 @@ class TestSettingsDialog:
         param_values = request.param
 
         yield param_values
+
+    @pytest.mark.parametrize('state', ['visible', 'minimized', 'hidden'])
+    def test_settings_action_restores_existing_window(self, mocker, ui_obj, main_window, qapp, state):
+        mocker.patch.object(type(main_window), 'resizeEvent', return_value=None)
+        create = mocker.patch('notolog.notolog_editor.SettingsDialog', return_value=ui_obj)
+        save = mocker.patch.object(main_window, 'save_active_file')
+        raised = mocker.patch.object(ui_obj, 'raise_', wraps=ui_obj.raise_)
+        activated = mocker.patch.object(ui_obj, 'activateWindow', wraps=ui_obj.activateWindow)
+        QWidget.show(main_window)
+        try:
+            main_window.action_settings()
+            qapp.processEvents()
+            assert main_window.settings_dialog is ui_obj
+            assert not ui_obj.isModal()
+            assert qapp.activeModalWidget() is None
+            ui_obj.tab_widget.setCurrentIndex(1)
+            ui_obj.move(QPoint(150, 100))
+            position = ui_obj.pos()
+            if state == 'minimized':
+                ui_obj.showMinimized()
+            elif state == 'hidden':
+                ui_obj.hide()
+            main_window.raise_()
+            main_window.activateWindow()
+            qapp.processEvents()
+
+            main_window.action_settings()
+            qapp.processEvents()
+            assert main_window.settings_dialog is ui_obj
+            assert ui_obj.isVisible() and not ui_obj.isMinimized()
+            assert ui_obj.tab_widget.currentIndex() == 1
+            assert ui_obj.pos() == position
+            assert ui_obj.parentWidget() is main_window
+            assert ui_obj.windowHandle().transientParent() is None
+            create.assert_called_once_with(main_window)
+            save.assert_called_once_with(clear_after=False)
+            raised.assert_called_once_with()
+            activated.assert_called_once_with()
+
+            ui_obj.close()
+            assert main_window.settings_dialog is None
+            QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
+            assert not isValid(ui_obj)
+            create.side_effect = SettingsDialog
+            main_window.action_settings()
+            assert main_window.settings_dialog is not ui_obj
+            assert main_window.settings_dialog.isVisible()
+            assert create.call_count == 2
+            reopened = main_window.settings_dialog
+            main_window.close()
+            qapp.processEvents()
+            assert not isValid(reopened) or not reopened.isVisible()
+            assert main_window.settings_dialog is None
+        finally:
+            if main_window.settings_dialog is not None:
+                main_window.settings_dialog.close()
+            main_window.hide()
+
+    @pytest.mark.parametrize('shutdown_complete', [False, True])
+    def test_main_window_close_preserves_settings_when_close_is_refused(
+            self, mocker, ui_obj, main_window, qapp, shutdown_complete):
+        mocker.patch.object(type(main_window), 'resizeEvent', return_value=None)
+        mocker.patch('notolog.notolog_editor.SettingsDialog', return_value=ui_obj)
+        mocker.patch.object(main_window, 'save_active_file', return_value=True)
+        mocker.patch.object(main_window, 'get_mode', return_value=Mode.EDIT)
+        mocker.patch.object(main_window, 'get_source', return_value=Source.HTML)
+        mocker.patch('notolog.notolog_editor.asyncio.get_running_loop', side_effect=RuntimeError)
+        main_window._shutdown_complete = shutdown_complete
+        blocker = QWidget(ui_obj)
+        blocker.confirm_close = MagicMock(return_value=False)
+        QWidget.show(main_window)
+        main_window.action_settings()
+        try:
+            assert not main_window.close()
+            qapp.processEvents()
+            assert main_window.isVisible()
+            assert main_window.settings_dialog is ui_obj
+            assert ui_obj.isVisible()
+            blocker.confirm_close.assert_called_once_with()
+            blocker.confirm_close.return_value = True
+            assert main_window.close()
+            assert main_window.settings_dialog is None
+            assert not ui_obj.isVisible()
+        finally:
+            main_window._shutdown_complete = True
+            blocker.confirm_close.return_value = True
+            if isValid(ui_obj):
+                ui_obj.close()
+            main_window.hide()
+
+    @pytest.mark.parametrize('use_exec', [False, True])
+    def test_settings_window_moves_independently(self, ui_obj, main_window, qapp, use_exec):
+        observations = {}
+
+        def inspect_window():
+            try:
+                observations['transient_parent'] = ui_obj.windowHandle().transientParent()
+                main_position = main_window.pos()
+                ui_obj.move(ui_obj.pos() + QPoint(40, 25))
+                qapp.processEvents()
+                observations['main_unchanged'] = main_window.pos() == main_position
+                dialog_position = ui_obj.pos()
+                main_window.move(main_position + QPoint(25, 40))
+                qapp.processEvents()
+                observations['dialog_unchanged'] = ui_obj.pos() == dialog_position
+            finally:
+                if use_exec:
+                    ui_obj.reject()
+
+        main_window.show()
+        try:
+            if use_exec:
+                QTimer.singleShot(0, inspect_window)
+                ui_obj.exec()
+            else:
+                ui_obj.show()
+                qapp.processEvents()
+                inspect_window()
+            assert observations == {'transient_parent': None, 'main_unchanged': True, 'dialog_unchanged': True}
+            assert ui_obj.parentWidget() is main_window
+            assert ui_obj.settings is main_window.settings
+        finally:
+            ui_obj.close()
+            main_window.hide()
 
     def test_ui_object_state(self, mocker, ui_obj: SettingsDialog, settings_obj):
         # Check app language set correctly

@@ -1,4 +1,3 @@
-<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-18 13:57:00.794379"}} -->
 # Security Policy
 
 ## Supported Versions

@@ -135,17 +135,45 @@ class TestNotologEditor:
         dialog = mocker.patch('notolog.notolog_editor.SettingsDialog').return_value
         save_active_file = mocker.patch.object(test_obj_notolog_editor, 'save_active_file')
         if dialog_error is not None:
-            dialog.exec.side_effect = dialog_error
+            dialog.show.side_effect = dialog_error
 
         if dialog_error is None:
             test_obj_notolog_editor.action_settings()
+            assert test_obj_notolog_editor.settings_dialog is dialog
+            dialog.deleteLater.assert_not_called()
+            dialog.finished.connect.call_args.args[0]()
         else:
             with pytest.raises(RuntimeError, match='dialog failed'):
                 test_obj_notolog_editor.action_settings()
 
         save_active_file.assert_called_once_with(clear_after=False)
-        dialog.exec.assert_called_once_with()
+        dialog.show.assert_called_once_with()
+        dialog.exec.assert_not_called()
         dialog.deleteLater.assert_called_once_with()
+        assert test_obj_notolog_editor.settings_dialog is None
+
+    @pytest.mark.parametrize('allow_close', [False, True, None])
+    def test_reset_settings_respects_settings_dialog_cancellation(self, mocker, allow_close):
+        dialog = Mock() if allow_close is not None else None
+        if dialog is not None:
+            dialog.close.return_value = allow_close
+        editor = SimpleNamespace(logger=Mock(), settings_dialog=dialog, settings=Mock(), close=Mock())
+        app_config = mocker.patch('notolog.notolog_editor.AppConfig').return_value
+        dismiss = Mock()
+
+        NotologEditor.reset_settings_dialog_callback(editor, dismiss)
+
+        dismiss.assert_called_once_with()
+        if allow_close is False:
+            editor.settings.clear.assert_not_called()
+            editor.settings.sync.assert_not_called()
+            app_config.delete_app_config.assert_not_called()
+            editor.close.assert_not_called()
+        else:
+            editor.settings.clear.assert_called_once_with()
+            editor.settings.sync.assert_called_once_with()
+            app_config.delete_app_config.assert_called_once_with()
+            editor.close.assert_called_once_with()
 
     @pytest.mark.asyncio
     async def test_finish_shutdown_cancels_and_drains_tasks(self, mocker, test_obj_notolog_editor):

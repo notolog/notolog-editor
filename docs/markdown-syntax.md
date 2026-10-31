@@ -1,4 +1,3 @@
-<!-- {"notolog.app": {"created": "2024-03-26 00:19:36.466439", "updated": "2026-09-06 00:00:00.000000"}} -->
 # Markdown Syntax
 
 ## Headings
@@ -25,7 +24,15 @@ Keep space between the `#` sign and the heading itself.
 ##### Header 5
 ###### Header 6
 
-*No alternate syntax supported for the headings at the moment.*
+View mode also renders underlined level 1 and level 2 headings:
+
+```markdown
+Heading level 1
+===============
+
+Heading level 2
+---------------
+```
 
 ## Tables
 
@@ -530,9 +537,10 @@ Admonitions are special callout blocks that highlight important information. The
     This block contains additional information and conceals it beneath an expandable short summary.
     <details>
         <summary>Nested blocks support</summary>
-        This feature is experimental, and some nested syntax highlighting may not function entirely as expected. Nonetheless, it proves helpful in condensing lengthy content into expandable links. Support for this block will be expanded in the future.
+        Nested blocks can group related content. Rendering depends on the Markdown viewer;
+        check the result in Notolog's View mode as well as on the documentation website.
     </details>
 </details>
 
 ---
-_This README.md file has been carefully crafted and edited using the Notolog editor itself._
+_These examples were edited using Notolog._

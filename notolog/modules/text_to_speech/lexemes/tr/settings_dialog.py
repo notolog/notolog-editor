@@ -60,11 +60,11 @@ lexemes = {
         "lisansı vardır."
     ),
     "module_text_to_speech_config_runtime_input_accessible_description": (
-        "NeMo-Speech.cpp 0.1.0 gereklidir. Arşivi açıp bin/nemo-speech (Windows: bin/nemo-speech.exe) "
+        "NeMo-Speech.cpp 0.2.0 gereklidir. Arşivi açıp bin/nemo-speech (Windows: bin/nemo-speech.exe) "
         "seçin."
     ),
     "module_text_to_speech_config_model_directory_input_accessible_description": (
-        "Modeller buraya indirilir. Mevcut dosyalar doğrulanıp yeniden kullanılır. curl ve yaklaşık 550 "
+        "Modeller buraya indirilir. Mevcut dosyalar doğrulanıp yeniden kullanılır. curl ve yaklaşık 700 "
         "MB gerekir."
     ),
     "module_text_to_speech_config_custom_models_accessible_description": (

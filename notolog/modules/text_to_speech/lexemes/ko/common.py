@@ -1,5 +1,23 @@
 # Korean lexemes common.py
 lexemes = {
+    "module_text_to_speech_error_runtime_version": (
+        "이 통합에는 NeMo-Speech.cpp {version}이 필요합니다. 감지된 버전: {detected}"
+    ),
+    "module_text_to_speech_error_runtime_missing": (
+        "텍스트 음성 변환 설정에서 설치된 nemo-speech 실행 파일을 선택하세요."
+    ),
+    "module_text_to_speech_error_models_missing": (
+        "모델을 다운로드하거나 텍스트 음성 변환 설정에서 Magpie, NanoCodec 및 토크나이저 폴더를 선택하세요."
+    ),
+    "module_text_to_speech_error_runtime_archive": (
+        "네이티브 오디오 스트리밍에는 lib 디렉터리를 포함한 전체 런타임 아카이브가 필요합니다."
+    ),
+    "module_text_to_speech_error_language_selection": (
+        "텍스트 음성 변환 설정에서 지원되는 언어를 선택하세요."
+    ),
+    "module_text_to_speech_error_download_incomplete": (
+        "다운로드가 완료되었지만 모델이 모두 갖춰지지 않았습니다. 런타임 출력을 확인하거나 모델 경로를 직접 선택하세요."
+    ),
     "module_text_to_speech_name": "텍스트 음성 변환",
     "module_text_to_speech_action_read_selection": "선택한 텍스트 읽기",
     "module_text_to_speech_action_read_file": "파일 읽기",

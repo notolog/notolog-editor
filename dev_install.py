@@ -24,11 +24,27 @@ import tomli
 
 
 def parse_version(version):
-    if "^" in version:
-        major = version.split(".")[0][1:]  # Remove the caret and split by dot
-        next_major = str(int(major) + 1)
-        return f">={version[1:]},<{next_major}.0.0"
+    if version.startswith('^'):
+        parts = [int(part) for part in version[1:].split('.')]
+        index = next((i for i, part in enumerate(parts) if part), len(parts) - 1)
+        upper = parts[:index] + [parts[index] + 1] + [0] * (len(parts) - index - 1)
+        return f">={version[1:]},<{'.'.join(map(str, upper))}"
     return version
+
+
+def dependency_requirements(dependencies):
+    """Convert the project's version constraints and markers into pip requirements."""
+    for name, declarations in dependencies.items():
+        if not isinstance(declarations, list):
+            declarations = [declarations]
+        for declaration in declarations:
+            if isinstance(declaration, str):
+                yield f'{name}{parse_version(declaration)}'
+            else:
+                requirement = f"{name}{parse_version(declaration['version'])}"
+                if declaration.get('markers'):
+                    requirement += f"; {declaration['markers']}"
+                yield requirement
 
 
 def install_dependencies(group):
@@ -37,7 +53,7 @@ def install_dependencies(group):
 
     dependencies = data.get('tool', {}).get('poetry', {}).get('group', {}).get(group, {}).get('dependencies', {})
 
-    packages = [f"{pkg}{parse_version(ver)}" for pkg, ver in dependencies.items()]
+    packages = list(dependency_requirements(dependencies))
     if packages:
         subprocess.run([sys.executable, "-m", "pip", "install"] + packages, check=True)
 

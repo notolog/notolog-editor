@@ -1,397 +1,169 @@
-<!-- {"notolog.app": {"created": "2026-01-24 00:00:00.000000", "updated": "2026-01-31 00:00:00.000000"}} -->
 # AI Modules
 
-Notolog Editor integrates three AI inference modules for the AI Assistant feature. Each module supports different backends and use cases.
+The AI Assistant supports three inference backends. Use the [AI Assistant Guide](ai-assistant.md)
+for basic setup and the [Configuration Guide](configuration.md#ai-module-settings) for settings.
 
 ## Overview
 
-| Module | Backend | Use Case | Model Format |
-|--------|---------|----------|--------------|
-| **OpenAI API** | Cloud API | Cloud-based inference | N/A (API) |
-| **On Device LLM** | ONNX Runtime GenAI | Local inference with hardware acceleration | ONNX |
-| **Module llama.cpp** | llama-cpp-python | Local inference with GGUF models | GGUF |
+| Module | Runs inference | Requires |
+|--------|----------------|----------|
+| OpenAI API | At the configured API endpoint | Compatible endpoint, model access, and credentials |
+| On Device LLM | Locally through ONNX Runtime GenAI | Compatible ONNX GenAI model directory and runtime |
+| Module llama.cpp | Locally through llama-cpp-python | Compatible GGUF model and runtime |
 
----
+Model quality, speed, and memory requirements depend on the model, hardware, and runtime.
+The backend name alone does not establish a quality or performance ranking.
 
-## 1. OpenAI API Module
+## OpenAI API
 
-### Description
-The OpenAI API module enables cloud-based inference using OpenAI's language models (GPT-4o, GPT-5.2, etc.) or any OpenAI-compatible API endpoint.
+Configure the API URL, API key, and supported model in **Settings → OpenAI API**.
+Custom endpoints must support the request format used by Notolog; an arbitrary model API is not interchangeable.
 
-### Requirements
-- OpenAI API key
-- Internet connection
-- Optional: Custom API endpoint for compatible services (Azure OpenAI, LocalAI, etc.)
+Requests send the API key, prompt, configured system prompt, and included conversation history to
+the selected endpoint. Use HTTPS for remote services and verify the destination before entering credentials.
+The key is encrypted in local settings using an application key; this does not protect it from someone
+who can access both the settings and the application key.
 
-### Configuration Settings (UI Labels)
-| UI Label | Description                                   |
-|----------|-----------------------------------------------|
-| **API URL** | API endpoint URL                              |
-| **API Key** | Your OpenAI API key (stored encrypted)        |
-| **Supported Models** | Model name dropdown (e.g., `gpt-4o`, `gpt-5`) |
-| **System Prompt** | Initial instructions for the model            |
-| **Temperature** | Controls response randomness (0-100)          |
-| **Maximum Response Tokens** | Maximum response length                       |
-| **Prompt History Size** | Number of conversation turns to retain        |
+## On Device LLM (ONNX)
 
-### Pros & Cons
-| Pros | Cons |
-|------|------|
-| Most capable models | Requires internet |
-| No local hardware requirements | API costs |
-| Easy setup | Data sent to cloud |
+Base pip installations include the CPU `onnxruntime-genai` package. Conda packaging has a different
+dependency set; a missing backend is not enabled merely by selecting it in Settings.
 
----
+Models must be exported for the installed ONNX Runtime GenAI version. Select the directory containing
+`genai_config.json` and all model/tokenizer files referenced by that configuration. Ordinary ONNX exports,
+including models intended for transformers.js, are not automatically compatible.
 
-## 2. On Device LLM Module (ONNX)
+### Hardware acceleration
 
-### Description
-The On Device LLM module uses [ONNX Runtime GenAI](https://github.com/microsoft/onnxruntime-genai){:target="_blank"} for local inference with hardware acceleration support.
+| Provider | Setup |
+|----------|-------|
+| CPU | Use the base `onnxruntime-genai` package and a CPU-compatible model. |
+| CUDA | Requires a compatible `onnxruntime-genai-cuda` build, NVIDIA drivers and runtime libraries, and a compatible model. |
+| DirectML | Requires a compatible Windows `onnxruntime-genai-directml` build and model. |
+| Other listed providers | Require explicit support in the installed GenAI build and model; the Settings list is not a list of bundled accelerators. |
 
-### Requirements
-- Python 3.10-3.14
-- ONNX model files
-- Package: `onnxruntime-genai` (included with Notolog)
+See the [upstream GenAI installation guide](https://onnxruntime.ai/docs/genai/howto/install.html)
+for supported packages and driver/runtime requirements. ONNX Runtime's provider catalog does not mean
+every provider is available in ONNX Runtime GenAI's standard Python packages.
 
-### Supported Models
-Download ONNX-optimized models from:
-- [Hugging Face ONNX Models](https://huggingface.co/models?library=onnx){:target="_blank"}
-- [Microsoft Phi-3 ONNX](https://huggingface.co/microsoft/Phi-3-mini-4k-instruct-onnx){:target="_blank"}
+Other provider names describe possible runtime integration targets, not extra
+accelerators installed by the base Notolog package:
 
-Model directories should contain `.onnx` files and configuration.
+| Provider family | Hardware ecosystem |
+|-----------------|--------------------|
+| OpenVINO | Intel processors and accelerators |
+| CoreML | Apple platforms |
+| TensorRT RTX | NVIDIA RTX GPUs |
+| QNN | Qualcomm accelerators |
+| MIGraphX | AMD GPUs |
 
-### Configuration Settings (UI Labels)
-| UI Label | Description |
-|----------|-------------|
-| **ONNX Model Location** | Directory containing ONNX model files |
-| **Temperature** | Controls response randomness (0-100, displayed as 0.0-1.0) |
-| **Maximum Response Tokens** | Maximum response length (0 = unlimited) |
-| **Hardware Acceleration** | Execution provider selection |
-| **Prompt History Size** | Number of conversation turns to retain |
+Consult the [ONNX Runtime provider catalog](https://onnxruntime.ai/docs/execution-providers/)
+and the selected GenAI build's documentation before choosing one. A provider in
+ONNX Runtime, or a name exposed by Notolog, does not establish GenAI model support.
 
-### Hardware Acceleration Providers
+Install only one GenAI variant: CPU, CUDA, and DirectML share the same Python module.
+Remove the existing variant before switching, and restart Notolog afterwards.
+For Notolog 1.2.4 on Python 3.11–3.14, keep CPU and CUDA within
+`>=0.18.0,<1.0.0`. DirectML uses a separate version line: `>=0.14.1,<0.15.0`.
+The [DirectML 0.14.1 wheels](https://pypi.org/project/onnxruntime-genai-directml/0.14.1/#files)
+target Windows x64. For every variant, verify that a wheel exists for your platform;
+package availability alone does not guarantee that your model and driver are compatible.
+After checking those prerequisites, switch an isolated pip environment to CUDA or
+DirectML with the matching command pair:
 
-| Provider | Platform | Hardware Required | Package |
-|----------|----------|-------------------|---------|
-| **CPU (Default)** | All | Any CPU | `onnxruntime-genai` |
-| **CUDA** | Linux/Windows | NVIDIA GPU + CUDA + cuDNN | `onnxruntime-genai-cuda` |
-| **DirectML** | Windows | DirectX 12 GPU | `onnxruntime-genai-directml` |
-| **OpenVINO** | Windows/Linux | Intel CPU/GPU/VPU | `onnxruntime-genai` |
-| **CoreML** | macOS | Apple Silicon/Neural Engine | `onnxruntime-genai` |
-| **TensorRT RTX** | Windows/Linux | NVIDIA RTX GPU | `onnxruntime-genai` |
-| **QNN** | Linux | Qualcomm Snapdragon NPU | `onnxruntime-genai` |
-| **MIGraphX** | Linux | AMD GPU with ROCm | `onnxruntime-genai` |
-
-#### Provider Details
-
-##### CPU (Default)
-- **Hardware**: Any x86_64 or ARM64 CPU
-- **Performance**: Baseline, no acceleration
-- **Use Case**: Universal fallback, development
-
-##### CUDA (NVIDIA GPUs)
-- **Hardware**: NVIDIA GPU with sufficient VRAM
-- **Requirements**:
-  - CUDA Toolkit
-  - cuDNN library
-  - NVIDIA drivers
-- **Install on Ubuntu 24.04+**:
-  ```bash
-  sudo apt install nvidia-cuda-toolkit nvidia-cudnn
-  ```
-- **Install package**: `pip install onnxruntime-genai-cuda` (replaces base package)
-- **Model Selection**: Use CUDA-optimized models (look for `cuda` in model directory name)
-- **Use Case**: NVIDIA GPU users on Linux/Windows
-
-**Important**: Choose models that fit your GPU memory:
-- **Phi-3-mini** (~4GB VRAM) - Good for most GPUs
-- **Phi-3-medium** (~14GB VRAM) - Requires high-end GPU
-
-##### DirectML (Windows)
-- **Hardware**: Any DirectX 12 compatible GPU (NVIDIA, AMD, Intel)
-- **Performance**: Good GPU acceleration on Windows
-- **Use Case**: Windows users with modern GPUs
-- **Install**: `pip install onnxruntime-genai-directml` (replaces base package)
-
-##### OpenVINO (Intel)
-- **Hardware**: Intel CPUs (with AVX2/AVX-512), Intel GPUs (Iris, Arc), Intel VPUs
-- **Performance**: Optimized for Intel hardware
-- **Use Case**: Intel-based systems
-
-##### CoreML (Apple)
-- **Hardware**: Apple Silicon (M1/M2/M3/M4), Neural Engine
-- **Performance**: Optimized for Apple hardware
-- **Use Case**: macOS on Apple Silicon
-
-##### TensorRT RTX (NVIDIA)
-- **Hardware**: NVIDIA RTX 20/30/40 series GPUs
-- **Performance**: Highly optimized for NVIDIA RTX GPUs
-- **Use Case**: NVIDIA RTX GPU users
-
-##### QNN (Qualcomm)
-- **Hardware**: Qualcomm Snapdragon with NPU (AI Engine)
-- **Performance**: Optimized for Snapdragon AI accelerators
-- **Use Case**: Qualcomm-based devices
-
-##### MIGraphX (AMD)
-- **Hardware**: AMD GPUs with ROCm support
-- **Performance**: Optimized for AMD GPUs
-- **Use Case**: AMD GPU users on Linux
-
-### Model Selection Tips
-- **CPU models**: Look for `cpu-int4` in model name (e.g., `Phi-3-mini-4k-instruct-onnx/cpu-int4-rtn-block-32`)
-- **CUDA/GPU models**: Look for `cuda` in directory name (e.g., `Phi-3-mini-4k-instruct-onnx-cuda/cuda-int4-rtn-block-32`)
-- **Model size matters**: Phi-3-mini (~2GB) vs Phi-3-medium (~9GB) - choose based on your GPU VRAM
-
-### Pros & Cons
-| Pros | Cons |
-|------|------|
-| Local/private inference | Model download required |
-| Hardware acceleration | Limited model availability |
-| No API costs | Hardware-dependent performance |
-| Works offline | Provider compatibility varies |
-
----
-
-## 3. Module llama.cpp (GGUF)
-
-### Description
-The Module llama.cpp uses [llama-cpp-python](https://github.com/abetlen/llama-cpp-python){:target="_blank"} for local inference with GGUF format models.
-
-### Requirements
-- Python 3.10-3.14
-- GGUF model file
-- Package: `llama-cpp-python` (optional extra)
-
-### Installation
 ```bash
-# Install with llama.cpp support
-pip install "notolog[llama]"
+# CUDA
+pip uninstall onnxruntime-genai onnxruntime-genai-directml
+pip install "onnxruntime-genai-cuda>=0.18.0,<1.0.0"
 
-# Or install separately
-pip install llama-cpp-python
+# DirectML on Windows
+pip uninstall onnxruntime-genai onnxruntime-genai-cuda
+pip install "onnxruntime-genai-directml>=0.14.1,<0.15.0"
 ```
 
-### Supported Models
-GGUF models from:
-- [Hugging Face GGUF Models](https://huggingface.co/models?library=gguf){:target="_blank"}
-- [TheBloke's Collection](https://huggingface.co/TheBloke){:target="_blank"} (historic archive, 2,000+ models)
+Choose one pair. These are manual runtime substitutions; Notolog's base package
+metadata still declares the CPU distribution. A later package upgrade can install
+it again, so recheck the environment after dependency changes.
+When returning to CPU, reinstall through Notolog so its package requirements apply:
 
-Popular models:
-- Llama 2/3
-- Mistral
-- Phi-2/3
-- Gemma
-- Qwen
+```bash
+pip uninstall onnxruntime-genai-cuda onnxruntime-genai-directml
+pip install --upgrade notolog
+```
 
-### Configuration Settings (UI Labels)
-| UI Label | Description |
-|----------|-------------|
-| **Model Location** | Path to `.gguf` file |
-| **Context Window Size** | Maximum context size (default: 2048) |
-| **Chat Formats** | Model-specific chat template dropdown |
-| **System Prompt** | Custom system instructions |
-| **Response Temperature** | Controls response randomness (0-100) |
-| **Max Tokens per Response** | Maximum response length (0 = context window limit) |
-| **Size of the Prompt History** | Conversation history limit |
+If variants were installed together, shared files may have been overwritten or
+removed. After uninstalling the GPU distributions, repair the CPU distribution
+with `pip install --force-reinstall "onnxruntime-genai>=0.18.0,<1.0.0"`.
+Keep it within the requirements of the installed Notolog release.
 
-### Chat Formats
-| Format | Models |
-|--------|--------|
-| `auto` | Auto-detect from model metadata |
-| `chatml` | Mistral, Qwen, many others |
-| `llama-2` | Llama 2 models |
-| `llama-3` | Llama 3 models |
-| `gemma` | Google Gemma |
-| `phi-3` | Microsoft Phi-3 |
+### Loading and memory
 
-### Performance Tips
-- The module automatically uses all CPU cores
-- Quantized models (Q4_K_M, Q5_K_M) offer good quality/speed balance
-- Larger context windows require more memory
-- **macOS Apple Silicon (M1/M2/M3/M4)**: Automatically uses Metal GPU acceleration (GPU Layers = Auto)
+Loading time depends on model size, storage, and available memory.
+Notolog attempts CPU fallback after provider initialization errors and can reduce generation length
+after allocation failures. These fallbacks cannot make an incompatible model or insufficient RAM work.
+Try a smaller model or lower the generation limit if problems persist.
 
-### macOS GPU Acceleration (Metal)
+## Module llama.cpp (GGUF)
 
-On Apple Silicon Macs (M1/M2/M3/M4), the Module llama.cpp automatically uses Metal GPU acceleration when **GPU Layers** is set to **Auto**.
+For pip installations:
 
-**Configuration**: Go to `Settings` → `Module llama.cpp` tab → `GPU Layers`:
+```bash
+pip install "notolog[llama]"
+```
 
-| Value | Behavior |
-|-------|----------|
-| **Auto** (default) | Platform auto-detection: GPU on Apple Silicon, CPU on Intel Mac/Linux/Windows |
-| **-1** | Offload all layers to GPU (explicit GPU mode) |
-| **0** | CPU-only mode (recommended for Intel Macs) |
-| **1-999** | Partial GPU offloading (advanced) |
+A C++ compiler is needed when pip builds llama-cpp-python from source. Prebuilt distributions have
+their own architecture and acceleration support. Follow the
+[llama-cpp-python installation instructions](https://github.com/abetlen/llama-cpp-python#installation)
+for the required backend.
 
-!!! info "What GPU Layers Does"
-    The `n_gpu_layers` parameter controls how many transformer layers are offloaded from CPU to GPU memory. Each layer offloaded reduces CPU load and speeds up inference, but requires corresponding GPU VRAM. Setting `-1` offloads all layers for maximum GPU acceleration, while `0` keeps everything on CPU.
+Select the GGUF file in **Settings → Module llama.cpp** and choose its chat format:
+`chatml` (the default), `llama-2`, or `gemma`. Match the format to the model card's chat template;
+Notolog passes this selection to the runtime rather than detecting it automatically.
+An arbitrary GGUF file is not necessarily a supported text-generation model.
 
-!!! note "Auto vs -1"
-    **Auto** intelligently selects the best mode for your hardware. On Apple Silicon it uses GPU (-1), on Intel Mac it uses CPU (0). **-1** always forces GPU mode regardless of platform.
+Model collections such as [Qwen2 GGUF exports](https://huggingface.co/Qwen/Qwen2-7B-Instruct-GGUF)
+provide examples of quantized models. `Q4_K_M` and `Q5_K_M` are alternative
+size/quality choices, not fixed memory requirements or guarantees of compatibility.
+Use the model card, chat template, and installed runtime together when selecting a file.
+For ONNX model directory examples, see [model setup](ai-assistant.md#on-device-llm-onnx).
 
-### Pros & Cons
-| Pros | Cons |
-|------|------|
-| Wide model compatibility | May be slower than dedicated GPU |
-| Large model ecosystem | Model file required |
-| Works offline | Memory-intensive for large models |
-| No API costs | |
-| Metal GPU on Apple Silicon | |
+### GPU layers
 
----
+| Setting | Requested behavior |
+|---------|--------------------|
+| Auto | All layers on GPU for Apple Silicon; CPU on Intel Macs, Linux, and Windows |
+| -1 | Offload all layers to an available supported GPU backend |
+| 0 | CPU only |
+| Positive number | Offload that many layers, subject to model and backend limits |
 
-## Comparison
+The setting requests offloading; the installed llama.cpp build must include the matching backend.
+Apple Silicon needs a Metal-enabled build. If an Intel Mac hangs during loading, use **0** and retry.
+Do not downgrade below Notolog's declared llama-cpp-python requirements.
 
-### Performance (Relative)
-
-| Module | Speed | Quality | Privacy | Ease of Setup |
-|--------|-------|---------|---------|---------------|
-| OpenAI API | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐⭐ |
-| On Device LLM (GPU) | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ |
-| On Device LLM (CPU) | ⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
-| Module llama.cpp | ⭐⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
-
-### Recommendations
-
-| Use Case | Recommended Module |
-|----------|-------------------|
-| Best quality, no hardware limits | OpenAI API |
-| Privacy-focused, have NVIDIA GPU | On Device LLM + CUDA |
-| Privacy-focused, Windows GPU | On Device LLM + DirectML |
-| Privacy-focused, Apple Silicon | On Device LLM + CoreML |
-| Privacy-focused, Intel CPU | On Device LLM + OpenVINO |
-| Wide model choice, privacy | Module llama.cpp |
-| Offline work required | On Device LLM or Module llama.cpp |
-
----
+Larger context windows increase memory use. Smaller quantized models can reduce resource requirements;
+measure performance with your chosen model rather than relying on a generic token-rate estimate.
 
 ## Troubleshooting
 
-### On Device LLM (ONNX) Common Issues
+| Problem | Action |
+|---------|--------|
+| Unknown ONNX provider | Select CPU or install a GenAI build that explicitly supports the provider. |
+| Missing CUDA library | Check the required driver, CUDA, and cuDNN versions in the runtime's installation guide. |
+| Missing `genai_config.json` | Select a complete GenAI model export, not a generic ONNX directory. |
+| Model file not found | Check paths, permissions, and whether all download files are present. |
+| Out of memory | Reduce model/context size and close other memory-intensive applications. |
+| Chat-template markers in output | Check the model's tokenizer, chat template, and stop-token configuration. |
+| API request fails | Check the endpoint, supported model, credentials, quota, and returned error. |
 
-**Error: "Unknown provider name 'X'"**
-- The provider is not supported in your onnxruntime-genai build
-- Solution: Use CPU or install the correct package variant
+If zsh reports `no matches found: notolog[llama]`, quote the extra as above or
+escape the brackets: `pip install notolog\[llama\]`.
 
-**Error: "CUDA execution provider is not enabled"**
-- CUDA requires separate package
-- Solution: `pip install onnxruntime-genai-cuda` (replaces base package)
+A llama.cpp message such as `n_ctx_per_seq (2048) < n_ctx_train (...)` means the
+configured context is smaller than the model's training context. It is not, by
+itself, a load failure. Increasing the context can use more memory.
+Likewise, a `skipping kernel_*_bf16` message identifies a skipped kernel; it does
+not alone prove a fatal error or guarantee a working fallback. Read the subsequent
+initialization result and follow the runtime's hardware requirements.
 
-**Error: "libcublasLt.so.12: cannot open shared object file"** or **"libcudnn.so.9: cannot open shared object file"**
-- CUDA runtime libraries not installed
-- Solution (Ubuntu 24.04+):
-  ```bash
-  sudo apt install nvidia-cuda-toolkit nvidia-cudnn
-  ```
-
-**Error: "Failed to allocate memory for requested buffer"** or **"Could not allocate the key-value cache buffer"**
-- GPU doesn't have enough VRAM for the model or response generation
-- **Note**: Notolog automatically:
-  1. Falls back from GPU to CPU when model initialization fails
-  2. Reduces `max_length` (response tokens) when generator allocation fails
-- If issues persist:
-  1. Use a smaller model (e.g., Phi-3-mini instead of Phi-3-medium)
-  2. Reduce "Maximum Response Tokens" in settings
-  3. Close other GPU applications
-  4. Manually select CPU provider in settings
-
-**Error: "Model not found" or "error opening genai_config.json"**
-- Model directory structure is incompatible
-- ONNX Runtime GenAI requires `genai_config.json` + `.onnx` files in the same directory
-- **Common cause**: Models optimized for transformers.js have different structure and lack `genai_config.json`
-- Solutions:
-  1. Use models specifically built for onnxruntime-genai (look for `genai_config.json`)
-  2. Recommended sources: [microsoft/ on Hugging Face](https://huggingface.co/microsoft){:target="_blank"} or models with "onnx-genai" in name
-  3. Example compatible model: `microsoft/Phi-3-mini-4k-instruct-onnx`. Navigate to the `cpu_and_mobile/cpu-int4-rtn-block-32` directory inside the model folder.
-
-**Chat format tokens appearing in output (e.g., "<|assistant|>")**
-- Model's `genai_config.json` may have incorrect stop tokens or chat template
-- Solutions:
-  1. Try a different quantization of the same model
-  2. Check if the model's genai_config.json has proper `stop_strings` defined
-  3. Use official Microsoft ONNX models which have tested configurations
-
-### Module llama.cpp Common Issues
-
-**Error: "Model not found"**
-- File path is incorrect or file doesn't exist
-- Solution: Use full path to the `.gguf` file
-
-**Model loading hangs (Intel Macs only)**
-- Set GPU Layers to "0" in Settings and restart Notolog.
-- Version 0.2.90 was a validated workaround for older Notolog releases, but it is not compatible with the current
-  integration. If CPU-only mode still hangs, report the macOS, Python, model, and llama-cpp-python versions.
-
-**Slow performance**
-- Context window too large
-- Solution: Reduce Context Window Size in settings
-
-**Out of memory**
-- Model too large for available RAM
-- Solution: Use a smaller/more quantized model (e.g., Q4_K_M)
-
-### macOS-Specific Issues
-
-**Installation error: "zsh: no matches found: notolog[llama]"**
-- zsh interprets square brackets as glob patterns
-- Solutions:
-  ```bash
-  # Option 1: Quote the package specification
-  pip install "notolog[llama]"
-
-  # Option 2: Escape the brackets
-  pip install notolog\[llama\]
-
-  # Option 3: Install llama-cpp-python separately
-  pip install notolog
-  pip install llama-cpp-python
-  ```
-
-**Metal warnings: "skipping kernel_*_bf16 (not supported)"**
-- These are informational messages, not errors
-- BF16 (bfloat16) operations require newer Apple Silicon (M1+) or Metal 3
-- Intel Macs don't support BF16 and will use FP16/FP32 fallbacks automatically
-- The model will still work correctly, just without BF16 optimization
-
-**Context window warning: "n_ctx_per_seq (2048) < n_ctx_train (40960)"**
-- Informational only - the model has a larger training context than configured
-- To use more context, increase "Context Window Size" in settings
-- Note: Larger context uses more memory and may slow down inference
-
----
-
-## Package Installation Summary
-
-### Base Installation
-```bash
-pip install notolog
-```
-Includes: `onnxruntime-genai` (CPU)
-
-### Optional Extras
-```bash
-# llama.cpp support
-pip install "notolog[llama]"
-```
-
-### GPU Acceleration (Manual)
-```bash
-# NVIDIA CUDA (Linux/Windows) - replaces base onnxruntime-genai
-pip uninstall onnxruntime-genai
-pip install onnxruntime-genai-cuda
-
-# DirectML (Windows) - replaces base onnxruntime-genai
-pip uninstall onnxruntime-genai
-pip install onnxruntime-genai-directml
-
-# To switch back to CPU-only (use --force-reinstall to ensure clean install)
-pip uninstall onnxruntime-genai-cuda  # or -directml
-pip install --force-reinstall onnxruntime-genai
-```
-
-**Important Notes**:
-- CUDA, DirectML, and base packages all provide the same `onnxruntime_genai` Python module
-- They **cannot** be installed together - the last installed package wins
-- If you uninstall the GPU package, use `--force-reinstall` when reinstalling the base package
-- After changing packages, restart the application
+When reporting a problem, include Notolog, Python, runtime, OS, model, and provider versions.
+Remove credentials and private document or conversation content from logs.

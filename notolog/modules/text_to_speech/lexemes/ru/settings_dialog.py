@@ -60,12 +60,12 @@ lexemes = {
         "лицензия."
     ),
     "module_text_to_speech_config_runtime_input_accessible_description": (
-        "Требуется NeMo-Speech.cpp 0.1.0. Распакуйте архив и выберите bin/nemo-speech "
+        "Требуется NeMo-Speech.cpp 0.2.0. Распакуйте архив и выберите bin/nemo-speech "
         "(bin/nemo-speech.exe в Windows)."
     ),
     "module_text_to_speech_config_model_directory_input_accessible_description": (
         "Модели скачиваются сюда. Существующие файлы проверяются и используются повторно. Нужны curl и "
-        "около 550 МБ."
+        "около 700 МБ."
     ),
     "module_text_to_speech_config_custom_models_accessible_description": (
         "Укажите свои пути к моделям или очистите поля, чтобы использовать папку моделей."

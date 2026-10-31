@@ -24,8 +24,10 @@ import platform
 from threading import Lock
 from enum import Enum
 
-# ONNX Runtime GenAI
-from onnxruntime_genai import Config, Generator, GeneratorParams, Model, Tokenizer, TokenizerStream
+# GenAI reads this full telemetry opt-out during native initialization.
+# Set it before importing the runtime to preserve local inference privacy.
+os.environ['ORT_DISABLE_TELEMETRY'] = '1'
+from onnxruntime_genai import Config, Generator, GeneratorParams, Model, Tokenizer, TokenizerStream  # noqa: E402
 
 
 class ExecutionProvider(Enum):
@@ -473,17 +475,9 @@ class ModelHelper:
         # Set search options (temperature, max_length, top_p, etc.)
         params.set_search_options(**search_options)
 
-        # For older API compatibility (v0.5.2 and earlier)
-        if hasattr(params, 'input_ids'):
-            params.input_ids = input_tokens
-
-        # Initialize the generator
-        self.generator = Generator(self.model, params)  # type: Generator
-
-        # Append input tokens (v0.6.0+ API)
-        if hasattr(self.generator, 'append_tokens'):
-            self.generator.append_tokens(input_tokens)
-
+        generator = Generator(self.model, params)
+        generator.append_tokens(input_tokens)
+        self.generator = generator
         return self.generator
 
     def generate_output(self):
@@ -513,7 +507,6 @@ class ModelHelper:
         outputs = self.tokenizer_stream.decode(new_token)
         # Or via decoding a batch
         # outputs = ''.join(self.tokenizer.decode_batch(new_tokens))
-        self.logger.debug(f'Output: {outputs}: {new_token}')
         return outputs
 
     def get_model_name(self):

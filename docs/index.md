@@ -1,4 +1,3 @@
-<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-31 00:00:00.000000"}} -->
 # Notolog Documentation
 
 [![PyPI - Version](https://img.shields.io/pypi/v/notolog)](https://pypi.org/project/notolog/)
@@ -36,15 +35,14 @@ Notolog is a privacy-focused Markdown editor that combines:
 
 | Requirement | Minimum | Recommended |
 |-------------|---------|-------------|
-| Python | 3.10 | 3.14 |
-| OS | Windows 10, macOS 10.14, Ubuntu 20.04 | Latest stable versions |
-| RAM | 4 GB (base editor) | 8 GB (16+ GB for local 7B+ parameter LLMs) |
-| Storage | 100 MB (base) | 500 MB-4 GB (depends on local model files) |
+| Python | 3.11–3.14 | A version supported by all selected dependencies |
+| OS | Windows, macOS, or Linux with compatible native dependencies | See [installation requirements](getting-started.md#platform-compatibility) |
+| RAM | 4 GB (base editor) | Additional RAM or VRAM required by the selected local models and context |
+| Storage | Space for Notolog and its Python/Qt dependencies | Additional space for downloaded models and notes |
 
 !!! note "Local LLM Memory Requirements"
-    - **Phi-3-mini (3.8B)**: ~4 GB VRAM or 8 GB RAM
-    - **7B parameter models**: ~6 GB VRAM or 16 GB RAM
-    - **13B parameter models**: ~10 GB VRAM or 24 GB RAM
+    Memory use depends on the model, quantization, context length, and runtime.
+    Follow the selected model's requirements; parameter count alone does not determine RAM or VRAM needs.
 
 ## Installation Overview
 
@@ -74,4 +72,4 @@ Notolog is released under the [MIT License](https://github.com/notolog/notolog-e
 
 ---
 
-*Documentation version: 1.2.2*
+*Documentation for Notolog 1.2.4.*

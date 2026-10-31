@@ -11,9 +11,9 @@ name: Tests
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
   pull_request:
-    branches: [ "main" ]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -29,10 +29,12 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
-        python-version: [ "3.10", "3.11", "3.12", "3.13", "3.14" ]
+        python-version: [ "3.11", "3.12", "3.13", "3.14" ]
 
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      with:
+        persist-credentials: false
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
       with:
@@ -83,18 +85,6 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=15 --max-line-length=127 --per-file-ignores="__init__.py:F401" --statistics
 
-    - name: Print working directory
-      run: pwd || echo %CD%
-
-    - name: List directory contents (Cross-platform)
-      run: |
-        Get-ChildItem -Force | Format-Table
-      shell: pwsh
-
-    - name: List directory contents (Python)
-      run: |
-        python -c "import os; print('\n'.join(os.listdir('.')))"
-
     - name: Test with pytest and coverage report (Codecov job)
       if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.12'
       run: |
@@ -124,7 +114,7 @@ jobs:
       if: >-
         matrix.python-version == '3.12' && matrix.os == 'ubuntu-latest' &&
         (github.repository == 'notolog/notolog-editor' || vars.CODECOV_ENABLED == 'true')
-      uses: codecov/codecov-action@e53489f4d376d79066609109e7a95a29eb3740b1 # v7.0.0
+      uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
       with:
         files: ./coverage.xml
         disable_search: true

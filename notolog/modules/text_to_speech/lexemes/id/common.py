@@ -1,5 +1,24 @@
 # Indonesian lexemes common.py
 lexemes = {
+    "module_text_to_speech_error_runtime_version": (
+        "Integrasi ini memerlukan NeMo-Speech.cpp {version}. Terdeteksi: {detected}"
+    ),
+    "module_text_to_speech_error_runtime_missing": (
+        "Pilih berkas eksekusi nemo-speech yang terpasang di pengaturan teks ke suara."
+    ),
+    "module_text_to_speech_error_models_missing": (
+        "Unduh model atau pilih Magpie, NanoCodec, dan folder tokenizer di pengaturan teks ke suara."
+    ),
+    "module_text_to_speech_error_runtime_archive": (
+        "Streaming audio native memerlukan arsip runtime lengkap, termasuk direktori lib."
+    ),
+    "module_text_to_speech_error_language_selection": (
+        "Pilih bahasa suara yang didukung di pengaturan teks ke suara."
+    ),
+    "module_text_to_speech_error_download_incomplete": (
+        "Unduhan selesai tanpa set model yang lengkap. Periksa keluaran runtime atau pilih jalur model secara"
+        " manual."
+    ),
     "module_text_to_speech_name": "Teks ke Ucapan",
     "module_text_to_speech_action_read_selection": "Bacakan pilihan",
     "module_text_to_speech_action_read_file": "Bacakan file",

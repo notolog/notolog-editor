@@ -25,7 +25,7 @@ from ...fenced_code_extension import NestedFencesExtension
 
 
 def normalize_numbers(text, language):
-    """Expand plain English numbers when no native text-normalization grammar is installed."""
+    """Expand English numbers and dotted versions without native normalization grammars."""
     if language.lower().split('-')[0].split('_')[0] != 'en':
         return text
     units = ('zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen '
@@ -41,11 +41,23 @@ def normalize_numbers(text, language):
             if value >= scale:
                 return integer(value // scale) + ' ' + name + (' ' + integer(value % scale) if value % scale else '')
 
+    def whole_words(whole):
+        return (' '.join(units[int(digit)] for digit in whole)
+                if len(whole) > 12 or (len(whole) > 1 and whole[0] == '0') else integer(int(whole)))
+
     def expand(match):
         whole, dot, fraction = match.group().replace(',', '').partition('.')
-        words = (' '.join(units[int(digit)] for digit in whole)
-                 if len(whole) > 12 or (len(whole) > 1 and whole[0] == '0') else integer(int(whole)))
-        return words + (' point ' + ' '.join(units[int(digit)] for digit in fraction) if dot else '')
+        return whole_words(whole) + (' point ' + ' '.join(units[int(digit)] for digit in fraction) if dot else '')
+
+    def version(match):
+        value = match.group()
+        prefix = 'version ' if value[0] in 'vV' else ''
+        return prefix + ' point '.join(whole_words(part) for part in value.lstrip('vV').split('.'))
+
+    # Handle multi-dot sequences before decimals. A v prefix also identifies
+    # two-component versions; identifiers such as Python3 remain unchanged.
+    text = re.sub(r'(?<![\w.])(?:[vV][0-9]+(?:\.[0-9]+)+|[0-9]+(?:\.[0-9]+){2,})(?!\w|\.[0-9])',
+                  version, text)
 
     return re.sub(r'(?<![\w.])(?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)(?:\.[0-9]+)?(?!\w|\.[0-9])', expand, text)
 

@@ -48,6 +48,14 @@ if TYPE_CHECKING:
 
 class SettingsDialog(QDialog):
 
+    def showEvent(self, event):
+        super().showEvent(event)
+        # Keep widget ownership and editor access, but let the window manager
+        # position Settings independently of the main window.
+        window = self.windowHandle()
+        if window is not None:
+            window.setTransientParent(None)
+
     def done(self, result):
         for widget in self.findChildren(QWidget):
             confirm = getattr(widget, 'confirm_close', None)

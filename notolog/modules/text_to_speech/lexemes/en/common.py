@@ -1,5 +1,25 @@
 # English lexemes common.py
 lexemes = {
+    "module_text_to_speech_error_runtime_version": (
+        "This integration requires NeMo-Speech.cpp {version}. Detected: {detected}"
+    ),
+    "module_text_to_speech_error_runtime_missing": (
+        "Select an installed nemo-speech executable in Text-to-Speech settings."
+    ),
+    "module_text_to_speech_error_models_missing": (
+        "Download the model set or select Magpie, NanoCodec, and the tokenizer folder in Text-to-Speech "
+        "settings."
+    ),
+    "module_text_to_speech_error_runtime_archive": (
+        "Native streaming needs the complete runtime archive, including its lib directory."
+    ),
+    "module_text_to_speech_error_language_selection": (
+        "Select a supported speech language in Text-to-Speech settings."
+    ),
+    "module_text_to_speech_error_download_incomplete": (
+        "Download finished without a complete model set. Check the runtime output or select the model paths "
+        "manually."
+    ),
     "module_text_to_speech_name": "Text-to-Speech",
     "module_text_to_speech_action_read_selection": "Read selection aloud",
     "module_text_to_speech_action_read_file": "Read file aloud",

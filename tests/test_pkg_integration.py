@@ -33,18 +33,13 @@ def markdown_obj():
     yield md
 
 
-def test_markdown_conversion(markdown_obj):
-
-    md_content = "*Italic text*"
-    "**Bold text**"
-    "___Italic bold text___"
-
-    # Convert markdown to HTML
-    html_content = markdown_obj.convert(md_content)
-
-    assert html_content == "<p><em>Italic text</em></p>"
-    "<p><strong>Bold text</strong></p>"
-    "<p><strong><em>Bold text</em></strong></p>"
+@pytest.mark.parametrize('source,expected', [
+    ('*Italic text*', '<p><em>Italic text</em></p>'),
+    ('**Bold text**', '<p><strong>Bold text</strong></p>'),
+    ('___Italic bold text___', '<p><strong><em>Italic bold text</em></strong></p>'),
+])
+def test_markdown_conversion(markdown_obj, source, expected):
+    assert markdown_obj.convert(source) == expected
 
 
 def test_emoji_conversion():

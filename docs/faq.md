@@ -1,4 +1,3 @@
-<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-31 00:00:00.000000"}} -->
 # FAQ & Troubleshooting
 
 Common questions and solutions for Notolog users.
@@ -63,7 +62,7 @@ pip install llama-cpp-python
 
 ### Q: PySide6 installation fails
 
-**Solution**: Ensure you have Python 3.10 or higher:
+**Solution**: Ensure you have Python 3.11–3.14 and a compatible OS and architecture:
 ```bash
 python3 --version
 ```
@@ -94,7 +93,7 @@ Font size can be adjusted in `Settings` → `General` tab → `Font Size` slider
 
 ### Q: How do I show/hide line numbers?
 
-Go to `Settings` → `Editor` tab → `Show Line Numbers` checkbox.
+Go to `Settings` → `Workspace` → `Editor mode` → `Show Line Numbers`.
 
 ---
 
@@ -108,29 +107,28 @@ Yes, Notolog automatically saves your work periodically. This is a built-in feat
 
 ### Q: Model takes very long to load (ONNX)
 
-First-time ONNX model loading can take **up to 60 seconds**. Subsequent loads are faster due to caching. A loading message is displayed during initialization.
+Loading time depends on model size, storage, and available memory. A loading message is displayed.
+See [AI module troubleshooting](ai-modules.md#troubleshooting).
 
 ---
 
 ### Q: Module llama.cpp model loading hangs on macOS
 
-**Apple Silicon (M1/M2/M3/M4)**: Works automatically with Metal GPU acceleration. Set GPU Layers to "Auto" or "-1" in settings.
+**Apple Silicon**: "Auto" requests Metal GPU acceleration. This requires a Metal-enabled llama.cpp build.
 
 **Intel Mac**: If you experience hangs or crashes, try:
 1. Set GPU Layers to "0" (CPU-only mode) in Settings → Module llama.cpp
 2. Restart Notolog and retry with the currently supported llama-cpp-python release.
 3. If the issue persists, report the macOS, Python, model, and llama-cpp-python versions.
 
-Version 0.2.90 was a validated workaround for older Notolog releases, but the current integration uses newer
-llama-cpp-python APIs and cannot safely downgrade to it.
+Keep llama-cpp-python within Notolog's declared version requirements.
 
 ---
 
 ### Q: Out of memory with local LLMs
 
-**For ONNX models**: Notolog automatically handles memory issues:
-1. Falls back from GPU to CPU when model loading fails
-2. Reduces response token limit when generator allocation fails
+**For ONNX models**: Notolog attempts CPU fallback after provider initialization errors and can
+reduce the generation limit after allocation failures. A smaller model or context may still be needed.
 
 **If issues persist**:
 1. Use smaller quantized models (e.g., `Q4_K_M` instead of `Q8_0`)
@@ -148,9 +146,9 @@ llama-cpp-python APIs and cannot safely downgrade to it.
 
 **Solution**: Use models specifically built for onnxruntime-genai that include `genai_config.json`:
 
-* [Microsoft official models](https://huggingface.co/microsoft){:target="_blank"} (Phi-3, etc.)
-* Models with "onnx-genai" or "onnxruntime-genai" in the name
-* Example: Download `microsoft/Phi-3-mini-4k-instruct-onnx`, then set path to the `cpu_and_mobile/cpu-int4-rtn-block-32` subdirectory
+Browse the [Microsoft model collection](https://huggingface.co/microsoft){:target="_blank"} for GenAI exports.
+Check the model card for the supported GenAI version and execution provider, then select the
+directory containing `genai_config.json`. See [ONNX setup](ai-assistant.md#on-device-llm-onnx).
 
 ---
 

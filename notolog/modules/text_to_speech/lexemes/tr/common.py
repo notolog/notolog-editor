@@ -1,5 +1,25 @@
 # Turkish lexemes common.py
 lexemes = {
+    "module_text_to_speech_error_runtime_version": (
+        "Bu entegrasyon NeMo-Speech.cpp {version} gerektirir. Algılanan: {detected}"
+    ),
+    "module_text_to_speech_error_runtime_missing": (
+        "Metinden konuşmaya ayarlarında kurulu bir nemo-speech yürütülebilir dosyası seçin."
+    ),
+    "module_text_to_speech_error_models_missing": (
+        "Modelleri indirin veya metinden konuşmaya ayarlarında Magpie, NanoCodec ve belirteçleştirici "
+        "klasörünü seçin."
+    ),
+    "module_text_to_speech_error_runtime_archive": (
+        "Yerel ses akışı, lib dizini dahil olmak üzere çalışma zamanı arşivinin tamamını gerektirir."
+    ),
+    "module_text_to_speech_error_language_selection": (
+        "Metinden konuşmaya ayarlarında desteklenen bir konuşma dili seçin."
+    ),
+    "module_text_to_speech_error_download_incomplete": (
+        "İndirme tamamlandı ancak model kümesi eksik. Çalışma zamanı çıktısını kontrol edin veya model "
+        "yollarını elle seçin."
+    ),
     "module_text_to_speech_name": "Metin okuma",
     "module_text_to_speech_action_read_selection": "Seçimi sesli oku",
     "module_text_to_speech_action_read_file": "Dosyayı sesli oku",

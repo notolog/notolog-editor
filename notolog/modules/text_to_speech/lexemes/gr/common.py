@@ -1,5 +1,25 @@
 # Greek lexemes common.py
 lexemes = {
+    "module_text_to_speech_error_runtime_version": (
+        "Αυτή η ενσωμάτωση απαιτεί NeMo-Speech.cpp {version}. Εντοπίστηκε: {detected}"
+    ),
+    "module_text_to_speech_error_runtime_missing": (
+        "Επιλέξτε ένα εγκατεστημένο εκτελέσιμο nemo-speech στις ρυθμίσεις μετατροπής κειμένου σε ομιλία."
+    ),
+    "module_text_to_speech_error_models_missing": (
+        "Κατεβάστε τα μοντέλα ή επιλέξτε Magpie, NanoCodec και τον φάκελο των tokenizers στις ρυθμίσεις "
+        "ομιλίας."
+    ),
+    "module_text_to_speech_error_runtime_archive": (
+        "Η εγγενής ροή ήχου απαιτεί το πλήρες αρχείο του περιβάλλοντος εκτέλεσης, μαζί με τον φάκελο lib."
+    ),
+    "module_text_to_speech_error_language_selection": (
+        "Επιλέξτε μια υποστηριζόμενη γλώσσα στις ρυθμίσεις μετατροπής κειμένου σε ομιλία."
+    ),
+    "module_text_to_speech_error_download_incomplete": (
+        "Η λήψη ολοκληρώθηκε χωρίς πλήρες σύνολο μοντέλων. Ελέγξτε την έξοδο του περιβάλλοντος εκτέλεσης ή "
+        "επιλέξτε τις διαδρομές των μοντέλων χειροκίνητα."
+    ),
     "module_text_to_speech_name": "Κείμενο σε ομιλία",
     "module_text_to_speech_action_read_selection": "Εκφώνηση επιλογής",
     "module_text_to_speech_action_read_file": "Εκφώνηση αρχείου",

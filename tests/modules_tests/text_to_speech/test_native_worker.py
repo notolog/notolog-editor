@@ -39,7 +39,7 @@ PCM = b'\x01\x02\x03\x04'
 class FakeLibrary:
     """Exercise the real ctypes structures and callback with a controlled native API."""
 
-    def __init__(self, *, version=b'nemo-speech-tts 0.1.0', create_code=0, code=0,
+    def __init__(self, *, version=b'nemo-speech-tts 0.2.0', create_code=0, code=0,
                  detail=b'private note text', diagnostics=False):
         self.create_code = create_code
         self.code = code
@@ -49,6 +49,7 @@ class FakeLibrary:
         self.nemo_speech_tts_create = Mock(side_effect=self.create)
         self.nemo_speech_tts_destroy = Mock()
         self.nemo_speech_tts_sample_rate = Mock(return_value=22050)
+        self.nemo_speech_tts_speaker_count = Mock(return_value=5)
         self.nemo_speech_tts_runtime_config_default = Mock(side_effect=worker.Runtime)
         self.nemo_speech_tts_synthesis_options_default = Mock(side_effect=worker.Options)
         self.nemo_speech_tts_last_error = Mock(return_value=detail)
@@ -129,20 +130,77 @@ def test_worker_streams_multiple_requests_and_releases_resources(harness, platfo
 
 
 @pytest.mark.parametrize('platform', ['linux', 'win32'])
-def test_worker_rejects_version_before_loading_models(harness, platform):
-    library = FakeLibrary(version=b'nemo-speech-tts 9.9.9')
+@pytest.mark.parametrize('version', [b'nemo-speech-tts 0.1.0', b'nemo-speech-tts 9.9.9'])
+def test_worker_rejects_version_before_loading_models(harness, platform, version):
+    library = FakeLibrary(version=version)
     events, _, native_os = harness(protocol(), library=library, platform=platform)
-    assert len(events) == 1 and 'version 0.1.0' in events[0]['error']
+    assert len(events) == 1 and 'version 0.2.0' in events[0]['error']
     library.nemo_speech_tts_create.assert_not_called()
     library.nemo_speech_tts_destroy.assert_not_called()
     if platform == 'win32':
         native_os.add_dll_directory.return_value.close.assert_called_once()
 
 
+@pytest.mark.parametrize('voice,index', [('Aria', 0), ('Jason', 1), ('John', 2), ('Leo', 3), ('Sofia', 4),
+                                       ('ARIA', 0), ('magpietts.Aria', 0), ('0', -1), ('unknown', -1)])
+def test_worker_uses_checkpoint_speaker_indices(harness, tmp_path, voice, index):
+    # The shipped v2607 checkpoint map differs from the GGUF's legacy labels.
+    mapping = {'Aria': 0, 'Jason': 1, 'John': 2, 'Leo': 3, 'Sofia': 4}
+    (tmp_path / 'checkpoint.speakers.json').write_text(json.dumps(mapping))
+    configuration = dict(CONFIGURATION, paths=['magpie.gguf', 'codec.gguf', str(tmp_path)])
+    request = dict(REQUEST, voice=voice)
+    events, library, _ = harness(protocol(request, configuration=configuration))
+    assert events[-1] == {'done': True}
+    assert library.requests == [(request['text'].encode(), b'en', voice.encode(), index)]
+
+
+@pytest.mark.parametrize('mapping', [[], {}, {'Aria': True}, {'Aria': -1}, {'Aria': 5},
+                                   {'Aria': 0, 'ARIA': 1}, {'Aria': 0, 'John': 0}])
+def test_worker_rejects_invalid_checkpoint_speaker_map(harness, tmp_path, mapping):
+    (tmp_path / 'checkpoint.speakers.json').write_text(json.dumps(mapping))
+    configuration = dict(CONFIGURATION, paths=['magpie.gguf', 'codec.gguf', str(tmp_path)])
+    events, library, _ = harness(protocol(REQUEST, configuration=configuration))
+    assert len(events) == 1 and 'speaker mapping is invalid' in events[0]['error']
+    assert events[0]['error_code'] == 'speaker_map'
+    library.nemo_speech_tts_synthesize_text.assert_not_called()
+    library.nemo_speech_tts_destroy.assert_called_once()
+
+
+@pytest.mark.parametrize('content', ['{"Aria": 0, "Aria": 2}', '{"Aria": 0}' + ' ' * 65536])
+def test_worker_rejects_duplicate_names_and_oversized_maps(harness, tmp_path, content):
+    (tmp_path / 'checkpoint.speakers.json').write_text(content)
+    configuration = dict(CONFIGURATION, paths=['magpie.gguf', 'codec.gguf', str(tmp_path)])
+    events, library, _ = harness(protocol(REQUEST, configuration=configuration))
+    assert events[0]['error_code'] == 'speaker_map'
+    library.nemo_speech_tts_synthesize_text.assert_not_called()
+    library.nemo_speech_tts_destroy.assert_called_once()
+
+
+def test_worker_rejects_ambiguous_speaker_maps(harness, tmp_path):
+    for name in ('first', 'second'):
+        (tmp_path / f'{name}.speakers.json').write_text('{"Aria": 0}')
+    configuration = dict(CONFIGURATION, paths=['magpie.gguf', 'codec.gguf', str(tmp_path)])
+    events, library, _ = harness(protocol(REQUEST, configuration=configuration))
+    assert events[0]['error_code'] == 'speaker_map'
+    library.nemo_speech_tts_synthesize_text.assert_not_called()
+
+
 def test_worker_cleans_partial_initialization(harness):
     library = FakeLibrary(create_code=1)
     events, _, _ = harness(protocol(), library=library)
     assert len(events) == 1 and 'initialization failed' in events[0]['error']
+    library.nemo_speech_tts_destroy.assert_called_once()
+    library.nemo_speech_tts_synthesize_text.assert_not_called()
+
+
+@pytest.mark.parametrize('detail', [b'unsupported v2607 language_to_tokenizer_mapping',
+                                   b'Magpie model/tokenizer mismatch: private path'])
+def test_worker_explains_incompatible_cached_tokenizers_without_native_details(harness, detail):
+    library = FakeLibrary(create_code=1, detail=detail)
+    events, _, _ = harness(protocol(), library=library)
+    assert len(events) == 1
+    assert 'Download or verify the matching model set' in events[0]['error']
+    assert 'private' not in events[0]['error']
     library.nemo_speech_tts_destroy.assert_called_once()
     library.nemo_speech_tts_synthesize_text.assert_not_called()
 
@@ -157,6 +215,8 @@ def test_worker_cancels_without_acknowledgement(harness, acknowledgement):
 
 
 @pytest.mark.parametrize('code,detail,expected', [
+    (1, b"unsupported language_code 'private'", 'language is not supported'),
+    (1, b"native Magpie tokenizer is not available for language_code 'private'", 'language is not supported'),
     (1, b'tokenizer: private note text', 'text preparation failed'),
     (1, b'unknown voice_name: private note text', 'voice is not supported'),
     (2, b'private note text', 'out of memory'),

@@ -1,5 +1,25 @@
 # Swedish lexemes common.py
 lexemes = {
+    "module_text_to_speech_error_runtime_version": (
+        "Den här integrationen kräver NeMo-Speech.cpp {version}. Hittad version: {detected}"
+    ),
+    "module_text_to_speech_error_runtime_missing": (
+        "Välj en installerad körbar nemo-speech-fil i inställningarna för text-till-tal."
+    ),
+    "module_text_to_speech_error_models_missing": (
+        "Ladda ned modellerna eller välj Magpie, NanoCodec och tokenizer-mappen i inställningarna för "
+        "text-till-tal."
+    ),
+    "module_text_to_speech_error_runtime_archive": (
+        "Inbyggd ljudströmning kräver hela runtime-arkivet, inklusive katalogen lib."
+    ),
+    "module_text_to_speech_error_language_selection": (
+        "Välj ett språk som stöds i inställningarna för text-till-tal."
+    ),
+    "module_text_to_speech_error_download_incomplete": (
+        "Nedladdningen slutfördes utan en komplett uppsättning modeller. Kontrollera runtime-utdata eller "
+        "välj modellsökvägarna manuellt."
+    ),
     "module_text_to_speech_name": "Text till tal",
     "module_text_to_speech_action_read_selection": "Läs markering högt",
     "module_text_to_speech_action_read_file": "Läs fil högt",

@@ -53,10 +53,10 @@ lexemes = {
         "NeMo-Speech.cpp を選択し、MagpieTTS、NanoCodec、トークナイザーをダウンロードします。モデルには別のライセンスが適用されます。"
     ),
     "module_text_to_speech_config_runtime_input_accessible_description": (
-        "NeMo-Speech.cpp 0.1.0 が必要です。アーカイブを展開し、bin/nemo-speech（Windows では bin/nemo-speech.exe）を選択します。"
+        "NeMo-Speech.cpp 0.2.0 が必要です。アーカイブを展開し、bin/nemo-speech（Windows では bin/nemo-speech.exe）を選択します。"
     ),
     "module_text_to_speech_config_model_directory_input_accessible_description": (
-        "モデルはここに保存されます。既存のファイルは検証して再利用します。curl と約550 MBの空き容量が必要です。"
+        "モデルはここに保存されます。既存のファイルは検証して再利用します。curl と約700 MBの空き容量が必要です。"
     ),
     "module_text_to_speech_config_custom_models_accessible_description": "モデルのパスを指定するか、空欄にしてモデルフォルダーを使用します。",
     "module_text_to_speech_config_reading_accessible_description": "音声、言語、速度を選択します。コードの代わりに短い音声ラベルを読み上げられます。",

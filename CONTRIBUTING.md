@@ -1,4 +1,3 @@
-<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-18 13:57:00.794379"}} -->
 # Contributing to Notolog
 
 Thank you for your interest in contributing to Notolog! This document provides guidelines and information for contributors.
@@ -46,7 +45,7 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
 
 ### Prerequisites
 
-- Python 3.10 or higher
+- Python 3.11–3.14
 - Git
 
 ### Setup Steps
@@ -113,7 +112,8 @@ The test skips unless configured. Set `NOTOLOG_TTS_PLAYBACK=1` to also test audi
 
 #### Pre-commit Hooks (Recommended)
 
-Install pre-commit hooks to automatically check code quality before commits:
+Pre-commit hooks require Python 3.11 or newer. Install them to automatically check
+code quality before commits:
 
 ```bash
 # Activate the same virtual environment configured as the project interpreter first
@@ -141,21 +141,6 @@ The pre-commit configuration includes:
 - **Bandit**: Security vulnerability scanning
 - **pytest**: Quick test validation
 
-#### MkDocs Documentation Build
-
-When modifying documentation, validate the build:
-
-```bash
-# Install MkDocs and every plugin enabled in mkdocs.yml
-pip install mkdocs "mkdocs-material[imaging]" mkdocs-minify-plugin mkdocs-rss-plugin
-
-# Build and validate (checks for broken links, missing files)
-mkdocs build --strict
-
-# Preview locally
-mkdocs serve
-```
-
 #### Manual Linting
 
 ```bash
@@ -168,6 +153,7 @@ flake8 . --count --exit-zero --max-complexity=15 --max-line-length=127 --per-fil
 - Add docstrings to all public methods and classes
 - Follow Google-style docstrings
 - Update README.md if adding user-facing features
+- Update the relevant [user guides](docs/) and examples when application behavior changes
 
 ### Type Hints
 
@@ -185,23 +171,32 @@ if TYPE_CHECKING:
 
 ### Commit Messages
 
-Follow conventional commit format:
+Use the following format, omitting `(scope)` when no scope is needed:
 
-```
-type(scope): short description
-
-Longer description if needed.
-
-Fixes #123
+```text
+type(scope): description
 ```
 
-Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+- Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`, `ci`, `build`.
+- Use lowercase types and scopes. Areas such as `ui` and `tts` are scopes, not types.
+- Start the description with a lowercase imperative verb, keep it concise, and omit the trailing period.
+- Describe the final change. Choose the type for the main behavior changed; use `docs` for documentation-only changes.
+- Add a body when the reason, tradeoff, or related changes need explanation. Keep unrelated changes in separate commits.
+
+For example: `fix(ui): allow independent Settings window movement`.
+
+### Changelog Entries
+
+- Add relevant entries to the matching version section in `CHANGELOG.md`.
+- Compare against the actual previous published release. Describe each finished user-visible improvement once; leave supporting interaction details in the relevant guide.
+- Exclude fixes for defects introduced and corrected during development of the same release, test-only changes, validation results, TODOs, operational notes, and release-status commentary.
+- Preserve published release history unless an evidence-backed correction is explicitly requested.
 
 ### Pull Request Process
 
 1. Ensure all tests pass
 2. Update documentation if needed
-3. Add entry to CHANGELOG.md under `[Unreleased]`
+3. Update CHANGELOG.md for relevant release differences, following the rules above
 4. Fill out the pull request template
 5. Request review from maintainers
 
@@ -210,7 +205,7 @@ Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 - [ ] Tests pass locally
 - [ ] Code follows style guidelines
 - [ ] Documentation updated (if applicable)
-- [ ] CHANGELOG.md updated
+- [ ] CHANGELOG.md updated (if applicable)
 - [ ] Commits are clean and well-described
 
 ## Reporting Issues

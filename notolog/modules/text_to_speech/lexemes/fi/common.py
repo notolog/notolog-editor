@@ -1,5 +1,24 @@
 # Finnish lexemes common.py
 lexemes = {
+    "module_text_to_speech_error_runtime_version": (
+        "Tämä integraatio vaatii NeMo-Speech.cpp-version {version}. Havaittu: {detected}"
+    ),
+    "module_text_to_speech_error_runtime_missing": (
+        "Valitse asennettu nemo-speech-ohjelmatiedosto puhesynteesin asetuksissa."
+    ),
+    "module_text_to_speech_error_models_missing": (
+        "Lataa mallit tai valitse Magpie, NanoCodec ja tokenisointikansio puhesynteesin asetuksissa."
+    ),
+    "module_text_to_speech_error_runtime_archive": (
+        "Natiivi äänen suoratoisto vaatii koko suoritusympäristön arkiston, myös lib-kansion."
+    ),
+    "module_text_to_speech_error_language_selection": (
+        "Valitse tuettu puhekieli puhesynteesin asetuksissa."
+    ),
+    "module_text_to_speech_error_download_incomplete": (
+        "Lataus päättyi ilman kaikkia malleja. Tarkista suoritusympäristön tuloste tai valitse mallien polut "
+        "käsin."
+    ),
     "module_text_to_speech_name": "Teksti puheeksi",
     "module_text_to_speech_action_read_selection": "Lue valinta ääneen",
     "module_text_to_speech_action_read_file": "Lue tiedosto ääneen",

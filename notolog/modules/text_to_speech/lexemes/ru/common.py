@@ -1,5 +1,24 @@
 # Russian lexemes common.py
 lexemes = {
+    "module_text_to_speech_error_runtime_version": (
+        "Для этой интеграции требуется NeMo-Speech.cpp {version}. Обнаружено: {detected}"
+    ),
+    "module_text_to_speech_error_runtime_missing": (
+        "Выберите установленный исполняемый файл nemo-speech в настройках синтеза речи."
+    ),
+    "module_text_to_speech_error_models_missing": (
+        "Скачайте модели или выберите Magpie, NanoCodec и папку токенизаторов в настройках синтеза речи."
+    ),
+    "module_text_to_speech_error_runtime_archive": (
+        "Для потокового синтеза нужен полный архив среды выполнения, включая каталог lib."
+    ),
+    "module_text_to_speech_error_language_selection": (
+        "Выберите поддерживаемый язык в настройках синтеза речи."
+    ),
+    "module_text_to_speech_error_download_incomplete": (
+        "Загрузка завершена, но набор моделей неполон. Проверьте вывод среды выполнения или выберите пути к "
+        "моделям вручную."
+    ),
     "module_text_to_speech_name": "Озвучивание текста",
     "module_text_to_speech_action_read_selection": "Прочитать выделенное вслух",
     "module_text_to_speech_action_read_file": "Прочитать файл вслух",

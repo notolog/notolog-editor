@@ -1,4 +1,3 @@
-<!-- {"notolog.app": {"created": "2026-01-18 13:57:00.794379", "updated": "2026-01-31 00:00:00.000000"}} -->
 # AI Assistant Guide
 
 Notolog includes an AI-powered assistant that supports multiple backends for text generation and assistance.
@@ -36,8 +35,8 @@ Access via: `Tools` → `AI Assistant`
 | Backend | Model Format | Requirements | Privacy |
 |---------|--------------|--------------|---------|
 | OpenAI API | Cloud-based | API key, internet | Cloud processed |
-| On-Device LLM | ONNX | 8GB+ RAM | Fully local |
-| Module llama.cpp | GGUF | 8GB+ RAM, C++ compiler | Fully local |
+| On-Device LLM | ONNX | Compatible GenAI model/runtime and sufficient memory | Local inference |
+| Module llama.cpp | GGUF | Compatible model/runtime; compiler if building from source | Local inference |
 
 ---
 
@@ -63,14 +62,16 @@ Access via: `Tools` → `AI Assistant`
 | Supported Models | GPT model to use | gpt-5.2 |
 | System Prompt | Initial context/instructions | (empty) |
 | Temperature | Response creativity (0-100 → 0.0-1.0) | 20 (0.2) |
-| Maximum Response Tokens | Maximum response length (0 = unlimited) | 0 |
+| Maximum Response Tokens | Response limit; 0 leaves the limit to the API service | 0 |
 | Prompt History Size | Number of turns to remember | 0 |
 
 ### Security Notes
 
-- API keys are stored encrypted locally
-- Keys are never transmitted except to OpenAI
-- Consider using environment variables for added security
+The API key, prompt, system prompt, and included conversation history are sent to the configured
+endpoint, which may be OpenAI or another compatible service. Verify the URL and use HTTPS for remote endpoints.
+Keys are encrypted in local settings with an application key, not stored in an OS credential vault.
+Anyone with access to both the settings and that key can recover them. The API key is configured in Settings;
+Notolog does not automatically read the OpenAI SDK's environment variables.
 
 ---
 
@@ -80,15 +81,17 @@ Run AI models locally using ONNX Runtime GenAI.
 
 ### Requirements
 
-- Python 3.10-3.14
-- 8GB+ RAM (16GB recommended)
-- ONNX format model files
+- Python 3.11–3.14
+- Enough RAM or VRAM for the selected model and context
+- A model exported for the installed ONNX Runtime GenAI version
 
 ### Supported Models
 
-Download ONNX-optimized models from:
-- [Hugging Face ONNX models](https://huggingface.co/models?library=onnx){:target="_blank"}
-- Microsoft's Phi models (recommended for efficiency)
+Choose an ONNX Runtime GenAI export containing `genai_config.json` and all referenced files.
+Use the model card to check runtime and execution-provider compatibility.
+The [Microsoft model collection](https://huggingface.co/microsoft){:target="_blank"}
+and [Hugging Face ONNX catalog](https://huggingface.co/models?library=onnx){:target="_blank"}
+include model exports; check each export rather than relying on its ONNX label alone.
 
 ### Configuration
 
@@ -100,13 +103,14 @@ Download ONNX-optimized models from:
 |---------|-------------|---------|
 | ONNX Model Location | Path to ONNX model directory | (required) |
 | Temperature | Response randomness (0-100 → 0.0-1.0) | 20 (0.2) |
-| Maximum Response Tokens | Maximum response length (0 = unlimited) | 0 |
+| Maximum Response Tokens | GenAI sequence-length limit; 0 uses the module default of 4096 | 0 |
 | Prompt History Size | Number of turns to remember | 0 |
 
 ### First Run Notice
 
 !!! warning "Model Loading Time"
-    On first use, ONNX models may take **up to 60 seconds** to load. The application will display a loading message. Subsequent uses are faster due to caching.
+    Loading time depends on the model, storage, and available memory. The application displays a loading message.
+    Subsequent requests can reuse the loaded model.
 
 ### Model Directory Structure
 
@@ -116,8 +120,11 @@ model_directory/
 ├── model.onnx           # Main model file
 ├── model.onnx.data      # Model weights (if separate)
 ├── tokenizer.json       # Tokenizer configuration
-└── config.json          # Model configuration
+└── genai_config.json    # ONNX Runtime GenAI configuration
 ```
+
+Filenames vary by export. Download the complete model directory referenced by `genai_config.json`
+and check compatibility with the installed GenAI version. See [AI Modules](ai-modules.md#on-device-llm-onnx).
 
 ---
 
@@ -128,8 +135,8 @@ Run GGUF-format models using llama.cpp bindings.
 ### Requirements
 
 - `llama-cpp-python` package
-- C++ compiler (for installation)
-- 8GB+ RAM
+- C++ compiler when building llama-cpp-python from source
+- Enough RAM or VRAM for the selected model and context
 - GGUF model file
 
 ### Installation
@@ -149,7 +156,7 @@ sudo apt-get install build-essential
 
 GGUF models from:
 - [Hugging Face GGUF Models](https://huggingface.co/models?library=gguf){:target="_blank"}
-- [TheBloke's Collection](https://huggingface.co/TheBloke){:target="_blank"} (historic archive, 2,000+ models)
+- [TheBloke's GGUF collection](https://huggingface.co/TheBloke){:target="_blank"}
 
 Recommended quantizations:
 - `Q4_K_M` - Good balance of size/quality
@@ -166,19 +173,22 @@ Recommended quantizations:
 |---------|-------------|---------|
 | Model Location | Path to `.gguf` model file | (required) |
 | Context Window Size | Token context size (1-65536) | 2048 |
-| Chat Formats | Model's chat template | auto |
+| Chat Formats | Model's chat template | chatml |
 | System Prompt | Initial instructions for the model | (empty) |
 | Response Temperature | Response randomness (0-100 → 0.0-1.0) | 20 (0.2) |
-| Max Tokens per Response | Maximum response length (0 = unlimited) | 0 |
+| Max Tokens per Response | Response limit; 0 uses the available context window | 0 |
 | Size of the Prompt History | Number of turns to remember | 0 |
 
 ### Chat Formats
 
-Select based on your model:
-* `chatml` - Most common format
+Select the template specified by your model card:
+
+* `chatml` - ChatML models (default)
 * `llama-2` - Meta's Llama 2 models
 * `gemma` - Google's Gemma models
-* `mistral` - Mistral AI models
+
+The selector offers these three formats. Models requiring other templates are not supported
+through this setting; a GGUF file alone does not guarantee compatibility.
 
 ---
 
@@ -237,7 +247,7 @@ The status area shows:
 
 ### For Performance
 
-1. Start with smaller models (7B parameters)
+1. Start with a smaller model that fits the available RAM or VRAM
 2. Use quantized models (Q4_K_M) for speed
 3. Increase context window only if needed
 4. Close other applications when using large models
@@ -269,17 +279,9 @@ The status area shows:
 **Cause**: First-time model initialization.
 
 **Solution**:
-- Wait up to 60 seconds on first run
-- Subsequent loads are faster
+- Allow time for the model size and available hardware
+- Keep the model loaded to reuse it for subsequent requests
 - A loading message will be displayed
-
-### "Application Not Responding" During Model Load
-
-**Cause**: Model loading blocking the UI thread (fixed in v1.1.7+).
-
-**Solution**:
-- Update to latest Notolog version
-- Loading now runs in background thread
 
 ### llama-cpp-python Installation Fails
 
@@ -306,16 +308,6 @@ xcode-select --install
 2. Close other applications
 3. Reduce context window size
 4. Consider cloud API instead
-
-### C++ Type Conversion Warning
-
-**Warning**: `_pythonToCppCopy: Cannot copy-convert ... (NoneType) to C++`
-
-**Cause**: Signal passing None to C++ layer (cosmetic warning, fixed in v1.1.7+).
-
-**Impact**: No functional impact; warning can be ignored.
-
----
 
 ## API Reference
 
