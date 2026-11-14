@@ -82,8 +82,8 @@ lexemes = {
     ),
     "module_text_to_speech_config_speed_input_accessible_description": "დაკვრის სიჩქარე ხმის სიმაღლესაც ცვლის.",
     "module_text_to_speech_config_announce_headings_accessible_description": (
-        "Markdown-ისა და HTML-ის 1–4 დონის სათაურებისთვის ითქმის Chapter, Section, Subsection და "
-        "Sub-subsection, შემდეგ Heading level 5–6."
+        "Markdown-ისა და HTML-ის 1-4 დონის სათაურებისთვის ითქმის Chapter, Section, Subsection და "
+        "Sub-subsection, შემდეგ Heading level 5-6."
     ),
     "module_text_to_speech_config_skip_inline_code_accessible_description": (
         "მონიშნული: ამბობს “Inline code block”. მოუნიშნავი: კითხულობს სტრიქონშიდა კოდს. შემოსაზღვრული ან"

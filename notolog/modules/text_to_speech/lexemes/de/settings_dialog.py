@@ -92,8 +92,8 @@ lexemes = {
         "Die Wiedergabegeschwindigkeit verändert auch die Tonhöhe."
     ),
     "module_text_to_speech_config_announce_headings_accessible_description": (
-        "Sagt für Markdown- und HTML-Überschriften der Ebenen 1–4 Chapter, Section, Subsection und "
-        "Sub-subsection, danach Heading level 5–6."
+        "Sagt für Markdown- und HTML-Überschriften der Ebenen 1-4 Chapter, Section, Subsection und "
+        "Sub-subsection, danach Heading level 5-6."
     ),
     "module_text_to_speech_config_skip_inline_code_accessible_description": (
         "Aktiviert: sagt „Inline code block“. Deaktiviert: liest Inline-Code. Eingerückter und umzäunter"

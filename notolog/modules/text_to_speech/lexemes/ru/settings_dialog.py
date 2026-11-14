@@ -84,8 +84,8 @@ lexemes = {
         "Скорость воспроизведения также меняет высоту голоса."
     ),
     "module_text_to_speech_config_announce_headings_accessible_description": (
-        "Для заголовков Markdown и HTML уровней 1–4 произносятся Chapter, Section, Subsection и "
-        "Sub-subsection, затем Heading level 5–6."
+        "Для заголовков Markdown и HTML уровней 1-4 произносятся Chapter, Section, Subsection и "
+        "Sub-subsection, затем Heading level 5-6."
     ),
     "module_text_to_speech_config_skip_inline_code_accessible_description": (
         "Включено: произносится «Inline code block». Выключено: читается встроенный код. Для ограждённых"

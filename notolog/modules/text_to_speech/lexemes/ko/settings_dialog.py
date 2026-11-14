@@ -67,7 +67,7 @@ lexemes = {
     "module_text_to_speech_config_speed_input_accessible_description": "재생 속도를 바꾸면 음높이도 바뀝니다.",
     "module_text_to_speech_config_announce_headings_accessible_description": (
         "Markdown과 HTML의 제목 수준 1~4는 Chapter, Section, Subsection, Sub-subsection으로, 5~6은 Heading level "
-        "5–6으로 읽습니다."
+        "5-6으로 읽습니다."
     ),
     "module_text_to_speech_config_skip_inline_code_accessible_description": (
         "선택: “Inline code block”을 읽습니다. 해제: 인라인 코드 내용을 읽습니다. 울타리 또는 들여쓰기로 구분한 코드는 여러 줄 설정을 따릅니다."

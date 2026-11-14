@@ -38,12 +38,25 @@ from ..test_enums.something_enum import SomethingEnum
 from . import test_app  # noqa: F401
 
 import pytest
+import logging
 
 from unittest.mock import MagicMock
 from shiboken6 import isValid
 
 
 class TestSettingsDialog:
+
+    def test_text_settings_values_are_not_logged(self, ui_obj, caplog):
+        secret = 'SYNTHETIC_PRIVATE_SETTING'
+        field = QPlainTextEdit(ui_obj)
+        field.setObjectName('synthetic_label:default_path')
+        field.textChanged.connect(ui_obj.save_settings)
+
+        with caplog.at_level(logging.DEBUG):
+            field.setPlainText(secret)
+
+        assert ui_obj.settings.default_path == secret
+        assert secret not in caplog.text
 
     @pytest.fixture(scope="function", autouse=True)
     def settings_obj(self, mocker):
@@ -81,6 +94,65 @@ class TestSettingsDialog:
         # Fixture to initialize object.
         ui_obj = SettingsDialog(parent=main_window)
         yield ui_obj
+
+    def test_hotkeys_reference(self, ui_obj):
+        from PySide6.QtGui import QKeySequence
+        from PySide6.QtWidgets import QTableWidget, QAbstractItemView, QLabel
+        from notolog.ui.horizontal_line_spacer import HorizontalLineSpacer
+        table = ui_obj.findChild(QTableWidget, 'workspace_hotkeys')
+        assert table.rowCount() == 11
+        assert table.editTriggers() == QAbstractItemView.EditTrigger.NoEditTriggers
+        assert all(table.item(row, column).text()
+                   for row in range(table.rowCount()) for column in range(2))
+        assert all(',' not in table.item(row, 0).text() for row in range(table.rowCount()))
+        assert table.item(3, 0).text() == QKeySequence('Shift+Tab').toString(QKeySequence.SequenceFormat.NativeText)
+        assert table.item(4, 0).text() == QKeySequence('Shift+Return').toString(QKeySequence.SequenceFormat.NativeText)
+        label = ui_obj.findChild(QLabel, 'settings_dialog_workspace_hotkeys_label')
+        assert label.property('class') == 'group-header-label'
+        label.ensurePolished()
+        assert label.font().bold()
+        layout = label.parentWidget().layout()
+        assert isinstance(layout.itemAt(layout.indexOf(label) - 1).widget(), HorizontalLineSpacer)
+
+    def test_hotkeys_omit_alternative_named_and_function_keys(self, ui_obj, mocker):
+        from PySide6.QtGui import QKeySequence
+        from PySide6.QtWidgets import QTableWidget
+        mocker.patch('notolog.ui.settings_dialog.shortcut_keys', return_value=[
+            QKeySequence('Ctrl+Z'), QKeySequence('F14'), QKeySequence('Undo')])
+        table = QTableWidget(ui_obj)
+        ui_obj.populate_hotkeys(table)
+        assert table.item(0, 0).text() == QKeySequence('Ctrl+Z').toString(QKeySequence.SequenceFormat.NativeText)
+
+    def test_hotkeys_follow_live_font_size_changes(self, ui_obj, main_window, qapp):
+        from PySide6.QtWidgets import QTableWidget
+
+        table = ui_obj.findChild(QTableWidget, 'workspace_hotkeys')
+        ui_obj.tab_widget.setCurrentIndex(1)
+        ui_obj.show()
+        try:
+            measurements = []
+            original_items = [[table.item(row, column) for column in range(table.columnCount())]
+                              for row in range(table.rowCount())]
+            for size in (12, 24, 12):
+                font = main_window.font()
+                font.setPointSize(size)
+                main_window.setFont(font)
+                ui_obj.update_font_size(size)
+                qapp.processEvents()
+
+                assert table.font().pointSize() == size
+                assert table.minimumHeight() >= table.fontMetrics().height() * 9
+                assert all(table.rowHeight(row) >= table.sizeHintForRow(row)
+                           for row in range(table.rowCount()))
+                assert all(table.item(row, column) is original_items[row][column]
+                           for row in range(table.rowCount()) for column in range(table.columnCount()))
+                measurements.append((table.rowHeight(0), table.minimumHeight()))
+
+            assert measurements[1][0] > measurements[0][0]
+            assert measurements[1][1] > measurements[0][1]
+            assert measurements[2] == measurements[0]
+        finally:
+            ui_obj.close()
 
     @pytest.fixture(scope="function")
     def test_params_fixture(self, request):

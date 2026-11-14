@@ -81,8 +81,8 @@ lexemes = {
     ),
     "module_text_to_speech_config_speed_input_accessible_description": "प्लेबैक गति से आवाज़ की पिच भी बदलती है।",
     "module_text_to_speech_config_announce_headings_accessible_description": (
-        "Markdown और HTML के स्तर 1–4 के शीर्षकों के लिए Chapter, Section, Subsection और Sub-subsection,"
-        " फिर Heading level 5–6 बोलता है।"
+        "Markdown और HTML के स्तर 1-4 के शीर्षकों के लिए Chapter, Section, Subsection और Sub-subsection,"
+        " फिर Heading level 5-6 बोलता है।"
     ),
     "module_text_to_speech_config_skip_inline_code_accessible_description": (
         "चयनित: “Inline code block” बोलता है। अचयनित: इनलाइन कोड पढ़ता है। सीमांकित या इंडेंट वाला कोड "

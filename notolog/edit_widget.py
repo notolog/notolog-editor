@@ -169,12 +169,12 @@ class EditWidget(QPlainTextEdit):
                 # Non-space symbol
                 if cursor_char != " ":
                     """
-                    " "  – Space
-                    "\t" – Horizontal tab
-                    "\v" – Vertical tab
-                    "\n" – Newline
-                    "\r" – Carriage return
-                    "\f" – Feed
+                    " "  - Space
+                    "\t" - Horizontal tab
+                    "\v" - Vertical tab
+                    "\n" - Newline
+                    "\r" - Carriage return
+                    "\f" - Feed
                     """
                     # Non-space character
                     if not cursor_char.isspace():

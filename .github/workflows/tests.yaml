@@ -1,7 +1,15 @@
 # Notolog Editor
 # An open-source Markdown editor built with Python.
 #
+# File Details:
+# - Purpose: Build, test, and lint the application across supported Python versions and operating systems.
+#
 # Repository: https://github.com/notolog/notolog-editor
+# Website: https://notolog.app
+# PyPI: https://pypi.org/project/notolog
+#
+# Author: Vadim Bakhrenkov
+# Copyright: 2024-2026 Vadim Bakhrenkov
 # License: MIT License
 #
 # This workflow installs Python dependencies, runs tests, and performs linting across multiple Python versions.
@@ -77,6 +85,9 @@ jobs:
         # fixes: libEGL.so.1: cannot open shared object file: No such file or directory
         sudo apt-get install -y libegl1-mesa-dev
       shell: bash
+
+    - name: Verify Qt runtime compatibility
+      run: python -m pytest tests/test_qt_runtime.py -v
 
     - name: Lint with flake8
       run: |

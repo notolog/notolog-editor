@@ -4,7 +4,7 @@ Notolog's built-in Text-to-Speech module reads Markdown and plain-text documents
 Read a whole document, selected text, or start from the cursor. Playback controls let you pause, resume,
 and stop reading while you work.
 
-Notolog 1.2.4 uses NeMo-Speech.cpp 0.2.0 and MagpieTTS v2607.
+Notolog 1.2.5 uses NeMo-Speech.cpp 0.2.0 and MagpieTTS v2607.
 Follow the runtime link in your installed application's settings to select a compatible release.
 
 ## Set up local speech
@@ -61,9 +61,9 @@ the new Korean or Brazilian Portuguese options. Never combine a v2607 model with
 
 ## Read documents and selections
 
-- Use **Read document aloud** or the editor's play control to read the current document.
-- Select text in edit or view mode, then choose **Read selection aloud** from its context menu.
-- Choose **Read from cursor aloud** from the edit or view context menu to start at that position.
+- Use **Read the document aloud** or the editor's play control to read the current document.
+- Select text in edit or view mode, then choose **Read selected text aloud** from its context menu.
+- Choose **Read aloud from the cursor** from the edit or view context menu to start at that position.
 - Use the file tree's read action to read a file. Open and unlock an encrypted note before reading it.
 - Pause or resume with the pause control, and end playback with stop.
 

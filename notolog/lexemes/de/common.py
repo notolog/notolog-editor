@@ -1,5 +1,9 @@
 # German lexemes common.py
 lexemes = {
+    'dialog_goto_button_ok': 'OK',
+    'dialog_goto_button_cancel': 'Abbrechen',
+    'dialog_goto_title': 'Gehe zu Zeile',
+    'dialog_goto_label': 'Zeilennummer (1-{maximum}):',
     "app_title": "Notolog Editor",
     "app_title_with_sub": "{app_title} - {sub_title}",
 

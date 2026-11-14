@@ -1,5 +1,17 @@
 # Russian lexemes settings_dialog.py
 lexemes = {
+    'workspace_hotkeys_label': 'Горячие клавиши',
+    'hotkey_save': 'Сохранить',
+    'hotkey_find': 'Найти',
+    'hotkey_goto': 'Перейти к строке',
+    'hotkey_undo': 'Отменить',
+    'hotkey_redo': 'Повторить',
+    'hotkey_cut': 'Вырезать',
+    'hotkey_copy': 'Копировать',
+    'hotkey_paste': 'Вставить',
+    'hotkey_select_all': 'Выделить всё',
+    'hotkey_unindent': 'Уменьшить отступ',
+    'hotkey_newline': 'Вставить перенос строки',
     # Настройки
     "window_title": "Настройки",
 

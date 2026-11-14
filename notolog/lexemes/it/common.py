@@ -1,5 +1,9 @@
 # Italian lexemes common.py
 lexemes = {
+    'dialog_goto_button_ok': 'OK',
+    'dialog_goto_button_cancel': 'Annulla',
+    'dialog_goto_title': 'Vai alla riga',
+    'dialog_goto_label': 'Numero di riga (1-{maximum}):',
     "app_title": "Editor Notolog",
     "app_title_with_sub": "{app_title} - {sub_title}",
 

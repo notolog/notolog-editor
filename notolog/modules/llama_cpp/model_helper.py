@@ -305,13 +305,12 @@ class ModelHelper:
 
             if 'role' in delta:
                 # Role indicator (e.g., 'assistant')
-                output = f"{delta['role']}: "
-                self.logger.debug(f"Role output: {output}")
+                self.logger.debug('Role chunk received')
                 yield ''  # Don't display role prefix in UI
             elif 'content' in delta:
                 # Actual content tokens - preserve all characters including spaces
                 tokens = delta['content']
-                self.logger.debug(f"Output token(s): {tokens}")
+                self.logger.debug('Output chunk received')
                 yield tokens
             elif 'finish_reason' in delta:
                 # Completion finished

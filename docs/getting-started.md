@@ -18,8 +18,11 @@ This guide will help you install Notolog and get up and running quickly.
 
 Use Python **3.11–3.14**. Notolog's Python wheel is platform-independent, but Qt and AI/audio
 dependencies require builds for your operating system and processor. Older Windows and macOS
-versions are not supported merely because Python installs on them. Check the selected
-[PySide6 release files](https://pypi.org/project/PySide6-Essentials/6.11.3/#files) and
+versions are not supported merely because Python installs on them. Python 3.11 uses Qt for
+Python 6.11.3; Python 3.12 and later use Qt for Python 6.12. The dependency installer selects
+the compatible version automatically. Check the corresponding
+[6.11.3](https://pypi.org/project/PySide6-Essentials/6.11.3/#files) or
+[6.12.0 release files](https://pypi.org/project/PySide6-Essentials/6.12.0/#files) and
 [Qt platform guidance](https://doc.qt.io/qt-6/supported-platforms.html).
 Debian packages have their own architecture and distribution requirements listed with each release.
 
@@ -146,10 +149,14 @@ On first launch, you'll see the main editor window with:
 
 ### Keyboard Shortcuts
 
-| Action | Windows/Linux | macOS | Status |
-|--------|---------------|-------|--------|
-| Save | `Ctrl+S` | `⌘+S` | ✓ |
-| Find | `Ctrl+F` | `⌘+F` | ✓ |
+| Action | Windows/Linux | macOS |
+|--------|---------------|-------|
+| Save | `Ctrl+S` | `Cmd+S` |
+| Find | `Ctrl+F` | `Cmd+F` |
+| Go to line | `Ctrl+G` | `Cmd+G` |
+
+On macOS, `Cmd` is the Command key (`⌘`). See **Settings > Workspace > Hotkeys**
+or the [keyboard shortcut reference](user-guide.md#keyboard-shortcuts) for more combinations.
 
 ### File Tree Actions
 
@@ -159,7 +166,7 @@ On first launch, you'll see the main editor window with:
 ### Editor Features
 
 - **Line Numbers**: Show each line's position in the document
-- **Search**: `Ctrl+F` to find text in the current file
+- **Search**: `Ctrl+F` (`Cmd+F` on macOS) to find text in the current file
 - **Quick Filter**: Type in the file tree search box to filter files
 
 ---

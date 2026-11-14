@@ -1,5 +1,17 @@
 # Swedish lexemes settings_dialog.py
 lexemes = {
+    'workspace_hotkeys_label': 'Kortkommandon',
+    'hotkey_save': 'Spara',
+    'hotkey_find': 'Sök',
+    'hotkey_goto': 'Gå till rad',
+    'hotkey_undo': 'Ångra',
+    'hotkey_redo': 'Gör om',
+    'hotkey_cut': 'Klipp ut',
+    'hotkey_copy': 'Kopiera',
+    'hotkey_paste': 'Klistra in',
+    'hotkey_select_all': 'Markera allt',
+    'hotkey_unindent': 'Minska indrag',
+    'hotkey_newline': 'Infoga radbrytning',
     # Settings dialog
     "window_title": "Inställningar",
 

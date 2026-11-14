@@ -70,7 +70,7 @@ class ViewWidget(QTextBrowser):
         anchor = self.anchorAt(cursor_pos)
         # Ensure hyperlink clicks are not processed when clicking on expandable/collapsible blocks.
         if anchor and (anchor.startswith('expandable') or anchor.startswith('collapsible')):
-            self.logger.debug("Anchor URL at cursor:", anchor)
+            self.logger.debug('Expandable or collapsible anchor at cursor')
             return
 
     def contextMenuEvent(self, event):
@@ -94,7 +94,7 @@ class ViewWidget(QTextBrowser):
 
     def loadResource(self, resource_type, url):
         # Log the resource request
-        self.logger.debug(f"Requesting resource of type {resource_type} at URL: {url.toString()}")
+        self.logger.debug('Requesting resource of type %s', resource_type)
 
     def searched_text_count(self, searched_text, find_flags) -> int:
         """

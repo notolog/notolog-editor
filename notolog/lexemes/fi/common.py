@@ -1,5 +1,9 @@
 # Finnish lexemes common.py
 lexemes = {
+    'dialog_goto_button_ok': 'OK',
+    'dialog_goto_button_cancel': 'Peruuta',
+    'dialog_goto_title': 'Siirry riville',
+    'dialog_goto_label': 'Rivinumero (1-{maximum}):',
     "app_title": "Notolog Editori",
     "app_title_with_sub": "{app_title} - {sub_title}",
 

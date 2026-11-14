@@ -1,5 +1,17 @@
 # Latin lexemes settings_dialog.py
 lexemes = {
+    'workspace_hotkeys_label': 'Claves compendiariae',
+    'hotkey_save': 'Servare',
+    'hotkey_find': 'Quaerere',
+    'hotkey_goto': 'Ad lineam ire',
+    'hotkey_undo': 'Solutio',
+    'hotkey_redo': 'Repetere',
+    'hotkey_cut': 'Excidere',
+    'hotkey_copy': 'Copiare',
+    'hotkey_paste': 'Inserere',
+    'hotkey_select_all': 'Omnia eligere',
+    'hotkey_unindent': 'Indentationem minuere',
+    'hotkey_newline': 'Novam lineam inserere',
     # Configurationes
     "window_title": "Configurationes",
 

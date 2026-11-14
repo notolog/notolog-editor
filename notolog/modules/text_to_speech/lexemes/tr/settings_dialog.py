@@ -82,8 +82,8 @@ lexemes = {
     ),
     "module_text_to_speech_config_speed_input_accessible_description": "Oynatma hızı sesin perdesini de değiştirir.",
     "module_text_to_speech_config_announce_headings_accessible_description": (
-        "Markdown ve HTML başlıklarının 1–4 düzeyleri için Chapter, Section, Subsection ve "
-        "Sub-subsection; ardından Heading level 5–6 söylenir."
+        "Markdown ve HTML başlıklarının 1-4 düzeyleri için Chapter, Section, Subsection ve "
+        "Sub-subsection; ardından Heading level 5-6 söylenir."
     ),
     "module_text_to_speech_config_skip_inline_code_accessible_description": (
         "İşaretli: “Inline code block” der. Değilse satır içi kod okunur. Çevrili veya girintili kod çok"

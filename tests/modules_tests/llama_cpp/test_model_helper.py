@@ -205,19 +205,19 @@ class TestModelHelper:
             (
                     [{'choices': [{'delta': {'role': 'assistant'}}]}],
                     [''],
-                    ["Role output: assistant: "]
+                    ["Role chunk received"]
             ),
             # Case 2: 'content' in delta
             (
                     [{'choices': [{'delta': {'content': 'Hello, world'}}]}],
                     ['Hello, world'],
-                    ["Output token(s): Hello, world"]
+                    ["Output chunk received"]
             ),
             # Case 3: 'finish_reason' in delta
             (
                     [{'choices': [{'delta': {'finish_reason': 'length'}}]}],
                     [''],
-                    ["Output finished with the reason: 'length'"]
+                    ["Output finished with reason: 'length'"]
             ),
             # Case 4: Mixed inputs
             (
@@ -228,15 +228,15 @@ class TestModelHelper:
                     ],
                     ['', 'Hello, world', ''],
                     [
-                        "Role output: assistant: ",
-                        "Output token(s): Hello, world",
-                        "Output finished with the reason: 'length'"
+                        "Role chunk received",
+                        "Output chunk received",
+                        "Output finished with reason: 'length'"
                     ]
             ),
         ]
     )
     async def test_async_wrap_iterator(self, test_model_helper: ModelHelper, input_iterator, expected_outputs,
-                                       expected_logs):
+                                       expected_logs, caplog):
 
         # Create an async iterator from the input data
         def mock_iterator():
@@ -245,11 +245,17 @@ class TestModelHelper:
 
         # Collect outputs from the async_wrap_iterator
         outputs = []
-        async for output in test_model_helper.async_wrap_iterator(mock_iterator()):
-            outputs.append(output)
+        with caplog.at_level(logging.DEBUG):
+            async for output in test_model_helper.async_wrap_iterator(mock_iterator()):
+                outputs.append(output)
 
         # Assert the outputs match the expected results
         assert outputs == expected_outputs
+        for output in outputs:
+            if output:
+                assert output not in caplog.text
+        for message in expected_logs:
+            assert message in caplog.text
 
     @pytest.mark.skipif(not is_module_available('llama_cpp'), reason="llama_cpp module not available")
     def test_is_model_loaded_initially_false(self, mocker, tmp_path):

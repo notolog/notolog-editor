@@ -66,7 +66,7 @@ lexemes = {
     "module_text_to_speech_config_voice_input_accessible_description": "MagpieTTS の音声：John、Sofia、Aria、Jason、Leo。",
     "module_text_to_speech_config_speed_input_accessible_description": "再生速度を変えると声の高さも変わります。",
     "module_text_to_speech_config_announce_headings_accessible_description": (
-        "Markdown と HTML の見出しレベル1～4は Chapter、Section、Subsection、Sub-subsection、5～6は Heading level 5–6 "
+        "Markdown と HTML の見出しレベル1～4は Chapter、Section、Subsection、Sub-subsection、5～6は Heading level 5-6 "
         "と読み上げます。"
     ),
     "module_text_to_speech_config_skip_inline_code_accessible_description": (

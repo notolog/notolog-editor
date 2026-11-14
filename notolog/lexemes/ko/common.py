@@ -1,5 +1,9 @@
 # Korean lexemes common.py
 lexemes = {
+    'dialog_goto_button_ok': '확인',
+    'dialog_goto_button_cancel': '취소',
+    'dialog_goto_title': '줄로 이동',
+    'dialog_goto_label': '줄 번호 (1-{maximum}):',
     "app_title": "Notolog 에디터",
     "app_title_with_sub": "{app_title} - {sub_title}",
 

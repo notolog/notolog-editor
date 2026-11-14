@@ -202,7 +202,7 @@ def test_selection_context_action_preserves_code(settings, view):
     widget.setTextCursor(cursor)
     menu = QMenu()
     append_selection_action(widget, menu, html=view)
-    action = next(action for action in menu.actions() if action.text() == 'Read selection aloud')
+    action = next(action for action in menu.actions() if action.text() == 'Read selected text aloud')
     assert not action.icon().isNull()
     from notolog.modules.text_to_speech.actions import speech_action_icon
     assert action.icon().pixmap(24, 24).toImage() == speech_action_icon().pixmap(24, 24).toImage()
@@ -221,7 +221,7 @@ def test_empty_selection_disabled(settings):
     widget = EditWidget(host)
     menu = QMenu()
     append_selection_action(widget, menu)
-    assert not next(action for action in menu.actions() if action.text() == 'Read selection aloud').isEnabled()
+    assert not next(action for action in menu.actions() if action.text() == 'Read selected text aloud').isEnabled()
     host.close()
 
 
@@ -584,7 +584,7 @@ def test_file_tree_read_action_has_speaker_icon(settings, tmp_path, extension):
     host.is_file_safely_deleted = lambda _: False
     host.action_read_file_aloud = Mock()
     menu = FileTreeContextMenu(str(note), host)
-    action = next(action for action in menu.actions() if action.text() == 'Read file aloud')
+    action = next(action for action in menu.actions() if action.text() == 'Read the file aloud')
     assert not action.icon().isNull()
     assert action.icon().pixmap(24, 24).toImage() == speech_action_icon(filled=True).pixmap(24, 24).toImage()
     assert action.isIconVisibleInMenu()
@@ -2186,7 +2186,7 @@ def test_read_from_cursor_preserves_code_and_visible_selection(settings, rendere
     original = (cursor.position(), cursor.anchor())
     menu = QMenu()
     append_selection_action(widget, menu, html=rendered)
-    action = next(action for action in menu.actions() if action.text() == 'Read from cursor aloud')
+    action = next(action for action in menu.actions() if action.text() == 'Read aloud from the cursor')
     assert action.isEnabled() and action.isIconVisibleInMenu()
     assert action.icon().pixmap(24, 24).toImage() == speech_action_icon(filled=True).pixmap(24, 24).toImage()
     action.trigger()

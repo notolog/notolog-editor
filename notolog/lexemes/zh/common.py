@@ -1,5 +1,9 @@
 # Chinese lexemes common.py
 lexemes = {
+    'dialog_goto_button_ok': '确定',
+    'dialog_goto_button_cancel': '取消',
+    'dialog_goto_title': '跳转到行',
+    'dialog_goto_label': '行号 (1-{maximum}):',
     "app_title": "Notolog 编辑器",
     "app_title_with_sub": "{app_title} - {sub_title}",
 

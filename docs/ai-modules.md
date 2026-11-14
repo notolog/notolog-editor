@@ -63,8 +63,8 @@ ONNX Runtime, or a name exposed by Notolog, does not establish GenAI model suppo
 
 Install only one GenAI variant: CPU, CUDA, and DirectML share the same Python module.
 Remove the existing variant before switching, and restart Notolog afterwards.
-For Notolog 1.2.4 on Python 3.11–3.14, keep CPU and CUDA within
-`>=0.18.0,<1.0.0`. DirectML uses a separate version line: `>=0.14.1,<0.15.0`.
+For Notolog 1.2.5 on Python 3.11–3.14, keep CPU and CUDA within
+`>=0.19.0,<1.0.0`. DirectML uses a separate version line: `>=0.14.1,<0.15.0`.
 The [DirectML 0.14.1 wheels](https://pypi.org/project/onnxruntime-genai-directml/0.14.1/#files)
 target Windows x64. For every variant, verify that a wheel exists for your platform;
 package availability alone does not guarantee that your model and driver are compatible.
@@ -74,7 +74,7 @@ DirectML with the matching command pair:
 ```bash
 # CUDA
 pip uninstall onnxruntime-genai onnxruntime-genai-directml
-pip install "onnxruntime-genai-cuda>=0.18.0,<1.0.0"
+pip install "onnxruntime-genai-cuda>=0.19.0,<1.0.0"
 
 # DirectML on Windows
 pip uninstall onnxruntime-genai onnxruntime-genai-cuda
@@ -93,7 +93,7 @@ pip install --upgrade notolog
 
 If variants were installed together, shared files may have been overwritten or
 removed. After uninstalling the GPU distributions, repair the CPU distribution
-with `pip install --force-reinstall "onnxruntime-genai>=0.18.0,<1.0.0"`.
+with `pip install --force-reinstall "onnxruntime-genai>=0.19.0,<1.0.0"`.
 Keep it within the requirements of the installed Notolog release.
 
 ### Loading and memory

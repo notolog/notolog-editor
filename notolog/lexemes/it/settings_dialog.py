@@ -1,5 +1,17 @@
 # Italian lexemes settings_dialog.py
 lexemes = {
+    'workspace_hotkeys_label': 'Scorciatoie da tastiera',
+    'hotkey_save': 'Salva',
+    'hotkey_find': 'Trova',
+    'hotkey_goto': 'Vai alla riga',
+    'hotkey_undo': 'Annulla',
+    'hotkey_redo': 'Ripeti',
+    'hotkey_cut': 'Taglia',
+    'hotkey_copy': 'Copia',
+    'hotkey_paste': 'Incolla',
+    'hotkey_select_all': 'Seleziona tutto',
+    'hotkey_unindent': 'Riduci rientro',
+    'hotkey_newline': 'Inserisci nuova riga',
     # Impostazioni
     "window_title": "Impostazioni",
 

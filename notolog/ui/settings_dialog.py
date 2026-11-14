@@ -17,10 +17,11 @@ License: MIT License
 For detailed instructions and project information, please see the repository's README.md.
 """
 
+from PySide6.QtGui import QKeySequence
 from PySide6.QtCore import Qt, QObject, QSize, QSignalBlocker
 from PySide6.QtWidgets import QDialog, QVBoxLayout, QTabWidget, QWidget, QSizePolicy, QPlainTextEdit, QScrollArea
 from PySide6.QtWidgets import QLabel, QCheckBox, QLineEdit, QPushButton, QComboBox, QSpinBox, QDoubleSpinBox, QSlider
-from PySide6.QtWidgets import QStyle
+from PySide6.QtWidgets import QStyle, QTableWidget, QTableWidgetItem, QHeaderView, QAbstractItemView
 
 import logging
 from typing import TYPE_CHECKING
@@ -29,6 +30,7 @@ from . import AppConfig
 from . import Lexemes
 from . import ThemeHelper
 
+from ..shortcuts import SHORTCUTS, shortcut_keys
 from ..enums.enum_base import EnumBase
 from ..enums.languages import Languages
 from ..enums.themes import Themes
@@ -302,6 +304,24 @@ class SettingsDialog(QDialog):
              "callback": lambda obj: tab_general_layout.addWidget(obj)},
         ]
 
+    def populate_hotkeys(self, table):
+        """Show the primary native combination for each editing action."""
+        table.setRowCount(len(SHORTCUTS))
+        table.setColumnCount(2)
+        table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        table.horizontalHeader().hide()
+        table.verticalHeader().hide()
+        table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        table.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
+        table.setMinimumHeight(table.fontMetrics().height() * 9)
+        for row, (name, _) in enumerate(SHORTCUTS):
+            sequence = shortcut_keys(name)[0]
+            table.setItem(row, 0, QTableWidgetItem(
+                sequence.toString(QKeySequence.SequenceFormat.NativeText)))
+            item = QTableWidgetItem()
+            table.setItem(row, 1, item)
+            self.translations.bind(item.setText, 'hotkey_' + name)
+
     def get_workspace_fields(self) -> list:
         tab_workspace = QWidget(self)
         scroll_area = QScrollArea(self)
@@ -335,6 +355,10 @@ class SettingsDialog(QDialog):
 
         def add_to_system_load_options(obj):
             system_load_controls['layout'].addWidget(obj, alignment=Qt.AlignmentFlag.AlignTop)
+
+        def add_hotkeys_table(obj):
+            self.populate_hotkeys(obj)
+            tab_workspace_layout.addWidget(obj)
 
         return [
             {"type": QLabel, "name": "settings_dialog_workspace_editor_mode_label",
@@ -422,6 +446,15 @@ class SettingsDialog(QDialog):
              "callback": add_to_system_load_options,
              "accessible_description":
                  self.lexemes.get('workspace_bottom_bar_system_load_interval_ms_accessible_description')},
+            {"type": HorizontalLineSpacer,
+             "callback": lambda obj: tab_workspace_layout.addWidget(obj)},
+            {"type": QLabel, "name": "settings_dialog_workspace_hotkeys_label",
+             "alignment": Qt.AlignmentFlag.AlignLeft,
+             "props": {"setProperty": ("class", "group-header-label")},
+             "text": self.lexemes.get('workspace_hotkeys_label'), "style": {"bold": True},
+             "callback": add_to_workspace},
+            {"type": QTableWidget, "name": "workspace_hotkeys",
+             "callback": add_hotkeys_table},
             {"type": QWidget, "name": None,
              "size_policy": (QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding),
              "callback": lambda obj: tab_workspace_layout.addWidget(obj)},
@@ -699,15 +732,12 @@ class SettingsDialog(QDialog):
         lexeme_key, setting_name = self.parse_object_name(sender_name)
 
         setting_value = None
-        setting_text = None
         if isinstance(sender_widget, QCheckBox):
             setting_value = sender_widget.isChecked()
-            setting_text = sender_widget.text()
         elif isinstance(sender_widget, QComboBox):
             # Index of the item in the enum
             # index = sender_widget.currentIndex()
             # setting_value = sender_widget.currentData()
-            setting_text = sender_widget.currentText()
             """
             To get enum name instead of the value, say for Languages:
             index = sender_widget.currentIndex()
@@ -716,31 +746,26 @@ class SettingsDialog(QDialog):
             setting_value = sender_widget.currentData().name.lower()  # Save in lower case
         elif isinstance(sender_widget, QSpinBox):
             setting_value = sender_widget.value()
-            setting_text = sender_widget.text()
             # Special handling for GPU layers: -2 (UI "Auto") should be stored as None
             if setting_name == 'module_llama_cpp_gpu_layers' and setting_value == -2:
                 setting_value = None
         elif isinstance(sender_widget, QDoubleSpinBox):
             setting_value = sender_widget.value()
-            setting_text = sender_widget.text()
         elif isinstance(sender_widget, QLineEdit):
             setting_value = sender_widget.text()
-            setting_text = sender_widget.placeholderText()
         elif isinstance(sender_widget, QPlainTextEdit):
             setting_value = sender_widget.toPlainText()
-            setting_text = sender_widget.placeholderText()
         elif isinstance(sender_widget, QSlider):
             setting_value = sender_widget.value()
-            setting_text = sender_widget.accessibleDescription()
 
-        self.logger.debug(f"Saving setting '{setting_name}': {setting_value} ({setting_text})")
+        self.logger.debug('Saving setting %s', setting_name)
 
         try:
             setattr(self.settings, setting_name, setting_value)
         except AttributeError as e:
             self.logger.warning(f'ERROR: {e}')
 
-        self.logger.debug(f"Setting new value: {getattr(self.settings, setting_name)}")
+        self.logger.debug('Setting updated')
 
         if setting_name == 'app_theme' or sender_widget.objectName().endswith('app_theme'):
             # Apply the selected theme to the widget's stylesheet
@@ -790,7 +815,7 @@ class SettingsDialog(QDialog):
         # A simple font size update should also work.
         self.setFont(self.parent.font())
         widgets_to_update = [QLabel, QTabWidget, QPushButton, QCheckBox, QLineEdit, QPlainTextEdit, QComboBox,
-                             QSpinBox, QDoubleSpinBox, QSlider]
+                             QSpinBox, QDoubleSpinBox, QSlider, QTableWidget]
         for _widget in widgets_to_update:
             # Find all QLabel objects
             found_objects = self.findChildren(_widget)
@@ -808,6 +833,10 @@ class SettingsDialog(QDialog):
                     app_font_size_label.setFont(font)
                     """
                     obj.setText(self.lexemes.get('general_app_font_size_label', size=font_size))
+
+        hotkeys = self.findChild(QTableWidget, 'workspace_hotkeys')
+        if hotkeys is not None:
+            hotkeys.setMinimumHeight(hotkeys.fontMetrics().height() * 9)
 
     def format_widget_lexeme(self, obj: QObject, lexeme: str) -> str:
         """Resolve dynamic settings-label placeholders during a language refresh."""

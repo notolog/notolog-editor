@@ -1,5 +1,9 @@
 # Swedish lexemes common.py
 lexemes = {
+    'dialog_goto_button_ok': 'OK',
+    'dialog_goto_button_cancel': 'Avbryt',
+    'dialog_goto_title': 'Gå till rad',
+    'dialog_goto_label': 'Radnummer (1-{maximum}):',
     "app_title": "Notolog Redigerare",
     "app_title_with_sub": "{app_title} - {sub_title}",
 

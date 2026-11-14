@@ -1,5 +1,17 @@
 # Turkish lexemes settings_dialog.py
 lexemes = {
+    'workspace_hotkeys_label': 'Klavye kısayolları',
+    'hotkey_save': 'Kaydet',
+    'hotkey_find': 'Bul',
+    'hotkey_goto': 'Satıra git',
+    'hotkey_undo': 'Geri al',
+    'hotkey_redo': 'Yinele',
+    'hotkey_cut': 'Kes',
+    'hotkey_copy': 'Kopyala',
+    'hotkey_paste': 'Yapıştır',
+    'hotkey_select_all': 'Tümünü seç',
+    'hotkey_unindent': 'Girintiyi azalt',
+    'hotkey_newline': 'Yeni satır ekle',
     # Ayarlar
     "window_title": "Ayarlar",
 

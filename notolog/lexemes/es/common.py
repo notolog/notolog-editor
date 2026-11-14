@@ -1,5 +1,9 @@
 # Spanish lexemes common.py
 lexemes = {
+    'dialog_goto_button_ok': 'Aceptar',
+    'dialog_goto_button_cancel': 'Cancelar',
+    'dialog_goto_title': 'Ir a la línea',
+    'dialog_goto_label': 'Número de línea (1-{maximum}):',
     "app_title": "Editor Notolog",
     "app_title_with_sub": "{app_title} - {sub_title}",
 

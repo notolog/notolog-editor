@@ -84,12 +84,15 @@ from .lexemes.lexemes import Lexemes
 # Editor state
 from .editor_state import EditorState, Mode, Source, Encryption
 
+from .shortcuts import shortcut_keys
+from .ui.widget_translations import WidgetTranslations
+
 from PySide6.QtCore import Slot, Qt, QDir, QPoint, QTimer, QSize, QUrl
 from PySide6.QtCore import QRegularExpression, QItemSelectionModel, QFileSystemWatcher
-from PySide6.QtGui import QGuiApplication, QIcon, QAction, QPalette, QShortcut, QFont, QKeySequence
+from PySide6.QtGui import QGuiApplication, QIcon, QAction, QPalette, QShortcut, QFont
 from PySide6.QtGui import QTextDocument, QTextCursor, QTextBlock, QDesktopServices, QPixmap, QPixmapCache
 from PySide6.QtWidgets import QWidget, QMainWindow, QVBoxLayout, QSplitter, QListView, QTextBrowser
-from PySide6.QtWidgets import QPlainTextEdit, QSizePolicy, QDialog, QStyle, QFileSystemModel, QFileDialog
+from PySide6.QtWidgets import QPlainTextEdit, QSizePolicy, QDialog, QStyle, QFileSystemModel, QFileDialog, QInputDialog, QLayout
 
 import asyncio
 
@@ -107,6 +110,7 @@ import emoji
 import os
 import re
 import time
+from copy import deepcopy
 from typing import TYPE_CHECKING, Union, Optional, Callable, List, Dict, Any
 
 import logging
@@ -327,23 +331,51 @@ class NotologEditor(QMainWindow):
         self.save_timer = QTimer(interval=15000, timeout=self.auto_save_file)  # noqa
         self.toggle_save_timer()
 
-        """
-        Ctrl+S save current file.
-        More info about the key enum: https://doc.qt.io/qt-6/qt.html#Key-enum
-        More info about the keyboard modifier enum: https://doc.qt.io/qt-6/qt.html#KeyboardModifier-enum
-        """
-        shortcut_save = QShortcut(
-            QKeySequence(Qt.KeyboardModifier.ControlModifier | Qt.Key.Key_S),  # noqa
-            self
-        )
-        # Reset 'allow save empty' dialog if save file action called explicitly
+        shortcut_save = QShortcut(self)
+        shortcut_save.setKeys(shortcut_keys('save'))
         shortcut_save.activated.connect(lambda: (self.estate.allow_save_empty_reset(), self.auto_save_file()))
-
-        shortcut_search = QShortcut(
-            QKeySequence(Qt.KeyboardModifier.ControlModifier | Qt.Key.Key_F),  # noqa
-            self
-        )
+        shortcut_search = QShortcut(self)
+        shortcut_search.setKeys(shortcut_keys('find'))
         shortcut_search.activated.connect(self.search_text)
+        shortcut_goto = QShortcut(self)
+        shortcut_goto.setKeys(shortcut_keys('goto'))
+        shortcut_goto.activated.connect(self.go_to_line)
+
+    def go_to_line(self):
+        """Prompt for a one-based block number in the active editor or viewer."""
+        widget = self.get_active_widget()
+        if widget is None:
+            return
+        dialog = QInputDialog(self)
+        dialog.setFont(self.font())
+        dialog.setInputMode(QInputDialog.InputMode.IntInput)
+        dialog.setIntRange(1, widget.document().blockCount())
+        dialog.setIntValue(widget.textCursor().blockNumber() + 1)
+        translations = WidgetTranslations(
+            dialog, self.settings, lambda language: Lexemes(language, default_scope='common'))
+
+        def set_title(title):
+            dialog.setWindowTitle(title)
+            metrics = dialog.fontMetrics()
+            # Keep room for native title-bar controls, including at larger UI font sizes.
+            dialog.setMinimumWidth(metrics.horizontalAdvance(title) + max(150, 8 * metrics.height()))
+
+        translations.bind(set_title, 'dialog_goto_title')
+        translations.bind(dialog.setOkButtonText, 'dialog_goto_button_ok')
+        translations.bind(dialog.setCancelButtonText, 'dialog_goto_button_cancel')
+        translations.bind(dialog.setLabelText, 'dialog_goto_label',
+                          maximum=widget.document().blockCount())
+        # QInputDialog's SetMinAndMaxSize constraint would replace the title's minimum width on show.
+        dialog.layout().setSizeConstraint(QLayout.SizeConstraint.SetDefaultConstraint)
+        try:
+            if dialog.exec() == QDialog.DialogCode.Accepted:
+                block = widget.document().findBlockByNumber(dialog.intValue() - 1)
+                if block.isValid():
+                    widget.setTextCursor(QTextCursor(block))
+                    widget.ensureCursorVisible()
+                    widget.setFocus()
+        finally:
+            dialog.deleteLater()
 
     def init_font(self):
         # Use default ratio
@@ -370,7 +402,7 @@ class NotologEditor(QMainWindow):
         @return: None
         """
 
-        self.logger.debug(f'Settings update handler is processing: {data}')
+        self.logger.debug('Processing settings update')
 
         if 'tts_enabled' in data:
             if hasattr(self, 'toolbar'):
@@ -1028,50 +1060,53 @@ class NotologEditor(QMainWindow):
             active_path = self.tree_active_dir if self.tree_active_dir else QDir.currentPath()
         return active_path
 
-    def set_current_path(self, tree_path: str) -> None:
+    def select_tree_file(self, file_path: str) -> None:
+        """Show a file in the tree without changing the document or its save destination."""
+        index = self.file_model.index(file_path)
+        proxy_index = self.tree_proxy_model.mapFromSource(index)
+        self.tree_view.setRootIndex(proxy_index.parent())
+        self.tree_view.setCurrentIndex(proxy_index)
+        selection_model = self.tree_view.selectionModel()
+        selection_model.clearSelection()
+        selection_model.setCurrentIndex(proxy_index, QItemSelectionModel.SelectionFlag.Select)
+        self.tree_view.scrollTo(proxy_index)
+        self.tree_active_dir = os.path.dirname(file_path)
+
+    def set_current_path(self, tree_path: str) -> bool:
         """
-        Set current file path and tree index.
+        Set the tree location; return True only when a readable file becomes active.
         """
-        # Path's index
-        index = self.file_model.index(tree_path)
         if file_helper.is_file_openable(tree_path):
             # Set current file
             self.file_path = tree_path
-            # Update current file index
-            proxy_index = self.tree_proxy_model.mapFromSource(index)
-            self.tree_view.scrollTo(proxy_index)
-            self.tree_view.setCurrentIndex(proxy_index)
-
-            selection_model = self.tree_view.selectionModel()
-            # Reset selection as it persists if not
-            selection_model.clearSelection()
-            # Select actual tree item
-            selection_model.setCurrentIndex(proxy_index, QItemSelectionModel.SelectionFlag.Select)
+            self.select_tree_file(tree_path)
 
             # Adjust tree proxy model with file's dir
             self.adjust_tree_current_root_index()
 
             if self.file_watcher:
                 self.file_watcher.addPath(self.file_path)
+            return True
 
-            # Save for back up
-            self.tree_active_dir = self.get_current_file_path(is_base=True)
         else:
             # Dir
+            index = self.file_model.index(tree_path)
             proxy_dir_index = self.tree_proxy_model.mapFromSource(index)
             # Just remove proxy index if there is no proxy model and use index
             self.tree_view.setRootIndex(proxy_dir_index)
             # Save for back up
             self.tree_active_dir = tree_path
+            return False
 
-    def confirm_current_path(self) -> None:
+    def confirm_current_path(self, header: Optional[FileHeader] = None) -> None:
         """
         Confirm current file params.
         It may be necessary to set params after encrypted file opened or so.
         """
         current_file_path = self.get_current_file_path()
         self.settings.file_path = current_file_path
-        self.set_encryption(Encryption.ENCRYPTED if self.is_file_encrypted(current_file_path) else Encryption.PLAIN)
+        encrypted = header.is_file_encrypted() if header is not None else self.is_file_encrypted(current_file_path)
+        self.set_encryption(Encryption.ENCRYPTED if encrypted else Encryption.PLAIN)
 
     def show_tree_context_menu(self, tree_view: QListView, pos: QPoint) -> None:
         """
@@ -1415,14 +1450,14 @@ class NotologEditor(QMainWindow):
     def get_enc_password_dialog_cnt(self) -> Union[int, None]:
         return self.enc_password_dialog_cnt if hasattr(self, 'enc_password_dialog_cnt') else None
 
-    def enc_password_reset_dialog(self) -> None:
+    def enc_password_reset_dialog(self, reset_callback: Optional[Callable[..., Any]] = None) -> None:
         """
         Confirmation dialog when trying to open a file encrypted with different password/key.
         """
 
         self.logger.info('Reset encryption password dialog')
 
-        dialog = EncPasswordResetDialog(callback=self.reset_encrypt_helper, parent=self)
+        dialog = EncPasswordResetDialog(callback=reset_callback or self.reset_encrypt_helper, parent=self)
         dialog.exec()
 
         """
@@ -1439,7 +1474,7 @@ class NotologEditor(QMainWindow):
         if self.is_quiet_mode():
             return
 
-        self.logger.debug('Common dialog "%s": "%s"' % (title, text))
+        self.logger.debug('Opening confirmation dialog')
 
         dialog = CommonDialog(title=title, text=text, callback=callback, reject_callback=reject_callback, parent=self)
         dialog.exec()
@@ -1551,10 +1586,10 @@ class NotologEditor(QMainWindow):
                 if self.settings.viewer_open_link_confirmation:
                     # Capture url in closure for the callback
                     target_url = url
-                    self.logger.debug(f"Link confirmation enabled for: {target_url.toString()}")
+                    self.logger.debug('Requesting link confirmation')
 
                     def open_and_close(dialog_callback):
-                        self.logger.debug(f"Callback executing for URL: {target_url.toString()}")
+                        self.logger.debug('Link confirmed')
                         # Close dialog first
                         dialog_callback()
                         self.logger.debug("Dialog closed, opening URL...")
@@ -1567,11 +1602,11 @@ class NotologEditor(QMainWindow):
                         callback=open_and_close
                     )
                 else:
-                    self.logger.debug(f"Opening URL without confirmation: {url.toString()}")
+                    self.logger.debug('Opening link without confirmation')
                     QDesktopServices.openUrl(url)
             else:
                 # Unknown or blocked - log and ignore, or show info
-                self.logger.debug(f"Link not handled: {url.toString()}")
+                self.logger.debug('Link not handled')
 
         return handle_link
 
@@ -1583,12 +1618,12 @@ class NotologEditor(QMainWindow):
         Args:
             url: The QUrl to open
         """
-        self.logger.debug(f"Attempting to open URL: {url.toString()}")
+        self.logger.debug('Opening external link')
         result = QDesktopServices.openUrl(url)
         if result:
-            self.logger.info(f"Successfully opened URL: {url.toString()}")
+            self.logger.info('Opened external link')
         else:
-            self.logger.error(f"Failed to open URL: {url.toString()}")
+            self.logger.error('Failed to open external link')
             # Could show error dialog to user here if needed
 
     def check_local_link(self, url: QUrl, execute: bool = False) -> Any:  # noqa: C901
@@ -1625,7 +1660,7 @@ class NotologEditor(QMainWindow):
 
         # Block potentially dangerous URL schemes
         if url_scheme and url_scheme not in ('', 'file'):
-            self.logger.warning(f"Blocked potentially unsafe URL scheme: {url_scheme}")
+            self.logger.warning('Blocked unsupported link scheme')
             return None
 
         # Get the path from URL
@@ -1637,44 +1672,44 @@ class NotologEditor(QMainWindow):
             if current_file:
                 current_dir = os.path.dirname(os.path.abspath(current_file))
                 url_path = os.path.normpath(os.path.join(current_dir, url_path))
-                self.logger.debug(f"Resolved relative link '{url_str}' to '{url_path}'")
+                self.logger.debug('Resolved relative link')
             else:
-                self.logger.debug(f"Cannot resolve relative link '{url_str}': no current file")
+                self.logger.debug('Cannot resolve relative link without a current file')
 
         # Resolve symlinks and get absolute path
         try:
             resolved_path = os.path.realpath(url_path)
         except (OSError, ValueError) as e:
-            self.logger.warning(f"Failed to resolve path '{url_path}': {e}")
+            self.logger.warning('Failed to resolve link path: %s', type(e).__name__)
             return None
 
         # Check file extension - allow supported file types
         file_ext = os.path.splitext(resolved_path)[1].lower().lstrip('.')
         allowed_extensions = [ext for ext in self.supported_file_extensions if ext != 'enc']
         if file_ext and file_ext not in allowed_extensions:
-            self.logger.debug(f"File extension '{file_ext}' not in allowed list: {allowed_extensions}")
+            self.logger.debug('Link target has an unsupported file extension')
             return None
 
         # Check if file exists
         try:
             is_file = os.path.isfile(resolved_path)
         except PermissionError:
-            self.logger.warning(f"Permission denied when accessing: {resolved_path}")
+            self.logger.warning('Permission denied when accessing link target')
             is_file = False
         except OSError as e:
-            self.logger.warning(f"Error checking file '{resolved_path}': {e}")
+            self.logger.warning('Error checking link target: %s', type(e).__name__)
             is_file = False
 
         if is_file:
             # Open local file directly in-app
             if execute:
-                self.logger.debug(f"Opening local file: {resolved_path}")
+                self.logger.debug('Opening local link target')
                 self.safely_open_file(resolved_path)
             return True
 
         # File doesn't exist - this might be a valid local link to a non-existent file
         # or a relative link that couldn't be resolved properly
-        self.logger.debug(f"File not found: {resolved_path}")
+        self.logger.debug('Local link target not found')
         return None
 
     def get_view_doc(self) -> QTextDocument:
@@ -2476,7 +2511,8 @@ class NotologEditor(QMainWindow):
         """
         if file_helper.is_file_openable(file_path):
             # Save any unsaved changes
-            self.save_active_file(clear_after=True)
+            if self.save_active_file(clear_after=False) is False:
+                return
             # Load file for current mode
             self.load_file(file_path)
         else:
@@ -2511,11 +2547,22 @@ class NotologEditor(QMainWindow):
             # https://doc.qt.io/qt-6/qfiledialog.html#Option-enum
             # options=QFileDialog.Option.DontUseNativeDialog
         )
-        if file_path:
-            with open(file_path, 'w', encoding='utf-8') as file:
-                # Edit widget
-                edit_widget = self.get_edit_widget()  # type: Union[EditWidget, QPlainTextEdit]
-                file.write(edit_widget.toPlainText())
+        if not file_path:
+            return
+
+        # View and Source modes may leave the edit widget empty or showing another document.
+        content = self.get_edit_widget().toPlainText() if self.get_mode() == Mode.EDIT else self.content
+        header = deepcopy(self.header) if self.header is not None else FileHeader()
+        header.refresh()
+        try:
+            packed_content = self.pack_file_content(header, content)
+        except (TypeError, ValueError):
+            self.logger.error('Cannot prepare document for saving')
+            saved = False
+        else:
+            saved = self.save_file_content(file_path, packed_content)
+        if not saved:
+            MessageBox(text=self.lexemes.get('save_active_file_error_occurred'), icon_type=2, parent=self)
 
     def action_edit_file(self) -> None:
         """
@@ -3181,7 +3228,11 @@ class NotologEditor(QMainWindow):
         """
 
         # Save any unsaved changes
-        self.save_active_file(clear_after=False)
+        if self.save_active_file(clear_after=False) is False:
+            current_file_path = self.get_current_file_path()
+            if current_file_path:
+                self.set_current_path(current_file_path)
+            return
 
         """
         Get file path by index:
@@ -3199,8 +3250,6 @@ class NotologEditor(QMainWindow):
             return
 
         if os.path.isfile(file_path):
-            # Reset stored cursor values within settings
-            self.reset_settings_cursor_pos()
             # Load file content
             if file_helper.is_file_openable(file_path):
                 self.load_file(file_path)
@@ -3243,172 +3292,116 @@ class NotologEditor(QMainWindow):
         # Set cursor back
         self.setCursor(Qt.CursorShape.ArrowCursor)
 
-    def load_file(self, file_path: str) -> bool:  # noqa: C901 - consider simplifying this method
-        """
-        Helper: Load content of the file.
-        """
-
-        if not os.path.isabs(file_path):
-            file_path = os.path.abspath(file_path)  # Make sure it's an absolute path
-
-        # Current file path and a new one can be the same but the MODE can differ
-        current_file_path = self.get_current_file_path()
-        # Update the tree and related indexes
-        self.set_current_path(file_path)
-
-        if current_file_path is not None and file_path != current_file_path:
-            # Highlight the file to switch from
-            in_transit_color = self.theme_helper.get_color('main_tree_file_highlighted_in_transit', True)
-            self.file_model.highlight(self.file_model.index(current_file_path), os.path.basename(current_file_path),
-                                      color=in_transit_color)
-
-        # Check is file encrypted
-        if self.is_file_encrypted(file_path):
-            file_header, file_body = FileHeader().load_file(file_path)
-            try:
-                file_header.validate_enc()
-                file_salt = file_header.get_enc_param('slt')
-                file_iterations = file_header.get_enc_param('itr')
-                decrypted_data = (
-                    self.get_encrypt_helper(
-                        salt=file_salt, hint=file_header.get_enc_param('hint'),
-                        iterations=file_iterations).decrypt_data(file_body.encode("utf-8")))
-                # File content can be an empty string
-                if decrypted_data is not None and type(decrypted_data) is bytes:
-                    file_body = decrypted_data.decode("utf-8")
-                    self.set_encryption(Encryption.ENCRYPTED)
-                else:
-                    self.logger.info('Cannot decrypt file "%s"' % file_path)
-                    """
-                    * https://docs.python.org/3/reference/compound_stmts.html#the-try-statement
-                    """
-                    raise InvalidToken
-                # Reset encryption password dialogue count
-                self.enc_password_dialog_cnt = 0
-            except (InvalidToken, InvalidSignature, TypeError, ValueError):
-                self.logger.debug('Cannot apply encryption password!')
-                # Setup file's cursor position to a very beginning
-                self.settings.line_num = 0
-                self.settings.col_num = 0
-                # Set up password tries count
-                if self.get_enc_password_dialog_cnt() is None:
-                    self.enc_password_dialog_cnt = 0
-                # If currently opened file is encrypted then offer to change the password
-                if self.get_encryption() == Encryption.ENCRYPTED:
-                    self.logger.debug('Wrong encryption password but another encrypted file is opened')
-                    if self.enc_password is not None:
-                        # Show other file password mismatch message
-                        MessageBox(text=self.lexemes.get('load_file_encryption_password_mismatch'), icon_type=2, parent=self)
-                        # If password not matched N-times, load default page then
-                        if self.get_enc_password_dialog_cnt() >= 3:
-                            # Reset encryption helper
-                            self.reset_encrypt_helper()
-                            # Reset encryption password dialogue count
-                            self.enc_password_dialog_cnt = 0
-                            # Mind possible recursion
-                            # return self.load_default_page(ignore_settings=True)
-                            return False
-                        elif self.get_enc_password_dialog_cnt() > 0:
-                            # Do not ask confirmation to reset the password as it has been confirmed already
-                            self.reset_encrypt_helper()
-                        else:
-                            """
-                            Request to change the password for the currently opened file to a new one.
-                            Try to load the file by switch to it if the encryption password has been reset.
-                            """
-                            self.enc_password_reset_dialog()
-                    else:
-                        """
-                        If no password set.
-                        Remove saved start up page from settings
-                        """
-                        # Mind possible recursion
-                        return self.load_default_page(ignore_settings=True)
-
-                    if current_file_path is not None:
-                        self.set_current_path(current_file_path)
-
-                    # Try to re-load file if encryption password has been reset
-                    if self.enc_password is None:
-                        # Try to re-load file after encryption password reset
-                        if file_path != current_file_path:
-                            return self.load_file(file_path)
-                # If current file is not encrypted.
-                # Show error message and reset password only if the password set.
-                elif self.enc_password is not None:
-                    # Reset encryption helper and password
-                    self.reset_encrypt_helper()
-                    # Show file password mismatch message
-                    MessageBox(text=self.lexemes.get('load_file_encryption_password_incorrect'), icon_type=3, parent=self)
-                    # If password not matched N-times, load default page then
-                    if self.get_enc_password_dialog_cnt() >= 3:
-                        # Reset encryption password dialogue count
-                        self.enc_password_dialog_cnt = 0
-                        # Mind possible recursion
-                        # return self.load_default_page(ignore_settings=True)
-                        return False
-                    # Revert back the tree index if one was set previously
-                    if (current_file_path is not None
-                            # To avoid cycle between encrypted files when trying to return to a prev file
-                            # with an empty password
-                            and not self.is_file_encrypted(current_file_path)):
-                        self.set_current_path(current_file_path)
-                        # Try to re-load file after encryption password reset
-                        if file_path != current_file_path:
-                            return self.load_file(file_path)
-                    else:
-                        # Mind possible recursion
-                        return self.load_default_page(ignore_settings=True)
-                else:
-                    self.reset_encrypt_helper()  # Reset encryption helper and password
-                    self.logger.debug('Do nothing with the wrong password but check the loaded page')
-                    """
-                    Just to be sure the editor is not started on encrypted file
-                    with cancelled password dialog on very beginning, or without any default file.
-                    Revert back the tree index if one was set previously.
-                    """
-                    if (current_file_path is not None
-                            # To avoid cycling between encrypted files when trying to return to a prev file
-                            # with no or empty password.
-                            and not self.is_file_encrypted(current_file_path)):
-                        # return self.load_file(current_file_path)
-                        return False
-                    else:
-                        # Mind possible recursion
-                        return self.load_default_page(ignore_settings=True)
-
-                if current_file_path is not None:
-                    # Remove highlighted background
-                    default_color = self.theme_helper.get_color('main_tree_background', True)
-                    self.file_model.highlight(self.file_model.index(current_file_path),
-                                              os.path.basename(current_file_path), color=default_color)
-
-                return False
-        # File is not encrypted
-        else:
-            # Load the file as usual
-            file_header, file_body = FileHeader().load_file(file_path)
-
-        # Load fields content
-        if file_header or file_body:  # File body equal to None when file is just created but the header was removed
-            self.load_content(file_header, file_body if file_body else '')
-        else:
+    def _decrypt_file_content(self, header: FileHeader, body: str) -> Optional[tuple[str, EncHelper]]:
+        """Unlock a candidate document without changing the active document's keys."""
+        try:
+            header.validate_enc()
+            salt = header.get_enc_param('slt')
+            iterations = header.get_enc_param('itr')
+            ciphertext = body.encode('utf-8')
+        except (AttributeError, TypeError, ValueError):
+            self.logger.warning('Invalid encrypted document')
             MessageBox(text=self.lexemes.get('load_file_none_content_error'), icon_type=2, parent=self)
-            return False
+            return None
 
-        # Confirm current file path is set
-        self.confirm_current_path()
+        password = self.enc_password
+        helper = self.encrypt_helpers.get(salt) if password is not None else None
+        attempts = 0
+        self.enc_password_dialog_cnt = 0
+        while attempts < 3:
+            if password is None:
+                password = self.enc_password_dialog(hint=header.get_enc_param('hint'))
+                if password is None:
+                    return None
+                attempts += 1
+            try:
+                if helper is None:
+                    helper = EncHelper(password, salt, iterations)
+                decrypted = helper.decrypt_data(ciphertext)
+                if decrypted is None:
+                    raise InvalidToken
+                return decrypted.decode('utf-8'), helper
+            except (InvalidToken, InvalidSignature, TypeError, ValueError):
+                self.logger.debug('Cannot unlock candidate document')
+                encrypted_active = self.get_encryption() == Encryption.ENCRYPTED
+                message = ('load_file_encryption_password_mismatch' if encrypted_active
+                           else 'load_file_encryption_password_incorrect')
+                MessageBox(text=self.lexemes.get(message), icon_type=2 if encrypted_active else 3, parent=self)
+                if attempts == 0 and encrypted_active:
+                    # Reset only the candidate password. Autosave still needs the active key.
+                    reset = False
 
-        if current_file_path is not None:
-            # Highlight the file was switched from
-            prev_opened_color = self.theme_helper.get_color('main_tree_file_highlighted_prev_opened', True)
-            self.file_model.highlight(self.file_model.index(current_file_path), os.path.basename(current_file_path),
-                                      color=prev_opened_color)
+                    def reset_candidate(callback=None):
+                        nonlocal reset
+                        reset = True
+                        if callback is not None:
+                            callback()
 
-        # Add file path to the navigation history
-        self.history_manager.add_file(file_path)
+                    self.enc_password_reset_dialog(reset_callback=reset_candidate)
+                    if not reset:
+                        return None
+                password = None
+                helper = None
+        return None
 
-        return True
+    def load_file(self, file_path: str) -> bool:
+        """Load a document, committing its path and encryption key only after it is ready."""
+        file_path = os.path.abspath(file_path)
+        current_file_path = self.get_current_file_path()
+        loaded = False
+        try:
+            # Preview the target while keeping autosave attached to the active document.
+            if file_helper.is_file_openable(file_path):
+                self.select_tree_file(file_path)
+            if current_file_path is not None and file_path != current_file_path:
+                color = self.theme_helper.get_color('main_tree_file_highlighted_in_transit', True)
+                self.file_model.highlight(self.file_model.index(current_file_path),
+                                          os.path.basename(current_file_path), color=color)
+
+            file_data = file_helper.read_file(file_path)
+            if file_data is None:
+                MessageBox(text=self.lexemes.get('load_file_none_content_error'), icon_type=2, parent=self)
+                return False
+            file_header, file_body = FileHeader().load(file_data)
+            encrypt_helper = None
+            if file_header.is_file_encrypted():
+                unlocked = self._decrypt_file_content(file_header, file_body)
+                if unlocked is None:
+                    if self.header is None:
+                        return self.load_default_page(ignore_settings=True)
+                    return False
+                file_body, encrypt_helper = unlocked
+
+            # The password dialog runs an event loop: the target may have disappeared.
+            # Use the result of the path assignment itself, not an earlier existence check.
+            if not self.set_current_path(file_path):
+                MessageBox(text=self.lexemes.get('open_file_permission_error'), icon_type=2, parent=self)
+                return False
+            if encrypt_helper is not None:
+                if self.enc_password is not encrypt_helper.enc_password:
+                    self.reset_encrypt_helper()
+                self.enc_password = encrypt_helper.enc_password
+                self.set_encrypt_helper(file_header.get_enc_param('slt'), encrypt_helper)
+            if current_file_path is not None and file_path != current_file_path:
+                self.reset_settings_cursor_pos()
+            self.set_encryption(Encryption.ENCRYPTED if file_header.is_file_encrypted() else Encryption.PLAIN)
+            self.load_content(file_header, file_body if file_body else '')
+            # Use the header that was loaded, even if the file changes again on disk.
+            self.confirm_current_path(header=file_header)
+            if current_file_path is not None:
+                color = self.theme_helper.get_color('main_tree_file_highlighted_prev_opened', True)
+                self.file_model.highlight(self.file_model.index(current_file_path),
+                                          os.path.basename(current_file_path), color=color)
+            self.history_manager.add_file(file_path)
+            loaded = True
+            return True
+        finally:
+            self.enc_password_dialog_cnt = 0
+            if not loaded and current_file_path is not None and self.get_current_file_path() == current_file_path:
+                self.select_tree_file(current_file_path)
+                color = self.theme_helper.get_color('main_tree_background', True)
+                self.file_model.highlight(self.file_model.index(current_file_path),
+                                          os.path.basename(current_file_path), color=color)
 
     def is_file_encrypted(self, file_path: str) -> bool:
         """
@@ -3436,7 +3429,7 @@ class NotologEditor(QMainWindow):
             view_widget = self.get_view_widget()  # type: Union[ViewWidget, QTextBrowser]
             selected_text = view_widget.textCursor().selectedText()
 
-        self.logger.debug('Searching text "%s"' % selected_text)
+        self.logger.debug('Searching selected text')
 
         if hasattr(self, 'toolbar') and hasattr(self.toolbar, 'search_form'):
             self.toolbar.search_form.set_text(selected_text)
@@ -3462,6 +3455,20 @@ class NotologEditor(QMainWindow):
         self.logger.debug('Check auto save possibility for the file "%s"' % file_path)
 
         self.action_save_file(file_path)
+
+    def pack_file_content(self, header: FileHeader, content: str) -> str:
+        """Pack a document for saving, preserving encryption regardless of its destination suffix."""
+        if self.get_encryption() == Encryption.ENCRYPTED or header.is_file_encrypted():
+            if not header.is_file_encrypted():
+                raise ValueError('Encrypted document has no encryption header')
+            header.validate_enc()
+            encrypted = self.get_encrypt_helper(
+                salt=header.get_enc_param('slt'), iterations=header.get_enc_param('itr')
+            ).encrypt_data(content.encode('utf-8'))
+            if encrypted is None:
+                raise ValueError('Encryption returned no data')
+            content = encrypted.decode('utf-8')
+        return header.pack(content)
 
     def save_file_content(self, file_path: str, content: str) -> bool:
         """
@@ -3593,27 +3600,12 @@ class NotologEditor(QMainWindow):
             # Update the header with a new date
             header.refresh()
 
-            # To keep initial content unencrypted
-            content = file_content
-            encryption_failed = False
-            if self.get_encryption() == Encryption.ENCRYPTED:
-                try:
-                    header.validate_enc()
-                    file_salt = header.get_enc_param('slt')
-                    file_iterations = header.get_enc_param('itr')
-                    encrypted_content_b = self.get_encrypt_helper(
-                        salt=file_salt, iterations=file_iterations).encrypt_data(content.encode("utf-8"))
-                    if encrypted_content_b is None:
-                        raise ValueError('Encryption returned no data')
-                    content = encrypted_content_b.decode("utf-8")
-                except (TypeError, ValueError) as e:
-                    self.logger.error('File header cannot be validated "%s"' % e)
-                    encryption_failed = True
-
-            if encryption_failed:
+            try:
+                content = self.pack_file_content(header, file_content)
+            except (TypeError, ValueError):
+                self.logger.error('Cannot prepare document for saving')
                 save_result = False
             else:
-                content = header.pack(content)
                 save_result = self.save_file_content(current_file_path, content)
 
             if save_result:
@@ -3823,10 +3815,10 @@ class NotologEditor(QMainWindow):
         # Try to find resource attached to the document
         resource = view_doc.resource(QTextDocument.ResourceType.ImageResource, QUrl(resource_url))
         if resource:
-            self.logger.debug(f"Resource for {resource_url} is already added.")
+            self.logger.debug('Resource already attached')
             return True
         else:
-            self.logger.debug(f"No resource found for {resource_url}.")
+            self.logger.debug('Resource not attached')
             return False
 
     def attach_resource(self, resource_name: str, pixmap: QPixmap) -> bool:
@@ -3837,29 +3829,29 @@ class NotologEditor(QMainWindow):
         view_doc = self.get_view_doc()  # type: QTextDocument
         # url and pixmap data
         view_doc.addResource(QTextDocument.ResourceType.ImageResource, resource_name, pixmap)
-        self.logger.debug(f"Resource '{resource_name}' added to the document")
+        self.logger.debug('Resource added to the document')
         return True
 
     def get_cached_resource_pixmap(self, image_url) -> QPixmap:
         # Check if the image is already downloaded and cached
         pixmap = QPixmap()
         if QPixmapCache.find(image_url, pixmap):
-            self.logger.debug(f"Pixmap resource found in cache: {image_url}")
+            self.logger.debug('Pixmap resource found in cache')
         else:
             file_path = self.resource_downloader.get_cached_image_path(image_url, self.get_tree_active_dir())
             if file_path:
                 # Load from disk and cache
                 pixmap.load(file_path)
                 QPixmapCache.insert(image_url, pixmap)
-                self.logger.debug(f"Loaded from disk and cached: {image_url}")
+                self.logger.debug('Resource loaded from disk and cached')
             elif self.resource_downloader.is_external_url(image_url):
-                self.logger.debug(f"Resource's '{image_url}' file doesn't exist '{file_path}' yet")
+                self.logger.debug('Resource not yet saved locally')
         return pixmap
 
     @Slot()
     def resource_downloaded_handler(self, data) -> None:
         if 'resource_name' not in data:
-            self.logger.warning(f'Wrong data for added resource: {data}')
+            self.logger.warning('Invalid resource data')
             return
         image_url = data['resource_name']
         pixmap = data.get('pixmap')
@@ -3869,7 +3861,7 @@ class NotologEditor(QMainWindow):
             # Attach resource
             self.attach_resource(image_url, pixmap)
         else:
-            self.logger.warning(f"Resource '{image_url}' data not found")
+            self.logger.warning('Resource data not found')
 
     @Slot()
     def resource_downloader_finished_handler(self, downloaded_cnt):
@@ -3907,7 +3899,7 @@ class NotologEditor(QMainWindow):
                     # Valid image
                     if image_format.isValid():
                         image_url = image_format.name()
-                        self.logger.debug(f"Found image resource url: {image_url}")
+                        self.logger.debug('Found image resource')
                         # Check if the resource has been already added
                         if not self.is_resource_attached(image_url):
                             # Try to get cached resource data
@@ -3921,7 +3913,7 @@ class NotologEditor(QMainWindow):
                                 # Attach resource
                                 self.attach_resource(image_url, pixmap)
                         else:
-                            self.logger.debug(f"Resource is already attached: {image_url}")
+                            self.logger.debug('Resource already attached')
                 it += 1
             block = block.next()
 

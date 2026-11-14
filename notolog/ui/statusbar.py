@@ -483,7 +483,7 @@ class StatusBar(QStatusBar):
         @return: None
         """
 
-        self.logger.debug(f'Settings update handler is processing: {data}')
+        self.logger.debug('Processing settings update')
 
         if 'show_deleted_files' in data:
             # Update the status bar buttons

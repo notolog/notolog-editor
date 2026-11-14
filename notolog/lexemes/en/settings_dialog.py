@@ -1,5 +1,17 @@
 # English lexemes settings_dialog.py
 lexemes = {
+    'workspace_hotkeys_label': 'Hotkeys',
+    'hotkey_save': 'Save',
+    'hotkey_find': 'Find',
+    'hotkey_goto': 'Go to line',
+    'hotkey_undo': 'Undo',
+    'hotkey_redo': 'Redo',
+    'hotkey_cut': 'Cut',
+    'hotkey_copy': 'Copy',
+    'hotkey_paste': 'Paste',
+    'hotkey_select_all': 'Select all',
+    'hotkey_unindent': 'Unindent',
+    'hotkey_newline': 'Insert newline',
     # Settings dialog
     "window_title": "Settings",
 

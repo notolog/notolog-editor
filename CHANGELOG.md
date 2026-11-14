@@ -1,13 +1,33 @@
 # Changelog
 All notologable changes to this project will be documented in this file.
 
+## [1.2.5] - 2026-11-14
+
+### Added
+- Added Go to line with Ctrl+G (Cmd+G on macOS) in Edit and View modes.
+- Added a translated, scrollable Hotkeys reference in Settings > Workspace.
+
+### Changed
+- Used native platform bindings for Save and Find shortcuts.
+- Replaced the quick-search clear symbol with a scalable, theme-colored backspace icon.
+- Improved speech action wording across several languages.
+- Updated PySide6 Essentials to 6.12 (6.11.3 on Python 3.11).
+- Updated ONNX Runtime GenAI to 0.19 for CPU and CUDA inference.
+- Required Python-Markdown 3.11.3 for inline parsing fixes and faster parsing of repeated references, footnotes, and headings.
+
+### Fixed
+- Kept whitespace between heading markers and text at the heading's font size.
+- Preserved note encryption when using Save As.
+- Restored the active document's file-tree selection after canceling a password prompt.
+- Removed document text, AI messages, and sensitive settings values from debug logs.
+
 ## [1.2.4] - 2026-11-03
 
 ### Added
 - Added MagpieTTS v2607 speech choices for Korean and Brazilian Portuguese.
 
 ### Changed
-- Required Python 3.11–3.14.
+- Required Python 3.11-3.14.
 - Updated Text-to-Speech to NeMo-Speech.cpp 0.2.0 and matching MagpieTTS v2607 models and tokenizers.
 - Raised the minimum cryptography version to 50.0.2 (OpenSSL 4.0.3 wheels) and Tomli to 2.5.0 (nested TOML parsing crash fix).
 - Required Python-Markdown 3.11.2 for inline parsing fixes and safer fenced-code attributes.

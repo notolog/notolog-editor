@@ -81,7 +81,7 @@ lexemes = {
     "module_text_to_speech_config_speed_input_accessible_description": "Kecepatan pemutaran juga mengubah nada suara.",
     "module_text_to_speech_config_announce_headings_accessible_description": (
         "Menyebut Chapter, Section, Subsection, dan Sub-subsection untuk judul Markdown dan HTML tingkat"
-        " 1–4, lalu Heading level 5–6."
+        " 1-4, lalu Heading level 5-6."
     ),
     "module_text_to_speech_config_skip_inline_code_accessible_description": (
         "Dicentang: menyebut “Inline code block”. Jika tidak: membaca kode sebaris. Kode berpagar atau "

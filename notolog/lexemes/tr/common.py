@@ -1,5 +1,9 @@
 # Turkish lexemes common.py
 lexemes = {
+    'dialog_goto_button_ok': 'Tamam',
+    'dialog_goto_button_cancel': 'İptal',
+    'dialog_goto_title': 'Satıra git',
+    'dialog_goto_label': 'Satır numarası (1-{maximum}):',
     "app_title": "Notolog Editörü",
     "app_title_with_sub": "{app_title} - {sub_title}",
 

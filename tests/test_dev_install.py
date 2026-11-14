@@ -28,7 +28,7 @@ def test_development_installer_selects_required_tools(mocker, monkeypatch, pytho
     assert command[:4] == [sys.executable, '-m', 'pip', 'install']
     assert run.call_args.kwargs == {'check': True}
     requirements = [Requirement(value) for value in command[4:]]
-    for name, version in [('pre-commit', '4.7.0'), ('virtualenv', '21.15.2'), ('filelock', '4.2.5')]:
+    for name, version in [('pre-commit', '4.7.0'), ('virtualenv', '21.15.6'), ('filelock', '4.2.10')]:
         selected = [req for req in requirements if req.name == name
                     and (req.marker is None or req.marker.evaluate({'python_version': python_version}))]
         assert len(selected) == 1
@@ -36,10 +36,10 @@ def test_development_installer_selects_required_tools(mocker, monkeypatch, pytho
 
 
 @pytest.mark.parametrize('python_version,numpy_version,markdown_version,genai_version', [
-    ('3.11', '2.4.6', '3.11.2', '0.18.0'),
-    ('3.12', '2.5.4', '3.11.2', '0.18.0'),
-    ('3.13', '2.5.4', '3.11.2', '0.18.0'),
-    ('3.14', '2.5.4', '3.11.2', '0.18.0'),
+    ('3.11', '2.4.6', '3.11.3', '0.19.0'),
+    ('3.12', '2.5.4', '3.11.3', '0.19.0'),
+    ('3.13', '2.5.4', '3.11.3', '0.19.0'),
+    ('3.14', '2.5.4', '3.11.3', '0.19.0'),
 ])
 def test_runtime_markers_select_one_compatible_branch(python_version, numpy_version, markdown_version, genai_version):
     with (Path(__file__).resolve().parents[1] / 'pyproject.toml').open('rb') as stream:

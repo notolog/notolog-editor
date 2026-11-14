@@ -534,7 +534,7 @@ class ViewProcessor:
             cursor.setPosition(pos_close, QTextCursor.MoveMode.KeepAnchor)
             selected_text = cursor.selectedText()
             if selected_text:
-                self.logger.debug('Block text[%d][%d]: %s' % (pos_group, pos_level, selected_text))
+                self.logger.debug('Processing expandable block at group %d, level %d', pos_group, pos_level)
 
                 cursor.removeSelectedText()
 
@@ -581,7 +581,7 @@ class ViewProcessor:
                                             encoded_summary.decode('utf-8'), pos_group, pos_level, summary))
                 replacement_text_len += len(replacement_text) - (pos_close - pos_open)
                 cursor.insertText(replacement_text)
-                self.logger.debug('Replacement text: %s' % replacement_text)
+                self.logger.debug('Expandable block replaced')
 
                 # Save current group and level to check them over again within the next iteration.
                 prev_group = pos_group
@@ -605,7 +605,6 @@ class ViewProcessor:
             else:
                 # cursor.select(QTextCursor.SelectionType.WordUnderCursor)
                 # text = cursor.selectedText()
-                # self.logger.debug(f'Click context: {text}')
 
                 cursor.clearSelection()
                 parent_widget.setTextCursor(cursor)
@@ -614,8 +613,7 @@ class ViewProcessor:
         # Start from the clicked position
         cursor.select(QTextCursor.SelectionType.WordUnderCursor)
 
-        self.logger.debug('Cursor data, pos: %d, anchor: %s, text: %s'
-                          % (cursor.position(), cursor.anchor(), cursor.selectedText()))
+        self.logger.debug('Cursor position: %d, anchor: %d', cursor.position(), cursor.anchor())
 
         i = 0
         # Move to the anchor caption's start position
@@ -652,16 +650,13 @@ class ViewProcessor:
                 cursor.movePosition(QTextCursor.MoveOperation.PreviousCharacter, QTextCursor.MoveMode.KeepAnchor)
                 j += 1
 
-        self.logger.debug(f'Anchor summary text: "{cursor.selectedText()}"')
-
         cursor.removeSelectedText()
 
         return cursor
 
     def expandable_click_event(self, url: QUrl, cursor: QTextCursor):
         # cursor.charFormat().anchorHref()
-        self.logger.debug('Expandable anchor clicked, scheme: %s, path: %s, fragment: %s'
-                          % (url.scheme(), url.path(), url.fragment()))
+        self.logger.debug('Expandable anchor clicked')
 
         # This may cause left-right click issue when either the start or end position of token is clicked
         # cursor.movePosition(QTextCursor.MoveOperation.PreviousCharacter, QTextCursor.MoveMode.KeepAnchor)
@@ -670,19 +665,15 @@ class ViewProcessor:
         # start_pos = cursor.position()
 
         encoded_text = url.path()
-        self.logger.debug('Text to decode: {%s}', encoded_text)
 
         decoded_text = (base64.b64decode(encoded_text.encode('utf-8'))
                         .decode('utf-8')
                         .strip())
 
         encoded_summary = url.fragment()
-        self.logger.debug('Summary to decode: {%s}', encoded_summary)
         decoded_summary = (base64.b64decode(encoded_summary.encode('utf-8'))
                            .decode('utf-8')
                            .strip())
-
-        self.logger.debug('Decoded text: {%s}' % decoded_text)
 
         # Set default format for inserted text
         default_format = QTextCharFormat()
@@ -710,12 +701,11 @@ class ViewProcessor:
 
     def collapsible_click_event(self, url: QUrl, cursor: QTextCursor):
         # cursor.charFormat().anchorHref()
-        self.logger.debug('Collapsible anchor clicked, scheme: %s, path: %s' % (url.scheme(), url.path()))
+        self.logger.debug('Collapsible anchor clicked')
 
         cursor = self.process_anchor_label(cursor)
 
         encoded_text = url.path()
-        self.logger.debug('Text to decode: {%s}', encoded_text)
 
         encoded_summary = url.fragment()
         decoded_summary = (base64.b64decode(encoded_summary.encode('utf-8'))

@@ -1,5 +1,17 @@
 # Korean lexemes settings_dialog.py
 lexemes = {
+    'workspace_hotkeys_label': '키보드 단축키',
+    'hotkey_save': '저장',
+    'hotkey_find': '찾기',
+    'hotkey_goto': '줄로 이동',
+    'hotkey_undo': '실행 취소',
+    'hotkey_redo': '다시 실행',
+    'hotkey_cut': '잘라내기',
+    'hotkey_copy': '복사',
+    'hotkey_paste': '붙여넣기',
+    'hotkey_select_all': '모두 선택',
+    'hotkey_unindent': '들여쓰기 줄이기',
+    'hotkey_newline': '줄 바꿈 삽입',
     # 설정
     "window_title": "설정",
 

@@ -18,7 +18,7 @@ For detailed instructions and project information, please see the repository's R
 
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtWidgets import QVBoxLayout, QWidget, QListView, QAbstractItemView, QLineEdit, QLabel, QHBoxLayout
-from PySide6.QtGui import QCursor
+from PySide6.QtGui import QColor, QCursor
 
 import logging
 from typing import TYPE_CHECKING, Optional, Callable, Any
@@ -40,13 +40,13 @@ class FileTree(QWidget):
 
     Attributes:
         FILTER_MAX_LENGTH: Maximum characters allowed in filter input
-        CLEAR_BUTTON_TEXT: Text displayed on the clear filter button
+        CLEAR_BUTTON_ICON: Theme icon displayed on the clear filter button
         CLEAR_BUTTON_SIZE_RATIO: Button size ratio relative to filter input height
     """
 
     # Constants for configuration
     FILTER_MAX_LENGTH: int = 512
-    CLEAR_BUTTON_TEXT: str = '×'
+    CLEAR_BUTTON_ICON: str = 'backspace.svg'
     CLEAR_BUTTON_SIZE_RATIO: float = 1.0  # Button is same size as filter height
 
     def __init__(
@@ -263,24 +263,29 @@ class FileTree(QWidget):
         # Apply theme color
         theme_icon_color = self._get_theme_color()
 
-        # Configure button text and styling
-        self.tree_filter_clear_btn.setText(self.CLEAR_BUTTON_TEXT)
+        # Render at the current font size and display density, using the theme's icon color.
+        icon_size = self.tree_filter.fontMetrics().height()
+        pixel_ratio = self.tree_filter.devicePixelRatioF()
+        pixel_size = round(icon_size * pixel_ratio)
+        icon = self.theme_helper.get_icon(
+            theme_icon=self.CLEAR_BUTTON_ICON, color=QColor(theme_icon_color),
+            width=pixel_size, height=pixel_size)
+        self.tree_filter_clear_btn.setPixmap(icon.pixmap(QSize(icon_size, icon_size), pixel_ratio))
         self.tree_filter_clear_btn.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.tree_filter_clear_btn.setStyleSheet(f"color: {theme_icon_color};")
 
         # Update input padding and button position
         self._update_filter_padding()
         self._adjust_clear_button_position()
 
-    def _get_theme_color(self) -> str:
+    def _get_theme_color(self) -> int | str | None:
         """
         Get the appropriate theme color for the clear button.
 
         Returns:
-            Hex color string
+            Theme color as an RGB integer or color name, or None when unset
         """
         color = self.theme_helper.get_color('main_menu_icon_color')
-        if not color:
+        if color is None:
             color = self.theme_helper.get_color('color_default')
         return color
 
@@ -360,6 +365,12 @@ class FileTree(QWidget):
         Returns:
             True if event was handled and should be filtered out, False otherwise
         """
+        if obj == self.tree_filter:
+            if event.type() == event.Type.DevicePixelRatioChange:
+                self.update_clear_button()
+            elif event.type() == event.Type.Resize:
+                self._adjust_clear_button_position()
+
         # Check if this is a key press event on the filter input
         if obj == self.tree_filter and event.type() == event.Type.KeyPress:
             # Check if Esc key was pressed
@@ -388,7 +399,7 @@ class FileTree(QWidget):
         Raises:
             RuntimeError: If Qt widget operations fail during update
         """
-        self.logger.debug(f'Settings update handler processing: {data}')
+        self.logger.debug('Processing settings update')
 
         try:
             if 'app_theme' in data:

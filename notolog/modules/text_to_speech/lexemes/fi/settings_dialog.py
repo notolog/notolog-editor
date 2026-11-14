@@ -82,8 +82,8 @@ lexemes = {
     ),
     "module_text_to_speech_config_speed_input_accessible_description": "Toistonopeus muuttaa myös äänenkorkeutta.",
     "module_text_to_speech_config_announce_headings_accessible_description": (
-        "Markdown- ja HTML-otsikoiden tasot 1–4 ilmoitetaan sanoilla Chapter, Section, Subsection ja "
-        "Sub-subsection, sitten Heading level 5–6."
+        "Markdown- ja HTML-otsikoiden tasot 1-4 ilmoitetaan sanoilla Chapter, Section, Subsection ja "
+        "Sub-subsection, sitten Heading level 5-6."
     ),
     "module_text_to_speech_config_skip_inline_code_accessible_description": (
         "Valittu: sanoo “Inline code block”. Muuten lukee rivinsisäisen koodin. Rajattu ja sisennetty "

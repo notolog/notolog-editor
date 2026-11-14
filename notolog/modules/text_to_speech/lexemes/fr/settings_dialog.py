@@ -87,7 +87,7 @@ lexemes = {
     ),
     "module_text_to_speech_config_announce_headings_accessible_description": (
         "Annonce Chapter, Section, Subsection et Sub-subsection pour les titres Markdown et HTML de "
-        "niveaux 1–4, puis Heading level 5–6."
+        "niveaux 1-4, puis Heading level 5-6."
     ),
     "module_text_to_speech_config_skip_inline_code_accessible_description": (
         "Coché : dit « Inline code block ». Décoché : lit le code en ligne. Le code délimité ou indenté "

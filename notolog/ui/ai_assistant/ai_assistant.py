@@ -767,7 +767,7 @@ class AIAssistant(QDialog):
             None
         """
 
-        self.logger.debug(f'Settings update handler is processing: {data}')
+        self.logger.debug('Processing settings update')
 
         if 'module_ondevice_llm_model_path' in data or 'ai_config_inference_module' in data:
             try:

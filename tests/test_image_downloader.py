@@ -76,6 +76,23 @@ class BufferedReply(QNetworkReply):
 
 class TestImageDownloader:
 
+    def test_resource_urls_and_network_details_are_not_logged(self, mocker, tmp_path, caplog):
+        downloader = ImageDownloader(str(tmp_path))
+        reply = BufferedReply(downloader)
+        secret = 'SYNTHETIC_PRIVATE_RESOURCE'
+        url = f'https://images.invalid/{secret}.png?token={secret}'
+        reply.setUrl(QUrl(url))
+        mocker.patch.object(downloader.network_manager, 'get', return_value=reply)
+
+        with caplog.at_level(logging.DEBUG):
+            downloader.download_image(url)
+            reply.setError(QNetworkReply.NetworkError.HostNotFoundError, f'Cannot resolve {url}')
+            downloader.handle_network_reply_error(reply, reply.error())
+
+        assert caplog.records
+        assert secret not in caplog.text
+        assert not downloader._downloads
+
     @pytest.fixture(autouse=True)
     def settings_owner(self, qapp):
         # Temporary downloaders must not own the shared settings singleton.

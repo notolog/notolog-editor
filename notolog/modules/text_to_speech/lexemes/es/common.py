@@ -21,10 +21,10 @@ lexemes = {
         " rutas de los modelos manualmente."
     ),
     "module_text_to_speech_name": "Texto a voz",
-    "module_text_to_speech_action_read_selection": "Leer selección en voz alta",
-    "module_text_to_speech_action_read_file": "Leer archivo en voz alta",
+    "module_text_to_speech_action_read_selection": "Leer el texto seleccionado en voz alta",
+    "module_text_to_speech_action_read_file": "Leer el archivo en voz alta",
     "module_text_to_speech_action_read": "Leer en voz alta",
-    "module_text_to_speech_action_read_document": "Leer documento en voz alta",
+    "module_text_to_speech_action_read_document": "Leer el documento en voz alta",
     "module_text_to_speech_action_pause_resume": "Pausar / Reanudar",
     "module_text_to_speech_action_stop": "Detener lectura",
     "module_text_to_speech_playback_details": "Detalles de reproducción",

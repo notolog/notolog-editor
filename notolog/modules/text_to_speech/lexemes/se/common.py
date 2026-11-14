@@ -21,10 +21,10 @@ lexemes = {
         "välj modellsökvägarna manuellt."
     ),
     "module_text_to_speech_name": "Text till tal",
-    "module_text_to_speech_action_read_selection": "Läs markering högt",
-    "module_text_to_speech_action_read_file": "Läs fil högt",
+    "module_text_to_speech_action_read_selection": "Läs den markerade texten högt",
+    "module_text_to_speech_action_read_file": "Läs filen högt",
     "module_text_to_speech_action_read": "Läs högt",
-    "module_text_to_speech_action_read_document": "Läs dokument högt",
+    "module_text_to_speech_action_read_document": "Läs dokumentet högt",
     "module_text_to_speech_action_pause_resume": "Pausa / Fortsätt",
     "module_text_to_speech_action_stop": "Stoppa läsning",
     "module_text_to_speech_playback_details": "Uppspelningsdetaljer",

@@ -1,5 +1,17 @@
 # French lexemes settings_dialog.py
 lexemes = {
+    'workspace_hotkeys_label': 'Raccourcis clavier',
+    'hotkey_save': 'Enregistrer',
+    'hotkey_find': 'Rechercher',
+    'hotkey_goto': 'Aller à la ligne',
+    'hotkey_undo': 'Annuler',
+    'hotkey_redo': 'Rétablir',
+    'hotkey_cut': 'Couper',
+    'hotkey_copy': 'Copier',
+    'hotkey_paste': 'Coller',
+    'hotkey_select_all': 'Tout sélectionner',
+    'hotkey_unindent': 'Réduire le retrait',
+    'hotkey_newline': 'Insérer un saut de ligne',
     # Paramètres
     "window_title": "Paramètres",
 

@@ -21,10 +21,10 @@ lexemes = {
         "seleziona manualmente i percorsi dei modelli."
     ),
     "module_text_to_speech_name": "Sintesi vocale",
-    "module_text_to_speech_action_read_selection": "Leggi selezione ad alta voce",
-    "module_text_to_speech_action_read_file": "Leggi file ad alta voce",
+    "module_text_to_speech_action_read_selection": "Leggi il testo selezionato ad alta voce",
+    "module_text_to_speech_action_read_file": "Leggi il file ad alta voce",
     "module_text_to_speech_action_read": "Leggi ad alta voce",
-    "module_text_to_speech_action_read_document": "Leggi documento ad alta voce",
+    "module_text_to_speech_action_read_document": "Leggi il documento ad alta voce",
     "module_text_to_speech_action_pause_resume": "Pausa / Riprendi",
     "module_text_to_speech_action_stop": "Interrompi lettura",
     "module_text_to_speech_playback_details": "Dettagli riproduzione",

@@ -1,5 +1,9 @@
 # Georgian lexemes common.py
 lexemes = {
+    'dialog_goto_button_ok': 'კარგი',
+    'dialog_goto_button_cancel': 'გაუქმება',
+    'dialog_goto_title': 'ხაზზე გადასვლა',
+    'dialog_goto_label': 'ხაზის ნომერი (1-{maximum}):',
     "app_title": "Notolog რედაქტორი",
     "app_title_with_sub": "{app_title} - {sub_title}",
 

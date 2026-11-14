@@ -1,5 +1,17 @@
 # German lexemes settings_dialog.py
 lexemes = {
+    'workspace_hotkeys_label': 'Tastenkürzel',
+    'hotkey_save': 'Speichern',
+    'hotkey_find': 'Suchen',
+    'hotkey_goto': 'Gehe zu Zeile',
+    'hotkey_undo': 'Rückgängig',
+    'hotkey_redo': 'Wiederholen',
+    'hotkey_cut': 'Ausschneiden',
+    'hotkey_copy': 'Kopieren',
+    'hotkey_paste': 'Einfügen',
+    'hotkey_select_all': 'Alles auswählen',
+    'hotkey_unindent': 'Einzug verkleinern',
+    'hotkey_newline': 'Zeilenumbruch einfügen',
     # Einstellungen
     "window_title": "Einstellungen",
 

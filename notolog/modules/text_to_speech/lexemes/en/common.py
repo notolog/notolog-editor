@@ -21,10 +21,10 @@ lexemes = {
         "manually."
     ),
     "module_text_to_speech_name": "Text-to-Speech",
-    "module_text_to_speech_action_read_selection": "Read selection aloud",
-    "module_text_to_speech_action_read_file": "Read file aloud",
+    "module_text_to_speech_action_read_selection": "Read selected text aloud",
+    "module_text_to_speech_action_read_file": "Read the file aloud",
     "module_text_to_speech_action_read": "Read aloud",
-    "module_text_to_speech_action_read_document": "Read document aloud",
+    "module_text_to_speech_action_read_document": "Read the document aloud",
     "module_text_to_speech_action_pause_resume": "Pause / resume",
     "module_text_to_speech_action_stop": "Stop reading",
     "module_text_to_speech_playback_details": "Speech playback details",
@@ -61,5 +61,5 @@ lexemes = {
     "module_text_to_speech_language_runtime_required": "requires runtime support",
     "module_text_to_speech_error_note_locked": "Open and unlock this note before reading it aloud.",
     "module_text_to_speech_error_read_note": "Cannot read this note: {error}",
-    "module_text_to_speech_action_read_from_cursor": "Read from cursor aloud",
+    "module_text_to_speech_action_read_from_cursor": "Read aloud from the cursor",
 }

@@ -1,5 +1,17 @@
 # Chinese lexemes settings_dialog.py
 lexemes = {
+    'workspace_hotkeys_label': '快捷键',
+    'hotkey_save': '保存',
+    'hotkey_find': '查找',
+    'hotkey_goto': '跳转到行',
+    'hotkey_undo': '撤销',
+    'hotkey_redo': '重做',
+    'hotkey_cut': '剪切',
+    'hotkey_copy': '复制',
+    'hotkey_paste': '粘贴',
+    'hotkey_select_all': '全选',
+    'hotkey_unindent': '减少缩进',
+    'hotkey_newline': '插入换行',
     # 设置
     "window_title": "设置",
 

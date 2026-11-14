@@ -1,5 +1,17 @@
 # Hindi lexemes settings_dialog.py
 lexemes = {
+    'workspace_hotkeys_label': 'कीबोर्ड शॉर्टकट',
+    'hotkey_save': 'सहेजें',
+    'hotkey_find': 'खोजें',
+    'hotkey_goto': 'पंक्ति पर जाएँ',
+    'hotkey_undo': 'पूर्ववत करें',
+    'hotkey_redo': 'फिर से करें',
+    'hotkey_cut': 'काटें',
+    'hotkey_copy': 'कॉपी करें',
+    'hotkey_paste': 'चिपकाएँ',
+    'hotkey_select_all': 'सभी चुनें',
+    'hotkey_unindent': 'इंडेंट घटाएँ',
+    'hotkey_newline': 'नई पंक्ति डालें',
     # सेटिंग्स संवाद
     "window_title": "सेटिंग्स",
 

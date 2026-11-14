@@ -1,5 +1,17 @@
 # Greek lexemes settings_dialog.py
 lexemes = {
+    'workspace_hotkeys_label': 'Συντομεύσεις πληκτρολογίου',
+    'hotkey_save': 'Αποθήκευση',
+    'hotkey_find': 'Εύρεση',
+    'hotkey_goto': 'Μετάβαση στη γραμμή',
+    'hotkey_undo': 'Αναίρεση',
+    'hotkey_redo': 'Επανάληψη',
+    'hotkey_cut': 'Αποκοπή',
+    'hotkey_copy': 'Αντιγραφή',
+    'hotkey_paste': 'Επικόλληση',
+    'hotkey_select_all': 'Επιλογή όλων',
+    'hotkey_unindent': 'Μείωση εσοχής',
+    'hotkey_newline': 'Εισαγωγή νέας γραμμής',
     # Διάλογος ρυθμίσεων
     "window_title": "Ρυθμίσεις",
 

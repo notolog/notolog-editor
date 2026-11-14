@@ -66,8 +66,8 @@ lexemes = {
     "module_text_to_speech_config_voice_input_accessible_description": "MagpieTTS 声音：John、Sofia、Aria、Jason 和 Leo。",
     "module_text_to_speech_config_speed_input_accessible_description": "播放速度也会改变音高。",
     "module_text_to_speech_config_announce_headings_accessible_description": (
-        "Markdown 和 HTML 的 1–4 级标题分别播报 Chapter、Section、Subsection 和 Sub-subsection，5–6 级播报 Heading level"
-        " 5–6。"
+        "Markdown 和 HTML 的 1-4 级标题分别播报 Chapter、Section、Subsection 和 Sub-subsection，5-6 级播报 Heading level"
+        " 5-6。"
     ),
     "module_text_to_speech_config_skip_inline_code_accessible_description": (
         "勾选时播报“Inline code block”，未勾选时朗读行内代码。围栏代码和缩进代码使用多行代码设置。"

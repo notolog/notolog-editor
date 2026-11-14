@@ -304,8 +304,8 @@ class ModuleCore(BaseAiCore):
                         # Emit update message signal
                         self.update_signal.emit(outputs, None, None, EnumMessageType.DEFAULT, EnumMessageStyle.ERROR)
                     else:
-                        result = task.result()
-                        self.logger.debug(f"Task completed with result: {result}")
+                        task.result()
+                        self.logger.debug('Task completed')
 
     async def run_generator(self, user_prompt, request_msg_id, response_msg_id):
         """
@@ -623,7 +623,7 @@ class ModuleCore(BaseAiCore):
             None
         """
 
-        AppConfig().logger.debug(f'Settings update handler is processing: {data}')
+        AppConfig().logger.debug('Processing llama.cpp settings update')
 
         options = [
             'module_llama_cpp_model_path',

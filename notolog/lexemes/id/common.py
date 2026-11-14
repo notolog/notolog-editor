@@ -1,5 +1,9 @@
 # Indonesian lexemes common.py
 lexemes = {
+    'dialog_goto_button_ok': 'OK',
+    'dialog_goto_button_cancel': 'Batal',
+    'dialog_goto_title': 'Ke baris',
+    'dialog_goto_label': 'Nomor baris (1-{maximum}):',
     "app_title": "Notolog Editor",
     "app_title_with_sub": "{app_title} - {sub_title}",
 

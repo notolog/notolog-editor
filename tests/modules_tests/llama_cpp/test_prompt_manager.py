@@ -33,6 +33,20 @@ import logging
 
 class TestPromptManager:
 
+    def test_messages_are_not_logged(self, mocker, caplog):
+        mocker.patch.object(PromptManager, '_instance', None)
+        test_prompt_manager = PromptManager()
+        prompt = 'SYNTHETIC_PRIVATE_PROMPT'
+        response = 'SYNTHETIC_PRIVATE_RESPONSE'
+        with caplog.at_level(logging.DEBUG):
+            test_prompt_manager.add_message(prompt, 501, None, EnumMessageType.USER_INPUT)
+            test_prompt_manager.add_message(response, 501, 502, EnumMessageType.RESPONSE)
+
+        assert prompt in test_prompt_manager.get_history()
+        assert response in test_prompt_manager.get_history()
+        assert prompt not in caplog.text
+        assert response not in caplog.text
+
     @pytest.fixture(scope="function", autouse=True)
     def test_obj_app_config(self, mocker):
         # Mock AppConfig's get_logger_level method to suppress logging during tests.

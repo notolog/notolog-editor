@@ -32,7 +32,7 @@ from threading import Lock
 toml_base_app_config = """
 [app]
 name = "Notolog"
-version = "1.2.4"
+version = "1.2.5"
 license = "MIT License"
 date = "2024-2026"
 website = "https://notolog.app"
@@ -314,7 +314,7 @@ class AppConfig(QObject):
 
     def app_config_update_handler(self, data: dict) -> None:
         # Data contains information about the changes made
-        self.logger.debug('App config handler is in use "%s"' % data)
+        self.logger.debug('Processing app configuration update')
 
         # Save the current config
         self.save_app_config()

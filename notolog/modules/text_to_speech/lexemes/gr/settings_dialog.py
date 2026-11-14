@@ -87,8 +87,8 @@ lexemes = {
         "Η ταχύτητα αναπαραγωγής αλλάζει και το ύψος της φωνής."
     ),
     "module_text_to_speech_config_announce_headings_accessible_description": (
-        "Για επικεφαλίδες Markdown και HTML επιπέδων 1–4 λέει Chapter, Section, Subsection και "
-        "Sub-subsection, έπειτα Heading level 5–6."
+        "Για επικεφαλίδες Markdown και HTML επιπέδων 1-4 λέει Chapter, Section, Subsection και "
+        "Sub-subsection, έπειτα Heading level 5-6."
     ),
     "module_text_to_speech_config_skip_inline_code_accessible_description": (
         "Επιλεγμένο: λέει «Inline code block». Αλλιώς διαβάζει τον ενσωματωμένο κώδικα. Ο οριοθετημένος "

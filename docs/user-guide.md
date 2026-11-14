@@ -8,6 +8,7 @@ Complete guide to all Notolog features and functionality.
 - [View Mode](#view-mode)
 - [File Management](#file-management)
 - [Search Features](#search-features)
+- [Keyboard Shortcuts](#keyboard-shortcuts)
 - [Text-to-Speech](text-to-speech.md)
 - [Encryption](#encryption)
 - [Themes](#themes)
@@ -84,9 +85,11 @@ Toggle between Edit and View modes:
 ### Image Handling
 
 Notolog displays local and remote images. Remote images are cached in memory when space is
-available and can optionally be saved to a local `images` directory.
+available and saved unencrypted to a local `images` directory by default, including images
+referenced by encrypted notes.
 
 Configure in `Settings` → `Workspace` → `View mode` → `Auto-save external images to disk`.
+Turning this off prevents new saved copies; it does not remove existing copies or stop downloads.
 
 Remote image downloads are limited to 16 MiB per image and 60 seconds overall,
 with a 30-second inactivity timeout. Images must decode successfully and contain no more than
@@ -150,7 +153,7 @@ This preserves:
 
 ### In-File Search
 
-Press `Ctrl+F` to open the search bar:
+Press `Ctrl+F` (`Cmd+F` on macOS) to open the search bar:
 
 - **Case Sensitive**: Toggle with button
 - **Navigation**: Previous/Next match buttons
@@ -162,7 +165,34 @@ Type in the file tree search box to filter:
 
 - Filters by filename
 - Real-time filtering
-- Clear with `X` button or `Esc`
+- Clear with the clear button or `Esc`
+
+---
+
+## Keyboard Shortcuts
+
+Open **Settings > Workspace** to see the scrollable **Hotkeys** table with shortcuts
+for your operating system. On macOS, the Command key is shown as `⌘`; for example,
+Go to line appears as `⌘G`. The table below spells it out as `Cmd+G`.
+
+| Action | Windows / Linux | macOS |
+| --- | --- | --- |
+| Save current note | Ctrl+S | Cmd+S |
+| Find | Ctrl+F | Cmd+F |
+| Go to line | Ctrl+G | Cmd+G |
+| Undo | Ctrl+Z | Cmd+Z |
+| Redo | Ctrl+Y on Windows; Ctrl+Shift+Z on Linux | Cmd+Shift+Z |
+| Cut / Copy / Paste | Ctrl+X / Ctrl+C / Ctrl+V | Cmd+X / Cmd+C / Cmd+V |
+| Select all | Ctrl+A | Cmd+A |
+| Unindent | Shift+Tab | Shift+Tab |
+| Insert newline | Shift+Enter | Shift+Return |
+
+**Go to line** accepts a whole number from 1 to the active document's line count.
+The dialog starts at the current line and restricts input to that range; canceling
+keeps the cursor unchanged. In Edit mode, lines are source lines, independent of
+word wrapping. In View mode, numbering follows displayed text blocks, such as
+paragraphs and headings, so it may differ from the Markdown source.
+The destination is brought into view.
 
 ---
 
@@ -194,6 +224,10 @@ Notolog provides AES-128 encryption for sensitive notes.
 2. Enter your password
 3. File decrypts in memory
 4. Edit and save as normal
+
+**Save As** preserves the note's encryption and password, regardless of the destination extension.
+Use **Decrypt File** to create an unencrypted copy. Linked images are separate files and are not
+protected by note encryption; see [Image Handling](#image-handling).
 
 ### Password Best Practices
 

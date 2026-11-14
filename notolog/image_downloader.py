@@ -104,10 +104,10 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
 
     def download_image(self, url: str) -> None:
         if not self.is_external_url(url):
-            self.logger.debug(f"Skip downloading as the provided url is not an external url: {url}")
+            self.logger.debug('Skipping non-external resource')
             return
 
-        self.logger.debug(f'Downloading resource from "{url}"')
+        self.logger.debug('Downloading image resource')
 
         request = QNetworkRequest(QUrl(url))
         request.setTransferTimeout(self.TRANSFER_TIMEOUT_MS)
@@ -181,9 +181,9 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
         file_path = os.path.join(self.folder.path(), file_name)
         # Save received data
         if file_helper.save_file(file_path, data, as_bytearray=True):
-            self.logger.debug(f"Resource saved {url} to {file_path} [{file_helper.size_f(len(data))}]")
+            self.logger.debug('Image resource saved: %d bytes', len(data))
         else:
-            self.logger.debug(f"Resource not saved {url} to {file_path} [{file_helper.size_f(len(data))}]")
+            self.logger.debug('Image resource not saved')
 
     def handle_network_reply(self, reply):
         if reply not in self._downloads:
@@ -191,7 +191,7 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
         # Get received status code, say 200
         status_code = reply.attribute(QNetworkRequest.Attribute.HttpStatusCodeAttribute)
 
-        self.logger.debug(f'Network reply, reply: {reply}, status_code: {status_code}')
+        self.logger.debug('Image response status: %s', status_code)
 
         try:
             if reply.error() == QNetworkReply.NetworkError.NoError and self._read_reply(reply):
@@ -201,7 +201,7 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
                 url = self._downloads[reply][3]
                 data = self._downloads[reply][0]
 
-                self.logger.debug(f"Resource data downloaded {url} [{file_helper.size_f(len(data))}]")
+                self.logger.debug('Image resource downloaded: %d bytes', len(data))
 
                 # Store the image within the app's cache first
                 decoded = self.cache_pixmap(url, data)
@@ -261,7 +261,7 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
         # Get received status code, say 404
         status_code = reply.attribute(QNetworkRequest.Attribute.HttpStatusCodeAttribute)
 
-        self.logger.debug(f'Network reply, reply: {reply}, error_code: {error_code}, status_code: {status_code}')
+        self.logger.debug('Image response error: %s, status: %s', error_code, status_code)
 
         if reply.error() == QNetworkReply.NetworkError.HostNotFoundError:
             # The host was not found, indicating possible DNS issues or no internet connection
@@ -281,7 +281,7 @@ class ImageDownloader(QObject):  # QObject to allow signal emitting
                                               status_code=status_code)
 
         self.logger.warning(result_message)
-        self.logger.warning(f'Failed to download resource "{reply.errorString()}" with error code [{error_code}]')
+        self.logger.warning('Failed to download resource with error code %s', error_code)
 
         self._dispose_reply(reply)
 

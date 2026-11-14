@@ -16,12 +16,16 @@ License: MIT License
 For detailed instructions and project information, please see the repository's README.md.
 """
 
-from PySide6.QtGui import QTextDocument, QFont
+from PySide6.QtCore import QObject, QUrl
+from PySide6.QtGui import QTextDocument, QFont, QTextCursor
 
 from notolog.highlight.view_highlighter import ViewHighlighter
 from notolog.view_processor import ViewProcessor
 
 import pytest
+import base64
+import logging
+from unittest.mock import Mock
 
 
 class TestViewProcessorAdmonition:
@@ -50,6 +54,32 @@ class TestViewProcessorAdmonition:
         assert test_obj_processor.ADMONITION_ICONS['note'] == 'pencil-square.svg'
         assert test_obj_processor.ADMONITION_ICONS['warning'] == 'exclamation-triangle-fill.svg'
         assert test_obj_processor.ADMONITION_ICONS['info'] == 'info-circle-fill.svg'
+
+    def test_expandable_content_is_not_logged(self, test_obj_processor, caplog):
+        processor = test_obj_processor
+        parent = QObject()
+        parent.statusbar = Mock()
+        parent.get_view_widget = Mock(return_value=Mock())
+        processor.doc.setParent(parent)
+        body = 'SYNTHETIC_PRIVATE_BODY'
+        summary = 'SYNTHETIC_PRIVATE_SUMMARY'
+        encoded_body = base64.b64encode(body.encode()).decode()
+        encoded_summary = base64.b64encode(summary.encode()).decode()
+        with caplog.at_level(logging.DEBUG):
+            processor.doc.setPlainText(f'<details>\n<summary>{summary}</summary>{body}\n</details>\n')
+            processor.process()
+            assert 'expandable:' in processor.doc.toPlainText()
+            processor.doc.setHtml(processor.doc.toPlainText())
+            processor.expandable_click_event(
+                QUrl(f'expandable:{encoded_body}#{encoded_summary}'), QTextCursor(processor.doc))
+            assert body in processor.doc.toPlainText()
+            processor.collapsible_click_event(
+                QUrl(f'collapsible:{encoded_body}#{encoded_summary}'), QTextCursor(processor.doc))
+
+        assert caplog.records
+        for secret in (body, summary, encoded_body, encoded_summary):
+            assert secret not in caplog.text
+        processor.doc.setParent(None)
 
     def test_admonition_color_keys_mapping(self, test_obj_processor):
         """Test that ADMONITION_COLOR_KEYS maps to theme keys."""

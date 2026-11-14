@@ -82,8 +82,8 @@ lexemes = {
     ),
     "module_text_to_speech_config_speed_input_accessible_description": "Celeritas soni etiam altitudinem vocis mutat.",
     "module_text_to_speech_config_announce_headings_accessible_description": (
-        "Tituli Markdown et HTML graduum 1–4 dicuntur Chapter, Section, Subsection et Sub-subsection, "
-        "deinde Heading level 5–6."
+        "Tituli Markdown et HTML graduum 1-4 dicuntur Chapter, Section, Subsection et Sub-subsection, "
+        "deinde Heading level 5-6."
     ),
     "module_text_to_speech_config_skip_inline_code_accessible_description": (
         "Selectum: dicitur “Inline code block”. Aliter codex in linea legitur. Codex saeptus vel "

@@ -83,8 +83,8 @@ lexemes = {
         "Native playback speed also changes voice pitch."
     ),
     "module_text_to_speech_config_announce_headings_accessible_description": (
-        "Say Chapter, Section, Subsection and Sub-subsection for heading levels 1–4, then Heading level "
-        "5–6. Applies to Markdown and HTML headings."
+        "Say Chapter, Section, Subsection and Sub-subsection for heading levels 1-4, then Heading level "
+        "5-6. Applies to Markdown and HTML headings."
     ),
     "module_text_to_speech_config_skip_inline_code_accessible_description": (
         "Checked: say “Inline code block”. Unchecked: read the inline code contents. Fenced and indented"

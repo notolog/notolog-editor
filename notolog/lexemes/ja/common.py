@@ -1,5 +1,9 @@
 # Japanese lexemes common.py
 lexemes = {
+    'dialog_goto_button_ok': 'OK',
+    'dialog_goto_button_cancel': 'キャンセル',
+    'dialog_goto_title': '指定行へ移動',
+    'dialog_goto_label': '行番号 (1-{maximum}):',
     "app_title": "Notolog エディタ",
     "app_title_with_sub": "{app_title} - {sub_title}",
 

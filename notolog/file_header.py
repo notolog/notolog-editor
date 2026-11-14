@@ -173,11 +173,11 @@ class FileHeader:
             # Return header and content, even if the content is empty
             return header_line + delimiter + content
         elif content is not None:
-            self.logger.debug(f'File contains content but lacks a header {self}')
+            self.logger.debug('File contains content but lacks a header')
             # Return content without header
             return content
         else:
-            self.logger.warning(f'File contains header but lacks a content {self}')
+            self.logger.warning('File contains header but lacks content')
             # Return header without content
             return header_line
 

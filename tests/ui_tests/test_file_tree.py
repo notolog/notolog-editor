@@ -16,10 +16,10 @@ License: MIT License
 For detailed instructions and project information, please see the repository's README.md.
 """
 
-from PySide6.QtCore import Qt, QPoint, QCoreApplication
+from PySide6.QtCore import Qt, QPoint, QCoreApplication, QEvent
 from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QListView, QLineEdit, QLabel
-from PySide6.QtGui import QStandardItemModel, QStandardItem
+from PySide6.QtGui import QColor, QStandardItemModel, QStandardItem
 
 from notolog.ui.file_tree import FileTree
 from notolog.settings import Settings
@@ -92,6 +92,7 @@ class TestFileTree:
         tree.show()  # Show widget to ensure geometry is calculated
         QCoreApplication.processEvents()  # Process events to update UI
         yield tree
+        tree.close()
 
     # ===== INITIALIZATION TESTS =====
 
@@ -103,7 +104,7 @@ class TestFileTree:
     def test_constants_defined(self, file_tree):
         """Test class constants are properly defined."""
         assert FileTree.FILTER_MAX_LENGTH == 512
-        assert FileTree.CLEAR_BUTTON_TEXT == '×'
+        assert FileTree.CLEAR_BUTTON_ICON == 'backspace.svg'
         assert FileTree.CLEAR_BUTTON_SIZE_RATIO == 1.0
 
     def test_ui_components_initialized(self, file_tree):
@@ -197,11 +198,15 @@ class TestFileTree:
 
     # ===== CLEAR BUTTON APPEARANCE TESTS =====
 
-    def test_clear_button_text(self, file_tree):
-        """Test clear button displays correct text."""
+    def test_clear_button_icon(self, file_tree):
+        """The clear control renders the icon instead of a text glyph."""
         file_tree.tree_filter.setText("test")
         QCoreApplication.processEvents()
-        assert file_tree.tree_filter_clear_btn.text() == FileTree.CLEAR_BUTTON_TEXT
+        assert file_tree.tree_filter_clear_btn.text() == ''
+        assert not file_tree.tree_filter_clear_btn.pixmap().isNull()
+        pixmap = file_tree.tree_filter_clear_btn.pixmap()
+        assert pixmap.devicePixelRatio() == file_tree.tree_filter.devicePixelRatioF()
+        assert pixmap.deviceIndependentSize().height() == file_tree.tree_filter.fontMetrics().height()
 
     def test_clear_button_size_matches_filter(self, file_tree):
         """Test clear button size matches filter input height."""
@@ -237,6 +242,30 @@ class TestFileTree:
 
     # ===== SETTINGS UPDATE TESTS =====
 
+    @staticmethod
+    def assert_icon_color(file_tree, color):
+        image = file_tree.tree_filter_clear_btn.pixmap().toImage()
+        colors = {image.pixelColor(x, y).name()
+                  for x in range(image.width()) for y in range(image.height())
+                  if image.pixelColor(x, y).alpha() == 255}
+        assert colors == {QColor(color).name()}
+
+    @pytest.mark.parametrize('theme_name', ['default', 'calligraphy', 'noir_dark', 'strawberry', 'nocturne', 'spooky'])
+    def test_clear_icon_uses_theme_color(self, file_tree, theme_name):
+        from notolog.theme import Theme
+
+        file_tree.theme_helper.theme = Theme(theme_name)
+        file_tree.settings_update_handler({'app_theme': theme_name})
+        self.assert_icon_color(file_tree, file_tree.theme_helper.get_color('main_menu_icon_color'))
+
+    def test_clear_icon_refreshes_for_display_density(self, file_tree, mocker):
+        mocker.patch.object(file_tree.tree_filter, 'devicePixelRatioF', return_value=2.0)
+        set_pixmap = mocker.spy(file_tree.tree_filter_clear_btn, 'setPixmap')
+        QCoreApplication.sendEvent(file_tree.tree_filter, QEvent(QEvent.Type.DevicePixelRatioChange))
+        pixmap = set_pixmap.call_args.args[0]
+        assert pixmap.devicePixelRatio() == 2.0
+        assert pixmap.width() == file_tree.tree_filter.fontMetrics().height() * 2
+
     def test_theme_change_updates_button(self, file_tree, mocker):
         """Test theme change updates clear button styling."""
         file_tree.tree_filter.setText("test")
@@ -246,11 +275,16 @@ class TestFileTree:
 
         file_tree.settings_update_handler({'app_theme': 'dark'})
 
-        assert '#FF0000' in file_tree.tree_filter_clear_btn.styleSheet()
+        self.assert_icon_color(file_tree, '#FF0000')
 
     def test_font_size_change_updates_widgets(self, file_tree, main_window, mocker):
         """Test font size change updates all widgets."""
         from PySide6.QtGui import QFont
+
+        # Show independently of the hidden mock editor so Qt updates the layout.
+        file_tree.setWindowFlag(Qt.WindowType.Window)
+        file_tree.show()
+        QCoreApplication.processEvents()
 
         # Create new font with different size
         new_font = QFont()
@@ -258,8 +292,7 @@ class TestFileTree:
         mocker.patch.object(main_window, 'font', return_value=new_font)
 
         file_tree.tree_filter.setText("test")
-        # Store initial size for potential future comparison
-        _ = file_tree.tree_filter_clear_btn.size()
+        initial_icon_size = file_tree.tree_filter_clear_btn.pixmap().deviceIndependentSize()
 
         file_tree.settings_update_handler({'app_font_size': 16})
 
@@ -271,8 +304,10 @@ class TestFileTree:
 
         # Button size should update
         new_button_size = file_tree.tree_filter_clear_btn.size()
-        # Size might change based on new filter height
         assert new_button_size.width() > 0
+        assert file_tree.tree_filter_clear_btn.pixmap().deviceIndependentSize().height() > initial_icon_size.height()
+        QCoreApplication.processEvents()
+        assert file_tree.tree_filter.geometry().contains(file_tree.tree_filter_clear_btn.geometry())
 
     def test_language_change_updates_labels(self, file_tree, mocker):
         """Test language change updates UI text."""
@@ -419,7 +454,7 @@ class TestFileTree:
 
         # Both changes should be applied
         assert file_tree.font().pointSize() == 14
-        assert '#00FF00' in file_tree.tree_filter_clear_btn.styleSheet()
+        self.assert_icon_color(file_tree, '#00FF00')
 
     # ===== ESC KEY FUNCTIONALITY TESTS =====
 

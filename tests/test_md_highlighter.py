@@ -27,6 +27,18 @@ import markdown
 
 class TestMdHighlighter:
 
+    @pytest.mark.parametrize('level', range(1, 7))
+    @pytest.mark.parametrize('gap', [' ', '   ', '\t'])
+    def test_heading_gap_has_heading_font_size(self, highlighter, level, gap):
+        source = '#' * level + gap + 'Heading'
+        self.highlight(highlighter, source)
+        formats = highlighter.document().firstBlock().layout().formats()
+        sizes = [next(r.format.fontPointSize() for r in formats
+                      if r.start <= position < r.start + r.length)
+                 for position in range(len(source))]
+        assert sizes[0] > 0
+        assert len(set(sizes)) == 1
+
     @pytest.mark.parametrize('source', [
         '[page](https://example.com/_part)',
         '![image](https://example.com/_part.png)',

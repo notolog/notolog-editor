@@ -1,5 +1,9 @@
 # Lexica Communia Latine common.py
 lexemes = {
+    'dialog_goto_button_ok': 'OK',
+    'dialog_goto_button_cancel': 'Cancellare',
+    'dialog_goto_title': 'Ad lineam ire',
+    'dialog_goto_label': 'Numerus lineae (1-{maximum}):',
     "app_title": "Editorium Notolog",
     "app_title_with_sub": "{app_title} - {sub_title}",
 

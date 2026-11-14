@@ -86,8 +86,8 @@ lexemes = {
         "De afspeelsnelheid verandert ook de toonhoogte."
     ),
     "module_text_to_speech_config_announce_headings_accessible_description": (
-        "Zegt Chapter, Section, Subsection en Sub-subsection voor Markdown- en HTML-koppen 1–4, daarna "
-        "Heading level 5–6."
+        "Zegt Chapter, Section, Subsection en Sub-subsection voor Markdown- en HTML-koppen 1-4, daarna "
+        "Heading level 5-6."
     ),
     "module_text_to_speech_config_skip_inline_code_accessible_description": (
         "Aangevinkt: zegt “Inline code block”. Anders wordt inlinecode voorgelezen. Afgebakende en "

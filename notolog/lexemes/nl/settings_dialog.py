@@ -1,5 +1,17 @@
 # Dutch lexemes settings_dialog.py
 lexemes = {
+    'workspace_hotkeys_label': 'Sneltoetsen',
+    'hotkey_save': 'Opslaan',
+    'hotkey_find': 'Zoeken',
+    'hotkey_goto': 'Ga naar regel',
+    'hotkey_undo': 'Ongedaan maken',
+    'hotkey_redo': 'Opnieuw',
+    'hotkey_cut': 'Knippen',
+    'hotkey_copy': 'Kopiëren',
+    'hotkey_paste': 'Plakken',
+    'hotkey_select_all': 'Alles selecteren',
+    'hotkey_unindent': 'Inspringing verkleinen',
+    'hotkey_newline': 'Nieuwe regel invoegen',
     # Settings dialog
     "window_title": "Instellingen",
 

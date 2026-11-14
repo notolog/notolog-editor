@@ -1,5 +1,9 @@
 # Hindi lexemes common.py
 lexemes = {
+    'dialog_goto_button_ok': 'ठीक है',
+    'dialog_goto_button_cancel': 'रद्द करें',
+    'dialog_goto_title': 'पंक्ति पर जाएँ',
+    'dialog_goto_label': 'पंक्ति संख्या (1-{maximum}):',
     "app_title": "नोटोलॉग एडिटर",
     "app_title_with_sub": "{app_title} - {sub_title}",
 

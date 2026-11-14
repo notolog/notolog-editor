@@ -1,5 +1,17 @@
 # Japanese lexemes settings_dialog.py
 lexemes = {
+    'workspace_hotkeys_label': 'キーボードショートカット',
+    'hotkey_save': '保存',
+    'hotkey_find': '検索',
+    'hotkey_goto': '指定行へ移動',
+    'hotkey_undo': '元に戻す',
+    'hotkey_redo': 'やり直す',
+    'hotkey_cut': '切り取り',
+    'hotkey_copy': 'コピー',
+    'hotkey_paste': '貼り付け',
+    'hotkey_select_all': 'すべて選択',
+    'hotkey_unindent': 'インデントを減らす',
+    'hotkey_newline': '改行を挿入',
     # 設定
     "window_title": "設定",
 

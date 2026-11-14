@@ -1,0 +1,117 @@
+# Notolog Editor
+# An open-source Markdown editor built with Python.
+#
+# File Details:
+# - Purpose: Build and validate release distributions, then publish approved tags to PyPI.
+#
+# Repository: https://github.com/notolog/notolog-editor
+# Website: https://notolog.app
+# PyPI: https://pypi.org/project/notolog
+#
+# Author: Vadim Bakhrenkov
+# Copyright: 2024-2026 Vadim Bakhrenkov
+# License: MIT License
+#
+# This workflow runs manually, defaults to a dry run, and uses PyPI Trusted Publishing.
+# For more information, see: https://docs.pypi.org/trusted-publishers/using-a-publisher/
+
+name: Publish to PyPI
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Build and check distributions without publishing to PyPI
+        type: boolean
+        required: true
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pypi-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.14'
+      - name: Verify release versions
+        env:
+          RELEASE_REPOSITORY: ${{ github.repository }}
+          RELEASE_REF: ${{ github.ref_name }}
+          RELEASE_REF_TYPE: ${{ github.ref_type }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          python - <<'PY'
+          import ast
+          import os
+          import re
+          import tomllib
+          from pathlib import Path
+
+          package = tomllib.loads(Path('pyproject.toml').read_text())['tool']['poetry']
+          version = package['version']
+          if package['name'] != 'notolog' or not re.fullmatch(r'\d+\.\d+\.\d+', version):
+              raise SystemExit('Expected a stable notolog release')
+          if os.environ['DRY_RUN'] != 'true':
+              if os.environ['RELEASE_REPOSITORY'] != 'notolog/notolog-editor':
+                  raise SystemExit('Publishing is restricted to notolog/notolog-editor; use a dry run here')
+              if os.environ['RELEASE_REF_TYPE'] != 'tag':
+                  raise SystemExit('Publishing requires selecting a release tag')
+          if os.environ['RELEASE_REF_TYPE'] == 'tag':
+              if os.environ['RELEASE_REF'] not in (version, 'v' + version):
+                  raise SystemExit('Release tag does not match the package version')
+          config = ast.parse(Path('notolog/app_config.py').read_text())
+          app_config = next(ast.literal_eval(node.value) for node in config.body
+                            if isinstance(node, ast.Assign)
+                            and any(isinstance(target, ast.Name) and target.id == 'toml_base_app_config'
+                                    for target in node.targets))
+          app_version = tomllib.loads(app_config)['app']['version']
+          if app_version != version:
+              raise SystemExit('Application and package versions differ')
+          heading = re.search(r'^## \[([^]]+)\] - \d{4}-\d{2}-\d{2}$',
+                              Path('CHANGELOG.md').read_text(), re.MULTILINE)
+          if not heading or heading.group(1) != version:
+              raise SystemExit('The first changelog entry must match the release')
+          PY
+      - name: Build distributions and check metadata
+        run: |
+          python -m pip install --disable-pip-version-check build twine
+          python -m build --outdir "$RUNNER_TEMP/notolog-dist"
+          python -m twine check --strict "$RUNNER_TEMP"/notolog-dist/*
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: python-distributions
+          path: ${{ runner.temp }}/notolog-dist/
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    needs: build
+    if: github.repository == 'notolog/notolog-editor' && !inputs.dry_run && github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: pypi
+      url: https://pypi.org/project/notolog/
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: python-distributions
+          path: dist/
+      - name: Publish distributions with attestations
+        uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # release/v1
+        with:
+          attestations: true

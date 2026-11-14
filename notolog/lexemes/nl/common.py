@@ -1,5 +1,9 @@
 # Dutch lexemes common.py
 lexemes = {
+    'dialog_goto_button_ok': 'OK',
+    'dialog_goto_button_cancel': 'Annuleren',
+    'dialog_goto_title': 'Ga naar regel',
+    'dialog_goto_label': 'Regelnummer (1-{maximum}):',
     "app_title": "Notolog Editor",
     "app_title_with_sub": "{app_title} - {sub_title}",
 

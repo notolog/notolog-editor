@@ -22,10 +22,10 @@ lexemes = {
         "execução ou selecione os caminhos dos modelos manualmente."
     ),
     "module_text_to_speech_name": "Texto para fala",
-    "module_text_to_speech_action_read_selection": "Ler seleção em voz alta",
-    "module_text_to_speech_action_read_file": "Ler arquivo em voz alta",
+    "module_text_to_speech_action_read_selection": "Ler o texto selecionado em voz alta",
+    "module_text_to_speech_action_read_file": "Ler o arquivo em voz alta",
     "module_text_to_speech_action_read": "Ler em voz alta",
-    "module_text_to_speech_action_read_document": "Ler documento em voz alta",
+    "module_text_to_speech_action_read_document": "Ler o documento em voz alta",
     "module_text_to_speech_action_pause_resume": "Pausar / Retomar",
     "module_text_to_speech_action_stop": "Parar leitura",
     "module_text_to_speech_playback_details": "Detalhes da reprodução",

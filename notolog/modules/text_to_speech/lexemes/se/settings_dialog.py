@@ -79,7 +79,7 @@ lexemes = {
     "module_text_to_speech_config_speed_input_accessible_description": "Uppspelningshastigheten ändrar även tonhöjden.",
     "module_text_to_speech_config_announce_headings_accessible_description": (
         "Säger Chapter, Section, Subsection och Sub-subsection för Markdown- och HTML-rubriker på nivå "
-        "1–4, sedan Heading level 5–6."
+        "1-4, sedan Heading level 5-6."
     ),
     "module_text_to_speech_config_skip_inline_code_accessible_description": (
         "Markerat: säger ”Inline code block”. Annars läses koden i löptext. Avgränsad och indragen kod "

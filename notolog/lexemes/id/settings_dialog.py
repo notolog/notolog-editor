@@ -1,5 +1,17 @@
 # Indonesian lexemes settings_dialog.py
 lexemes = {
+    'workspace_hotkeys_label': 'Pintasan keyboard',
+    'hotkey_save': 'Simpan',
+    'hotkey_find': 'Cari',
+    'hotkey_goto': 'Ke baris',
+    'hotkey_undo': 'Urungkan',
+    'hotkey_redo': 'Ulangi',
+    'hotkey_cut': 'Potong',
+    'hotkey_copy': 'Salin',
+    'hotkey_paste': 'Tempel',
+    'hotkey_select_all': 'Pilih semua',
+    'hotkey_unindent': 'Kurangi inden',
+    'hotkey_newline': 'Sisipkan baris baru',
     # Settings dialog
     "window_title": "Pengaturan",
 

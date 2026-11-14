@@ -1,5 +1,17 @@
 # Georgian lexemes settings_dialog.py
 lexemes = {
+    'workspace_hotkeys_label': 'კლავიატურის მალსახმობები',
+    'hotkey_save': 'შენახვა',
+    'hotkey_find': 'ძებნა',
+    'hotkey_goto': 'ხაზზე გადასვლა',
+    'hotkey_undo': 'გაუქმება',
+    'hotkey_redo': 'გამეორება',
+    'hotkey_cut': 'ამოჭრა',
+    'hotkey_copy': 'კოპირება',
+    'hotkey_paste': 'ჩასმა',
+    'hotkey_select_all': 'ყველაფრის მონიშვნა',
+    'hotkey_unindent': 'შეწევის შემცირება',
+    'hotkey_newline': 'ახალი ხაზის ჩასმა',
     # პარამეტრების დიალოგი
     "window_title": "პარამეტრები",
 

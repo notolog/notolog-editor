@@ -1,5 +1,17 @@
 # Finnish lexemes settings_dialog.py
 lexemes = {
+    'workspace_hotkeys_label': 'Pikanäppäimet',
+    'hotkey_save': 'Tallenna',
+    'hotkey_find': 'Etsi',
+    'hotkey_goto': 'Siirry riville',
+    'hotkey_undo': 'Kumoa',
+    'hotkey_redo': 'Tee uudelleen',
+    'hotkey_cut': 'Leikkaa',
+    'hotkey_copy': 'Kopioi',
+    'hotkey_paste': 'Liitä',
+    'hotkey_select_all': 'Valitse kaikki',
+    'hotkey_unindent': 'Vähennä sisennystä',
+    'hotkey_newline': 'Lisää rivinvaihto',
     # Asetusten dialogi
     "window_title": "Asetukset",
 
